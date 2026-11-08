@@ -1,0 +1,35 @@
+{
+  "runId": "run_01M6E22WG0NQFVT4Q4295NMG1Z",
+  "title": "Thin-liquidity launch with a deployer rumor",
+  "createdAt": "2026-11-02T12:00:00Z",
+  "status": "complete",
+  "stopReason": null,
+  "crowdSize": 3,
+  "rounds": 2,
+  "personaMix": {
+    "sniper": 1,
+    "holder": 1,
+    "panic_seller": 1,
+    "skeptic": 0
+  },
+  "models": {
+    "agents": "provider/agents-model",
+    "report": "provider/report-model"
+  },
+  "hash": "0xbc4e60035a1343aeb7490f30c62f54e465888e04f943232a6facd3b1d3a8dc62",
+  "market": {
+    "symbol": "HYVX",
+    "priceStart": "0.00001",
+    "priceEnd": "0.000011024659555802",
+    "priceChangePct": 10.25,
+    "swaps": 3,
+    "posts": 5
+  },
+  "sparkline": [
+    0.00001,
+    0.000011446722520286,
+    0.000011024659555802
+  ],
+  "turningPointRound": 2,
+  "summary": "Two agents entered early on thin liquidity and lifted the price. The round 2 rumor flipped the mood: one agent exited in full, which moved the price enough that the sniper's exit reverted on slippage, and the holder's oversized order was rejected and recorded as a hold."
+}

@@ -1,0 +1,358 @@
+/*
+ * The home page's console. Its parts sit on the card's rule color with a one-pixel gap between
+ * them, so the dividers are the card itself showing through.
+ */
+.console {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  border-radius: var(--radius-lg);
+  background: var(--rule);
+  box-shadow: 0 0 0 1px var(--rule);
+  overflow: hidden;
+}
+
+.top,
+.stats,
+.main,
+.side,
+.foot {
+  background: var(--surface);
+}
+
+/* --- what is playing ----------------------------------------------------------------------------- */
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 14px 20px;
+}
+
+.play {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--raised);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  cursor: pointer;
+  transition: box-shadow 160ms var(--ease);
+}
+
+.play:hover {
+  box-shadow: inset 0 0 0 1px var(--ink-3);
+}
+
+.icon {
+  display: grid;
+  animation: fade 200ms var(--ease);
+}
+
+.play svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.title {
+  display: grid;
+  flex: 1 1 260px;
+  gap: 1px;
+  min-width: 0;
+}
+
+.title a {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.006em;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.title a:hover {
+  text-decoration: underline;
+}
+
+.title span {
+  color: var(--ink-3);
+  font-size: 0.8125rem;
+}
+
+.round {
+  color: var(--ink-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* --- the numbers so far -------------------------------------------------------------------------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(132px, 100%), 1fr));
+  gap: 16px 24px;
+  margin: 0;
+  padding: 18px 20px 20px;
+}
+
+.stat {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  min-width: 0;
+}
+
+.stat dt {
+  color: var(--ink-3);
+  font-size: 0.8125rem;
+}
+
+.stat dd {
+  margin: 0;
+  font-size: clamp(1.3125rem, 2vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: -0.024em;
+  line-height: 1.15;
+}
+
+.up {
+  color: var(--buy-text);
+}
+
+.down {
+  color: var(--sell-text);
+}
+
+/* --- the price and the crowd, beside the feed ---------------------------------------------------- */
+
+.body {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+@media (min-width: 980px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+}
+
+.main {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: 18px 20px 20px;
+}
+
+.chart {
+  min-width: 0;
+}
+
+.scrub {
+  display: grid;
+  min-width: 0;
+}
+
+.scrub input {
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+
+.scrub input::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, var(--accent) var(--p), var(--rule-strong) var(--p));
+}
+
+.scrub input::-moz-range-track {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--rule-strong);
+}
+
+.scrub input::-moz-range-progress {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+}
+
+.scrub input::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -5px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--surface);
+}
+
+.scrub input::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--surface);
+}
+
+.scrub input:focus-visible {
+  outline: 0;
+}
+
+.scrub input:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--focus);
+}
+
+.scrub input:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--focus);
+}
+
+.rounds {
+  display: flex;
+  min-width: 0;
+}
+
+.rounds button {
+  flex-basis: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: none;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: color 160ms var(--ease);
+}
+
+.rounds button:hover,
+.rounds button[aria-current="step"] {
+  color: var(--ink);
+}
+
+.crowd {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+}
+
+.crowdHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px var(--space-5);
+  color: var(--ink-3);
+  font-size: 0.8125rem;
+}
+
+.keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.keys li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.keys i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.keyHeld {
+  background: var(--accent);
+}
+
+.keyBuy {
+  background: var(--buy);
+}
+
+.keySell {
+  background: var(--sell);
+}
+
+.keyPost {
+  box-shadow: inset 0 0 0 1.25px var(--post);
+}
+
+.tip {
+  display: grid;
+  gap: 2px;
+}
+
+.tip b {
+  font-weight: 550;
+}
+
+.tipPersona {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink-3);
+}
+
+/* The feed: a fixed height on a phone; on a wide screen as tall as the chart beside it. */
+.side {
+  position: relative;
+  min-width: 0;
+  height: 420px;
+}
+
+@media (min-width: 980px) {
+  .side {
+    height: auto;
+  }
+}
+
+/* --- the disclaimer, and the way to the whole run ------------------------------------------------ */
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px var(--space-5);
+  padding: 6px 20px;
+}
+
+.foot p {
+  color: var(--ink);
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.foot a {
+  min-height: 44px;
+}

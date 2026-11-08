@@ -1,0 +1,5945 @@
+{
+  "runId": "run_01M6QD9NRSBS9QDX37M1NJAEDJ",
+  "version": 1,
+  "createdAt": "2026-11-06T03:09:06Z",
+  "status": "complete",
+  "stopReason": null,
+  "scenario": {
+    "title": "Fictional Pons token GLINT lists with a 5% creator tax",
+    "seedText": "GLINT is a fictional meme token made up for this simulation. In this scenario it has just launched on Pons with a 5% creator tax on every trade. The simulated pool models the tax as a 5% swap fee on every buy and sell and leaves other launchpad fees out, so a quick round trip costs close to 10% before price impact.\n\nThe launch post promises \"community first\" and a roadmap \"soon\". There is no website yet, only a launch page at pons.example/glint. The creator wallet holds 15% of the supply and has not said what the tax revenue is for.\n\nLiquidity is thin: about 5 ETH against 100 million GLINT, so a single 0.25 ETH swap moves the price by roughly 10%. Early chatter is split between wallets excited about a fast start and wallets asking why the tax is so high and who receives it.",
+    "seedSources": [
+      {
+        "kind": "user",
+        "ref": "pons-creator-tax.md"
+      }
+    ],
+    "injectedEvents": [
+      {
+        "round": 3,
+        "text": "A wallet that entered in the first minute posts that it is up 3x and has taken most of its position off the table."
+      },
+      {
+        "round": 5,
+        "text": "Rumor: the creator wallet moved 20% of its GLINT to an exchange deposit address. Nothing on-chain confirms a sale yet."
+      },
+      {
+        "round": 8,
+        "text": "The creator posts that the tax drops to 1% after the first week and that tax revenue funds a liquidity lock."
+      }
+    ]
+  },
+  "world": {
+    "chainId": 4663,
+    "forkBlock": 107254579,
+    "pools": [
+      {
+        "address": "0xA9d3b43ba2F10D7BBE658495b3358E064860A599",
+        "token0": "0x1dF360B4EB65224F2C99AB0FB25aef5B098d5b5d",
+        "token1": "0x5B9de13824aada1fC7436868854aA13414697511",
+        "kind": "v2-test",
+        "feeBps": 500
+      }
+    ],
+    "token": {
+      "address": "0x5B9de13824aada1fC7436868854aA13414697511",
+      "symbol": "GLINT",
+      "name": "Glint (fictional test token)",
+      "decimals": 18
+    },
+    "quote": {
+      "address": "0x1dF360B4EB65224F2C99AB0FB25aef5B098d5b5d",
+      "symbol": "WETH",
+      "decimals": 18
+    },
+    "initialMarket": {
+      "price": "0.00000005",
+      "reserve0": "5",
+      "reserve1": "100000000",
+      "holders": 25
+    }
+  },
+  "crowd": {
+    "size": 50,
+    "personaMix": {
+      "sniper": 10,
+      "holder": 15,
+      "panic_seller": 10,
+      "skeptic": 15
+    },
+    "model": {
+      "agents": "@cf/meta/llama-3.1-8b-instruct-fp8-fast",
+      "report": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "temperature": 0.8
+    },
+    "agents": [
+      {
+        "agentId": "a01",
+        "handle": "@pluckyraccoon72",
+        "persona": "sniper",
+        "startEth": "1.1276",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a02",
+        "handle": "@fuzzyokapi14",
+        "persona": "skeptic",
+        "startEth": "0.9302",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a03",
+        "handle": "@chillysquid69",
+        "persona": "sniper",
+        "startEth": "0.6281",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a04",
+        "handle": "@boldtapir60",
+        "persona": "skeptic",
+        "startEth": "0.969",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a05",
+        "handle": "@fizzyowl25",
+        "persona": "holder",
+        "startEth": "1.0941",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a06",
+        "handle": "@icygecko73",
+        "persona": "sniper",
+        "startEth": "1.2048",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a07",
+        "handle": "@vividheron40",
+        "persona": "holder",
+        "startEth": "1.0379",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a08",
+        "handle": "@cosmicsquid40",
+        "persona": "skeptic",
+        "startEth": "0.6355",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a09",
+        "handle": "@fuzzyllama99",
+        "persona": "panic_seller",
+        "startEth": "0.5658",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a10",
+        "handle": "@fizzybadger42",
+        "persona": "holder",
+        "startEth": "1.3437",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a11",
+        "handle": "@hastysquid28",
+        "persona": "skeptic",
+        "startEth": "0.4977",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a12",
+        "handle": "@chillybadger19",
+        "persona": "sniper",
+        "startEth": "1.0136",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a13",
+        "handle": "@boldpanda39",
+        "persona": "sniper",
+        "startEth": "1.2887",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a14",
+        "handle": "@hastygecko56",
+        "persona": "panic_seller",
+        "startEth": "0.4767",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a15",
+        "handle": "@vividstoat20",
+        "persona": "holder",
+        "startEth": "1.1925",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a16",
+        "handle": "@fizzyturtle68",
+        "persona": "panic_seller",
+        "startEth": "0.1744",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a17",
+        "handle": "@rapidalpaca30",
+        "persona": "holder",
+        "startEth": "1.2446",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a18",
+        "handle": "@snowyibex86",
+        "persona": "panic_seller",
+        "startEth": "0.1893",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a19",
+        "handle": "@daringheron66",
+        "persona": "skeptic",
+        "startEth": "0.5404",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a20",
+        "handle": "@gloomygecko65",
+        "persona": "panic_seller",
+        "startEth": "0.1448",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a21",
+        "handle": "@spryibis95",
+        "persona": "holder",
+        "startEth": "1.2026",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a22",
+        "handle": "@rapidstoat44",
+        "persona": "sniper",
+        "startEth": "1.9327",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a23",
+        "handle": "@wittystoat34",
+        "persona": "sniper",
+        "startEth": "1.1787",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a24",
+        "handle": "@noisyzebra60",
+        "persona": "sniper",
+        "startEth": "0.5404",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a25",
+        "handle": "@chillyvole31",
+        "persona": "panic_seller",
+        "startEth": "0.2435",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a26",
+        "handle": "@wittymarmot38",
+        "persona": "skeptic",
+        "startEth": "0.2857",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a27",
+        "handle": "@breezyyak37",
+        "persona": "holder",
+        "startEth": "0.7939",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a28",
+        "handle": "@briskmoth83",
+        "persona": "holder",
+        "startEth": "0.3847",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a29",
+        "handle": "@keenweasel20",
+        "persona": "holder",
+        "startEth": "0.7615",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a30",
+        "handle": "@waryllama77",
+        "persona": "panic_seller",
+        "startEth": "0.4505",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a31",
+        "handle": "@humblemole67",
+        "persona": "skeptic",
+        "startEth": "0.276",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a32",
+        "handle": "@vividtapir70",
+        "persona": "skeptic",
+        "startEth": "0.9381",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a33",
+        "handle": "@calmegret94",
+        "persona": "holder",
+        "startEth": "0.9809",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a34",
+        "handle": "@gloomymoth98",
+        "persona": "skeptic",
+        "startEth": "0.6126",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a35",
+        "handle": "@icystoat21",
+        "persona": "holder",
+        "startEth": "0.5661",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a36",
+        "handle": "@steadyviper81",
+        "persona": "panic_seller",
+        "startEth": "0.5669",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a37",
+        "handle": "@sleepyegret23",
+        "persona": "holder",
+        "startEth": "1.4456",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a38",
+        "handle": "@pluckybison93",
+        "persona": "skeptic",
+        "startEth": "0.7253",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a39",
+        "handle": "@eagersloth24",
+        "persona": "skeptic",
+        "startEth": "0.7738",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a40",
+        "handle": "@mellowyak37",
+        "persona": "holder",
+        "startEth": "0.7417",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a41",
+        "handle": "@noisysloth84",
+        "persona": "sniper",
+        "startEth": "1.9326",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a42",
+        "handle": "@wittymarmot28",
+        "persona": "holder",
+        "startEth": "1.121",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a43",
+        "handle": "@boldbadger95",
+        "persona": "holder",
+        "startEth": "1.2686",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a44",
+        "handle": "@briskllama32",
+        "persona": "panic_seller",
+        "startEth": "0.5479",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a45",
+        "handle": "@breezysquid20",
+        "persona": "panic_seller",
+        "startEth": "0.1268",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a46",
+        "handle": "@sprywalrus21",
+        "persona": "sniper",
+        "startEth": "1.3906",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a47",
+        "handle": "@nimblemarmot63",
+        "persona": "skeptic",
+        "startEth": "0.5498",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a48",
+        "handle": "@wittygecko32",
+        "persona": "skeptic",
+        "startEth": "0.821",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a49",
+        "handle": "@eagertoad23",
+        "persona": "skeptic",
+        "startEth": "0.651",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a50",
+        "handle": "@loftyegret88",
+        "persona": "skeptic",
+        "startEth": "0.4417",
+        "startTokens": "0"
+      }
+    ]
+  },
+  "rounds": [
+    {
+      "n": 1,
+      "posts": [
+        {
+          "id": "p1",
+          "agentId": "a10",
+          "text": "We're in this for the long haul, believe in GLINT's potential.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p2",
+          "agentId": "a11",
+          "text": "We need to see the team's roadmap before we commit, don't you think?",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p3",
+          "agentId": "a12",
+          "text": "I'm in for 0.25 ETH already!",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p4",
+          "agentId": "a14",
+          "text": "Is anyone else freaking out about this tax? We're basically giving away half our profit!",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p5",
+          "agentId": "a16",
+          "text": "I'm out! This tax is too high, I need to cut my losses!",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p6",
+          "agentId": "a19",
+          "text": "I'm still on the fence about this one. Need more information before I commit.",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p7",
+          "agentId": "a20",
+          "text": "Same here, @daringheron66! I'm still waiting for more info!",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p8",
+          "agentId": "a21",
+          "text": "We're in this for the long haul. I believe in the GLINT team and their vision. Let's give them a chance to deliver on their roadmap.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p9",
+          "agentId": "a22",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p10",
+          "agentId": "a23",
+          "text": "No way I'm touching GLINT with those high taxes. Who's behind this and what's the tax revenue for?",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p11",
+          "agentId": "a24",
+          "text": "Just got in for a quick flip.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p12",
+          "agentId": "a25",
+          "text": "What's going on? The price dropped and I'm in the red. Is this a rug?",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p13",
+          "agentId": "a26",
+          "text": "I'm not convinced by the tax structure. Who gets the tax revenue and what's the plan?",
+          "replyTo": null,
+          "likes": 9
+        },
+        {
+          "id": "p14",
+          "agentId": "a27",
+          "text": "I'm adding a bit to my position. The team's 'community first' promise is reassuring, but I'd like to see some progress soon.",
+          "replyTo": null,
+          "likes": 8
+        },
+        {
+          "id": "p15",
+          "agentId": "a28",
+          "text": "I'm holding off for now. The tax structure and lack of transparency are major concerns for me.",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p16",
+          "agentId": "a30",
+          "text": "I'm getting out! The price dropped and I'm in the red. Better safe than sorry!",
+          "replyTo": null,
+          "likes": 5
+        },
+        {
+          "id": "p17",
+          "agentId": "a31",
+          "text": "Not convinced by the creator tax yet. How will it be used?",
+          "replyTo": null,
+          "likes": 15
+        },
+        {
+          "id": "p18",
+          "agentId": "a41",
+          "text": "GLINT FOMO?",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p19",
+          "agentId": "a42",
+          "text": "We're in this for the long haul, folks. Let's not get spooked by the initial dip. We believe in the team and the community.",
+          "replyTo": null,
+          "likes": 5
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a27",
+          "kind": "swap_buy",
+          "amountIn": "0.02",
+          "amountOut": "378561.466427575214186092",
+          "txHash": "0x050ca4fc0afc06be6eb9d2420662e6e4f1f2240d97ed3e24477821b3ea90f352",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a17",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a24",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "933797.401153367573226672",
+          "txHash": "0x77a43c6e64458a492a6d92603464a6cf4c762283974d1f09f0d3d1a6cd35fdcc",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a21",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a22",
+          "kind": "swap_buy",
+          "amountIn": "0.1",
+          "amountOut": "1815164.744933167557637132",
+          "txHash": "0xc33bb4374945196f5f0a0342f707ce4fcc652bbaed026784fbdd8d618d4d8bc6",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a50",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a28",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a39",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a25",
+          "kind": "swap_sell",
+          "amountIn": "300000",
+          "amountOut": "0.015165585344390272",
+          "txHash": "0xa0eab27d6be9f117d7482f43d410903fdd77e6de4006bda71451f48c936dd6e6",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a37",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a42",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a09",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a45",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a08",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a38",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a26",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a05",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a01",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a49",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a30",
+          "kind": "swap_sell",
+          "amountIn": "300000",
+          "amountOut": "0.015074552129132428",
+          "txHash": "0x1e08dc5cd18e8e2631bd1e4110f5be5622a930e6a4f0e9cffca861d8e2e5a5f9",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a34",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a04",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a31",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a35",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a48",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a41",
+          "kind": "swap_buy",
+          "amountIn": "0.2",
+          "amountOut": "3474785.166933084521336646",
+          "txHash": "0xe0411450dddd8a38150af36c7b68111824ab30f5362d96ab8a6e0be9651d0f85",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a32",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a23",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a36",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a43",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a40",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a14",
+          "kind": "swap_sell",
+          "amountIn": "600000",
+          "amountOut": "0.032185020934280772",
+          "txHash": "0x440634f20c6cc35522a0d4fe6ea8fb5744ab9afd0df1669cf9b6b1642a90bedf",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a10",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a29",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "swap_sell",
+          "amountIn": "600000",
+          "amountOut": "0.031789335444697559",
+          "txHash": "0x0c0836a656d3801185295ded2a54a099f6b4d6032a5121274c6cc9d72f716a80",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a47",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a12",
+          "kind": "swap_buy",
+          "amountIn": "0.25",
+          "amountOut": "4100903.470293891249352673",
+          "txHash": "0x95ba7db4e33f6917d9febd024b765c2d4eebee09a43ffcc9953921dd783f627c",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a33",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a46",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a44",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a11",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000000060658401274",
+        "reserve0": "5.525785506147498969",
+        "reserve1": "91096787.750258913884260785",
+        "holders": 27
+      }
+    },
+    {
+      "n": 2,
+      "posts": [
+        {
+          "id": "p20",
+          "agentId": "a01",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": null,
+          "likes": 12
+        },
+        {
+          "id": "p21",
+          "agentId": "a02",
+          "text": "We need transparency on the tax revenue. How will it be used?",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p22",
+          "agentId": "a03",
+          "text": "Who else is in for a quick flip?",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p23",
+          "agentId": "a04",
+          "text": "I'm still not convinced by the tax structure. Let's get some answers.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p24",
+          "agentId": "a21",
+          "text": "We're in this for the long haul, folks. Let's not get spooked by the initial dip. We believe in the GLINT team and their vision. We're adding a bit more to our position today.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c1",
+          "agentId": "a22",
+          "text": "@breezyyak37, don't be so sure about the 'community first' promise. We all know who's behind this and what they want.",
+          "replyTo": "p14",
+          "likes": 0
+        },
+        {
+          "id": "c2",
+          "agentId": "a25",
+          "text": "@chillyvole31, I'm not sure about the rug hypothesis. What evidence do you have?",
+          "replyTo": "p12",
+          "likes": 0
+        },
+        {
+          "id": "c3",
+          "agentId": "a27",
+          "text": "I'm adding a bit to my position. The team's 'community first' promise is reassuring, but I'd like to see more transparency on the tax revenue.",
+          "replyTo": "p14",
+          "likes": 0
+        },
+        {
+          "id": "c4",
+          "agentId": "a31",
+          "text": "@calmegret94, your patience is admirable, but I'm still not convinced by the creator tax. What's the plan for the tax revenue?",
+          "replyTo": "p19",
+          "likes": 0
+        },
+        {
+          "id": "c5",
+          "agentId": "a33",
+          "text": "@humblemole67, I appreciate your questions, but I believe the team will come through with a clear plan for the tax revenue. Let's give them time to show their commitment.",
+          "replyTo": "p17",
+          "likes": 0
+        },
+        {
+          "id": "c6",
+          "agentId": "a35",
+          "text": "@calmegret94, I'm with you on this one. The team's promise of transparency is key for me. Let's see what they do with the tax revenue.",
+          "replyTo": "p19",
+          "likes": 0
+        },
+        {
+          "id": "c7",
+          "agentId": "a37",
+          "text": "@humblemole67, I understand your concerns, but I believe the team will come through with a clear plan for the tax revenue. Let's not get spooked by the initial dip.",
+          "replyTo": "p17",
+          "likes": 0
+        },
+        {
+          "id": "c8",
+          "agentId": "a39",
+          "text": "@humblemole67, I think you're being too cautious. The team will come through with a clear plan for the tax revenue. Let's give them time to show their commitment.",
+          "replyTo": "p17",
+          "likes": 0
+        },
+        {
+          "id": "p25",
+          "agentId": "a41",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c9",
+          "agentId": "a42",
+          "text": "@noisysloth84, I'm still with you on this one. We just need to be patient and see this through.",
+          "replyTo": "p18",
+          "likes": 0
+        },
+        {
+          "id": "p26",
+          "agentId": "a44",
+          "text": "Guys, can we talk about the price drop? Am I the only one seeing this?",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c10",
+          "agentId": "a45",
+          "text": "I'm getting out too! Better safe than sorry...",
+          "replyTo": "p16",
+          "likes": 0
+        },
+        {
+          "id": "p27",
+          "agentId": "a47",
+          "text": "I'd like to see some transparency on the tax revenue before committing to this project.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p28",
+          "agentId": "a48",
+          "text": "The tax structure is a major concern for me. Need to see a clear plan before investing.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p29",
+          "agentId": "a49",
+          "text": "Not convinced by the tax revenue plan yet.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p30",
+          "agentId": "a50",
+          "text": "I'm watching this one closely. Need to see some steady activity before investing.",
+          "replyTo": null,
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a16",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a35",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a11",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a28",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a17",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a41",
+          "kind": "swap_sell",
+          "amountIn": "1737392.583466542260668323",
+          "amountOut": "0.098336391094405707",
+          "txHash": "0xa60f785174c22f503d1a6ce5599706827c69378d7eafc027116685146ba38ba4",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a21",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "805418.182559528115047684",
+          "txHash": "0x9b84bd5a1c4eaed2ae31d00f38d74fd4e0be7ed8ba67b7183928fcde06bf4c8e",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a45",
+          "kind": "swap_sell",
+          "amountIn": "300000",
+          "amountOut": "0.016910512164305884",
+          "txHash": "0x947585e149607077a3c004c0baecd75b1ddd22bdc0955a9ba31c6dae488cc5e5",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a32",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a26",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a23",
+          "kind": "swap_buy",
+          "amountIn": "0.1",
+          "amountOut": "1578826.65054291381625903",
+          "txHash": "0xc0eed24037e1a67a1181f5078f0483a5d1f421b6ff7d35636bd38153809365e0",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "swap_buy",
+          "amountIn": "0.25",
+          "amountOut": "3717310.483351981525497438",
+          "txHash": "0xcf293b719268d99707e10e32de30cc5377f02d4cb22bdc51172480c6792373d9",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a34",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a39",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a37",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a30",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a09",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a08",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a10",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a40",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a47",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a31",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a49",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a42",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a24",
+          "kind": "swap_sell",
+          "amountIn": "466898.700576683786613336",
+          "amountOut": "0.029462721314921739",
+          "txHash": "0x261b75e882cc9cef511d01509be766df0d43742f4ad46c3fd9cb6059079873d8",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a44",
+          "kind": "swap_sell",
+          "amountIn": "300000",
+          "amountOut": "0.018768759645426796",
+          "txHash": "0xcaa3a4981740eff38977722d30637e260e2e8f3500010f3442ad23166a29f222",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a38",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a36",
+          "kind": "swap_sell",
+          "amountIn": "300000",
+          "amountOut": "0.018644109775856689",
+          "txHash": "0x7fe627dbb46e5aa6dc021ce889b6586afd36a6c8977c3d955eaceacf4f6e0e1e",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a29",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a05",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a43",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a46",
+          "kind": "swap_buy",
+          "amountIn": "0.15",
+          "amountOut": "2132829.502661396540680681",
+          "txHash": "0xa24c659c112a2d5bf6d36dca5ced1aabc3af778a01d0a44f69c57acbe77735a9",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a50",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a12",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a25",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a04",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a48",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a33",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a22",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a27",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "687309.532976752974483341",
+          "txHash": "0xf214039bf45eba27644d828e1c0e51b68a21471473fea656aa9d226cd25e28f9",
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000000069696363714",
+        "reserve0": "5.943663012152582154",
+        "reserve1": "85279384.68220956695957427",
+        "holders": 30
+      }
+    },
+    {
+      "n": 3,
+      "posts": [
+        {
+          "id": "c11",
+          "agentId": "a02",
+          "text": "@pluckyraccoon72, you're making a profit, but at what cost? The tax is eating into your gains.",
+          "replyTo": "p20",
+          "likes": 0
+        },
+        {
+          "id": "c12",
+          "agentId": "a04",
+          "text": "@humblemole67, I think you're being too cautious. The team will come through with a clear plan for the tax revenue.",
+          "replyTo": "p17",
+          "likes": 0
+        },
+        {
+          "id": "c13",
+          "agentId": "a06",
+          "text": "@chillysquid69, I'm still in, but I'm watching the market closely. If the tax revenue isn't transparent, I'm out.",
+          "replyTo": "p22",
+          "likes": 0
+        },
+        {
+          "id": "p31",
+          "agentId": "a11",
+          "text": "I'm still waiting for more information about the tax structure before I commit to this project.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p32",
+          "agentId": "a12",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p33",
+          "agentId": "a14",
+          "text": "I'm freaking out about the tax, we're basically giving away half our profit!",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p34",
+          "agentId": "a15",
+          "text": "I believe in the team's 'community first' promise, let's not get spooked by the initial dip.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p35",
+          "agentId": "a21",
+          "text": "We're not getting spooked by one post about a 3x gain. That's a small sample size, and we'll see how this plays out.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c14",
+          "agentId": "a23",
+          "text": "@waryllama77, I think you're being too hasty. This is just a minor dip. I'm not selling yet.",
+          "replyTo": "p16",
+          "likes": 0
+        },
+        {
+          "id": "c15",
+          "agentId": "a26",
+          "text": "@humblemole67, I still think the tax structure is a major concern. We need to see clear answers from the team.",
+          "replyTo": "p17",
+          "likes": 1
+        },
+        {
+          "id": "p36",
+          "agentId": "a27",
+          "text": "I'm still adding to my position. The team's promise of transparency is reassuring, but I'd like to see some steady activity.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c16",
+          "agentId": "a42",
+          "text": "Still patient, still waiting!",
+          "replyTo": "c4",
+          "likes": 0
+        },
+        {
+          "id": "p37",
+          "agentId": "a44",
+          "text": "What's going on with the price drop?",
+          "replyTo": null,
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a17",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a34",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        },
+        {
+          "agentId": "a21",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a11",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a40",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a08",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a50",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a28",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a04",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a35",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a46",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a13",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a32",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a10",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a33",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "676124.279073745545367746",
+          "txHash": "0xc9493de44aa501fbf0666bee5212d4107fe8a36082f70c0ed457d23efd27bc44",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a41",
+          "kind": "swap_sell",
+          "amountIn": "868696.291733271130334161",
+          "amountOut": "0.057900325114599449",
+          "txHash": "0xb6c9c005542594734244dc848356097502a705eb88d66c21f021c2933630ed89",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a36",
+          "kind": "swap_sell",
+          "amountIn": "150000",
+          "amountOut": "0.009879712090184932",
+          "txHash": "0x412bfbae91f83f645113cd3da5e125aa822dfad37dbedbb1143459c5fff4bec4",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a43",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a38",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a05",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a22",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a18",
+          "kind": "swap_sell",
+          "amountIn": "300000",
+          "amountOut": "0.019659370007237059",
+          "txHash": "0x6a3e767bc633db98c46248c12e75abbfbebc266637ded976150a882772dd9a03",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a37",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a25",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "685502.588601781032843785",
+          "txHash": "0x2fca3aa2f6abd39547c1b1b323a0447f0f679ac02a725a71503da7fe74ce0f25",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a24",
+          "kind": "swap_sell",
+          "amountIn": "466898.700576683786613336",
+          "amountOut": "0.03083456075738107",
+          "txHash": "0x9810939e97131f87c9aa47b5734f0991e4321bf14af2e1108513bf4dd449dfed",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a29",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a30",
+          "kind": "swap_sell",
+          "amountIn": "300000",
+          "amountOut": "0.019639123468100625",
+          "txHash": "0xd9e95d01a9ac41c36677a130ed4585488c8f43edbc1e09ef336cf2ee6f1596cf",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a39",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "686206.578378352012772814",
+          "txHash": "0x9b493548f77af7075fbb43b8f0ca6dc5731a5a059b34de965d96d4cb94d3fe5d",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a09",
+          "kind": "swap_sell",
+          "amountIn": "180000",
+          "amountOut": "0.01191315148793299",
+          "txHash": "0xdef1885361b84e8340beadb3d971976532a8b823af70193d6d34cc380d28855c",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a26",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a23",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a27",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "677831.108862201802122118",
+          "txHash": "0x787ab29c61c6dcae8809895180eb263c3eea426917c545652b91d2d62bd4e329",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a44",
+          "kind": "swap_sell",
+          "amountIn": "150000",
+          "amountOut": "0.010053007205795851",
+          "txHash": "0x4ba120faef1a0a26857c2343034483cac2394df4759a0a880304201d9d60d0e1",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a47",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        },
+        {
+          "agentId": "a31",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a48",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a12",
+          "kind": "swap_sell",
+          "amountIn": "2050451.735146945624676336",
+          "amountOut": "0.134104422038079163",
+          "txHash": "0xc31116a93d77a963f81a3c05a93242d3969f467900354249de62075f72fd55cb",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a45",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a20",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a49",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a42",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000000067222420278",
+        "reserve0": "5.849679339983271015",
+        "reserve1": "87019766.85475038710809164",
+        "holders": 29
+      }
+    },
+    {
+      "n": 4,
+      "posts": [
+        {
+          "id": "c17",
+          "agentId": "a01",
+          "text": "I'm in this for the long haul, folks. Let's not get spooked by the initial dip. We believe in GLINT's potential.",
+          "replyTo": "p20",
+          "likes": 2
+        },
+        {
+          "id": "p38",
+          "agentId": "a11",
+          "text": "We still need to see clear answers about the tax structure and what the team plans to do with the revenue. Let's not get spooked by the initial dip.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p39",
+          "agentId": "a12",
+          "text": "I'm selling 0.1 ETH to take some profit off the table. The price is up, but the tax is eating into my gains.",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p40",
+          "agentId": "a13",
+          "text": "No opinion on this one. Still watching the market.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c18",
+          "agentId": "a19",
+          "text": "We still need to see more information about the tax structure before we commit to this project.",
+          "replyTo": "p6",
+          "likes": 0
+        },
+        {
+          "id": "c19",
+          "agentId": "a31",
+          "text": "@calmegret94, I still think the tax structure is a major concern. We need to see clear answers before I consider adding more to my position.",
+          "replyTo": "p13",
+          "likes": 2
+        },
+        {
+          "id": "p41",
+          "agentId": "a41",
+          "text": "FOMO is not my thing",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p42",
+          "agentId": "a44",
+          "text": "Guys, can we talk about the price drop?",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p43",
+          "agentId": "a47",
+          "text": "I'd like to see some transparency on the tax revenue",
+          "replyTo": null,
+          "likes": 2
+        },
+        {
+          "id": "p44",
+          "agentId": "a48",
+          "text": "The tax structure is a major concern for me",
+          "replyTo": null,
+          "likes": 3
+        },
+        {
+          "id": "p45",
+          "agentId": "a50",
+          "text": "I'm watching this one closely",
+          "replyTo": null,
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a39",
+          "kind": "swap_sell",
+          "amountIn": "343103.289189176006386407",
+          "amountOut": "0.021829256439032539",
+          "txHash": "0xc7807155f8db4f52bae3706dfd0f1c94466408cf384aea88a571e56629198800",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a30",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a22",
+          "kind": "swap_buy",
+          "amountIn": "0.1",
+          "amountOut": "1401263.335489971927032763",
+          "txHash": "0xb7aca0182cc8c1199ff72e676068bc4d4aa045a4c509b612920bc5c16eadad73",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a23",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a41",
+          "kind": "swap_sell",
+          "amountIn": "173739.258346654226066832",
+          "amountOut": "0.011360074492960416",
+          "txHash": "0x442f8443ebafd97cf2a4296df53d06562f3413a753b1dd2d0facd0a43547eb47",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a43",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a11",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a28",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a31",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a42",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a09",
+          "kind": "swap_sell",
+          "amountIn": "336000",
+          "amountOut": "0.021844352862948898",
+          "txHash": "0xeff63d52b065f6d6cc86e0b373a1b7503577cc157d7bb687c33584066354ba8b",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a47",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        },
+        {
+          "agentId": "a33",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "691229.932052450331804702",
+          "txHash": "0x707e25e5063e366b0acf110238e4c94cda5550afd71017585a1ee5c3d289714f",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a12",
+          "kind": "swap_sell",
+          "amountIn": "1025225.867573472812338168",
+          "amountOut": "0.066738927183074586",
+          "txHash": "0x0b3b3933d1461f92ba602756751c23139723ed288c87c90abca9b7cd0633fca8",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a05",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a36",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a24",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a44",
+          "kind": "swap_sell",
+          "amountIn": "75000",
+          "amountOut": "0.004820640920519231",
+          "txHash": "0x697a8b8ec827f1a712da6a747d0a273dcc64fbcc8ed01034f0349bb83359d731",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a48",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a38",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a46",
+          "kind": "swap_sell",
+          "amountIn": "639848.850798418962204204",
+          "amountOut": "0.040805423814334612",
+          "txHash": "0x18d8b40452f984a70b73f4de86fb710e68dd079a534b8f82a1a7a5ffcd2245b7",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a40",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "707034.718282105704681764",
+          "txHash": "0x630759c0ea289f51ee67c8cabf0eb5fcd61393da4ca76ccb2403011fb9b44494",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a37",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a08",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a45",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a29",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a17",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a32",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a49",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a25",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a26",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a50",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a21",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a04",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a35",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "695409.349835027204434392",
+          "txHash": "0x0895134211e1cd2595a2cfecdd8bd06de42a0358870a84af445fa739e4c4a3e2",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a27",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "684070.738033755092844099",
+          "txHash": "0xde6efd2ce3a3b239cdaa30d030e6849e9fdb152681989dfff908095c051e7bee",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a10",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a34",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.00000007002251268",
+        "reserve0": "5.982280664270400733",
+        "reserve1": "85433676.046964798854289531",
+        "holders": 29
+      }
+    },
+    {
+      "n": 5,
+      "posts": [
+        {
+          "id": "p46",
+          "agentId": "a11",
+          "text": "We still need to see clear answers about the tax structure and what the team plans to do with the revenue. It's crucial for the community's trust.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c20",
+          "agentId": "a21",
+          "text": "I still believe in the team's vision and the community's commitment to GLINT. We need to be patient and see this through.",
+          "replyTo": "p19",
+          "likes": 0
+        },
+        {
+          "id": "c21",
+          "agentId": "a22",
+          "text": "The creator tax is a major concern, but I still think GLINT has potential. I'm not selling yet.",
+          "replyTo": "p16",
+          "likes": 1
+        },
+        {
+          "id": "c22",
+          "agentId": "a41",
+          "text": "@wittymarmot28, don't get too comfortable. The creator wallet just moved 20% of its GLINT to an exchange deposit address.",
+          "replyTo": "p19",
+          "likes": 0
+        },
+        {
+          "id": "c23",
+          "agentId": "a42",
+          "text": "@daringheron66, I understand your concerns about the tax structure, but I still believe in the team's plan.",
+          "replyTo": "p6",
+          "likes": 0
+        },
+        {
+          "id": "p47",
+          "agentId": "a44",
+          "text": "I'm getting out! The price drop and the rumor of the creator wallet selling have me worried.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c24",
+          "agentId": "a47",
+          "text": "@nimblemarmot63, I agree with you on the importance of transparency on the tax revenue.",
+          "replyTo": "p43",
+          "likes": 1
+        },
+        {
+          "id": "c25",
+          "agentId": "a48",
+          "text": "@wittygecko32, I share your concerns about the tax structure.",
+          "replyTo": "p44",
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a26",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        },
+        {
+          "agentId": "a19",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a32",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a25",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a36",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a29",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "673009.490424284807128445",
+          "txHash": "0x706a85188794b516ed3dc8dba0c2e2b42ab8a6a38bf5486f7a69bd583782f2fe",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a37",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a03",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "662216.596907254903567959",
+          "txHash": "0x2c65619aa9decf0c3eb8296b5573138cbbe518a35a464ba92f78dc04f752038d",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a47",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a45",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a44",
+          "kind": "swap_sell",
+          "amountIn": "37500",
+          "amountOut": "0.002575427955541136",
+          "txHash": "0xc92436c0777c0cea51744e0fe9f924530bfb04a03e94631870fa949a2a70e5f3",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a42",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a34",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a48",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a04",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a31",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a05",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a38",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a08",
+          "kind": "swap_buy",
+          "amountIn": "0.01",
+          "amountOut": "131263.686080031205334173",
+          "txHash": "0x606472f5b0e0b84c8ab1677ac2d20b675301084d5273aab5d3020a9bed500262",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a30",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a41",
+          "kind": "swap_sell",
+          "amountIn": "173739.258346654226066832",
+          "amountOut": "0.011941581913290197",
+          "txHash": "0x4f493ffc19e3ac819f6a5c2cc37e164921572617a1a9e0a54dc1b8f8a8450ff6",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a11",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a23",
+          "kind": "swap_sell",
+          "amountIn": "789413.325271456908129515",
+          "amountOut": "0.053668454167842513",
+          "txHash": "0xde7b3ea738430785b6a2a6534dd30994f253a8dd5cbb779daf51ee59b6488c6b",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a39",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a17",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a12",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a35",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a09",
+          "kind": "swap_sell",
+          "amountIn": "42000",
+          "amountOut": "0.002827523725730161",
+          "txHash": "0x2b7e62cccb3ee98429921291fe807fca1f7f9e1095d4df73a8eddac6f8db49fc",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a49",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a27",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a43",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a50",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a22",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a28",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a46",
+          "kind": "swap_buy",
+          "amountIn": "0.15",
+          "amountOut": "1965340.465916114988832388",
+          "txHash": "0x1d39cadf6094d99306447e34380ab6034e22337847287b795862eb1283502cb8",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a33",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a24",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "634307.93346498329462534",
+          "txHash": "0x0cb2e843c6d09048f73c2b5c78c0ec69e4e21b02f2733fa2e053234cb67f8555",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a10",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a40",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "624442.354342535020099163",
+          "txHash": "0x687706b9934fc67b58fd73f71d26be7d9f19d3fdf72c0b73d069ec65ea8d69be",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a21",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        }
+      ],
+      "market": {
+        "price": "0.000000076679223727",
+        "reserve0": "6.271267676507996726",
+        "reserve1": "81785748.10344770576889841",
+        "holders": 32
+      }
+    },
+    {
+      "n": 6,
+      "posts": [
+        {
+          "id": "c26",
+          "agentId": "a02",
+          "text": "I'm still not convinced by the tax structure. We need more transparency on the tax revenue.",
+          "replyTo": "p19",
+          "likes": 1
+        },
+        {
+          "id": "c27",
+          "agentId": "a03",
+          "text": "I'm still in, but I'm watching the market closely. If the tax revenue isn't used transparently, I'll reconsider.",
+          "replyTo": "p22",
+          "likes": 0
+        },
+        {
+          "id": "c28",
+          "agentId": "a05",
+          "text": "I'm holding firm. The team's 'community first' promise is reassuring, but I'd like to see more transparency on the tax revenue.",
+          "replyTo": "p14",
+          "likes": 0
+        },
+        {
+          "id": "c29",
+          "agentId": "a07",
+          "text": "I'm still in. The team's vision and the community's commitment to GLINT are reassuring.",
+          "replyTo": "p14",
+          "likes": 0
+        },
+        {
+          "id": "c30",
+          "agentId": "a09",
+          "text": "I'm getting out! The price drop and tax concerns are too much for me.",
+          "replyTo": "p16",
+          "likes": 1
+        },
+        {
+          "id": "p48",
+          "agentId": "a11",
+          "text": "We need clear answers on the tax structure and what the team plans to do with the revenue, or I'm out of here.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p49",
+          "agentId": "a12",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p50",
+          "agentId": "a14",
+          "text": "Dude, the tax is EATING INTO OUR PROFITS!!! Someone, anyone, please tell me it's just a minor dip...",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p51",
+          "agentId": "a18",
+          "text": "I'm holding tight, but I'm watching the market closely. If the tax revenue isn't used for something good, I'm outta here!",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p52",
+          "agentId": "a31",
+          "text": "Still waiting for answers on the tax structure. How will the revenue be used?",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c31",
+          "agentId": "a33",
+          "text": "Still confident in the team's vision. We need to be patient and give them time to deliver on their promises.",
+          "replyTo": "p13",
+          "likes": 1
+        },
+        {
+          "id": "p53",
+          "agentId": "a34",
+          "text": "The tax structure is a major concern for me, but I'm still willing to give GLINT a chance.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c32",
+          "agentId": "a39",
+          "text": "I think the team will come through with a clear plan for the tax revenue, but we need to be patient.",
+          "replyTo": "p17",
+          "likes": 0
+        },
+        {
+          "id": "p54",
+          "agentId": "a41",
+          "text": "Can't believe the creator wallet is selling! What's going on with this project?",
+          "replyTo": null,
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a31",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a38",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a12",
+          "kind": "swap_sell",
+          "amountIn": "512612.933786736406169084",
+          "amountOut": "0.0371203953194293",
+          "txHash": "0xed7ab1b9fd4667d542c015e65c16181158e5f338a7e5d36d658847f2f792a3f6",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a47",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a30",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a10",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a35",
+          "kind": "swap_sell",
+          "amountIn": "847704.674917513602217196",
+          "amountOut": "0.060412246193753118",
+          "txHash": "0xbfe72eeb35584cd0b9d8557e8a9d9f9163ce97d804bf1420691889a75d375842",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a42",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a11",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a21",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a49",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a22",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a25",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a05",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a27",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a44",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a50",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a40",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a26",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a17",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a04",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a46",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a36",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a45",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a29",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a33",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a24",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a34",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "swap_sell",
+          "amountIn": "1858655.241675990762748719",
+          "amountOut": "0.128381499983486695",
+          "txHash": "0xeaddd2e72c1fb6d3fc232a1da31caf8eb7efba424f51203180c8b240bfc680cf",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a37",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a43",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a39",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a48",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a23",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a09",
+          "kind": "swap_sell",
+          "amountIn": "21000",
+          "amountOut": "0.001418468330079978",
+          "txHash": "0x4606a53d8968e7382bed4778700455e60e803a22997cfe80889d6b37ebbd227b",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a08",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a32",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a28",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a41",
+          "kind": "swap_sell",
+          "amountIn": "130304.443759990669550124",
+          "amountOut": "0.008786592143571516",
+          "txHash": "0x652c3a8ef1b2da1242eff0c5598eb72fb15433e5875e7ffe5b47b2961d68cd24",
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000000070871655251",
+        "reserve0": "6.035148474537676119",
+        "reserve1": "85156025.397587937209583533",
+        "holders": 32
+      }
+    },
+    {
+      "n": 7,
+      "posts": [
+        {
+          "id": "c33",
+          "agentId": "a01",
+          "text": "@fuzzyokapi14, you're right that the tax is eating into our gains, but I still think GLINT has potential.",
+          "replyTo": "c26",
+          "likes": 1
+        },
+        {
+          "id": "p55",
+          "agentId": "a11",
+          "text": "The tax structure is still a major concern for me, and I need clear answers on who gets the revenue and what the plan is.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c34",
+          "agentId": "a21",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": "p35",
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a17",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a21",
+          "kind": "swap_buy",
+          "amountIn": "0.1",
+          "amountOut": "1319678.05451579583718724",
+          "txHash": "0x8c623ff0fd5cbdbdb103701ef85423e5d709692c3a95fe25047fdaf52c438496",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a39",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a31",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a34",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a40",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a24",
+          "kind": "swap_buy",
+          "amountIn": "0.25",
+          "amountOut": "3124467.413122791066305768",
+          "txHash": "0xf2ac2aa9e723cd8ffa198c37e843d67dc6825f9b6a9f809ef11cfd7274169d51",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a37",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a01",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a25",
+          "kind": "swap_sell",
+          "amountIn": "492751.294300890516421892",
+          "amountOut": "0.036819116775382123",
+          "txHash": "0xc9812cd2bcf58cb49f9332e50397844b9047bacac27b3a523cb6b6de0defb39f",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a22",
+          "kind": "swap_sell",
+          "amountIn": "1286571.232169255793867958",
+          "amountOut": "0.094134335820290401",
+          "txHash": "0xc6b34eb67712778e5b65cf5547d694ce370730271bb7d2bfead6bb71ae4bf4d2",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a11",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a35",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a32",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a29",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "621790.185503519863088283",
+          "txHash": "0x0a96e17ec7df8d8634fa5f4a799b210d000ce76bbd8034760bf5baa2fa23e168",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a49",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a05",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a04",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a41",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a02",
+          "kind": "swap_buy",
+          "amountIn": "0.02",
+          "amountOut": "246002.033426080653293181",
+          "txHash": "0x2a96192636eb1dbab4ffd0908b9153f7e04bd06e19b30a923bd6b4a011adb0be",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a27",
+          "kind": "swap_buy",
+          "amountIn": "0.15",
+          "amountOut": "1798652.313024856541974436",
+          "txHash": "0xd4aafb02bf653a2a019dced56a9822c0407d4f26adef103d920130b64f0701b1",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a10",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a30",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        },
+        {
+          "agentId": "a46",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a26",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a45",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a33",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a28",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a44",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a48",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a08",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a06",
+          "kind": "swap_buy",
+          "amountIn": "0.1",
+          "amountOut": "1154380.70836605597870754",
+          "txHash": "0xa9ec6943751b60c8d9a6c032b2d2ec0566cfec21a7e78f5d7cb0ed160d23d95f",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a50",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": null,
+          "txHash": "0xac4d9d8149e002754f79a12c7c10949a6af5cf1a685db120e11337a98fb41466",
+          "status": "reverted",
+          "note": "reverted: InsufficientOutput(amountOut=564333287078625443509582, amountOutMin=565243008834065214723626)"
+        },
+        {
+          "agentId": "a12",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a43",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a09",
+          "kind": "swap_sell",
+          "amountIn": "21000",
+          "amountOut": "0.00166672569968562",
+          "txHash": "0x13be9f030f546bd125565f5bbea0e430a16283b64601e5f013f80af650e35d92",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a36",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a38",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a47",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a42",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a23",
+          "kind": "swap_sell",
+          "amountIn": "552589.32769001983569066",
+          "amountOut": "0.043555580453695647",
+          "txHash": "0x8f1a72d347ba14b43702b5b979a739df33aa5c65318b76fd6d041c6dae850eba",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "swap_sell",
+          "amountIn": "331108.298453627451783979",
+          "amountOut": "0.025813793532474307",
+          "txHash": "0x29e6f76d818659bae1e4c04c43277804bfd75501f71fdc1ef34b3024974ad5bd",
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000000081723566521",
+        "reserve0": "6.503158922256148021",
+        "reserve1": "79575074.842242630866791574",
+        "holders": 33
+      }
+    },
+    {
+      "n": 8,
+      "posts": [
+        {
+          "id": "c35",
+          "agentId": "a01",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": "p13",
+          "likes": 0
+        },
+        {
+          "id": "c36",
+          "agentId": "a02",
+          "text": "@pluckyraccoon72, I agree that the tax is eating into our gains, but I'm still not convinced by the tax structure. We need more transparency on the tax revenue.",
+          "replyTo": "p20",
+          "likes": 0
+        },
+        {
+          "id": "p56",
+          "agentId": "a11",
+          "text": "Still not convinced by the tax structure, even with the news of a 1% tax drop. Who gets the remaining 4% and how will it be used?",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p57",
+          "agentId": "a12",
+          "text": "Selling 0.1 ETH, taking some profit off the table. The tax is still eating into our gains.",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "c37",
+          "agentId": "a14",
+          "text": "Dude, the tax is still a major concern! Who knows what will happen to our profits?",
+          "replyTo": "p50",
+          "likes": 0
+        },
+        {
+          "id": "c38",
+          "agentId": "a18",
+          "text": "I'm holding tight, but I'm watching the market closely. If the tax revenue isn't used for a liquidity lock, I'll reconsider my position.",
+          "replyTo": "p51",
+          "likes": 0
+        },
+        {
+          "id": "c39",
+          "agentId": "a21",
+          "text": "We're not getting spooked by the creator's latest announcement. We believe in the team's vision for GLINT.",
+          "replyTo": "p35",
+          "likes": 0
+        },
+        {
+          "id": "c40",
+          "agentId": "a24",
+          "text": "I'm still in for a quick flip. The market is looking good.",
+          "replyTo": "p22",
+          "likes": 1
+        },
+        {
+          "id": "c41",
+          "agentId": "a27",
+          "text": "I'm still adding to my position. The team's promise of transparency is reassuring, but I'd like to see more action on that front.",
+          "replyTo": "p14",
+          "likes": 0
+        },
+        {
+          "id": "c42",
+          "agentId": "a31",
+          "text": "The creator's promise of a 1% tax after the first week might be a step in the right direction, but we still need clear answers on the tax revenue.",
+          "replyTo": "p13",
+          "likes": 0
+        },
+        {
+          "id": "p58",
+          "agentId": "a32",
+          "text": "I'm not convinced by the team's vision for the tax revenue, but I'll keep an eye on the situation.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c43",
+          "agentId": "a35",
+          "text": "I'm still holding firm, but the team's promise of transparency is key for me. Let's see if they deliver on their roadmap.",
+          "replyTo": "p19",
+          "likes": 1
+        },
+        {
+          "id": "p59",
+          "agentId": "a38",
+          "text": "I still think the tax structure is a major concern, but I'm not convinced by the team's vision.",
+          "replyTo": null,
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a05",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a48",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a31",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a32",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "577013.106599770575083836",
+          "txHash": "0x9991dedbca23d90013b93362e8fbbd869230dd71e5671a248264c4ab8764ea69",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a33",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "568489.900272022918039053",
+          "txHash": "0xdccb326f9728871766037085cc6d3f81803c4fa33caba8ae6305cb4457e6d80f",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a39",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a12",
+          "kind": "swap_sell",
+          "amountIn": "256306.466893368203084542",
+          "amountOut": "0.020436610145009388",
+          "txHash": "0xb876ff23e66236096e7bad21f9eb57eaec0f47e5bfc8c956b852641834b1a7c6",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a21",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a50",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a04",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a26",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a29",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a09",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        },
+        {
+          "agentId": "a44",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a23",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a40",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "563718.536636437728143744",
+          "txHash": "0xc82ada6e28e255676668e82532c9b02d8e435d64f27f3cb3986aa2a78ef175b6",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a41",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a38",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a28",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a24",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "555490.88271204565795899",
+          "txHash": "0xeb72c7e5928e12e0df0e7f040e0c6add7b4b573c8b273cc7d80e3cc5a53d874a",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a22",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "547443.546598502714755831",
+          "txHash": "0xfa30ed888301409ac2095803fea5d6b15c3ced5deb25257300a52f6568bcdf91",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a46",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a49",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a42",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a25",
+          "kind": "swap_sell",
+          "amountIn": "246375.647150445258210946",
+          "amountOut": "0.020398355008293066",
+          "txHash": "0x2ae6a4aaccc7ffe0fd8570e24a57769f422811fb5a3c2688241efaf7dab16848",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a47",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a30",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        },
+        {
+          "agentId": "a11",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a34",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a35",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "542930.713877298692167641",
+          "txHash": "0xfd5ddb358431ef7a29115eddb608de791b4c27343e0acc4f6c2f02702eee4886",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a17",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a45",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a10",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a43",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a06",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a37",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a08",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a36",
+          "kind": "swap_sell",
+          "amountIn": "75000",
+          "amountOut": "0.006274137070384359",
+          "txHash": "0xd57bb4ca795c4a4281dd8be09d345534671e03d408968fec6408d1779984c8a3",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a27",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "536174.413989686565977884",
+          "txHash": "0x80a423be39cb197cf4b9da92d8440c55aae03d797a6d1e2c2d33f514480f43da",
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000000089246214537",
+        "reserve0": "6.806049820032461208",
+        "reserve1": "76261495.855600679475960083",
+        "holders": 33
+      }
+    },
+    {
+      "n": 9,
+      "posts": [
+        {
+          "id": "c44",
+          "agentId": "a01",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": "p13",
+          "likes": 0
+        },
+        {
+          "id": "c45",
+          "agentId": "a03",
+          "text": "I'm still in for a quick flip. The market is looking good, and I'm watching the tax revenue closely.",
+          "replyTo": "p22",
+          "likes": 0
+        },
+        {
+          "id": "p60",
+          "agentId": "a11",
+          "text": "We still need to see clear answers on the tax structure, even with the news of a 1% tax drop.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c46",
+          "agentId": "a12",
+          "text": "I'm still holding firm, but the tax is eating into our gains.",
+          "replyTo": "c36",
+          "likes": 0
+        },
+        {
+          "id": "p61",
+          "agentId": "a21",
+          "text": "We still believe in the team's vision and the community's commitment to GLINT. The creator's latest announcement doesn't change our stance.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c47",
+          "agentId": "a23",
+          "text": "I still think the team will come through with a clear plan for the tax revenue. Let's give them time to deliver.",
+          "replyTo": "p13",
+          "likes": 0
+        },
+        {
+          "id": "p62",
+          "agentId": "a31",
+          "text": "We still need clear answers on the tax structure and how the revenue will be used. Transparency is key for me.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c48",
+          "agentId": "a36",
+          "text": "The creator tax is a major concern, but I'm not selling yet. I want to see how the situation develops.",
+          "replyTo": "p16",
+          "likes": 0
+        },
+        {
+          "id": "c49",
+          "agentId": "a37",
+          "text": "I understand your concerns, @humblemole67, but I believe the team will come through with a clear plan for the tax revenue.",
+          "replyTo": "p17",
+          "likes": 0
+        },
+        {
+          "id": "c50",
+          "agentId": "a40",
+          "text": "I still believe in the team's vision and the community's commitment to GLINT.",
+          "replyTo": "p14",
+          "likes": 0
+        },
+        {
+          "id": "p63",
+          "agentId": "a41",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p64",
+          "agentId": "a42",
+          "text": "I'm still with the project, but I do think we need more transparency on the tax revenue. The team's promise of transparency is reassuring, but we need to see it in action.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p65",
+          "agentId": "a47",
+          "text": "I'd like to see some transparency on the tax revenue. I'm still not convinced by the tax structure.",
+          "replyTo": null,
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a27",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a23",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a12",
+          "kind": "swap_sell",
+          "amountIn": "128153.233446684101542271",
+          "amountOut": "0.010848013404254385",
+          "txHash": "0x7d2a872f6b9f0b5ad0970cd18615ddb77972bc93a1f93a011a16c9fba6dcfff4",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a26",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a11",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a08",
+          "kind": "swap_sell",
+          "amountIn": "26252.737216006241066834",
+          "amountOut": "0.0022178096720657",
+          "txHash": "0x7cfd1723b2d8f4f6062776e9b42e8f6de8e3feeb27fb13944aa0a31e0b4496f8",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a43",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a25",
+          "kind": "swap_sell",
+          "amountIn": "246375.647150445258210947",
+          "amountOut": "0.020742927511865336",
+          "txHash": "0x426eb8dd48543fc2aef01ca2d31049846b64108449d6b6ceb7faa6ea9efcb631",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a44",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a02",
+          "kind": "swap_sell",
+          "amountIn": "123001.01671304032664659",
+          "amountOut": "0.010306745155941577",
+          "txHash": "0xe3acf3973917912eb04ab2fe0ae34145eb1a58e9b9da536fe29b5eb834c741a9",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a48",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a49",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a47",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a35",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a29",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a24",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "535624.628212008103307865",
+          "txHash": "0xc84031ef348746c44f7f592bf4eb6c7792e98f7bbb08830a3c4f18ed85a8a120",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a50",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a46",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a30",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        },
+        {
+          "agentId": "a39",
+          "kind": "swap_buy",
+          "amountIn": "0.01",
+          "amountOut": "106190.527864352518743076",
+          "txHash": "0xb1b7fb080bd6547d411541308f0ca015b92124371c8c19ceb626d6c83dd2d794",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a45",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a28",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a38",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a40",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a34",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a10",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a17",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a04",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a21",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a42",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a05",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a33",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a09",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "526508.346630433282519473",
+          "txHash": "0x26fd43145ad01322f402787dce1155f4d4d2214b16d03f4a82f3643ebfd33897",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a36",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a32",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a41",
+          "kind": "swap_sell",
+          "amountIn": "97728.332819993002162593",
+          "amountOut": "0.008426961590393537",
+          "txHash": "0xbac352a809a957497540619fa98b181e5837e5823da8b39e083fec4c0d115378",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a31",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a22",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a37",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000000090649621206",
+        "reserve0": "6.863507362697940673",
+        "reserve1": "75714683.320240054501018904",
+        "holders": 32
+      }
+    },
+    {
+      "n": 10,
+      "posts": [
+        {
+          "id": "p66",
+          "agentId": "a01",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p67",
+          "agentId": "a12",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p68",
+          "agentId": "a18",
+          "text": "I'm holding tight, but I'm watching the market closely. If the tax revenue isn't used for a liquidity lock, I'll start to get worried.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p69",
+          "agentId": "a21",
+          "text": "We still believe in the team's vision and the community's commitment to GLINT. The creator's promise of a 1% tax after the first week might be a step in the right direction, but we need to see clear answers on how the tax revenue will be used.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c51",
+          "agentId": "a31",
+          "text": "I still think the tax structure is a major concern, but I believe the team will come through with a clear plan for the tax revenue.",
+          "replyTo": "p13",
+          "likes": 0
+        },
+        {
+          "id": "p70",
+          "agentId": "a41",
+          "text": "[Removed by the copy guard.]",
+          "replyTo": null,
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a30",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a47",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a44",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a40",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a32",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        },
+        {
+          "agentId": "a31",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a39",
+          "kind": "swap_sell",
+          "amountIn": "224646.908526764262564741",
+          "amountOut": "0.019291572763975782",
+          "txHash": "0xca4666537101cb922fad445de3cbb0d2f04586d2a9b337bb226bbb0b03dfeaee",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a50",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a09",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_sell with no tokens to sell"
+        },
+        {
+          "agentId": "a08",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a34",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a33",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "swap_sell",
+          "amountIn": "730700.504482728401349766",
+          "amountOut": "0.061996628107246646",
+          "txHash": "0xecacf36535f0d4b7dda701651fa910ed0a6250a22ae8338abb5c4e7b54589487",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a25",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a49",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a35",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a29",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a38",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a05",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a21",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a22",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a46",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a41",
+          "kind": "swap_sell",
+          "amountIn": "87955.499537993701946334",
+          "amountOut": "0.00738345674806324",
+          "txHash": "0x483ed559b4fb6a610a253073236a0bfd27109aec458390460aa85bb63741cc3c",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a27",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a45",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a04",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a36",
+          "kind": "swap_sell",
+          "amountIn": "37500",
+          "amountOut": "0.003142885431729503",
+          "txHash": "0x6f1de549f088ace1bebc71351d33910218dc557511559ee1f9634a33831673c8",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a17",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a37",
+          "kind": "swap_buy",
+          "amountIn": "0.05",
+          "amountOut": "534929.234666556629523816",
+          "txHash": "0xe3192f6243b5c84e102dfefa371de7a8363328f4eff2f652906eaf6666b62059",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a12",
+          "kind": "swap_sell",
+          "amountIn": "25630.646689336820308454",
+          "amountOut": "0.002177392449228086",
+          "txHash": "0xb9424103409a1b3789e737f2b1b0da30fe9b3a5b528950fcfb2dc80a6e53b462",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a11",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a42",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a24",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a10",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a48",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a23",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a28",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a43",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        },
+        {
+          "agentId": "a26",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": "missing_decision"
+        }
+      ],
+      "market": {
+        "price": "0.00000008939384229",
+        "reserve0": "6.819515427197697416",
+        "reserve1": "76286187.644810321057664383",
+        "holders": 32
+      }
+    }
+  ],
+  "report": {
+    "summary": "The synthetic crowd reacted to the GLINT token launch with a 78.79% price increase, 42 buys, and 50 sells. The crowd's behavior changed most in round 7, with a 15.31% price increase and a shift in sentiment. Objections raised by the agents included concerns about the tax structure and transparency. Price drivers included large swaps by sniper agents and changes in sentiment.",
+    "turningPoint": {
+      "round": 7,
+      "why": "15.31% price increase and shift in sentiment (p55, c33)"
+    },
+    "sentimentByRound": [
+      -0.0778,
+      0.0743,
+      0.16,
+      0.008,
+      0.1656,
+      -0.0577,
+      0.0696,
+      -0.0366,
+      -0.096,
+      0.0125
+    ],
+    "objections": [
+      "concerns about the tax structure (p13, c15, c40)",
+      "lack of transparency (p2, p17, c4)"
+    ],
+    "priceDrivers": [
+      "large swaps by sniper agents",
+      "changes in sentiment",
+      "creator tax announcement"
+    ],
+    "disclaimer": "Synthetic crowd reaction. Not a trading signal.",
+    "flags": [
+      "posts_removed:12"
+    ]
+  },
+  "usage": {
+    "llmCalls": 56,
+    "inputTokens": 341939,
+    "outputTokens": 34560,
+    "costUsd": 0.03288
+  },
+  "hash": "0xfd39df562d3af4ab89687b42b97036e13f1c96275be068949d5268a92f146ed9"
+}

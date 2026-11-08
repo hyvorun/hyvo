@@ -1,0 +1,9 @@
+{
+  "//": "Values that differ from wrangler.jsonc on the deployed Worker (Workers Free plan, Workers AI). scripts/deploy-cloudflare.ts passes them with --var. Cost numbers are measured: a 50 x 10 run on Llama 3.1 8B with a Llama 3.3 70B report used 2,800 neurons, $0.031 at list price. 10,000 free neurons a day are $0.11.",
+  "COST_PER_AGENT_ROUND_USD": "0.00005",
+  "REPORT_COST_USD": "0.008",
+  "DAILY_SPEND_CAP_USD": "0.10",
+  "ORACLE_ADDRESS": "0x2FEDc123c38B069cf78e5915852A61022E347642",
+  "PUBLIC_API_URL": "https://hyvo-api.artallm.workers.dev",
+  "RPC_URLS": "https://robinhood.drpc.org,https://rpc.mainnet.chain.robinhood.com"
+}

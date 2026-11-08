@@ -1,0 +1,425 @@
+{
+  "contractName": "HyvoOracle",
+  "abi": [
+    {
+      "type": "constructor",
+      "inputs": [
+        {
+          "name": "initialOwner",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "initialAttester",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "acceptOwnership",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "attester",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "commit",
+      "inputs": [
+        {
+          "name": "runId",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "reportHash",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "scenarioHash",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "resolvesAt",
+          "type": "uint64",
+          "internalType": "uint64"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getCommit",
+      "inputs": [
+        {
+          "name": "runId",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct HyvoOracle.Commit",
+          "components": [
+            {
+              "name": "reportHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "scenarioHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "resolvesAt",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "committedAt",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "resolvedAt",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "outcomeHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "pendingOwner",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "renounceOwnership",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "resolve",
+      "inputs": [
+        {
+          "name": "runId",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "outcomeHash",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "outcomeURI",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setAttester",
+      "inputs": [
+        {
+          "name": "newAttester",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [
+        {
+          "name": "newOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "event",
+      "name": "AttesterChanged",
+      "inputs": [
+        {
+          "name": "previousAttester",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newAttester",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Committed",
+      "inputs": [
+        {
+          "name": "runId",
+          "type": "bytes32",
+          "indexed": true,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "reportHash",
+          "type": "bytes32",
+          "indexed": false,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "scenarioHash",
+          "type": "bytes32",
+          "indexed": false,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "resolvesAt",
+          "type": "uint64",
+          "indexed": false,
+          "internalType": "uint64"
+        },
+        {
+          "name": "timestamp",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferStarted",
+      "inputs": [
+        {
+          "name": "previousOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        {
+          "name": "previousOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Resolved",
+      "inputs": [
+        {
+          "name": "runId",
+          "type": "bytes32",
+          "indexed": true,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "outcomeHash",
+          "type": "bytes32",
+          "indexed": false,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "outcomeURI",
+          "type": "string",
+          "indexed": false,
+          "internalType": "string"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "error",
+      "name": "AlreadyCommitted",
+      "inputs": [
+        {
+          "name": "runId",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "AlreadyResolved",
+      "inputs": [
+        {
+          "name": "runId",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "NotAttester",
+      "inputs": [
+        {
+          "name": "caller",
+          "type": "address",
+          "internalType": "address"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "NotCommitted",
+      "inputs": [
+        {
+          "name": "runId",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "NotResolvable",
+      "inputs": [
+        {
+          "name": "runId",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "OwnableInvalidOwner",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "OwnableUnauthorizedAccount",
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "TooEarly",
+      "inputs": [
+        {
+          "name": "runId",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "resolvesAt",
+          "type": "uint64",
+          "internalType": "uint64"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "ZeroAddress",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ZeroHash",
+      "inputs": []
+    }
+  ],
+  "bytecode": "0x608060405234801561000f575f5ffd5b50604051610a4c380380610a4c83398101604081905261002e9161017e565b816001600160a01b03811661005c57604051631e4fbdf760e01b81525f600482015260240160405180910390fd5b61006581610076565b5061006f81610092565b50506101af565b600180546001600160a01b031916905561008f81610114565b50565b6001600160a01b0381166100b95760405163d92e233d60e01b815260040160405180910390fd5b6002546040516001600160a01b038084169216907f59b0a2696d1ebcafa21539b85c82de9ecd511f90e43ae873d82cfad77dd60272905f90a3600280546001600160a01b0319166001600160a01b0392909216919091179055565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80516001600160a01b0381168114610179575f5ffd5b919050565b5f5f6040838503121561018f575f5ffd5b61019883610163565b91506101a660208401610163565b90509250929050565b610890806101bc5f395ff3fe608060405234801561000f575f5ffd5b506004361061009b575f3560e01c80638da5cb5b116100635780638da5cb5b146102025780639daf85ab14610212578063d433a7c314610225578063e30c397814610238578063f2fde38b14610249575f5ffd5b8063300588391461009f57806347b0c3b3146100b4578063715018a6146100e457806379ba5097146100ec5780638784ea96146100f4575b5f5ffd5b6100b26100ad36600461071e565b61025c565b005b6002546100c7906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6100b261038e565b6100b26103a1565b61019c610102366004610767565b6040805160c0810182525f80825260208201819052918101829052606081018290526080810182905260a0810191909152505f90815260036020818152604092839020835160c0810185528154815260018201549281019290925260028101546001600160401b0380821695840195909552600160401b810485166060840152600160801b9004909316608082015291015460a082015290565b6040516100db91905f60c08201905082518252602083015160208301526001600160401b0360408401511660408301526001600160401b0360608401511660608301526001600160401b03608084015116608083015260a083015160a083015292915050565b5f546001600160a01b03166100c7565b6100b261022036600461077e565b6103e5565b6100b26102333660046107ab565b6103f6565b6001546001600160a01b03166100c7565b6100b261025736600461077e565b610598565b6002546001600160a01b0316331461028e576040516314817f2f60e01b81523360048201526024015b60405180910390fd5b821580610299575081155b156102b75760405163f1ae58d560e01b815260040160405180910390fd5b5f8481526003602052604090206002810154600160401b90046001600160401b0316156102fa5760405163d297b6c560e01b815260048101869052602401610285565b838155600181018390556002810180546001600160401b038481166fffffffffffffffffffffffffffffffff199092168217600160401b429283160217909255604080518781526020810187905290810191909152606081019190915285907f0f2112a6ebf0d5564a74a38d9ab3d59afb5c6185deb00628691cd7ebc4d0a425906080015b60405180910390a25050505050565b610396610608565b61039f5f610634565b565b60015433906001600160a01b031681146103d95760405163118cdaa760e01b81526001600160a01b0382166004820152602401610285565b6103e281610634565b50565b6103ed610608565b6103e28161064d565b6002546001600160a01b03163314610423576040516314817f2f60e01b8152336004820152602401610285565b826104415760405163f1ae58d560e01b815260040160405180910390fd5b5f84815260036020526040812060028101549091600160401b9091046001600160401b0316900361048857604051634ebe8a4d60e01b815260048101869052602401610285565b60028101546001600160401b03165f036104b85760405163367a024760e11b815260048101869052602401610285565b60028101546001600160401b03164210156104fe57600281015460405163f9ac2af160e01b8152600481018790526001600160401b039091166024820152604401610285565b6002810154600160801b90046001600160401b03161561053457604051631e473f4b60e11b815260048101869052602401610285565b6003810184905560028101805467ffffffffffffffff60801b1916600160801b426001600160401b03160217905560405185907fa3bf49e7994bf85c410a20125747f2c7f67c61ddc9ff7bfb1e06499c023d7d409061037f90879087908790610825565b6105a0610608565b600180546001600160a01b0383166001600160a01b031990911681179091556105d05f546001600160a01b031690565b6001600160a01b03167f38d16b8cac22d99fc7c124b9cd0de2d3fa1faef420bfe791d8c362d765e2270060405160405180910390a350565b5f546001600160a01b0316331461039f5760405163118cdaa760e01b8152336004820152602401610285565b600180546001600160a01b03191690556103e2816106cf565b6001600160a01b0381166106745760405163d92e233d60e01b815260040160405180910390fd5b6002546040516001600160a01b038084169216907f59b0a2696d1ebcafa21539b85c82de9ecd511f90e43ae873d82cfad77dd60272905f90a3600280546001600160a01b0319166001600160a01b0392909216919091179055565b5f80546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b5f5f5f5f60808587031215610731575f5ffd5b84359350602085013592506040850135915060608501356001600160401b038116811461075c575f5ffd5b939692955090935050565b5f60208284031215610777575f5ffd5b5035919050565b5f6020828403121561078e575f5ffd5b81356001600160a01b03811681146107a4575f5ffd5b9392505050565b5f5f5f5f606085870312156107be575f5ffd5b843593506020850135925060408501356001600160401b038111156107e1575f5ffd5b8501601f810187136107f1575f5ffd5b80356001600160401b03811115610806575f5ffd5b876020828401011115610817575f5ffd5b949793965060200194505050565b83815260406020820152816040820152818360608301375f818301606090810191909152601f909201601f191601019291505056fea2646970667358221220b806b3a50a5f84dd0488849249c455cc61ec6db9cfa5d6673183c6b2a7f629ad64736f6c634300081c0033"
+}

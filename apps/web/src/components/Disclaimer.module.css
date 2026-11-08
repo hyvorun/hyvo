@@ -1,0 +1,5 @@
+/* Doubled, so a page's paragraph styles never restyle it. */
+.disclaimer.disclaimer {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}

@@ -1,0 +1,359 @@
+.page {
+  display: grid;
+  gap: var(--space-7);
+  padding-top: var(--space-8);
+}
+
+.head {
+  display: grid;
+  gap: var(--space-3);
+  animation: rise 700ms var(--ease-out) both;
+}
+
+.head h1 {
+  font-size: var(--t-2xl);
+}
+
+.head p {
+  max-width: 64ch;
+  color: var(--ink-2);
+  font-size: var(--t-lg);
+  line-height: 1.5;
+}
+
+.layout {
+  display: grid;
+  gap: var(--space-6);
+  align-items: start;
+  animation: rise 800ms var(--ease-out) 120ms both;
+}
+
+@media (min-width: 1040px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 372px;
+    gap: var(--space-8);
+  }
+
+  .side {
+    position: sticky;
+    top: 92px;
+    order: 2;
+  }
+}
+
+.form {
+  display: grid;
+  min-width: 0;
+}
+
+.step {
+  display: grid;
+  gap: var(--space-5);
+  padding-block: var(--space-6);
+  border-top: 1px solid var(--rule);
+}
+
+.step:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.step h2 {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--t-xl);
+}
+
+/* The steps really are a sequence. */
+.n {
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.examples {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius);
+  background: var(--sunken);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+.examplesLabel {
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.exampleList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.example {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color 160ms var(--ease),
+    box-shadow 160ms var(--ease),
+    background-color 160ms var(--ease);
+}
+
+.example:hover {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink-3);
+}
+
+.example[aria-pressed="true"] {
+  background: var(--raised);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.field {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
+.field label,
+.events legend {
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  color: var(--ink);
+  font-size: var(--t-sm);
+  transition: box-shadow 160ms var(--ease);
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--ink-3);
+}
+
+.field input:hover,
+.field textarea:hover {
+  box-shadow: inset 0 0 0 1px var(--ink-3);
+}
+
+.field textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible {
+  outline: 0;
+  box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 3px var(--accent-soft);
+}
+
+.field input[aria-invalid="true"],
+.field textarea[aria-invalid="true"] {
+  box-shadow: inset 0 0 0 1px var(--sell), 0 0 0 3px var(--sell-soft);
+}
+
+.compact input {
+  padding: 8px 11px;
+}
+
+.hint {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.error {
+  color: var(--sell-text);
+  font-size: var(--t-xs);
+  animation: rise 300ms var(--ease-out);
+}
+
+.events {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.events legend {
+  margin-bottom: 2px;
+  padding: 0;
+}
+
+.event {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-2);
+  animation: rise 380ms var(--ease-out);
+}
+
+/* Level with the inputs, below their labels. */
+.event .remove {
+  margin-top: 27px;
+}
+
+.add {
+  justify-self: start;
+}
+
+.market summary {
+  width: fit-content;
+  color: var(--ink);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.market summary::marker {
+  color: var(--ink-3);
+}
+
+.market[open] summary {
+  margin-bottom: var(--space-2);
+}
+
+.marketGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.mixGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.mixTotal {
+  margin-top: var(--space-3);
+}
+
+.sizes {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.presets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.preset {
+  display: grid;
+  gap: 2px;
+  justify-items: start;
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    box-shadow 160ms var(--ease),
+    background-color 160ms var(--ease);
+}
+
+.preset:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 1px var(--ink-3);
+}
+
+.preset:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.preset[aria-checked="true"] {
+  background: var(--raised);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.presetName {
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.presetSize {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.custom {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--t-sm);
+  cursor: pointer;
+}
+
+.check input {
+  margin-top: 4px;
+  accent-color: var(--ink);
+}
+
+.check small {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+}
+
+.notice {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+}
+
+@media (max-width: 560px) {
+  .event {
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+  }
+
+  .event .remove {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-top: 0;
+  }
+
+  .marketGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .preset {
+    padding: var(--space-3);
+  }
+}

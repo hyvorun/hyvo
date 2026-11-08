@@ -1,0 +1,237 @@
+{
+  "runId": "run_01M6E22WG0NQFVT4Q4295NMG1Z",
+  "version": 1,
+  "createdAt": "2026-11-02T12:00:00Z",
+  "status": "complete",
+  "stopReason": null,
+  "scenario": {
+    "title": "Thin-liquidity launch with a deployer rumor",
+    "seedText": "A new test token launches with a small constant-product pool. Early agents see the pool before the feed does. In round 2 a rumor claims the deployer wallet moved part of the supply.",
+    "seedSources": [
+      {
+        "kind": "user",
+        "ref": "sample-scenario.md"
+      }
+    ],
+    "injectedEvents": [
+      {
+        "round": 2,
+        "text": "Rumor: the deployer wallet moved 20% of the token supply to a fresh address."
+      }
+    ]
+  },
+  "world": {
+    "chainId": 4663,
+    "forkBlock": null,
+    "pools": [
+      {
+        "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+        "token0": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+        "token1": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+        "kind": "v2-test",
+        "feeBps": 30
+      }
+    ],
+    "token": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "symbol": "HYVX",
+      "name": "Hyvo Test Token",
+      "decimals": 18
+    },
+    "quote": {
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "symbol": "WETH",
+      "decimals": 18
+    },
+    "initialMarket": {
+      "price": "0.00001",
+      "reserve0": "1000000",
+      "reserve1": "10",
+      "holders": 0
+    }
+  },
+  "crowd": {
+    "size": 3,
+    "personaMix": {
+      "sniper": 1,
+      "holder": 1,
+      "panic_seller": 1,
+      "skeptic": 0
+    },
+    "model": {
+      "agents": "provider/agents-model",
+      "report": "provider/report-model",
+      "temperature": 0.8
+    },
+    "agents": [
+      {
+        "agentId": "a01",
+        "handle": "@quietferret42",
+        "persona": "sniper",
+        "startEth": "1",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a02",
+        "handle": "@lowtide_otter",
+        "persona": "holder",
+        "startEth": "1.5",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a03",
+        "handle": "@shaky_heron7",
+        "persona": "panic_seller",
+        "startEth": "0.5",
+        "startTokens": "0"
+      }
+    ]
+  },
+  "rounds": [
+    {
+      "n": 1,
+      "posts": [
+        {
+          "id": "p1",
+          "agentId": "a01",
+          "text": "Fresh pool and thin liquidity. Took an early position before the feed noticed.",
+          "replyTo": null,
+          "likes": 2
+        },
+        {
+          "id": "c1",
+          "agentId": "a02",
+          "text": "Thin pools move fast both ways. Checking the reserves first.",
+          "replyTo": "p1",
+          "likes": 1
+        },
+        {
+          "id": "p2",
+          "agentId": "a03",
+          "text": "Everyone here sounds excited, so I am in with a small size \ud83d\ude80",
+          "replyTo": null,
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a01",
+          "kind": "swap_buy",
+          "amountIn": "0.5",
+          "amountOut": "47482.973758155927037195",
+          "txHash": "0x5b299b382003ecdaa5e42d21f71f699fff03d8b270bd4f9d32eff69710fbcd02",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a02",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "swap_buy",
+          "amountIn": "0.2",
+          "amountOut": "17751.639814627335004652",
+          "txHash": "0x30dd240b463a1cdc2aa46fbcb754a0965b76b3f0e35efdfda5c22cff06b270c2",
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000011446722520286",
+        "reserve0": "934765.386427216737958153",
+        "reserve1": "10.7",
+        "holders": 2
+      }
+    },
+    {
+      "n": 2,
+      "posts": [
+        {
+          "id": "p3",
+          "agentId": "a03",
+          "text": "Rumor says the deployer moved 20% of supply. I am out \u2014 not waiting to find out.",
+          "replyTo": null,
+          "likes": 3
+        },
+        {
+          "id": "c2",
+          "agentId": "a01",
+          "text": "Tried to exit too. My tx reverted because the price moved before it landed.",
+          "replyTo": "p3",
+          "likes": 1
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a03",
+          "kind": "swap_sell",
+          "amountIn": "17751.639814627335004652",
+          "amountOut": "0.19882406457889518",
+          "txHash": "0x223641c977bbcfbbae861c6c7fc47f978439000ce6697ff2998e17d866527b2e",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "swap_sell",
+          "amountIn": "47482.973758155927037195",
+          "amountOut": null,
+          "txHash": "0x7f5e687920baf0c57c3ecdd502f5fe4f3048bbf8ec317397b23e1bf44b2dd3d7",
+          "status": "reverted",
+          "note": "Reverted: output was below the 1% slippage limit."
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "invalid",
+          "note": "swap_buy of 2 ETH exceeds the per-agent cap of 1 ETH; recorded as hold."
+        }
+      ],
+      "market": {
+        "price": "0.000011024659555802",
+        "reserve0": "952517.026241844072962805",
+        "reserve1": "10.50117593542110482",
+        "holders": 1
+      }
+    }
+  ],
+  "report": {
+    "summary": "Two agents entered early on thin liquidity and lifted the price. The round 2 rumor flipped the mood: one agent exited in full, which moved the price enough that the sniper's exit reverted on slippage, and the holder's oversized order was rejected and recorded as a hold.",
+    "turningPoint": {
+      "round": 2,
+      "why": "The injected deployer rumor turned sentiment negative and triggered the first full exit."
+    },
+    "sentimentByRound": [
+      0.45,
+      -0.6
+    ],
+    "objections": [
+      "Liquidity is thin, so a single order moves the price.",
+      "Nobody checked the deployer rumor on-chain before reacting."
+    ],
+    "priceDrivers": [
+      "Two early entries in round 1.",
+      "One full exit in round 2 after the rumor."
+    ],
+    "disclaimer": "Synthetic crowd reaction. Not a trading signal.",
+    "flags": [
+      "rewritten:price_prediction"
+    ]
+  },
+  "usage": {
+    "llmCalls": 3,
+    "inputTokens": 2140,
+    "outputTokens": 388,
+    "costUsd": 0.000408
+  },
+  "hash": "0xbc4e60035a1343aeb7490f30c62f54e465888e04f943232a6facd3b1d3a8dc62"
+}

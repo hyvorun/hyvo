@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0a0d13" />
+    <meta name="description" content="Watch a crowd of synthetic traders react to a scenario, round by round, on a private fork of Robinhood Chain. Every run is hashed. Synthetic crowd reaction, not a trading signal." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Hyvo" />
+    <meta property="og:title" content="Hyvo: launch it in a parallel world first" />
+    <meta property="og:description" content="A crowd of AI traders posts, argues and swaps on a private fork of Robinhood Chain. Synthetic crowd reaction. Not a trading signal." />
+    <meta property="og:image" content="https://hyvo.pages.dev/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Hyvo: launch it in a parallel world first. Rows of dots stand for a crowd of synthetic agents." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Hyvo: launch it in a parallel world first</title>
+    <script>
+      // A saved theme applies before the first paint; night is the default.
+      try {
+        if (localStorage.getItem("hyvo.theme") === "light") document.documentElement.setAttribute("data-theme", "light");
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

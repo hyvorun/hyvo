@@ -1,0 +1,48 @@
+# The always-on runner (SPEC §14 Phase 4). docs/RUNBOOK.md has the commands.
+#   daily   plays and publishes one public run a day
+#   runner  plays paid jobs from the API's queue
+#
+# Settings and secrets come from deploy/runner/.env, which git ignores: copy the engine part of .env.example.
+name: hyvo-runner
+
+x-engine: &engine
+  image: hyvo-runner:local
+  build:
+    context: ../..
+    dockerfile: deploy/runner/Dockerfile
+  init: true
+  restart: unless-stopped
+  env_file: .env
+  volumes:
+    - data:/data
+  # A stopping runner kills its run and tells the API, which queues the job again at once.
+  stop_grace_period: 30s
+  logging:
+    driver: json-file
+    options:
+      max-size: 10m
+      max-file: "5"
+
+services:
+  daily:
+    <<: *engine
+    command: ["python", "-m", "hyvo", "daily"]
+    # Docker only reports an unhealthy container, so a hung loop ends its own container and the restart policy
+    # brings it back. There is no start_period: the first check comes one interval after the start.
+    healthcheck:
+      test: ["CMD-SHELL", "python -m hyvo health /data/runs/daily/daily.health --max-age 300 || { kill 1; exit 1; }"]
+      interval: 1m
+      timeout: 30s
+      retries: 1
+
+  runner:
+    <<: *engine
+    command: ["python", "-m", "hyvo", "runner", "--work-dir", "/data/runner"]
+    healthcheck:
+      test: ["CMD-SHELL", "python -m hyvo health /data/runner/runner.health --max-age 300 || { kill 1; exit 1; }"]
+      interval: 1m
+      timeout: 30s
+      retries: 1
+
+volumes:
+  data:

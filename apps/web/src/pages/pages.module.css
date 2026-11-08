@@ -1,0 +1,251 @@
+/* --- run ----------------------------------------------------------------------------------- */
+
+.run {
+  display: grid;
+  gap: var(--space-5);
+  padding-top: var(--space-5);
+  min-width: 0;
+}
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.crumbs a {
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color 160ms var(--ease);
+}
+
+.crumbs a:hover {
+  color: var(--ink);
+}
+
+.crumbs span:last-child {
+  overflow-wrap: anywhere;
+}
+
+.runHead {
+  display: grid;
+  gap: var(--space-4) var(--space-7);
+  padding-bottom: var(--space-2);
+  animation: rise 700ms var(--ease-out) both;
+}
+
+@media (min-width: 1040px) {
+  .runHead {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+
+  .scenario {
+    grid-column: 1 / -1;
+  }
+}
+
+.runTitle {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.runTitle h1 {
+  max-width: 24ch;
+  font-size: var(--t-2xl);
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+}
+
+.proof {
+  display: grid;
+  gap: 2px;
+  justify-items: start;
+}
+
+.scenario {
+  max-width: 76ch;
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  overflow-wrap: anywhere;
+}
+
+.scenario summary {
+  width: fit-content;
+  color: var(--ink);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.scenario summary::marker {
+  color: var(--ink-3);
+}
+
+.scenario p {
+  margin-top: var(--space-2);
+  white-space: pre-line;
+}
+
+.scenario[open] > *:not(summary) {
+  animation: rise 420ms var(--ease-out);
+}
+
+.scenario ul {
+  display: grid;
+  gap: 4px;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scenario ul span {
+  margin-right: 6px;
+  color: var(--ink-3);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  border-block: 1px solid var(--rule);
+  list-style: none;
+}
+
+.stats li {
+  display: grid;
+  gap: 4px;
+  padding: var(--space-4) 0;
+}
+
+.stats li:nth-child(even) {
+  padding-left: var(--space-4);
+  border-left: 1px solid var(--rule);
+}
+
+.stats li:nth-child(n + 3) {
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 820px) {
+  .stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .stats li,
+  .stats li:nth-child(even) {
+    padding-left: var(--space-5);
+    border-top: 0;
+    border-left: 1px solid var(--rule);
+  }
+
+  .stats li:nth-child(n + 3) {
+    border-top: 0;
+  }
+
+  .stats li:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+.statLabel {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.stats b {
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.016em;
+  line-height: 1.2;
+}
+
+.up {
+  color: var(--buy-text);
+}
+
+.down {
+  color: var(--sell-text);
+}
+
+/* --- runs, simple pages -------------------------------------------------------------------- */
+
+.runs {
+  display: grid;
+  gap: var(--space-6);
+  padding-top: var(--space-8);
+}
+
+.pageHead {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  animation: rise 700ms var(--ease-out) both;
+}
+
+.pageHead h1 {
+  font-size: var(--t-2xl);
+}
+
+.pageHead p {
+  max-width: 60ch;
+  color: var(--ink-2);
+  font-size: var(--t-lg);
+  line-height: 1.5;
+}
+
+.more {
+  justify-self: center;
+}
+
+.narrow {
+  display: grid;
+  gap: var(--space-5);
+  justify-items: start;
+  max-width: 680px;
+  padding-top: var(--space-8);
+}
+
+.lost {
+  display: grid;
+  gap: var(--space-5);
+  justify-items: start;
+  padding-top: var(--space-9);
+}
+
+/* --- a run's question ------------------------------------------------------------------ */
+
+.question {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+}
+
+.question h2 {
+  color: var(--ink);
+  font-size: var(--t-md);
+  font-weight: 500;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.question a {
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+}
+

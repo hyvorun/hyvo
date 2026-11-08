@@ -1,0 +1,43 @@
+{
+  "runId": "run_01M6KKC386EGGCV69GHZPXZ9N8",
+  "title": "Fictional Pons token GLINT lists with a 5% creator tax",
+  "createdAt": "2026-11-04T15:38:19Z",
+  "status": "complete",
+  "stopReason": null,
+  "crowdSize": 50,
+  "rounds": 10,
+  "personaMix": {
+    "sniper": 10,
+    "holder": 15,
+    "panic_seller": 10,
+    "skeptic": 15
+  },
+  "models": {
+    "agents": "offline/rules-v1",
+    "report": "offline/rules-v1"
+  },
+  "hash": "0x3f59118078569faaba4769e7da6246c816fc9f9d6bbcf22581a98e0ae63a570d",
+  "market": {
+    "symbol": "GLINT",
+    "priceStart": "0.00000005",
+    "priceEnd": "0.000000061239676051",
+    "priceChangePct": 22.48,
+    "swaps": 66,
+    "posts": 177
+  },
+  "sparkline": [
+    5e-8,
+    5.9831419971e-8,
+    7.123865519e-8,
+    7.7336099626e-8,
+    6.808155461e-8,
+    6.1181829064e-8,
+    6.2085675311e-8,
+    6.1298621346e-8,
+    6.1279106859e-8,
+    6.1239676051e-8,
+    6.1239676051e-8
+  ],
+  "turningPointRound": 5,
+  "summary": "A synthetic crowd of 50 agents reacted over 10 rounds. The price went from 0.05 to 0.06124 ETH per 1M tokens (+22.48%). Agents made 26 buys and 40 sells; 0.6198 ETH more went into the pool than came out. The largest net inflow came from holders (+0.794 ETH). Mean sentiment moved…"
+}

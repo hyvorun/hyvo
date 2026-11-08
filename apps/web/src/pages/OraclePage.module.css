@@ -1,0 +1,275 @@
+.page {
+  display: grid;
+  gap: var(--space-7);
+  padding-top: var(--space-8);
+}
+
+.head {
+  display: grid;
+  gap: var(--space-3);
+  animation: rise 700ms var(--ease-out) both;
+}
+
+.head h1 {
+  font-size: var(--t-2xl);
+}
+
+.head > p {
+  max-width: 68ch;
+  color: var(--ink-2);
+  font-size: var(--t-lg);
+  line-height: 1.5;
+}
+
+.head > p.contract {
+  max-width: none;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  overflow-wrap: anywhere;
+}
+
+.head > p.warning {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--sell-soft);
+  color: var(--ink);
+  font-size: var(--t-sm);
+  overflow-wrap: anywhere;
+}
+
+.verify {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  animation: rise 800ms var(--ease-out) 100ms both;
+}
+
+.verify label {
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.row input {
+  flex: 1;
+  min-width: 14ch;
+  height: 42px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--sunken);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  color: var(--ink);
+  font-size: var(--t-sm);
+  transition: box-shadow 160ms var(--ease);
+}
+
+.row input:focus-visible {
+  outline: 0;
+  box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 3px var(--accent-soft);
+}
+
+.hint {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.result {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  animation: rise 500ms var(--ease-out);
+}
+
+.result h2 {
+  font-size: var(--t-lg);
+  letter-spacing: -0.016em;
+}
+
+.ok {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--buy) 45%, transparent);
+}
+
+.bad {
+  background: var(--sell-soft);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sell) 45%, transparent);
+}
+
+.steps {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-sm);
+  animation: rise 520ms var(--ease-out) calc(var(--i, 0) * 140ms) both;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  height: 20px;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.pass .mark {
+  color: var(--buy-text);
+}
+
+.fail .mark {
+  color: var(--sell-text);
+}
+
+.mark :global(.draw) {
+  stroke-dasharray: 1;
+  animation: oracle-draw 500ms var(--ease-out) calc(var(--i, 0) * 140ms + 200ms) both;
+}
+
+@keyframes oracle-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.detail {
+  display: block;
+  color: var(--ink-3);
+  font-size: var(--t-2xs);
+  overflow-wrap: anywhere;
+}
+
+.id {
+  color: var(--ink-3);
+  font-size: var(--t-2xs);
+  overflow-wrap: anywhere;
+}
+
+.ledger {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.ledger h2,
+.how h2 {
+  font-size: var(--t-xl);
+}
+
+.empty {
+  padding: var(--space-6) 0;
+  border-block: 1px solid var(--rule);
+  color: var(--ink-3);
+}
+
+.entries {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+  list-style: none;
+}
+
+.entry {
+  display: grid;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--rule);
+  animation: rise 500ms var(--ease-out);
+}
+
+@media (min-width: 760px) {
+  .entry {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 6fr) auto;
+    align-items: center;
+  }
+}
+
+.entryMain {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.title {
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 160ms var(--ease);
+}
+
+.title:hover {
+  text-decoration-color: var(--ink-3);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  font-size: var(--t-xs);
+}
+
+.facts dt {
+  color: var(--ink-3);
+}
+
+.facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.more {
+  justify-self: center;
+}
+
+.how {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--rule);
+}
+
+.how ol {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 76ch;
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+}
+
+.how ol ::marker {
+  color: var(--ink-3);
+}
+
+@media (max-width: 480px) {
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

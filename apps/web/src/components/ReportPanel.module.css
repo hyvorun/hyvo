@@ -1,0 +1,149 @@
+.report {
+  display: grid;
+  gap: var(--space-6);
+  padding-top: var(--space-8);
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 1040px) {
+  .report {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: start;
+    gap: var(--space-8);
+  }
+
+  .lead {
+    position: sticky;
+    top: 92px;
+  }
+}
+
+.lead {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+}
+
+.lead h2 {
+  font-size: var(--t-2xl);
+}
+
+.summary {
+  color: var(--ink-2);
+  font-size: var(--t-lg);
+  line-height: 1.55;
+}
+
+.grid {
+  display: grid;
+}
+
+.block {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding-block: var(--space-5);
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+}
+
+.block:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.block h3 {
+  font-size: var(--t-md);
+  letter-spacing: -0.012em;
+}
+
+.at {
+  margin-left: 6px;
+  color: var(--accent-text);
+  font-size: var(--t-sm);
+  font-weight: 400;
+}
+
+.block p {
+  max-width: 68ch;
+  color: var(--ink-2);
+}
+
+.block ul {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 68ch;
+  margin: 0;
+  padding: 0;
+  color: var(--ink-2);
+  list-style: none;
+}
+
+.cite {
+  color: var(--ink-3);
+  font-size: 0.86em;
+  white-space: nowrap;
+}
+
+/* --- mood --------------------------------------------------------------------------------------- */
+
+.mood {
+  display: flex;
+  gap: 4px;
+  height: 104px;
+}
+
+.moodRound {
+  display: grid;
+  grid-template-rows: 1fr 1fr auto;
+  flex: 1;
+  min-width: 0;
+}
+
+.moodUp,
+.moodDown {
+  position: relative;
+}
+
+.moodUp {
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.moodUp span,
+.moodDown span {
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  transform: scaleY(0);
+  transition: transform 800ms var(--ease-out) calc(var(--i, 0) * 45ms);
+}
+
+.moodUp span {
+  bottom: 0;
+  background: var(--buy);
+  transform-origin: bottom;
+}
+
+.moodDown span {
+  top: 0;
+  background: var(--sell);
+  transform-origin: top;
+}
+
+.mood[data-in="true"] .moodUp span,
+.mood[data-in="true"] .moodDown span {
+  transform: none;
+}
+
+.moodLabel {
+  margin-top: 4px;
+  color: var(--ink-3);
+  font-size: var(--t-2xs);
+  text-align: center;
+}
+
+.note.note {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}

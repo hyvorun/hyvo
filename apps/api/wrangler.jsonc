@@ -1,0 +1,105 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hyvo-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  // Built for the Workers Free plan (docs/OPEN_ITEMS.md item 21). `pnpm --filter @hyvo/api deploy:cloudflare`
+  // creates the database and the KV namespace, writes their ids here, sets the secrets and deploys
+  // (docs/RUNBOOK.md, "Going live"). Local `wrangler dev --local` keeps its own state whatever the ids.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "hyvo",
+      "database_id": "9340ce05-eb9c-4243-8002-455d05c5dac6",
+      "migrations_dir": "migrations"
+    }
+  ],
+  // run.json files. Workers KV needs no payment method; R2 is not enabled on this account.
+  "kv_namespaces": [{ "binding": "ARTIFACTS", "id": "08a9453e824a4a9f8ea142232d9d2268" }],
+  // The runner's LLM (routes/llm.ts): no key, free daily allocation.
+  "ai": { "binding": "AI" },
+  "observability": { "enabled": true },
+  // Payment scan, stale-job sweep and oracle commits.
+  "triggers": { "crons": ["* * * * *"] },
+  "vars": {
+    "API_VERSION": "0.3.0",
+    // Browser origin allowed by CORS (the web app); also the SIWE `uri` origin.
+    "WEB_ORIGIN": "http://localhost:5173",
+    // Absolute base of signed artifact and upload URLs; empty = the origin of the request.
+    "PUBLIC_API_URL": "",
+    // "1" parses and re-hashes every run in the Worker. It needs Workers Paid: 10 ms of CPU is not enough.
+    "VERIFY_RUNS_IN_WORKER": "0",
+
+    // Chain. Empty addresses or RPC_URLS switch the matching feature off (docs/RUNBOOK.md).
+    "CHAIN_ID": "4663",
+    // Comma-separated, tried in order (viem fallback). docs/OPEN_ITEMS.md item 3.
+    "RPC_URLS": "",
+    "CHAIN_BLOCK_TIME_MS": "100",
+    "ORACLE_ADDRESS": "",
+    "PAYMENT_ROUTER_ADDRESS": "",
+    "PAYMENT_ROUTER_DEPLOY_BLOCK": "0",
+    // Blocks a payment must be under before it counts (about 2 s at 0.1 s blocks); docs/OPEN_ITEMS.md item 15.
+    "PAYMENT_CONFIRMATIONS": "20",
+    // eth_getLogs window per call and calls per cron run (the dRPC free tier allows about 100 blocks).
+    "LOG_RANGE_BLOCKS": "100",
+    "LOG_RANGES_PER_RUN": "10",
+    // docs/OPEN_ITEMS.md item 4 (verified): Global Dollar, 6 decimals.
+    "USDG_ADDRESS": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+    "USDG_DECIMALS": "6",
+    // Empty until the token launches; holder benefits stay off until then.
+    "HYVO_TOKEN_ADDRESS": "",
+    "HYVO_TOKEN_DECIMALS": "18",
+    "TREASURY_ADDRESS": "",
+
+    // Sign-In with Ethereum: the web app's host (and port).
+    "SIWE_DOMAIN": "localhost:5173",
+    // Founder wallets that may open /admin (comma-separated).
+    "ADMIN_ADDRESSES": "",
+
+    // Price = max(floor, ceil_step(estimatedLlmCost x multiplier x (1 - holder discount))).
+    "PRICE_MULTIPLIER": "2.5",
+    "PRICE_FLOOR_USD": "1",
+    "PRICE_STEP_USD": "1",
+    // estimatedLlmCost = agents x rounds x COST_PER_AGENT_ROUND_USD + REPORT_COST_USD (SPEC 12 rule 4).
+    "COST_PER_AGENT_ROUND_USD": "0.0003",
+    "REPORT_COST_USD": "0.02",
+    // A run's LLM budget = estimate x headroom, never more than its price.
+    "BUDGET_HEADROOM": "2",
+    "QUOTE_TTL_S": "1800",
+
+    // Prepaid balances (SPEC 8.5): the range of one top-up.
+    "TOPUP_MIN_USD": "1",
+    "TOPUP_MAX_USD": "500",
+    // One question to an agent of a run, taken from the balance, and the Workers AI model that answers it.
+    "ASK_PRICE_USD": "0.01",
+    "ASK_MODEL": "@cf/meta/llama-3.1-8b-instruct-fp8-fast",
+
+    // Scenario questions (SPEC 11.2): how far away a question's date can be, in seconds.
+    "QUESTION_MIN_DELAY_S": "3600",
+    "QUESTION_MAX_DELAY_S": "31536000",
+
+    // Wallet Clone needs a runner with BLOCKSCOUT_API_KEY (docs/OPEN_ITEMS.md item 24).
+    "CLONES_ENABLED": "0",
+
+    "MIN_AGENTS": "10",
+    "MAX_AGENTS": "2000",
+    // Agents x rounds. A run's file grows with this, about 285 bytes per decision, and an upload is limited to 5 MB.
+    "MAX_RUN_DECISIONS": "15000",
+    "MIN_ROUNDS": "3",
+    "MAX_ROUNDS": "30",
+    "BATCH_SIZE": "10",
+
+    // Token units; 0 keeps holder benefits off even once the token address is set.
+    "HOLDER_MIN": "0",
+    "HOLDER_DISCOUNT_BPS": "2000",
+    "FREE_RUNS_PER_MONTH": "2",
+    "FREE_RUN_MAX_AGENTS": "50",
+    "FREE_RUN_MAX_ROUNDS": "10",
+
+    // Global LLM spend per UTC day; the queue pauses when the next run would pass it (SPEC 12 rule 2).
+    "DAILY_SPEND_CAP_USD": "20",
+    "JOB_TIMEOUT_S": "1800",
+    "HEARTBEAT_INTERVAL_S": "15",
+    "HEARTBEAT_TIMEOUT_S": "90"
+  }
+}

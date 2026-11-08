@@ -1,0 +1,8 @@
+# Copy to .dev.vars for `wrangler dev` (gitignored). Deployed values are Wrangler secrets.
+RUNNER_TOKEN=change-me-local-runner-token
+ARTIFACT_SIGNING_KEY=change-me-local-signing-key
+# The engine's LLM_API_KEY when it uses Workers AI through this API. Leave empty to keep the route closed.
+LLM_TOKEN=
+# Signs HyvoOracle.commit. Leave empty locally unless you run the local-chain E2E
+# (scripts/e2e-local.ts uses its own throwaway anvil key). Never commit a real key.
+ATTESTER_PRIVATE_KEY=

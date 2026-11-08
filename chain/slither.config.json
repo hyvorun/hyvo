@@ -1,0 +1,4 @@
+{
+  "filter_paths": "lib/|test/|script/|test-assets",
+  "exclude_informational": true
+}

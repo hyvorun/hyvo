@@ -1,0 +1,108 @@
+/*
+ * Design tokens. One typeface family, Geist, with Geist Mono for hashes and ids.
+ *
+ * The ground is a midnight black with a trace of blue, and the text a cool platinum. Silver, the one
+ * accent, marks the price and what agents hold, so the product reads almost monochrome until the
+ * crowd acts. The rest of the color is data, low in chroma and equal in weight: jade = bought,
+ * rose = sold, periwinkle = what the crowd said. No glow, no gradients, no warm yellows. Dark is the
+ * default; light comes from the same names.
+ */
+:root {
+  --font-sans: "Geist Variable", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono Variable", "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --t-2xs: 0.6875rem;
+  --t-xs: 0.75rem;
+  --t-sm: 0.875rem;
+  --t-md: 1rem;
+  --t-lg: 1.125rem;
+  --t-xl: clamp(1.25rem, 1.8vw, 1.5rem);
+  --t-2xl: clamp(1.75rem, 3vw, 2.5rem);
+  --t-3xl: clamp(2.5rem, 4.9vw, 4rem);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+  --space-9: 120px;
+
+  --radius-lg: 14px;
+  --radius: 10px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
+  --page: 1200px;
+  --gutter: 20px;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color-scheme: dark;
+  --paper: #0a0d13;
+  --surface: #10141b;
+  --raised: #191e27;
+  --sunken: #0c1016;
+  --ink: #eceef2;
+  --ink-2: #a6acb8;
+  --ink-3: #868d9a;
+  --rule: rgb(216 224 240 / 9%);
+  --rule-strong: rgb(216 224 240 / 16%);
+  --primary: #eceef2;
+  --on-primary: #0a0d13;
+  --primary-hover: #ffffff;
+  --accent: #c3ccdb;
+  --accent-text: #ccd4e2;
+  --accent-soft: rgb(195 204 219 / 7%);
+  --buy: #7cc2a3;
+  --buy-text: #8accae;
+  --buy-soft: rgb(124 194 163 / 11%);
+  --sell: #dc8f9a;
+  --sell-text: #e39ca6;
+  --sell-soft: rgb(220 143 154 / 11%);
+  --post: #a3aee6;
+  --post-soft: rgb(163 174 230 / 9%);
+  --dot: #1c212b;
+  --dot-line: rgb(216 224 240 / 14%);
+  --focus: #b7c3dd;
+  --glass: rgb(10 13 19 / 82%);
+}
+
+@media (min-width: 720px) {
+  :root {
+    --gutter: 40px;
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --paper: #fafbfc;
+  --surface: #ffffff;
+  --raised: #f0f2f5;
+  --sunken: #f6f7f9;
+  --ink: #12151b;
+  --ink-2: #525967;
+  --ink-3: #676e7b;
+  --rule: rgb(18 21 27 / 9%);
+  --rule-strong: rgb(18 21 27 / 18%);
+  --primary: #12151b;
+  --on-primary: #fafbfc;
+  --primary-hover: #000000;
+  --accent: #2c3a55;
+  --accent-text: #2c3a55;
+  --accent-soft: rgb(44 58 85 / 7%);
+  --buy: #1f7f5f;
+  --buy-text: #1a6e52;
+  --buy-soft: rgb(31 127 95 / 9%);
+  --sell: #b64a5c;
+  --sell-text: #a23f50;
+  --sell-soft: rgb(182 74 92 / 9%);
+  --post: #4b5ab0;
+  --post-soft: rgb(75 90 176 / 8%);
+  --dot: #eceff3;
+  --dot-line: rgb(18 21 27 / 16%);
+  --focus: #2c3a55;
+  --glass: rgb(250 251 252 / 84%);
+}

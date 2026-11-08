@@ -1,0 +1,178 @@
+/* The checklists: groups of questions with a tick each, and a count. */
+
+.switch {
+  max-width: 460px;
+}
+
+.panel {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 820px;
+  animation: rise 520ms var(--ease-out);
+}
+
+.head {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 720px) {
+  .head {
+    grid-template-columns: minmax(0, 1fr) 220px;
+    align-items: end;
+  }
+}
+
+.head h2 {
+  font-size: var(--t-xl);
+}
+
+.head p {
+  margin-top: var(--space-2);
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+}
+
+.count {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+}
+
+.bar {
+  display: block;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--rule-strong);
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 420ms var(--ease-out);
+}
+
+.clear {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.clear:hover {
+  color: var(--ink);
+}
+
+.group {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.group legend {
+  margin-bottom: var(--space-2);
+  padding: 0;
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.group ul {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius);
+  background: var(--rule);
+  box-shadow: 0 0 0 1px var(--rule);
+  list-style: none;
+  overflow: hidden;
+}
+
+.group li {
+  display: grid;
+  gap: var(--space-2);
+  padding: 14px 16px;
+  background: var(--surface);
+}
+
+@media (min-width: 720px) {
+  .group li {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+}
+
+.group label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.group input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+
+.text {
+  display: grid;
+  gap: 2px;
+}
+
+.text b {
+  font-size: var(--t-md);
+  font-weight: 500;
+  line-height: 1.4;
+  transition: color 200ms var(--ease);
+}
+
+.text span {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+}
+
+.group li[data-done="true"] .text b {
+  color: var(--ink-3);
+  text-decoration: line-through;
+  text-decoration-color: var(--rule-strong);
+}
+
+.link {
+  justify-self: start;
+  margin-left: 30px;
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+@media (min-width: 720px) {
+  .link {
+    margin: 3px 0 0;
+  }
+}
+
+.link:hover {
+  color: var(--ink);
+}

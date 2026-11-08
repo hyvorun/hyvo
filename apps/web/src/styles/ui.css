@@ -1,0 +1,152 @@
+/* Shared parts: buttons, panels and the entrances. Pages add layout in their modules. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--ease),
+    box-shadow 160ms var(--ease),
+    color 160ms var(--ease),
+    transform 160ms var(--ease),
+    opacity 160ms var(--ease);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--raised);
+}
+
+.btn-sm {
+  height: 34px;
+  padding: 0 13px;
+  font-size: var(--t-xs);
+}
+
+.btn .arrow,
+.arrow-link .arrow {
+  transition: transform 220ms var(--ease-out);
+}
+
+.btn:hover .arrow,
+.arrow-link:hover .arrow {
+  transform: translateX(3px);
+}
+
+.arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 160ms var(--ease);
+}
+
+/* The arrow stays beside the last line when the text wraps. */
+.arrow-link .arrow {
+  flex: none;
+}
+
+.arrow-link:hover {
+  color: var(--ink);
+}
+
+/* A flat surface with a hairline. */
+.card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+/* --- entrances -------------------------------------------------------------------------------- */
+
+/* Set by <Reveal> when a block scrolls into view. Without scripts everything simply shows. */
+@media (scripting: enabled) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 700ms var(--ease-out) calc(var(--i, 0) * 70ms),
+      transform 800ms var(--ease-out) calc(var(--i, 0) * 70ms);
+  }
+
+  .reveal[data-in="true"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Loading placeholders. */
+.skeleton {
+  display: block;
+  position: relative;
+  border-radius: var(--radius-xs);
+  background: var(--raised);
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, var(--rule) 50%, transparent 80%);
+  animation: sweep 1.6s var(--ease) infinite;
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}

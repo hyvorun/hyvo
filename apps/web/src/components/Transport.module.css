@@ -1,0 +1,186 @@
+.transport {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.play {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  cursor: pointer;
+  transition: background-color 160ms var(--ease);
+}
+
+.play:hover {
+  background: var(--raised);
+}
+
+.icon {
+  display: grid;
+  animation: fade 200ms var(--ease);
+}
+
+.play svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+}
+
+.track {
+  position: relative;
+  display: grid;
+  align-items: center;
+  height: 32px;
+  min-width: 0;
+}
+
+.track input {
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+
+.track input::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, var(--ink-2) var(--p), var(--rule-strong) var(--p));
+}
+
+.track input::-moz-range-track {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--rule-strong);
+}
+
+.track input::-moz-range-progress {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ink-2);
+}
+
+.track input::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -5px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: transform 160ms var(--ease);
+}
+
+.track input::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.track input:hover::-webkit-slider-thumb,
+.track input:active::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+
+.track input:focus-visible {
+  outline: 0;
+}
+
+.track input:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus);
+}
+
+.track input:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus);
+}
+
+.marks {
+  position: absolute;
+  inset: 0 6px;
+  pointer-events: none;
+}
+
+.marks span {
+  position: absolute;
+  top: calc(50% + 4px);
+  width: 1px;
+  height: 4px;
+  background: var(--ink-3);
+  opacity: 0.6;
+}
+
+.round {
+  min-width: 3.4em;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.speeds {
+  display: grid;
+  grid-template-columns: repeat(3, 30px);
+}
+
+.speeds button {
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: none;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--ease),
+    color 160ms var(--ease);
+}
+
+.speeds button:hover {
+  color: var(--ink);
+}
+
+.speeds button[aria-pressed="true"] {
+  background: var(--raised);
+  color: var(--ink);
+}
+
+@media (max-width: 520px) {
+  .transport {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "play track round"
+      "speeds speeds speeds";
+    row-gap: 2px;
+  }
+
+  .play {
+    grid-area: play;
+  }
+
+  .track {
+    grid-area: track;
+  }
+
+  .round {
+    grid-area: round;
+  }
+
+  .speeds {
+    grid-area: speeds;
+    justify-self: end;
+  }
+}

@@ -1,0 +1,10 @@
+# Only what deploy/runner/Dockerfile copies. The rest stays out of the build context, secrets above all.
+*
+!engine/pyproject.toml
+!engine/uv.lock
+!engine/LICENSE
+!engine/hyvo
+!engine/examples
+!chain/artifacts
+**/__pycache__
+**/*.pyc

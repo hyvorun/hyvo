@@ -1,0 +1,349 @@
+/* The trust and token pages: long reading, with a few structured blocks. */
+
+.page {
+  display: grid;
+  gap: var(--space-8);
+  max-width: 920px;
+  padding-top: var(--space-8);
+}
+
+.head {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 62ch;
+  animation: rise 700ms var(--ease-out) both;
+}
+
+.head h1 {
+  font-size: var(--t-3xl);
+  letter-spacing: -0.03em;
+}
+
+.head p {
+  color: var(--ink-2);
+  font-size: var(--t-lg);
+  line-height: 1.55;
+}
+
+.section {
+  display: grid;
+  gap: var(--space-5);
+  scroll-margin-top: 88px;
+}
+
+.section > h2 {
+  font-size: var(--t-xl);
+}
+
+.prose {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 68ch;
+}
+
+.prose h3 {
+  margin-top: var(--space-2);
+  font-size: var(--t-md);
+}
+
+.prose p {
+  color: var(--ink-2);
+  line-height: 1.65;
+}
+
+.prose a,
+.never a,
+.status a {
+  color: var(--ink);
+  text-underline-offset: 2px;
+}
+
+.muted {
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+  line-height: 1.6;
+}
+
+.muted a {
+  color: var(--ink-2);
+}
+
+.fine {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+}
+
+/* --- trust: the list of nevers ----------------------------------------------------------------------- */
+
+.never {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius-lg);
+  background: var(--rule);
+  box-shadow: 0 0 0 1px var(--rule);
+  list-style: none;
+  overflow: hidden;
+}
+
+.never li {
+  display: grid;
+  gap: var(--space-2) var(--space-6);
+  padding: 20px 22px;
+  background: var(--surface);
+}
+
+@media (min-width: 760px) {
+  .never li {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+}
+
+.never h3 {
+  font-size: var(--t-lg);
+  line-height: 1.3;
+}
+
+.never li div {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.never p {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.6;
+}
+
+.check {
+  color: var(--ink-3);
+}
+
+.check span {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* --- trust: what the chain says ----------------------------------------------------------------------- */
+
+.chain {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.contract {
+  display: grid;
+  gap: var(--space-3);
+  padding: 20px 22px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+.contract h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-size: var(--t-lg);
+}
+
+.contract h3 .address {
+  font-size: var(--t-sm);
+  font-weight: 400;
+}
+
+.contract dl {
+  display: grid;
+  margin: 0;
+}
+
+.contract dl > div {
+  display: grid;
+  gap: 2px var(--space-5);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .contract dl > div {
+    grid-template-columns: 170px minmax(0, 1fr);
+  }
+}
+
+.contract dt {
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+}
+
+.contract dd {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  min-width: 0;
+}
+
+.contract dd b {
+  font-weight: 500;
+}
+
+.contract dd span {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+}
+
+.address {
+  justify-self: start;
+  color: var(--accent-text);
+  text-underline-offset: 3px;
+}
+
+/* --- token -------------------------------------------------------------------------------------------- */
+
+.status {
+  display: grid;
+  gap: var(--space-3);
+  padding: 22px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  animation: rise 800ms var(--ease-out) 100ms both;
+}
+
+.status h2 {
+  font-size: var(--t-xl);
+}
+
+.status p {
+  max-width: 62ch;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+.bigAddress {
+  font-size: var(--t-md);
+  overflow-wrap: anywhere;
+}
+
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius-lg);
+  background: var(--rule);
+  box-shadow: 0 0 0 1px var(--rule);
+  list-style: none;
+  overflow: hidden;
+}
+
+.benefits li {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  padding: 20px 22px;
+  background: var(--surface);
+}
+
+.benefits b {
+  font-size: var(--t-xl);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.benefits span {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+}
+
+.nots {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nots li {
+  max-width: 68ch;
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--rule-strong);
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+.nots b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.planned {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap: 0 var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.planned li {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--rule);
+}
+
+.planned b {
+  font-weight: 500;
+}
+
+.planned li > span:last-child {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+}
+
+.tag {
+  justify-self: start;
+  margin-bottom: var(--space-1);
+  padding: 1px 8px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  color: var(--ink-3);
+  font-size: var(--t-2xs);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.safety {
+  display: grid;
+  gap: var(--space-3);
+  padding: 20px 22px;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 1px var(--sell-soft), inset 3px 0 0 var(--sell);
+  background: var(--surface);
+}
+
+.safety h2 {
+  font-size: var(--t-lg);
+}
+
+.safety ul {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: 1.1em;
+  color: var(--ink-2);
+  line-height: 1.6;
+}

@@ -1,0 +1,103 @@
+.panel {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  min-width: 0;
+}
+
+.panel h2 {
+  color: var(--ink);
+  font-size: var(--t-md);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.panel a {
+  color: var(--ink);
+}
+
+.panel em {
+  color: var(--ink);
+  font-style: normal;
+  overflow-wrap: anywhere;
+}
+
+.figure {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.figure svg {
+  display: block;
+  width: 100%;
+  height: 180px;
+}
+
+.zero {
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.played,
+.actual {
+  fill: none;
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.played {
+  stroke: var(--accent);
+}
+
+.actual {
+  stroke: var(--post);
+  stroke-dasharray: 5 4;
+}
+
+.axis {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-5);
+  font-size: var(--t-xs);
+}
+
+.legend b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.keyPlayed,
+.keyActual {
+  display: inline-block;
+  width: 18px;
+  margin-right: var(--space-1);
+  vertical-align: middle;
+  border-top: 2px solid var(--accent);
+}
+
+.keyActual {
+  border-top: 2px dashed var(--post);
+}
+
+.note {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}

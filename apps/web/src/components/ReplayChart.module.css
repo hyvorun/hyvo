@@ -1,0 +1,119 @@
+.chart {
+  display: block;
+  max-width: 100%;
+  cursor: ew-resize;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.ghost {
+  fill: none;
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+  stroke-dasharray: 1 4;
+  stroke-linecap: round;
+}
+
+.trace {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.round line {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.round text,
+.tick text {
+  fill: var(--ink-3);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tick line {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.turning rect {
+  fill: var(--accent-soft);
+}
+
+.turning text {
+  fill: var(--accent-text);
+  font-size: 10.5px;
+  font-weight: 500;
+}
+
+.event line {
+  stroke: var(--post);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+  opacity: 0.5;
+}
+
+.event path {
+  fill: var(--post);
+}
+
+.groups text {
+  fill: var(--ink-3);
+  font-size: 10.5px;
+}
+
+.row,
+.rowOdd {
+  stroke-width: 1;
+  stroke: var(--rule);
+}
+
+.rowOdd {
+  opacity: 0.5;
+}
+
+.buy {
+  fill: var(--buy);
+}
+
+.sell {
+  fill: var(--sell);
+}
+
+.reverted {
+  fill: transparent;
+  stroke-width: 0.8;
+}
+
+.buy.reverted {
+  stroke: var(--buy);
+}
+
+.sell.reverted {
+  stroke: var(--sell);
+}
+
+.post {
+  fill: var(--post);
+  opacity: 0.7;
+}
+
+.check {
+  fill: var(--ink-3);
+  opacity: 0.5;
+}
+
+.playhead line {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  opacity: 0.55;
+}
+
+.head {
+  fill: var(--paper);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}

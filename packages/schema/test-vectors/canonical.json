@@ -1,0 +1,332 @@
+[
+  {
+    "name": "literal_null",
+    "inputJson": "null",
+    "canonical": "null",
+    "keccak256": "0xefbde2c3aee204a69b7696d4b10ff31137fe78e3946306284f806e2dfc68b805"
+  },
+  {
+    "name": "literal_true",
+    "inputJson": "true",
+    "canonical": "true",
+    "keccak256": "0x6273151f959616268004b58dbb21e5c851b7b8d04498b4aabee12291d22fc034"
+  },
+  {
+    "name": "literal_false",
+    "inputJson": "false",
+    "canonical": "false",
+    "keccak256": "0xba9154e0baa69c78e0ca563b867df81bae9d177c4ea1452c35c84386a70f0f7a"
+  },
+  {
+    "name": "literals_in_object",
+    "inputJson": "{\"t\": true, \"f\": false, \"n\": null}",
+    "canonical": "{\"f\":false,\"n\":null,\"t\":true}",
+    "keccak256": "0x040259f2aff5e6fad4a5e58d1c86b418950512c3b32171c685f56271bd1a6e80"
+  },
+  {
+    "name": "empty_object",
+    "inputJson": "{}",
+    "canonical": "{}",
+    "keccak256": "0xb48d38f93eaa084033fc5970bf96e559c33c4cdc07d889ab00b4d63f9590739d"
+  },
+  {
+    "name": "empty_array",
+    "inputJson": "[]",
+    "canonical": "[]",
+    "keccak256": "0x518674ab2b227e5f11e9084f615d57663cde47bce1ba168b4c19c7ee22a73d70"
+  },
+  {
+    "name": "empty_containers_nested",
+    "inputJson": "{\"c\": [{}, [[]], {\"d\": {}}], \"b\": {}, \"a\": []}",
+    "canonical": "{\"a\":[],\"b\":{},\"c\":[{},[[]],{\"d\":{}}]}",
+    "keccak256": "0x466ee07771f96fe7f0852f2f3dc83132df8ae00f881ccc192292043e4df1f8e1"
+  },
+  {
+    "name": "whitespace_removed",
+    "inputJson": " \r\n\t{ \"b\" : [ 1 , 2 ] ,\n\t\"a\" : { } } \n",
+    "canonical": "{\"a\":{},\"b\":[1,2]}",
+    "keccak256": "0x608bf8543d8ddac11c7986df3ef883c11f22bfea0b33eeb7231dde784350f713"
+  },
+  {
+    "name": "keys_ascii_sorted",
+    "inputJson": "{\"b\": 2, \"a\": 1, \"c\": 3}",
+    "canonical": "{\"a\":1,\"b\":2,\"c\":3}",
+    "keccak256": "0x0822ab840ad717a17afbedcbc389b4c648199045b947af2f4c0f7759fb145211"
+  },
+  {
+    "name": "keys_case_digits_punctuation",
+    "inputJson": "{\"a\": 1, \"B\": 2, \"_\": 3, \"A\": 4, \"0\": 5, \" \": 6, \"~\": 7}",
+    "canonical": "{\" \":6,\"0\":5,\"A\":4,\"B\":2,\"_\":3,\"a\":1,\"~\":7}",
+    "keccak256": "0x0549bc27796ce70aef6593d8ceae192b157427a847731ae65dfa4885ac2cda0e"
+  },
+  {
+    "name": "keys_prefix_and_empty",
+    "inputJson": "{\"ab\": 1, \"a\": 2, \"abc\": 3, \"\": 0, \"aa\": 4}",
+    "canonical": "{\"\":0,\"a\":2,\"aa\":4,\"ab\":1,\"abc\":3}",
+    "keccak256": "0x9d3ddba19c65991bf19a846e1a6793bf262494aa2467f1d11ac5737523360a58"
+  },
+  {
+    "name": "keys_integer_like_sorted_as_strings",
+    "inputJson": "{\"10\": \"ten\", \"9\": \"nine\", \"1\": \"one\", \"2\": \"two\"}",
+    "canonical": "{\"1\":\"one\",\"10\":\"ten\",\"2\":\"two\",\"9\":\"nine\"}",
+    "keccak256": "0xf70c8cb15f7a8788c155bb0855c4e3bee3e3787ad1c2ece524e21cb19eadafec"
+  },
+  {
+    "name": "keys_nested_sorted",
+    "inputJson": "{\"z\": {\"y\": 1, \"x\": {\"b\": 2, \"a\": 1}}, \"a\": [{\"d\": 4, \"c\": 3}, {\"f\": [{\"h\": 0, \"g\": 0}]}]}",
+    "canonical": "{\"a\":[{\"c\":3,\"d\":4},{\"f\":[{\"g\":0,\"h\":0}]}],\"z\":{\"x\":{\"a\":1,\"b\":2},\"y\":1}}",
+    "keccak256": "0x18a6d3f5dbf48e85b6586455bd3a720e32a2168727845da309e10d3c36be1b39"
+  },
+  {
+    "name": "rfc8785_sorting_example",
+    "inputJson": "{\n  \"\\u20ac\": \"Euro Sign\",\n  \"\\r\": \"Carriage Return\",\n  \"\\ufb33\": \"Hebrew Letter Dalet With Dagesh\",\n  \"1\": \"One\",\n  \"\\ud83d\\ude00\": \"Emoji: Grinning Face\",\n  \"\\u0080\": \"Control\",\n  \"\\u00f6\": \"Latin Small Letter O With Diaeresis\"\n}",
+    "canonical": "{\"\\r\":\"Carriage Return\",\"1\":\"One\",\"\u0080\":\"Control\",\"\u00f6\":\"Latin Small Letter O With Diaeresis\",\"\u20ac\":\"Euro Sign\",\"\ud83d\ude00\":\"Emoji: Grinning Face\",\"\ufb33\":\"Hebrew Letter Dalet With Dagesh\"}",
+    "keccak256": "0xa0a138a7404c34122e9e872cd2a11429272c1ad2a592c0c8c47cf059164bb78f"
+  },
+  {
+    "name": "keys_utf16_order_beyond_bmp",
+    "inputJson": "{\"\\ue000\": \"private use\", \"\\ud800\\udc00\": \"linear b\"}",
+    "canonical": "{\"\ud800\udc00\":\"linear b\",\"\ue000\":\"private use\"}",
+    "keccak256": "0xff078eeda2230dbf11bca8f8eec19462727f9f4438ded35d42519245f8e53eed"
+  },
+  {
+    "name": "keys_non_ascii",
+    "inputJson": "{\"\u00f6\": 1, \"o\": 2, \"\u20ac\": 3, \"z\": 4, \"\u00e9\": 5}",
+    "canonical": "{\"o\":2,\"z\":4,\"\u00e9\":5,\"\u00f6\":1,\"\u20ac\":3}",
+    "keccak256": "0xc5809c540515c5e3e5b70247089d1185153f94296ef8ef7ae18f7ad83a5ec103"
+  },
+  {
+    "name": "keys_not_unicode_normalized",
+    "inputJson": "{\"\\u00e9\": \"precomposed\", \"e\\u0301\": \"decomposed\"}",
+    "canonical": "{\"e\u0301\":\"decomposed\",\"\u00e9\":\"precomposed\"}",
+    "keccak256": "0xd146bc341f3c0b7abfc5958f6d74f41354c41f77fa854329599abc0665f5ca6d"
+  },
+  {
+    "name": "array_order_preserved",
+    "inputJson": "[3, 1, 2, \"b\", \"a\", {\"b\": 1, \"a\": 2}, [2, 1]]",
+    "canonical": "[3,1,2,\"b\",\"a\",{\"a\":2,\"b\":1},[2,1]]",
+    "keccak256": "0xdc1c83657ade7fc9035a338cbf4ede08dc61882c189941efdc1e941245bc6895"
+  },
+  {
+    "name": "deeply_nested",
+    "inputJson": "[[[[[{\"b\": [[], {\"d\": 1, \"c\": 2}], \"a\": null}]]]]]",
+    "canonical": "[[[[[{\"a\":null,\"b\":[[],{\"c\":2,\"d\":1}]}]]]]]",
+    "keccak256": "0x81d1af5426d0834d60a6027a1587b6ed41d5e19874cc08975c25202e70829e90"
+  },
+  {
+    "name": "number_zero",
+    "inputJson": "0",
+    "canonical": "0",
+    "keccak256": "0x044852b2a670ade5407e78fb2863c51de9fcb96542a07186fe3aeda6bb8a116d"
+  },
+  {
+    "name": "number_negative_zero",
+    "inputJson": "-0",
+    "canonical": "0",
+    "keccak256": "0x044852b2a670ade5407e78fb2863c51de9fcb96542a07186fe3aeda6bb8a116d"
+  },
+  {
+    "name": "number_negative_zero_float",
+    "inputJson": "-0.0",
+    "canonical": "0",
+    "keccak256": "0x044852b2a670ade5407e78fb2863c51de9fcb96542a07186fe3aeda6bb8a116d"
+  },
+  {
+    "name": "number_one",
+    "inputJson": "1",
+    "canonical": "1",
+    "keccak256": "0xc89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b8bc6"
+  },
+  {
+    "name": "number_one_point_zero",
+    "inputJson": "1.0",
+    "canonical": "1",
+    "keccak256": "0xc89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b8bc6"
+  },
+  {
+    "name": "number_trailing_fraction_zeros",
+    "inputJson": "[4.50, 2.000, 10.10]",
+    "canonical": "[4.5,2,10.1]",
+    "keccak256": "0x3bc9d396a9e74b6e0c8e27493b901aed57ee5f66d8a58c8ccfefbb425ed3358b"
+  },
+  {
+    "name": "number_point_one",
+    "inputJson": "0.1",
+    "canonical": "0.1",
+    "keccak256": "0x8cd160c72d102a6747abd189ac21d4a1f802e3fcc1bb8fc78cc4d558df0c7c21"
+  },
+  {
+    "name": "number_1e21",
+    "inputJson": "1e21",
+    "canonical": "1e+21",
+    "keccak256": "0xf775057b7258b5a1269eb165194db8cc23793b7668117cfea80c052545c8c7e2"
+  },
+  {
+    "name": "number_1e21_uppercase_signed_exponent",
+    "inputJson": "1E+21",
+    "canonical": "1e+21",
+    "keccak256": "0xf775057b7258b5a1269eb165194db8cc23793b7668117cfea80c052545c8c7e2"
+  },
+  {
+    "name": "number_1e20_fixed_notation",
+    "inputJson": "1e20",
+    "canonical": "100000000000000000000",
+    "keccak256": "0x51b74b98b8bba8c37c9541dd2a35ffd6ac18dc0336101c7d1d9676a5e3eb2706"
+  },
+  {
+    "name": "number_1e-7",
+    "inputJson": "1e-7",
+    "canonical": "1e-7",
+    "keccak256": "0x1d6e4ac74701fe94c9dc73aec1c77a70052e084329d7a89eb8d0777d24e76de3"
+  },
+  {
+    "name": "number_1e-6_fixed_notation",
+    "inputJson": "1e-6",
+    "canonical": "0.000001",
+    "keccak256": "0x3d10d14bb8892ef8cf8c85e2e5f637083a0a75506cdef43d8593ec58b1e70d62"
+  },
+  {
+    "name": "number_exponents",
+    "inputJson": "[1.5e300, -2.5e-300, 12e3]",
+    "canonical": "[1.5e+300,-2.5e-300,12000]",
+    "keccak256": "0x1f4707009e3b027aba5ae09ef6518702375032091dcb59943330f0ce94402981"
+  },
+  {
+    "name": "number_safe_integer",
+    "inputJson": "123456789012345",
+    "canonical": "123456789012345",
+    "keccak256": "0xa51538240e3e4db8b5cc7e845a9fe51e6ca3d627293305d11cabdbfc16c1f07f"
+  },
+  {
+    "name": "number_max_safe_integer",
+    "inputJson": "[9007199254740991, -9007199254740991]",
+    "canonical": "[9007199254740991,-9007199254740991]",
+    "keccak256": "0x30edf92f23787ab4c48233a665123cbae0ca1a3364dced868fe04f15413f1ae1"
+  },
+  {
+    "name": "number_negative_fraction",
+    "inputJson": "-1.5",
+    "canonical": "-1.5",
+    "keccak256": "0x5fbd183d30c788fe318810caae767c4e37d28d5b1472951b0e67381e3f5fff67"
+  },
+  {
+    "name": "number_binary_rounding",
+    "inputJson": "0.30000000000000004",
+    "canonical": "0.30000000000000004",
+    "keccak256": "0x5cc6de7049e9a8ef58000ca3721e96cede68d948c3e987ae9f1df13b6e54e33b"
+  },
+  {
+    "name": "number_min_subnormal",
+    "inputJson": "5e-324",
+    "canonical": "5e-324",
+    "keccak256": "0xfa625397a6853660924b822c3a6e31b6c08ffdd71e0c11f8fb4ad10c0a67bfd2"
+  },
+  {
+    "name": "number_max_double",
+    "inputJson": "1.7976931348623157e308",
+    "canonical": "1.7976931348623157e+308",
+    "keccak256": "0xeebb1369fdcfa80a16121432d8190db53a5b61d6fe25f1284865b37235c79bc9"
+  },
+  {
+    "name": "rfc8785_appendix_b_numbers",
+    "inputJson": "[0.0, -0.0, 5e-324, -5e-324, 1.7976931348623157e308, -1.7976931348623157e308, 9007199254740992.0, -9007199254740992.0, 2.9514790517935283e20, 9.999999999999997e22, 1e23, 1.0000000000000001e23, 9.999999999999997e20, 9.999999999999999e20, 1e21, 9.999999999999997e-7, 0.000001, 333333333.3333332, 333333333.33333325, 333333333.3333333, 333333333.3333334, 333333333.33333343, -0.0000033333333333333333, 1424953923781206.2]",
+    "canonical": "[0,0,5e-324,-5e-324,1.7976931348623157e+308,-1.7976931348623157e+308,9007199254740992,-9007199254740992,295147905179352830000,9.999999999999997e+22,1e+23,1.0000000000000001e+23,999999999999999700000,999999999999999900000,1e+21,9.999999999999997e-7,0.000001,333333333.3333332,333333333.33333325,333333333.3333333,333333333.3333334,333333333.33333343,-0.0000033333333333333333,1424953923781206.2]",
+    "keccak256": "0x5e0423ff67400069a0fb4297df8076f635be066ec95038879ed1992e9bc86634"
+  },
+  {
+    "name": "string_empty",
+    "inputJson": "\"\"",
+    "canonical": "\"\"",
+    "keccak256": "0x2392a80f8a87b8cfde0aa5c84e199f163aae4c2a4c512d37598362ace687ad0c"
+  },
+  {
+    "name": "string_quote_and_backslash",
+    "inputJson": "\"say \\\"hi\\\" \\\\ bye\"",
+    "canonical": "\"say \\\"hi\\\" \\\\ bye\"",
+    "keccak256": "0x121753d63fa918d0bc0af3d091d37cf021b9623e6fd1abec1f712f389ce234c3"
+  },
+  {
+    "name": "string_short_escapes",
+    "inputJson": "\"\\b\\f\\n\\r\\t\"",
+    "canonical": "\"\\b\\f\\n\\r\\t\"",
+    "keccak256": "0xb3f71839b94d1228acf62a65ac8f2a3bc5d613993e637a669c6eac8cf2d3ef06"
+  },
+  {
+    "name": "string_control_characters",
+    "inputJson": "\"\\u0000 \\u0001 \\u000b \\u001f\"",
+    "canonical": "\"\\u0000 \\u0001 \\u000b \\u001f\"",
+    "keccak256": "0x31798c4ced61f360028b107b81d90c56409543e1acb181d3c55d546220f2016f"
+  },
+  {
+    "name": "string_escape_hex_lowercased",
+    "inputJson": "\"\\u001F\\u00E9\\u4E2D\"",
+    "canonical": "\"\\u001f\u00e9\u4e2d\"",
+    "keccak256": "0xb2634dcfc52a0ad1bae8553310a3c1bb4ab3a3233e8408af82789503a0383556"
+  },
+  {
+    "name": "string_del_not_escaped",
+    "inputJson": "\"a\\u007fb\"",
+    "canonical": "\"a\u007fb\"",
+    "keccak256": "0x5edc397c2bb8b106e4478bfc0b04fd23790aeda99e2a93a98f35a6f88452b7cf"
+  },
+  {
+    "name": "string_solidus_not_escaped",
+    "inputJson": "\"a\\/b/c\"",
+    "canonical": "\"a/b/c\"",
+    "keccak256": "0xcd4ed9f3bd3c2d881d736c82b74e75ab381b10022749cb36a28a0d66ac6becd1"
+  },
+  {
+    "name": "string_unicode_escapes_decoded",
+    "inputJson": "\"\\u00e9\\u4e2d\\u20ac\\ud83d\\ude00\"",
+    "canonical": "\"\u00e9\u4e2d\u20ac\ud83d\ude00\"",
+    "keccak256": "0x82a23f233389cf44d1abb9107d7987d89a22d5f885c4f559cfa987c25aaa5085"
+  },
+  {
+    "name": "string_line_and_paragraph_separators",
+    "inputJson": "\"\\u2028\\u2029\"",
+    "canonical": "\"\u2028\u2029\"",
+    "keccak256": "0x7c008d3cb89326bf05bbf21d386a99084d7ec18f27e14ef8a89d7b2ccbea579c"
+  },
+  {
+    "name": "string_emoji",
+    "inputJson": "\"launch \ud83d\ude80 \\ud83d\\ude80 \ud83d\ude00\"",
+    "canonical": "\"launch \ud83d\ude80 \ud83d\ude80 \ud83d\ude00\"",
+    "keccak256": "0x9e92eb8fc26354d403dbc81ef58ac9ca4d08205d58ddd8c702913a7a6c858e95"
+  },
+  {
+    "name": "string_emoji_sequences",
+    "inputJson": "\"\ud83d\udc69\u200d\ud83d\udcbb \ud83d\udc4d\ud83c\udffd \ud83c\uddee\ud83c\udde9\"",
+    "canonical": "\"\ud83d\udc69\u200d\ud83d\udcbb \ud83d\udc4d\ud83c\udffd \ud83c\uddee\ud83c\udde9\"",
+    "keccak256": "0x03be96c29122543917149365a47ff21db82b89056690f4b2d3d9fbae49177a76"
+  },
+  {
+    "name": "string_cjk",
+    "inputJson": "\"\u4e2d\u6587 \u65e5\u672c\u8a9e \ud55c\uad6d\uc5b4\"",
+    "canonical": "\"\u4e2d\u6587 \u65e5\u672c\u8a9e \ud55c\uad6d\uc5b4\"",
+    "keccak256": "0x7b142720db5931f292e5c1138290f696dfd6d698fdb4c2778c33879e30874e74"
+  },
+  {
+    "name": "string_combining_marks_not_normalized",
+    "inputJson": "\"e\\u0301 \\u00e9 n\\u0303 \\u00f1\"",
+    "canonical": "\"e\u0301 \u00e9 n\u0303 \u00f1\"",
+    "keccak256": "0xf50f54a99f8efc155412c155f05b23a8c4a2a2d195a9a9cc0f49b4a1f6ec8dfe"
+  },
+  {
+    "name": "string_html_sensitive_characters",
+    "inputJson": "\"<script>&'</script>\"",
+    "canonical": "\"<script>&'</script>\"",
+    "keccak256": "0xb4aca2daec93d7dae2ea55ff292643d7aa0604827aa9bb3ee7ffeac984f63939"
+  },
+  {
+    "name": "rfc8785_section_3_2_2_example",
+    "inputJson": "{\n  \"numbers\": [333333333.33333329, 1E30, 4.50,\n              2e-3, 0.000000000000000000000000001],\n  \"string\": \"\\u20ac$\\u000F\\u000aA'\\u0042\\u0022\\u005c\\\\\\\"\\/\",\n  \"literals\": [null, true, false]\n}",
+    "canonical": "{\"literals\":[null,true,false],\"numbers\":[333333333.3333333,1e+30,4.5,0.002,1e-27],\"string\":\"\u20ac$\\u000f\\nA'B\\\"\\\\\\\\\\\"/\"}",
+    "keccak256": "0x95fb19ff3efb4a4ce1ee009fc6b7f4cce4b5839e069b096f296fc9bffbbd0162"
+  },
+  {
+    "name": "run_fragment_keeps_all_members",
+    "inputJson": "{\"usage\": {\"llmCalls\": 57, \"inputTokens\": 123456, \"outputTokens\": 23456, \"costUsd\": 0.0312}, \"version\": 1, \"hash\": \"0xab\", \"report\": {\"sentimentByRound\": [0.4, -0.25, 1.0, -1], \"disclaimer\": \"Synthetic crowd reaction. Not a trading signal.\"}}",
+    "canonical": "{\"hash\":\"0xab\",\"report\":{\"disclaimer\":\"Synthetic crowd reaction. Not a trading signal.\",\"sentimentByRound\":[0.4,-0.25,1,-1]},\"usage\":{\"costUsd\":0.0312,\"inputTokens\":123456,\"llmCalls\":57,\"outputTokens\":23456},\"version\":1}",
+    "keccak256": "0x402cac2afa09ba5325a2584cce1a30eddbb1b60f23dec7c042054cd170d83ce9"
+  }
+]

@@ -1,0 +1,1281 @@
+{
+  "runId": "run_01M6QG7K4SAXZN7SDF5PQB2G51",
+  "version": 1,
+  "createdAt": "2026-11-06T04:00:24Z",
+  "status": "complete",
+  "stopReason": null,
+  "scenario": {
+    "title": "Fictional token MOSS lists, with ten kinds of trader in the crowd",
+    "seedText": "MOSS is a fictional meme token made up for this test. It has just launched with a 2% fee on every trade and a small pool. The team has said little so far.",
+    "seedSources": [
+      {
+        "kind": "user",
+        "ref": "ten.md"
+      }
+    ],
+    "injectedEvents": []
+  },
+  "world": {
+    "chainId": 4663,
+    "forkBlock": null,
+    "pools": [
+      {
+        "address": "0xA9d3b43ba2F10D7BBE658495b3358E064860A599",
+        "token0": "0x1dF360B4EB65224F2C99AB0FB25aef5B098d5b5d",
+        "token1": "0x5B9de13824aada1fC7436868854aA13414697511",
+        "kind": "v2-test",
+        "feeBps": 200
+      }
+    ],
+    "token": {
+      "address": "0x5B9de13824aada1fC7436868854aA13414697511",
+      "symbol": "MOSS",
+      "name": "Moss (fictional test token)",
+      "decimals": 18
+    },
+    "quote": {
+      "address": "0x1dF360B4EB65224F2C99AB0FB25aef5B098d5b5d",
+      "symbol": "WETH",
+      "decimals": 18
+    },
+    "initialMarket": {
+      "price": "0.00000008",
+      "reserve0": "8",
+      "reserve1": "100000000",
+      "holders": 10
+    }
+  },
+  "crowd": {
+    "size": 20,
+    "personaMix": {
+      "sniper": 2,
+      "holder": 2,
+      "panic_seller": 2,
+      "skeptic": 2,
+      "swing_trader": 2,
+      "whale": 2,
+      "kol_follower": 2,
+      "market_maker_bot": 2,
+      "stock_token_holder": 2,
+      "newcomer": 2
+    },
+    "model": {
+      "agents": "offline/rules-v1",
+      "report": "offline/rules-v1",
+      "temperature": 0.8
+    },
+    "agents": [
+      {
+        "agentId": "a01",
+        "handle": "@snowysloth89",
+        "persona": "swing_trader",
+        "startEth": "2.4222",
+        "startTokens": "300000"
+      },
+      {
+        "agentId": "a02",
+        "handle": "@sprypuffin18",
+        "persona": "swing_trader",
+        "startEth": "1.3962",
+        "startTokens": "300000"
+      },
+      {
+        "agentId": "a03",
+        "handle": "@cleveribis89",
+        "persona": "panic_seller",
+        "startEth": "0.3014",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a04",
+        "handle": "@quietbadger41",
+        "persona": "market_maker_bot",
+        "startEth": "2.0343",
+        "startTokens": "2000000"
+      },
+      {
+        "agentId": "a05",
+        "handle": "@calmstoat65",
+        "persona": "market_maker_bot",
+        "startEth": "2.7615",
+        "startTokens": "2000000"
+      },
+      {
+        "agentId": "a06",
+        "handle": "@keenkoala14",
+        "persona": "whale",
+        "startEth": "19.9904",
+        "startTokens": "6000000"
+      },
+      {
+        "agentId": "a07",
+        "handle": "@gentletoad50",
+        "persona": "stock_token_holder",
+        "startEth": "2.2634",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a08",
+        "handle": "@boldmoth79",
+        "persona": "skeptic",
+        "startEth": "0.8145",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a09",
+        "handle": "@breezymagpie78",
+        "persona": "skeptic",
+        "startEth": "0.3261",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a10",
+        "handle": "@shyweasel55",
+        "persona": "whale",
+        "startEth": "15.8391",
+        "startTokens": "6000000"
+      },
+      {
+        "agentId": "a11",
+        "handle": "@nimblelemur45",
+        "persona": "holder",
+        "startEth": "1.3684",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a12",
+        "handle": "@pluckyokapi69",
+        "persona": "sniper",
+        "startEth": "1.6153",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a13",
+        "handle": "@eagerbison14",
+        "persona": "panic_seller",
+        "startEth": "0.1896",
+        "startTokens": "600000"
+      },
+      {
+        "agentId": "a14",
+        "handle": "@daringtoad23",
+        "persona": "newcomer",
+        "startEth": "0.1495",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a15",
+        "handle": "@calmbadger45",
+        "persona": "newcomer",
+        "startEth": "0.0669",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a16",
+        "handle": "@pluckyheron86",
+        "persona": "kol_follower",
+        "startEth": "0.8443",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a17",
+        "handle": "@loftysloth96",
+        "persona": "sniper",
+        "startEth": "1.9905",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a18",
+        "handle": "@shymole72",
+        "persona": "kol_follower",
+        "startEth": "0.6556",
+        "startTokens": "0"
+      },
+      {
+        "agentId": "a19",
+        "handle": "@keenstoat37",
+        "persona": "holder",
+        "startEth": "1.258",
+        "startTokens": "1000000"
+      },
+      {
+        "agentId": "a20",
+        "handle": "@spryowl97",
+        "persona": "stock_token_holder",
+        "startEth": "0.7735",
+        "startTokens": "0"
+      }
+    ]
+  },
+  "rounds": [
+    {
+      "n": 1,
+      "posts": [
+        {
+          "id": "p1",
+          "agentId": "a01",
+          "text": "Volume is thin at 8 ETH. No setup, so no trade.",
+          "replyTo": null,
+          "likes": 11
+        },
+        {
+          "id": "p2",
+          "agentId": "a03",
+          "text": "Not sure about this anymore. Something feels off.",
+          "replyTo": null,
+          "likes": 4
+        },
+        {
+          "id": "p3",
+          "agentId": "a11",
+          "text": "Opening a long-term bag with 0.077 ETH. We're early, and early means patient.",
+          "replyTo": null,
+          "likes": 3
+        },
+        {
+          "id": "p4",
+          "agentId": "a13",
+          "text": "Can't stop refreshing. Is everyone else calm about this??",
+          "replyTo": null,
+          "likes": 5
+        },
+        {
+          "id": "p5",
+          "agentId": "a14",
+          "text": "I'm a bit lost, to be honest. Where do people learn this?",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p6",
+          "agentId": "a18",
+          "text": "What are the top posts saying now?",
+          "replyTo": null,
+          "likes": 7
+        },
+        {
+          "id": "p7",
+          "agentId": "a19",
+          "text": "10 holders now. Slow and steady is how real communities form.",
+          "replyTo": null,
+          "likes": 5
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a04",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a11",
+          "kind": "swap_buy",
+          "amountIn": "0.077",
+          "amountOut": "934435.933061398359969586",
+          "txHash": "0xef7db66eb984b1a64a5534bfdb283e61d309e28c29106bbb01fb10b22c9a7b1a",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a12",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a09",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a08",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a10",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a17",
+          "kind": "swap_buy",
+          "amountIn": "0.234",
+          "amountOut": "2734991.566882850664083706",
+          "txHash": "0x11ba2117bb9f6b8da5704acb50e490643390a9628f5e27ad25d91b327b5da162",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a05",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000000086275828995",
+        "reserve0": "8.311",
+        "reserve1": "96330572.500055750975946708",
+        "holders": 11
+      }
+    },
+    {
+      "n": 2,
+      "posts": [
+        {
+          "id": "p8",
+          "agentId": "a04",
+          "text": "Rebalance: -5% of tokens after +7.8%.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p9",
+          "agentId": "a09",
+          "text": "11 holders after 2 rounds. Who holds the top wallets? Nobody has shown the distribution.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p10",
+          "agentId": "a13",
+          "text": "Refreshing the pool numbers again. Can't stop looking.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c1",
+          "agentId": "a15",
+          "text": "@shymole72 wait, why is that bad? Sorry, new here.",
+          "replyTo": "p6",
+          "likes": 2
+        },
+        {
+          "id": "c2",
+          "agentId": "a16",
+          "text": "@eagerbison14 wait, are you out? Now I'm worried.",
+          "replyTo": "p4",
+          "likes": 1
+        },
+        {
+          "id": "p11",
+          "agentId": "a17",
+          "text": "First rounds are where the fun is. 0.154 ETH in, eyes already on the exit.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p12",
+          "agentId": "a19",
+          "text": "Opening a long-term bag with 0.028 ETH. We're early, and early means patient.",
+          "replyTo": null,
+          "likes": 1
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a17",
+          "kind": "swap_buy",
+          "amountIn": "0.154",
+          "amountOut": "1718074.621564422015014308",
+          "txHash": "0x1758d3217c329b9b029e84114bd849bcd27041283d7adacd5c0be6ac87f4543d",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a09",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a05",
+          "kind": "swap_sell",
+          "amountIn": "140000",
+          "amountOut": "0.012257537765338282",
+          "txHash": "0x46813f42c303864df14140856bd7e6c00f83e15dc4195d8606ac5885d07cf234",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a08",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a13",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a11",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a12",
+          "kind": "swap_buy",
+          "amountIn": "0.057",
+          "amountOut": "622061.561224054235417995",
+          "txHash": "0x9fc34f150a2464dcb114bae00f2b3f458ed592d9ab44cc331c366c8e931cc1ad",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a04",
+          "kind": "swap_sell",
+          "amountIn": "100000",
+          "amountOut": "0.008850351272847933",
+          "txHash": "0xa0647dcdc26fee857dc6f92a3a628ea64981db319da16fdaf1fd3649d8b50793",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a14",
+          "kind": "swap_buy",
+          "amountIn": "0.01",
+          "amountOut": "108505.661333912013824283",
+          "txHash": "0x1b06208af6d4ecda2c87b8dfc78921876aefea3c28d9b3918e183ddc8536eb63",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "swap_buy",
+          "amountIn": "0.028",
+          "amountOut": "302483.640087393899466829",
+          "txHash": "0x12cf8927fb2f54bde5c2af3a7d7edafbb963707ea68158acd721e4e951e6c214",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a10",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000000091014095505",
+        "reserve0": "8.538892110961813785",
+        "reserve1": "93819447.015845968812223293",
+        "holders": 13
+      }
+    },
+    {
+      "n": 3,
+      "posts": [
+        {
+          "id": "c3",
+          "agentId": "a01",
+          "text": "@nimblelemur45 maybe. Show me a higher low first.",
+          "replyTo": "p3",
+          "likes": 0
+        },
+        {
+          "id": "p13",
+          "agentId": "a03",
+          "text": "Phew, green round (+5.5%). Still nervous but holding for now.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p14",
+          "agentId": "a08",
+          "text": "Opening a tiny position, 0.022 ETH. 13 wallets is enough to earn a closer look, not trust.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c4",
+          "agentId": "a09",
+          "text": "@nimblelemur45 +13.8% since start on 8.53 ETH of liquidity. Let's see it hold through a real exit wave.",
+          "replyTo": "p3",
+          "likes": 0
+        },
+        {
+          "id": "p15",
+          "agentId": "a11",
+          "text": "Taking a proper look at the pool before I add anything.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c5",
+          "agentId": "a12",
+          "text": "@nimblelemur45 the feed is waking up, I'm watching the same flow.",
+          "replyTo": "p3",
+          "likes": 1
+        },
+        {
+          "id": "c6",
+          "agentId": "a13",
+          "text": "@loftysloth96 wait, is that confirmed?? Seeing +5.5% on my side too.",
+          "replyTo": "p11",
+          "likes": 1
+        },
+        {
+          "id": "c7",
+          "agentId": "a14",
+          "text": "@shymole72 oh no. What am I missing?",
+          "replyTo": "p6",
+          "likes": 0
+        },
+        {
+          "id": "p16",
+          "agentId": "a16",
+          "text": "Saw the likes pile up and jumped in, 0.022 ETH.",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "p17",
+          "agentId": "a17",
+          "text": "Another 0.065 ETH in. Pool still thin at 8.53 ETH, moves come fast.",
+          "replyTo": null,
+          "likes": 1
+        },
+        {
+          "id": "c8",
+          "agentId": "a19",
+          "text": "@loftysloth96 doubts are healthy, but 13 holders didn't show up by accident.",
+          "replyTo": "p11",
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a12",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a17",
+          "kind": "swap_buy",
+          "amountIn": "0.065",
+          "amountOut": "694709.071152416576930983",
+          "txHash": "0x452b0be9fff580d69c2f41e8ec1d68596b18202de42449b8d9d52c10c44df15e",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a11",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a09",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a10",
+          "kind": "swap_buy",
+          "amountIn": "0.867",
+          "amountOut": "8369802.579322549700709004",
+          "txHash": "0xdb097d05acb20ee6b097f2f21df4c609c12610a95044f14426eb21a52fa4174f",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a05",
+          "kind": "swap_sell",
+          "amountIn": "74400",
+          "amountOut": "0.008140507003792546",
+          "txHash": "0x9c9cbd0e0919f5900159e09a007584996addc3dca498935924749e78f7b33c0e",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a04",
+          "kind": "swap_sell",
+          "amountIn": "190000",
+          "amountOut": "0.020725204412165315",
+          "txHash": "0xa2bf1dccd151c1b683b6519b8a1492533533dd4311eedda145c23414e6f7e3a7",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a08",
+          "kind": "swap_buy",
+          "amountIn": "0.022",
+          "amountOut": null,
+          "txHash": "0x9bf3a82832794a8de343d0b4d3e6c1f6ae710fbc5ea446549de584cdaeb1c43e",
+          "status": "reverted",
+          "note": "reverted: InsufficientOutput(amountOut=193691566081687878070493, amountOutMin=200846306214452554009954)"
+        },
+        {
+          "agentId": "a01",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "swap_buy",
+          "amountIn": "0.022",
+          "amountOut": null,
+          "txHash": "0x5e7f08cc5f89c21fb8109927dc70ed8a21d2c69fd6cfa74d1632f1008677a2f9",
+          "status": "reverted",
+          "note": "reverted: InsufficientOutput(amountOut=193691566081687878070493, amountOutMin=200846306214452554009954)"
+        },
+        {
+          "agentId": "a18",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a07",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000000111057400754",
+        "reserve0": "9.442026399545855924",
+        "reserve1": "85019335.365371002534583306",
+        "holders": 13
+      }
+    },
+    {
+      "n": 4,
+      "posts": [
+        {
+          "id": "c9",
+          "agentId": "a02",
+          "text": "@keenstoat37 the chart has not said that yet. Watching the low.",
+          "replyTo": "c8",
+          "likes": 0
+        },
+        {
+          "id": "c10",
+          "agentId": "a03",
+          "text": "@breezymagpie78 I KNEW something was off.",
+          "replyTo": "c4",
+          "likes": 0
+        },
+        {
+          "id": "p18",
+          "agentId": "a05",
+          "text": "Rebalance: -6% of tokens after +22.0%.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c11",
+          "agentId": "a08",
+          "text": "@nimblelemur45 confidence is not evidence. Who audited it?",
+          "replyTo": "p3",
+          "likes": 0
+        },
+        {
+          "id": "p19",
+          "agentId": "a09",
+          "text": "Opening a tiny position, 0.011 ETH. 13 wallets is enough to earn a closer look, not trust.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c12",
+          "agentId": "a11",
+          "text": "@breezymagpie78 we've had red rounds before. Still here, still holding.",
+          "replyTo": "c4",
+          "likes": 0
+        },
+        {
+          "id": "c13",
+          "agentId": "a13",
+          "text": "@loftysloth96 wait, is that confirmed?? Seeing +22.0% on my side too.",
+          "replyTo": "p11",
+          "likes": 0
+        },
+        {
+          "id": "p20",
+          "agentId": "a14",
+          "text": "+22.0% last round! Is that a lot? It feels like a lot.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c14",
+          "agentId": "a15",
+          "text": "@snowysloth89 oh no. What am I missing?",
+          "replyTo": "p1",
+          "likes": 0
+        },
+        {
+          "id": "p21",
+          "agentId": "a16",
+          "text": "Everyone on my feed is talking about this, so I'm in with 0.091 ETH. Am I too late?",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "p22",
+          "agentId": "a18",
+          "text": "Saw the likes pile up and jumped in, 0.091 ETH.",
+          "replyTo": null,
+          "likes": 0
+        },
+        {
+          "id": "c15",
+          "agentId": "a19",
+          "text": "@breezymagpie78 fair question. I judge the team's work, not one candle.",
+          "replyTo": "c4",
+          "likes": 0
+        },
+        {
+          "id": "p23",
+          "agentId": "a20",
+          "text": "Hard to value something with 13 holders and no cash flow.",
+          "replyTo": null,
+          "likes": 0
+        }
+      ],
+      "actions": [
+        {
+          "agentId": "a11",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a17",
+          "kind": "swap_sell",
+          "amountIn": "4530042.228447726545305517",
+          "amountOut": "0.468565793866293658",
+          "txHash": "0x65274df73fa0d77b69234ee73aa5bad84fb62ebdf1bf6057be395cd8b9588a54",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a01",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a02",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a16",
+          "kind": "swap_buy",
+          "amountIn": "0.091",
+          "amountOut": "881201.610136886024772138",
+          "txHash": "0x923656628bec60d686afeee667566501f2766d71dc027171d1a9a655aa3768ce",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a03",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a08",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a13",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a20",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a04",
+          "kind": "swap_sell",
+          "amountIn": "119700",
+          "amountOut": "0.011976232961209545",
+          "txHash": "0xf04c53539e1d688b614b53a919f03b51f56e2c7c93ff77437c2883f347850ccd",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a09",
+          "kind": "swap_buy",
+          "amountIn": "0.011",
+          "amountOut": "105605.802031461259121204",
+          "txHash": "0x258fa042d545731a249e6a9cf413eee8dbd6d0002c2178af4ba67e623a27b260",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a18",
+          "kind": "swap_buy",
+          "amountIn": "0.091",
+          "amountOut": "864085.531025616729145576",
+          "txHash": "0xf76488808aa65fd604dc5aca3c84f2af4343b41cc9f95389970ad03790dbcb93",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a07",
+          "kind": "check_market",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a14",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a10",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a15",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a12",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a06",
+          "kind": "swap_sell",
+          "amountIn": "1320000",
+          "amountOut": "0.13289197417577962",
+          "txHash": "0x2390f284581bd5558e93a79d249c0d60aec8c86f42dde76951645715aa4413dd",
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a19",
+          "kind": "hold",
+          "amountIn": null,
+          "amountOut": null,
+          "txHash": null,
+          "status": "ok",
+          "note": null
+        },
+        {
+          "agentId": "a05",
+          "kind": "swap_sell",
+          "amountIn": "107136",
+          "amountOut": "0.010613770135823544",
+          "txHash": "0x68cf54a07731349e53786640c269d44a2297e4f6bdeca015820b342bbd8454ec",
+          "status": "ok",
+          "note": null
+        }
+      ],
+      "market": {
+        "price": "0.000000100968639731",
+        "reserve0": "9.010978628406749557",
+        "reserve1": "89245320.650624765066849905",
+        "holders": 16
+      }
+    }
+  ],
+  "report": {
+    "summary": "A synthetic crowd of 20 agents reacted over 4 rounds. The price went from 0.08 to 0.101 ETH per 1M tokens (+26.21%). Agents made 11 buys and 8 sells; 1.011 ETH more went into the pool than came out. The largest net inflow came from whales (+0.7341 ETH). Mean sentiment moved from +0.12 in round 1 to +0.32 in round 4. Agents wrote 38 posts that drew 44 likes. 2 swaps reverted.",
+    "turningPoint": {
+      "round": 3,
+      "why": "Round 3 showed the largest combined change: the price moved +22.02%, mean sentiment changed by -0.05. Most-liked posts that round: c5, c6."
+    },
+    "sentimentByRound": [
+      0.1235,
+      0.3275,
+      0.274,
+      0.323
+    ],
+    "objections": [
+      "Skeptic a09 in round 3: \"@nimblelemur45 +13.8% since start on 8.53 ETH of liquidity. Let's see it hold through a real exit wave.\" (c4)"
+    ],
+    "priceDrivers": [
+      "Round 3: a10 (whale) spent 0.867 ETH on 8.37M tokens; the price moved +20.95% (0.09239 to 0.1117 ETH per 1M tokens).",
+      "Round 4: a17 (sniper) swapped 4.53M tokens for 0.4686 ETH; the price moved -9.77% (0.1111 to 0.1002 ETH per 1M tokens).",
+      "Round 1: a17 (sniper) spent 0.234 ETH on 2.73M tokens; the price moved +5.82% (0.08153 to 0.08628 ETH per 1M tokens).",
+      "Net flow by persona: holders +0.105 ETH, KOL followers +0.182 ETH, market maker bots -0.07256 ETH, newcomers +0.01 ETH, skeptics +0.011 ETH, snipers +0.04143 ETH, whales +0.7341 ETH."
+    ],
+    "disclaimer": "Synthetic crowd reaction. Not a trading signal.",
+    "flags": []
+  },
+  "usage": {
+    "llmCalls": 9,
+    "inputTokens": 32604,
+    "outputTokens": 3848,
+    "costUsd": 0.0
+  },
+  "hash": "0x854badc825a876c82394fc5c22396bc8a49809574d27811d865ab7ce8e0bc70e"
+}

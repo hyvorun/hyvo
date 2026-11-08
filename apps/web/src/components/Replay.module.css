@@ -1,0 +1,244 @@
+.panel {
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* --- the bar: the numbers, and the view ---------------------------------------------------------- */
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--rule);
+}
+
+.readout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3) var(--space-5);
+  flex: 1 1 100%;
+}
+
+@media (min-width: 620px) {
+  .readout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-3) var(--space-7);
+    flex: none;
+  }
+}
+
+.stat {
+  display: grid;
+  gap: 2px;
+  align-content: start;
+  min-width: 0;
+}
+
+.label {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.priceLine {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+}
+
+.price,
+.value {
+  font-size: 1.375rem;
+  font-weight: 500;
+  letter-spacing: -0.016em;
+  line-height: 1.2;
+}
+
+.unit {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.value small {
+  color: var(--ink-3);
+  font-size: 0.72em;
+  font-weight: 400;
+}
+
+/* The price washes the way it just moved, and settles. */
+.tickUp {
+  animation: tick-up 700ms var(--ease-out);
+}
+
+.tickDown {
+  animation: tick-down 700ms var(--ease-out);
+}
+
+@keyframes tick-up {
+  from {
+    color: var(--buy-text);
+  }
+}
+
+@keyframes tick-down {
+  from {
+    color: var(--sell-text);
+  }
+}
+
+.up {
+  color: var(--buy-text);
+}
+
+.down {
+  color: var(--sell-text);
+}
+
+.views {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+.views button {
+  height: 28px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: none;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--ease),
+    color 160ms var(--ease);
+}
+
+.views button:hover {
+  color: var(--ink);
+}
+
+.views button[aria-pressed="true"] {
+  background: var(--raised);
+  color: var(--ink);
+}
+
+/* --- the body: chart and crowd, beside the feed --------------------------------------------------- */
+
+.body {
+  display: grid;
+  min-width: 0;
+}
+
+.main {
+  display: grid;
+  align-content: start;
+  gap: var(--space-5);
+  min-width: 0;
+  padding: var(--space-5);
+}
+
+.chart {
+  min-width: 0;
+}
+
+.crowd {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--rule);
+}
+
+.keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px var(--space-4);
+  margin: 0;
+  padding: 0;
+  color: var(--ink-3);
+  font-size: var(--t-2xs);
+  list-style: none;
+}
+
+.keys li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.keys i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.keyTotal {
+  margin-left: auto;
+}
+
+.keyHeld {
+  background: var(--accent);
+}
+
+.keyBuy {
+  background: var(--buy);
+}
+
+.keySell {
+  background: var(--sell);
+}
+
+.keyPost {
+  box-shadow: inset 0 0 0 1.25px var(--post);
+}
+
+.tip {
+  display: grid;
+  gap: 2px;
+}
+
+.tip b {
+  font-weight: 550;
+}
+
+.tipPersona {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink-3);
+}
+
+.side {
+  min-width: 0;
+  height: 420px;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 980px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+
+  /* As tall as the chart beside it; the feed scrolls inside. */
+  .side {
+    position: relative;
+    height: auto;
+    border-top: 0;
+    border-left: 1px solid var(--rule);
+  }
+}
+
+.foot {
+  padding: var(--space-2) var(--space-5);
+  border-top: 1px solid var(--rule);
+}

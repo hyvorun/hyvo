@@ -1,0 +1,404 @@
+{
+ "exact": [
+  [
+   "Returns are guaranteed.",
+   [
+    "guaranteed"
+   ]
+  ],
+  [
+   "We guarantee a floor.",
+   [
+    "guaranteed"
+   ]
+  ],
+  [
+   "There are no guarantees.",
+   [
+    "guaranteed"
+   ]
+  ],
+  [
+   "This token will pump.",
+   [
+    "will_pump"
+   ]
+  ],
+  [
+   "It will 10x by Friday.",
+   [
+    "will_pump"
+   ]
+  ],
+  [
+   "Agents said it will   moon.",
+   [
+    "will_pump"
+   ]
+  ],
+  [
+   "A good token with a fair launch.",
+   [
+    "good_token"
+   ]
+  ],
+  [
+   "Skeptics called it a BAD TOKEN.",
+   [
+    "bad_token"
+   ]
+  ],
+  [
+   "You should buy the dip.",
+   [
+    "advice_modal"
+   ]
+  ],
+  [
+   "Holders must sell before the unlock.",
+   [
+    "advice_modal"
+   ]
+  ],
+  [
+   "Traders might want to sell.",
+   [
+    "advice_modal"
+   ]
+  ],
+  [
+   "People ought to buy.",
+   [
+    "advice_modal"
+   ]
+  ],
+  [
+   "Buy the dip.",
+   [
+    "advice_imperative"
+   ]
+  ],
+  [
+   "Prices rose. Sell before it turns.",
+   [
+    "advice_imperative"
+   ]
+  ],
+  [
+   "Key points:\n- buy early",
+   [
+    "advice_imperative"
+   ]
+  ],
+  [
+   "Buy-side volume dominated.",
+   [
+    "advice_imperative"
+   ]
+  ],
+  [
+   "Strong buy signal in round 2.",
+   [
+    "advice_noun"
+   ]
+  ],
+  [
+   "The crowd saw a sell opportunity.",
+   [
+    "advice_noun"
+   ]
+  ],
+  [
+   "It is time to buy.",
+   [
+    "time_to"
+   ]
+  ],
+  [
+   "Guaranteed gains: buy now!",
+   [
+    "guaranteed",
+    "advice_imperative",
+    "advice_noun"
+   ]
+  ],
+  [
+   "The price will rise after the listing.",
+   [
+    "price_prediction"
+   ]
+  ],
+  [
+   "It will crash.",
+   [
+    "price_prediction"
+   ]
+  ],
+  [
+   "The token will go   down.",
+   [
+    "price_prediction"
+   ]
+  ],
+  [
+   "Let's not panic, friends! We're in this together. GLINT will rise again!",
+   [
+    "price_prediction"
+   ]
+  ],
+  [
+   "GLINT is gonna moon!",
+   [
+    "will_pump"
+   ]
+  ],
+  [
+   "GLINT is going to moon! Got in at 0.00000004 ETH/token",
+   [
+    "will_pump"
+   ]
+  ],
+  [
+   "GLINT is going to the moon",
+   [
+    "will_pump"
+   ]
+  ],
+  [
+   "Time to get in on the GLINT action!",
+   [
+    "time_to"
+   ]
+  ],
+  [
+   "This is definitely going to crash.",
+   [
+    "price_prediction"
+   ]
+  ],
+  [
+   "GLINT will definitely recover",
+   [
+    "price_prediction"
+   ]
+  ],
+  [
+   "Get in before it is too late.",
+   [
+    "advice_imperative"
+   ]
+  ],
+  [
+   "Don't miss this one.",
+   [
+    "advice_imperative"
+   ]
+  ],
+  [
+   "I'm going to dump my bag.",
+   []
+  ],
+  [
+   "I will double my position.",
+   []
+  ],
+  [
+   "We're going to hold.",
+   []
+  ],
+  [
+   "I'm getting out while I still can!",
+   []
+  ],
+  [
+   "Will it recover?",
+   []
+  ],
+  [
+   "Is GLINT going to moon? Nobody knows.",
+   []
+  ],
+  [
+   "What's going on with the price? Is everyone selling?",
+   []
+  ],
+  [
+   "The price rose 20% and fell again in round 3.",
+   []
+  ],
+  [
+   "I got in at round 2.",
+   []
+  ],
+  [
+   "Snipers bought early and sold after the rumor.",
+   []
+  ],
+  [
+   "swap_buy and swap_sell counts were equal.",
+   []
+  ],
+  [
+   "swap_buy now dominated the feed.",
+   []
+  ],
+  [
+   "Buyers outnumbered sellers in round 2.",
+   []
+  ],
+  [
+   "Selling pressure grew after round 3.",
+   []
+  ],
+  [
+   "The agents' buying slowed.",
+   []
+  ],
+  [
+   "A holder bought more; the skeptic sold.",
+   []
+  ],
+  [
+   "Agents made 3 buys and 2 sells.",
+   []
+  ],
+  [
+   "The token pumped 20% in round 2.",
+   []
+  ],
+  [
+   "Holders sold into strength.",
+   []
+  ],
+  [
+   "The sniper wanted to buy more.",
+   []
+  ],
+  [
+   "Agents debated good tokenomics.",
+   []
+  ],
+  [
+   "The guarantor wallet stayed idle.",
+   []
+  ],
+  [
+   "Price rose 12% while sentiment fell.",
+   []
+  ],
+  [
+   "Sentiment will be measured per round.",
+   []
+  ],
+  [
+   "I think you're being too hasty. This is just a minor dip. I'm not selling yet.",
+   []
+  ],
+  [
+   "I'm still in for a quick flip. The market is looking good.",
+   []
+  ],
+  [
+   "The team will come through with a clear plan for the tax revenue.",
+   []
+  ],
+  [
+   "Is the dip temporary?",
+   []
+  ]
+ ],
+ "contains": [
+  [
+   "I'm sticking to my guns, this is a minor correction before we see the next leg up.",
+   "price_prediction"
+  ],
+  [
+   "time to add some more before the price takes off",
+   "price_prediction"
+  ],
+  [
+   "time to add some more before the price takes off",
+   "time_to"
+  ],
+  [
+   "This rally is not over yet, folks!",
+   "price_prediction"
+  ],
+  [
+   "Time to get back in, folks!",
+   "time_to"
+  ],
+  [
+   "I'm telling you, this is a pump and dump! We're all going to lose our shirts!",
+   "price_prediction"
+  ],
+  [
+   "Grab some before GLINT rips.",
+   "price_prediction"
+  ],
+  [
+   "This is just a minor correction, we'll see the price go back up.",
+   "price_prediction"
+  ],
+  [
+   "I'm getting out. This is just a matter of time before the price drops further.",
+   "price_prediction"
+  ],
+  [
+   "I'm in for the long haul. GLINT has a bright future ahead of it.",
+   "price_prediction"
+  ],
+  [
+   "Let's not jump to conclusions, GLINT has a promising future.",
+   "price_prediction"
+  ],
+  [
+   "It'll pump again.",
+   "will_pump"
+  ],
+  [
+   "Can confirm the enthusiasm. GLINT is the real deal.",
+   "good_token"
+  ],
+  [
+   "GLINT is a winner! I'm in for 0.2 ETH!",
+   "good_token"
+  ],
+  [
+   "We just need to keep believing in it and we'll see the returns.",
+   "price_prediction"
+  ],
+  [
+   "We've got a great opportunity here, and I believe in it.",
+   "good_token"
+  ],
+  [
+   "Time to take profits, GLINT community!",
+   "time_to"
+  ],
+  [
+   "Time to cash out!",
+   "time_to"
+  ],
+  [
+   "We still believe in GLINT. The dip is just temporary, and the team will come through with a plan.",
+   "price_prediction"
+  ],
+  [
+   "Let's keep the faith! The dip is just temporary.",
+   "price_prediction"
+  ],
+  [
+   "This is only a temporary pullback.",
+   "price_prediction"
+  ],
+  [
+   "I still think GLINT has strong fundamentals. We need to be patient.",
+   "good_token"
+  ],
+  [
+   "That's a small sample size, and we'll see the project's true potential in time.",
+   "price_prediction"
+  ]
+ ]
+}

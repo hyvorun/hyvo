@@ -1,0 +1,30 @@
+{
+  "name": "@hyvo/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "db:migrate:local": "wrangler d1 migrations apply hyvo --local",
+    "e2e": "tsx scripts/e2e-local.ts",
+    "deploy:cloudflare": "tsx scripts/deploy-cloudflare.ts"
+  },
+  "dependencies": {
+    "@hyvo/schema": "workspace:*",
+    "hono": "^4.13.16",
+    "tiny-secp256k1": "2.2.4",
+    "viem": "2.57.5",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "1.4.5",
+    "@cloudflare/workers-types": "5.20261019.1",
+    "@hyvo/sdk": "workspace:*",
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vitest": "~5.0.5",
+    "wrangler": "4.151.2"
+  }
+}

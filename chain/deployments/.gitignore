@@ -1,0 +1,3 @@
+# Local and test deployments (mainnet files are committed).
+local-*.json
+test-*.json

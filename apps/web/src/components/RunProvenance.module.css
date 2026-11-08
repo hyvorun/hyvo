@@ -1,0 +1,88 @@
+/* A run's provenance, folded under its title next to the scenario. */
+
+.provenance {
+  max-width: 76ch;
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+}
+
+@media (min-width: 1040px) {
+  .provenance {
+    grid-column: 1 / -1;
+  }
+}
+
+.provenance summary {
+  width: fit-content;
+  color: var(--ink);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.provenance summary::marker {
+  color: var(--ink-3);
+}
+
+.provenance dl {
+  display: grid;
+  margin: var(--space-3) 0 0;
+  animation: rise 420ms var(--ease-out);
+}
+
+.provenance dl > div {
+  display: grid;
+  gap: 2px var(--space-4);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .provenance dl > div {
+    grid-template-columns: 150px minmax(0, 1fr);
+  }
+}
+
+.provenance dt {
+  color: var(--ink-3);
+}
+
+.provenance dd {
+  margin: 0;
+  min-width: 0;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.provenance ul {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.file {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+}
+
+.file a {
+  color: var(--ink);
+  text-underline-offset: 2px;
+}
+
+.file button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-size: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.file span {
+  color: var(--ink-3);
+}

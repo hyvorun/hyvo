@@ -1,0 +1,8 @@
+packages:
+  - apps/*
+  - packages/*
+
+# pnpm 11: dependencies allowed to run install scripts.
+allowBuilds:
+  esbuild: true
+  workerd: true

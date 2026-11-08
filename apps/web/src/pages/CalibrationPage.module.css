@@ -1,0 +1,210 @@
+.page {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 860px;
+  padding-top: var(--space-7);
+  min-width: 0;
+}
+
+.head {
+  display: grid;
+  gap: var(--space-3);
+  animation: rise 700ms var(--ease-out) both;
+}
+
+.head h1 {
+  font-size: var(--t-2xl);
+}
+
+.head p {
+  max-width: 68ch;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+.tally {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-4);
+  padding: var(--space-5) 0;
+  border-block: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .tally {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.tally div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.tally b {
+  font-size: var(--t-2xl);
+  font-weight: 500;
+}
+
+.tally span {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.small {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: 1.55;
+}
+
+.small a {
+  color: var(--ink-2);
+}
+
+.empty {
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+}
+
+.section {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.section h2 {
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.buckets {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+
+.buckets li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: var(--space-1) var(--space-3);
+  align-items: center;
+}
+
+.buckets li > :last-child {
+  grid-column: 2;
+  color: var(--ink-3);
+}
+
+@media (min-width: 640px) {
+  .buckets li {
+    grid-template-columns: 64px minmax(0, 1fr) 132px;
+  }
+
+  .buckets li > :last-child {
+    grid-column: auto;
+  }
+}
+
+.bucketBar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--raised);
+  overflow: hidden;
+}
+
+/* A hit and a miss weigh the same, in the two data colors of the product. */
+.hitFill {
+  background: var(--buy);
+}
+
+.missFill {
+  background: var(--sell);
+}
+
+.entries {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--rule);
+  min-width: 0;
+}
+
+.entry h3 {
+  font-size: var(--t-md);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+}
+
+.tag {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-xs);
+  box-shadow: inset 0 0 0 1px currentColor;
+  font-size: var(--t-xs);
+  font-weight: 500;
+}
+
+.tagHit {
+  color: var(--buy);
+}
+
+.tagMiss {
+  color: var(--sell);
+}
+
+.tagNeutral {
+  color: var(--ink-2);
+}
+
+.note {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.votes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.bar {
+  display: flex;
+  width: 120px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--raised);
+  overflow: hidden;
+}
+
+.yes {
+  background: var(--accent);
+}
+
+.no {
+  background: var(--ink-3);
+}

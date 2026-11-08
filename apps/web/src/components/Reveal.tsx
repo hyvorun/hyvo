@@ -1,0 +1,71 @@
+import { useEffect, useRef, useState, type CSSProperties, type ElementType, type ReactNode } from "react";
+import { prefersReducedMotion } from "./use-playback";
+
+/** True once the element has come into view. It stays true. */
+export function useInView<T extends Element>(threshold = 0.16): [React.RefObject<T | null>, boolean] {
+  const ref = useRef<T>(null);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || typeof IntersectionObserver === "undefined") {
+      setSeen(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry!.isIntersecting) {
+          setSeen(true);
+          observer.disconnect();
+        }
+      },
+      { threshold, rootMargin: "0px 0px -6% 0px" },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [threshold]);
+  return [ref, seen];
+}
+
+/** A block that rises into place when it scrolls into view; `index` staggers siblings. */
+export function Reveal({
+  as: Tag = "div",
+  index = 0,
+  className = "",
+  children,
+  ...rest
+}: {
+  as?: ElementType;
+  index?: number;
+  className?: string;
+  children: ReactNode;
+  [key: string]: unknown;
+}) {
+  const [ref, seen] = useInView<HTMLElement>();
+  return (
+    <Tag ref={ref} className={`reveal ${className}`} data-in={seen} style={{ "--i": index } as CSSProperties} {...rest}>
+      {children}
+    </Tag>
+  );
+}
+
+/** A number that counts up to its value the first time it is seen. */
+export function CountUp({ value, format }: { value: number; format: (value: number) => string }) {
+  const [ref, seen] = useInView<HTMLSpanElement>(0.2);
+  const [shown, setShown] = useState(value);
+  const started = useRef(false);
+  useEffect(() => {
+    if (!seen || started.current || prefersReducedMotion()) return;
+    started.current = true;
+    const begin = performance.now();
+    let raf = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - begin) / 1100);
+      const eased = 1 - (1 - t) ** 4;
+      setShown(t >= 1 ? value : value * eased);
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [seen, value]);
+  return <span ref={ref}>{format(shown)}</span>;
+}

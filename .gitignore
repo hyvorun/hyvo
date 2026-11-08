@@ -1,0 +1,53 @@
+# Secrets
+.env
+.env.*
+# Public build settings, no secrets: this file ends up in the site's bundle.
+!apps/web/.env.production
+!.env.example
+.dev.vars
+*.pem
+*.key
+
+# Node
+node_modules/
+dist/
+.wrangler/
+.turbo/
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# Foundry
+chain/out/
+chain/cache/
+chain/broadcast/*/31337/
+chain/lcov.info
+
+# Engine runtime state
+engine/.runs/
+engine/.anvil/
+*.db
+*.db-journal
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# OASIS import side effect (./log in the working directory)
+engine/log/
+engine/.oasis-logs/
+
+# Local agent settings for this machine
+.claude/settings.local.json
