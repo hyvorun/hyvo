@@ -51,6 +51,13 @@ a {
   text-underline-offset: 3px;
 }
 
+/* Links ease between colors; a part with its own transition keeps it. */
+:where(a) {
+  transition:
+    color var(--dur-hover) var(--ease),
+    text-decoration-color var(--dur-hover) var(--ease);
+}
+
 button {
   font: inherit;
   color: inherit;

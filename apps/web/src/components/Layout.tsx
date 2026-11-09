@@ -69,8 +69,12 @@ export function Layout() {
   };
 
   // A new page starts at the top, or at the section its #link names once that section has rendered
-  // (a lazy page needs a moment to load).
+  // (a lazy page needs a moment to load). A #link within the same page glides there (base.css makes
+  // scrolling smooth unless the viewer prefers reduced motion); a new page lands on it at once.
+  const lastPath = useRef<string | null>(null);
   useEffect(() => {
+    const samePage = lastPath.current === location.pathname;
+    lastPath.current = location.pathname;
     const id = decodeURIComponent(location.hash.slice(1));
     if (!id) {
       window.scrollTo({ top: 0, behavior: "instant" });
@@ -80,7 +84,7 @@ export function Layout() {
     let tries = 0;
     const seek = () => {
       const target = document.getElementById(id);
-      if (target) target.scrollIntoView({ block: "start" });
+      if (target) target.scrollIntoView(samePage ? { block: "start" } : { block: "start", behavior: "instant" });
       else if (++tries < 180) frame = requestAnimationFrame(seek);
       else window.scrollTo({ top: 0, behavior: "instant" });
     };
