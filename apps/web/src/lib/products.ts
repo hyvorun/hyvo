@@ -13,7 +13,7 @@ export type Gate = "always" | "oracle" | "payments" | "clone" | "read";
 /** The kinds of job a product does, in the order the products page shows them. */
 export const GROUPS = [
   { id: "simulate", name: "Simulate", line: "Try something on a private copy of the chain before it is real." },
-  { id: "verify", name: "Verify", line: "Check what a run did, and that nobody changed it since." },
+  { id: "verify", name: "Verify", line: "Check a run, or a token, against the chain itself rather than anyone's word." },
   { id: "build", name: "Build", line: "Use Hyvo from programs, bots and AI agents." },
   { id: "learn", name: "Learn", line: "Free tools for the arithmetic and the words around a launch." },
 ] as const;
@@ -58,6 +58,15 @@ export const PRODUCTS: Product[] = [
     to: "/oracle",
     group: "verify",
     gate: "oracle",
+  },
+  {
+    id: "check",
+    name: "Hyvo Check",
+    line: "A token's owner, the functions that could change it, where it trades, and what happens when someone buys it, sends it on and sells it back: read at one block, with the evidence.",
+    who: "Traders, holders",
+    to: "/check",
+    group: "verify",
+    gate: "always",
   },
   {
     id: "questions",

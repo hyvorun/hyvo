@@ -35,6 +35,7 @@ Status: **verified** (checked against an official source or on-chain) · **likel
 | 25 | How far back Rewind can fork | verified | a few days dependably on dRPC's free tier, further on and off; an archive RPC for more |
 | 26 | Unused prepaid balance | decision | no self-serve refund; by hand from `/admin` |
 | 27 | Publishing `@hyvo/sdk` to npm | decision | not published yet |
+| 28 | Hyvo Check: addresses and limits | verified | factories, hook and PoolManager read on-chain on every check; Blockscout optional (`blockscoutKey`) |
 
 ---
 
@@ -359,3 +360,70 @@ whether to offer withdrawals, and say so where people top up. Nothing changes un
 
 `packages/sdk` is built and tested in the repo. Publishing needs an npm account for the project; the package is `AGPL-3.0-or-later` like the rest of the repo unless item 1 is revisited.
 
+## 28. Hyvo Check: addresses and limits — verified
+
+`packages/check` (`@hyvo/check`) reads a token at one block and runs an exit simulation in one `eth_call`
+(`chain/src/probes/SellCheck.sol`, never deployed). Every address it uses, where it comes from, and how it was
+confirmed on-chain, with read-only calls to `https://robinhood.drpc.org` on 2026-11-09 (the router and factory reads at block
+109,837,577).
+
+| Contract | Address | Source | Confirmed on-chain |
+|---|---|---|---|
+| WETH | `0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73` | Robinhood Chain docs, Token Contracts (`docs.robinhood.com/chain/contracts`); item 5 | `Router02.WETH()`, `SwapRouter02.WETH9()` and `QuoterV2.WETH9()` return it |
+| USDG | `0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168` | item 4; Robinhood Token Contracts | Sourcify: EIP-1967 proxy, implementation `0x68184C449E1a8f34fA18d289737129FD27B66f8F` |
+| Uniswap V2 Router02 | `0x89e5DB8B5aA49aA85AC63f691524311AEB649eba` | Uniswap `deployments.json` (below); item 5 | |
+| Uniswap V2 Factory | `0x8bcEaA40B9AcdfAedF85AdF4FF01F5Ad6517937f` | Uniswap `deployments.json`; Uniswap v2 deployments page | `Router02.factory()` and `SwapRouter02.factoryV2()` return it. Read from the router on every check, not hardcoded |
+| Uniswap V3 SwapRouter02 | `0xCaf681a66D020601342297493863E78C959E5cb2` | Uniswap `deployments.json` | the Pons v1 factory's `getDexConfig(0).swapRouter` |
+| Uniswap V3 Factory | `0x1f7d7550B1b028f7571E69A784071F0205FD2EfA` | Uniswap `deployments.json` | `SwapRouter02.factory()`, `QuoterV2.factory()` and Pons v1 `getDexConfig(0).factory` return it. Read from SwapRouter02 on every check |
+| Uniswap V3 QuoterV2 | `0x33e885eD0Ec9bF04EcfB19341582aADCb4c8A9E7` | Uniswap `deployments.json` | its `factory()` and `WETH9()` match SwapRouter02's |
+| Uniswap V4 PoolManager | `0x8366a39CC670B4001A1121B8F6A443A643e40951` | Uniswap `deployments.json`; Uniswap v4 deployments page | the Pons v2 factory's and hook's `poolManager()` return it. Pons pools use the factory's answer on every check |
+| UniswapInterfaceMulticall | `0x282A3C4D320Cc7f0d5eaf56B8029e4B88338f0a3` | Uniswap `deployments.json` | its bytecode dispatches `multicall((address,uint256,bytes)[])` (`0x1749e1e3`); a live batch answered |
+| Pons v2 factory | `0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e` | item 5 | Sourcify exact match (`PonsV2LaunchFactory`) |
+| Pons v2 hook | `0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044` | item 5 | the factory's `memeHook()` returns it; Sourcify match (`PonsV2MemeHook`). Read from the factory on every check |
+| Pons v1 factory | `0xA5aAb3F0c6EeadF30Ef1D3Eb997108E976351feB` | item 5 | Sourcify exact match (`PonsLaunchFactory`) |
+
+Uniswap's list: `https://developers.uniswap.org/deployments.json` (read 2026-11-09), generated 2026-11-04 from `github.com/Uniswap/contracts`
+at commit `036160f`, every row above with status `active` for chain 4663.
+
+**Not used:** Aleph's registry named a V4 "UniversalRouter" `0xC6da9C87caE2fcecad79E22C398dE16BFAb0cFdA` and a V3 router
+`0x44e613593d7CC00164D790f2636aC2e2ED7dd292`, found by name on Blockscout. Neither is in Uniswap's list for chain 4663, so Hyvo
+Check does not use them.
+
+**Sources other than the chain.**
+
+- **Sourcify** (`https://sourcify.dev/server`, keyless): `GET /v2/contract/4663/<address>?fields=abi,deployment` answers 200 with
+  `match` `exact_match` (full) or `match` (partial), the ABI and the deployment (deployer, transaction, block), and 404 with `match: null`
+  when the contract is not verified. It answers browsers (`access-control-allow-origin: *`) and sends `Cache-Control: public,max-age=3600`.
+  Its rate limits were not checked.
+- **Blockscout** stays optional (item 24): `api.blockscout.com/4663/api/v2/...` answered `402 {"error":"Proceed with API key or make a X402
+  payment to continue"}` without a key on 2026-11-09. Hyvo Check calls it only with `blockscoutKey`, for holders, and as a second source
+  for verification and the deployer. The routes (`smart-contracts`, `tokens`, `tokens/<address>/holders`, `addresses/<address>`) are
+  Blockscout's standard v2 routes, which Aleph used on the explorer host in July 2026; **likely**, not tried with a key yet.
+- **dRPC** honors state overrides in `eth_call` (as does PublicNode), and answered the probe's 30M-gas call; its CORS preflight allows
+  `https://hyvo.run`.
+
+**Measured on 2026-11-09** (`pnpm --filter @hyvo/check check <address>`; 0.001 ETH; no Blockscout key): 7 to 10 JSON-RPC requests and 1 Sourcify
+request per token (2 for a proxy), 1 to 3.4 s.
+
+| Token | Venue found | Exit simulation |
+|---|---|---|
+| `0x8eee67a8aad993f15b4506975b38c52f6d3ce758` | Uniswap V2 pair with WETH | every step as quoted; round trip 0.59% |
+| `0x54cf6d6c466cb0cd72d113462746c674e546b274` | Pons v2 curve (fee 1%, creator tax 1%) | every step as the curve's math after fee and tax; round trip 3.95% |
+| `0xec243bbae17a826462b0bf006705feca0959c703` | Pons v2 curve (fee 1%, creator tax 2.89%) | as above; round trip 7.63% |
+| `0x51250b135174ca09450ec01c4aff73cf69dbb590` | Uniswap V4 pool with the Pons hook | every step as the swap delta; round trip 1.99% |
+| `0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168` (USDG) | Uniswap V2 pair with WETH | every step as quoted; round trip 0.6% |
+| `0xb895712c93d3a85372e90c7d0d11d3ead4e1c303` | none: its V3 pool holds no WETH and no in-range liquidity | skipped |
+| `0xa7bcbc1aae192fc60c5b18e67e0dce00532619f9` | a V4 pool outside Pons | skipped: not covered yet |
+
+Planted tokens, inside one `eth_call` (the research variants `TokenVariants.sol` in place of `0x8eee67a8…ce758`'s code, through the real Router02): a 5% transfer tax
+showed as 5.00% short on the buy, the transfer and the sell; a token that refuses transfers into its pair bought and sent normally, and its
+sell reverted with `Error("TransferHelper: TRANSFER_FROM_FAILED")`.
+
+**Limits.**
+
+- Not simulated yet: V4 pools outside Pons (their pool keys are not read), Pons launches quoted in another token (the factory approves USDG
+  as a pair token), launches between their curve and their V4 pool, and pools quoted in anything but ETH or WETH.
+- One block, one fresh sender, one amount: a token can behave differently for later blocks, other senders or larger amounts.
+- Proxies are followed through EIP-1967 and EIP-1167. USDG's implementation routes some calls through facets (`setFacet(bytes4,address)`), so
+  functions that live in a facet are not in its ABI.
+- Holders need a Blockscout key (item 24).

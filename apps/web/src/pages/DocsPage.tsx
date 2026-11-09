@@ -16,6 +16,7 @@ const SECTIONS = [
   ["ask", "Ask an agent"],
   ["dryrun", "Dry Run a contract"],
   ["rewind", "Rewind"],
+  ["cli", "Hyvo in your terminal"],
 ] as const;
 
 function Code({ children, label }: { children: string; label: string }) {
@@ -264,6 +265,59 @@ for (const finding of report.findings) console.log(finding.severity, finding.tit
     "agents": 50,
     "rounds": 10
   }'`}</Code>
+          </section>
+
+          <section id="cli" aria-labelledby="cli-title">
+            <h2 id="cli-title">Hyvo in your terminal</h2>
+            <p>
+              The <code className="mono">hyvo</code> command runs <Link to="/check">Hyvo Check</Link> on your own machine: the same reads and the same exit simulation,
+              straight from a Robinhood Chain endpoint. It also lists and verifies published runs. It needs no account and no key, never signs or sends anything,
+              and sends no telemetry. It will be on npm soon; until then, this is how it will run.
+            </p>
+            <Code label="Check a token, then keep an eye on it">{`npx hyvo check 0x…                  # facts with their evidence, and the exit simulation
+npx hyvo check 0x… --json           # the report as JSON, amounts as decimal strings
+npx hyvo watch 0x… --interval 300   # check again every 5 minutes, print what changed
+npx hyvo verify <runId>             # a run's hash, recomputed, against its commit on-chain`}</Code>
+            <dl className={styles.terms}>
+              <div>
+                <dt className="mono">check &lt;token&gt;</dt>
+                <dd>
+                  Every finding with its evidence, and the exit simulation. <code className="mono">--eth-in</code> sets what it buys with (0.001 ETH by default),{" "}
+                  <code className="mono">--block</code> the block to read at, <code className="mono">--rpc</code> your own endpoint.
+                </dd>
+              </div>
+              <div>
+                <dt className="mono">watch [&lt;token&gt;…]</dt>
+                <dd>
+                  Checks tokens again on an interval and prints what changed: a finding that moves between found and not found, the owner, the proxy&apos;s
+                  implementation, the supply or the venue.
+                </dd>
+              </div>
+              <div>
+                <dt className="mono">watchlist</dt>
+                <dd>The tokens watch follows, in a file on your machine.</dd>
+              </div>
+              <div>
+                <dt className="mono">runs</dt>
+                <dd>Recent published runs of the crowd simulation.</dd>
+              </div>
+              <div>
+                <dt className="mono">verify &lt;runId&gt;</dt>
+                <dd>Recomputes a run&apos;s hash and compares it with its commit on Robinhood Chain, as the oracle page does.</dd>
+              </div>
+              <div>
+                <dt className="mono">mcp</dt>
+                <dd>A local MCP server on stdio for AI agents, with one tool that checks a token and one that verifies a run.</dd>
+              </div>
+              <div>
+                <dt className="mono">config</dt>
+                <dd>Where it reads from: the RPC and the API.</dd>
+              </div>
+            </dl>
+            <p>
+              A check exits 0 whenever it made a report, whatever the report found, so a script never reads a verdict from the exit code. It exits 2 when no report
+              could be made and 64 on a usage error. Measured on-chain at one block. Not a trading signal.
+            </p>
           </section>
           <Disclaimer />
         </div>

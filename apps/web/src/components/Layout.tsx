@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router";
 import { OFFICIAL } from "../lib/official";
 import { Logomark } from "./Icons";
@@ -21,6 +21,18 @@ function readTheme(): Theme {
 export function Layout() {
   const [theme, setTheme] = useState<Theme>(readTheme);
   const location = useLocation();
+  const navRef = useRef<HTMLElement>(null);
+
+  // On a phone too narrow for every link, the nav scrolls sideways: bring the current page's link into it.
+  useEffect(() => {
+    const nav = navRef.current;
+    const active = nav?.querySelector<HTMLElement>("a.active");
+    if (!nav || !active || nav.scrollWidth <= nav.clientWidth) return;
+    const room = nav.getBoundingClientRect();
+    const link = active.getBoundingClientRect();
+    if (link.left < room.left) nav.scrollLeft -= room.left - link.left;
+    else if (link.right > room.right) nav.scrollLeft += link.right - room.right;
+  }, [location.pathname]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -63,11 +75,14 @@ export function Layout() {
         <div className={styles.bar}>
           <Link to="/" className={styles.mark} aria-label="Hyvo home" viewTransition>
             <Logomark />
-            Hyvo
+            <span className={styles.word}>Hyvo</span>
           </Link>
-          <nav className={styles.nav} aria-label="Main">
+          <nav ref={navRef} className={styles.nav} aria-label="Main">
             <NavLink to="/runs" className={styles.link} viewTransition>
               Runs
+            </NavLink>
+            <NavLink to="/check" className={styles.link} viewTransition>
+              Check
             </NavLink>
             <NavLink to="/tools" className={styles.link} viewTransition>
               Tools
@@ -133,6 +148,9 @@ export function Layout() {
           </Link>
           <Link to="/oracle" viewTransition>
             Oracle
+          </Link>
+          <Link to="/check" viewTransition>
+            Hyvo Check
           </Link>
           <Link to="/calibration" viewTransition>
             Calibration

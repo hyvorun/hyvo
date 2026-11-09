@@ -105,6 +105,27 @@ export function TrustPage() {
         </ul>
       </section>
 
+      <section className={styles.section} id="probe" aria-labelledby="probe-title">
+        <h2 id="probe-title">How Hyvo Check tries a sale</h2>
+        <div className={styles.prose}>
+          <p>
+            <Link to="/check">Hyvo Check</Link> tries a token&apos;s exit with a small test contract, SellCheck, that is never deployed. Your browser sends one
+            read-only call (<code className="mono">eth_call</code>) to a public Robinhood Chain endpoint, and for that call alone the contract&apos;s code sits at a
+            throwaway address with made-up ETH. Inside the call it buys the token, sends a tenth to a fresh address and sells the rest back, and when the call ends
+            nothing it did remains. Nothing is signed or sent, no wallet is connected, and no real ETH or token moves. Its source is{" "}
+            <code className="mono">chain/src/probes/SellCheck.sol</code> in{" "}
+            {SOURCE_URL ? (
+              <a href={SOURCE_URL} target="_blank" rel="noreferrer">
+                Hyvo&apos;s repository
+              </a>
+            ) : (
+              "Hyvo's repository"
+            )}
+            .
+          </p>
+        </div>
+      </section>
+
       <ChainSection />
 
       <section className={styles.section} aria-labelledby="limits">

@@ -140,13 +140,41 @@
   display: none;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 640px) {
   .bar {
     gap: var(--space-2);
   }
 
+  /* The links take the room that is left, and scroll sideways on a phone too narrow for all of them. */
+  .nav {
+    flex: 0 1 auto;
+    min-width: 0;
+    gap: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
   .link {
-    padding: 6px;
+    flex: none;
+    padding: 6px 4px;
+  }
+
+  /* Inside the link, so the scroller does not cut the ring off. */
+  .link:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .social {
+    padding: 0 6px;
+  }
+
+  .theme {
+    width: 30px;
   }
 
   .long,
@@ -160,6 +188,18 @@
 
   .end {
     gap: 2px;
+  }
+}
+
+/* On a phone the mark stands alone and gives its room to the links; its link keeps the name. */
+@media (max-width: 420px) {
+  .word {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 
@@ -181,9 +221,10 @@
   font-size: var(--t-xs);
 }
 
+/* The links wrap in their own column, so the text beside them keeps its width as the list grows. */
 @media (min-width: 720px) {
   .footer {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
     align-items: start;
   }
 }

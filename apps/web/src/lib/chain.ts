@@ -1,24 +1,20 @@
 /**
  * Robinhood Chain for the browser: the chain definition, RPC transports (tried in order) and the
- * few contract functions the app reads or calls. RPC URLs and the explorer default to the
- * verified public endpoints (docs/OPEN_ITEMS.md item 3) and can be overridden at build time with
- * VITE_RPC_URLS (comma-separated) and VITE_EXPLORER_URL, as the local end-to-end test does.
+ * few contract functions the app reads or calls. RPC URLs (lib/rpc-urls) and the explorer default
+ * to the verified public endpoints (docs/OPEN_ITEMS.md item 3) and can be overridden at build time
+ * with VITE_RPC_URLS (comma-separated) and VITE_EXPLORER_URL, as the local end-to-end test does.
  * VITE_ORACLE_ADDRESS pins the HyvoOracle address, so /oracle does not take it from the API.
  */
 import { createPublicClient, defineChain, fallback, http, parseAbi, type Hex, type PublicClient } from "viem";
 import { EXPLORER_URL } from "./explorer";
-
-// dRPC first: some ISPs block *.robinhood.com, and the official RPC is rate-limited.
-const DEFAULT_RPC_URLS = ["https://robinhood.drpc.org", "https://rpc.mainnet.chain.robinhood.com"];
+import { CONFIGURED_RPC_URLS, READ_RPC_URLS } from "./rpc-urls";
 
 export const CHAIN_ID = 4663;
 
-export const RPC_URLS: string[] = ((import.meta.env.VITE_RPC_URLS as string | undefined) ?? "")
-  .split(",")
-  .map((url) => url.trim())
-  .filter(Boolean);
+/** What VITE_RPC_URLS lists; empty when it is not set. */
+export const RPC_URLS: string[] = CONFIGURED_RPC_URLS;
 
-const rpcUrls = RPC_URLS.length > 0 ? RPC_URLS : DEFAULT_RPC_URLS;
+const rpcUrls = READ_RPC_URLS;
 
 /** The HyvoOracle this build checks against; empty until the contract is deployed. */
 export const PINNED_ORACLE = ((import.meta.env.VITE_ORACLE_ADDRESS as string | undefined) ?? "").trim();
