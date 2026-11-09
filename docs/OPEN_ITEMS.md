@@ -19,7 +19,7 @@ Status: **verified** (checked against an official source or on-chain) · **likel
 | 9 | `hyvo.run`, X handle | attached / decided | site at `hyvo.run`, API at `api.hyvo.run` (`apps/api/domains.json`); X `@Hyvorun` |
 | 10 | Report agent vs spec §6.7 | decision | Hyvo report agent modeled on ReportAgent |
 | 11 | LLM for real-model runs | resolved | Workers AI through the Worker; no key |
-| 12 | Mainnet deploy: owner, attester, treasury | deployed | `chain/deployments/4663.json`; owner and treasury still to move to the founder's wallet |
+| 12 | Mainnet deploy: owner, attester, treasury | done | owner and treasury moved to the founder's wallet on 2026-11-09 |
 | 13 | Cloudflare deploys | resolved | live on the free plans since 2026-11-04 |
 | 14 | Some ISPs block `*.robinhood.com` | verified | RPC fallbacks everywhere |
 | 15 | Payment finality on Robinhood Chain | decision | `PAYMENT_CONFIRMATIONS=20` (about 2 s) |
@@ -192,7 +192,13 @@ Founder's decision of 2026-11-05: a new wallet made for this deploys the contrac
 treasury. Ownership and the treasury then move to the wallet the founder launches the token with, and a Safe follows
 later. Both contracts are `Ownable2Step`: the current owner calls `transferOwnership`, the new owner calls
 `acceptOwnership`; `PaymentRouter.setTreasury` changes the treasury in one call. The wallet's key is in `chain/.env`
-(gitignored), and paid runs stay closed until these moves are done. The founder's wallet address is still `PLACEHOLDER`.
+(gitignored), and paid runs stay closed until these moves are done.
+
+**Done, 2026-11-09:** the founder's launch wallet is `0x3F818f145e613bBe4447b8B8e5F11419d75CD50e`. The deployer set PaymentRouter's
+treasury to it and offered both contracts' ownership (`pnpm --filter @hyvo/api move-ownership`); the founder accepted both, and the chain
+shows him as owner of PaymentRouter and HyvoOracle with nothing pending. HYVO launched on Pons V2 from that wallet at
+`0xA274A3E2636926390D6b47dAC9a2e11206f96808` (name Hyvo, symbol HYVO, paired with ETH, creator tax 1.5%), and `token:go-live` switched
+hyvo.run to it the same evening: holder benefits from 1,000,000 HYVO held 24 hours, and paid runs open.
 
 Deployed on 2026-11-05, sources verified with an exact match on Sourcify, which Blockscout shows:
 
