@@ -18,6 +18,7 @@ import {
   type StockReport,
 } from "@hyvo/stocks";
 import { createPublicClient, fallback, http, type Address, type PublicClient } from "viem";
+import { timedFetch } from "./commands/common.js";
 import type { Resolved } from "./config.js";
 import { checkDisclaimer } from "./format/check.js";
 import { toJson } from "./requests.js";
@@ -83,9 +84,17 @@ export interface StockFacts {
   session: SessionNow;
 }
 
-/** One contract read as a stock token, with its Chainlink feed found through Chainlink's directory. */
-export async function stockFacts(client: PublicClient, target: { address: Address; ticker: string | null }, fetchFn: typeof fetch): Promise<StockFacts> {
-  const report = await stockReport(client, target.address, { directory: () => fetchFeedDirectory(fetchFn) });
+/**
+ * One contract read as a stock token, with its Chainlink feed found through Chainlink's directory. The directory
+ * gets the same time limit as every other read, so a host that never answers cannot hold the command.
+ */
+export async function stockFacts(
+  client: PublicClient,
+  target: { address: Address; ticker: string | null },
+  fetchFn: typeof fetch,
+  timeoutMs = TIMEOUT_MS,
+): Promise<StockFacts> {
+  const report = await stockReport(client, target.address, { directory: () => fetchFeedDirectory(timedFetch(fetchFn, timeoutMs)) });
   return { report, ticker: target.ticker, session: usEquitySession(new Date(report.reading.blockTime * 1000)) };
 }
 

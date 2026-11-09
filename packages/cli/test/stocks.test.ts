@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { FEED_DIRECTORY_URL, SNAPSHOT } from "@hyvo/stocks";
 import { describe, expect, it } from "vitest";
 import { hasBannedWords } from "../../check/src/output/copy";
+import { stockFacts, stocksClient } from "../src/stocks";
 import { run, testContext, type Route } from "./helpers";
 
 const RPC = "https://rpc.test";
@@ -147,6 +148,25 @@ describe("hyvo stocks <ticker|address>", () => {
     expect(code).toBe(2);
     expect(err).toMatch(/^hyvo: the token could not be read: /);
     expect(err.split("\n").filter(Boolean)).toHaveLength(1);
+  });
+});
+
+describe("stockFacts", () => {
+  it("gives up on Chainlink's feed directory after its time limit, and keeps what the chain said", async () => {
+    const { route } = replay("rpc-nvda.json");
+    // The directory never answers: only the request's signal can end it.
+    const fetchFn = (async (input: string | URL | Request, init?: RequestInit) => {
+      const url = new URL(typeof input === "string" ? input : input instanceof URL ? input.href : input.url);
+      if (url.href === FEED_DIRECTORY_URL) {
+        return new Promise<Response>((_resolve, reject) => init?.signal?.addEventListener("abort", () => reject(init.signal!.reason)));
+      }
+      const answer = route(url, typeof init?.body === "string" ? init.body : undefined)!;
+      return new Response(JSON.stringify(answer.body), { status: 200, headers: { "content-type": "application/json" } });
+    }) as typeof fetch;
+    const client = stocksClient({ url: RPC, from: "option" }, fetchFn);
+    const facts = await stockFacts(client, { address: NVDA.address, ticker: "NVDA" }, fetchFn, 50);
+    expect(facts.report.verdict.kind).toBe("registered");
+    expect(facts.report.feed).toMatchObject({ kind: "directory-failed" });
   });
 });
 
