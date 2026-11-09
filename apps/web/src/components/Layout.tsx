@@ -206,6 +206,12 @@ export function Layout() {
           <Link to="/launches" viewTransition>
             Launches
           </Link>
+          <Link to="/watchlist" viewTransition>
+            Watchlist
+          </Link>
+          <Link to="/track" viewTransition>
+            Track
+          </Link>
           <Link to="/stocks" viewTransition>
             Stocks
           </Link>

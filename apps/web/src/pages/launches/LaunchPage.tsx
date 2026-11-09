@@ -26,6 +26,7 @@ import { tokenFromPath } from "../../lib/launches";
 import { useDescription, useTitle } from "../../lib/use-title";
 import { Age, Amount, BlockLink, pairLabel, Provenance, Towards } from "./parts";
 import { useLaunch, type LaunchState } from "./use-launches";
+import { WatchButton } from "./WatchButton";
 import styles from "./Launches.module.css";
 
 /** One Pons launch: the factory's record and its curve, read at one block, and its last hour of trades. */
@@ -97,6 +98,7 @@ function Detail({ detail, state, onAgain }: { detail: LaunchDetail; state: Launc
             Launched <Age at={detail.launchedAt} now={now} /> ago
           </li>
         </ul>
+        <WatchButton token={detail.token} symbol={detail.symbol} />
         <div className={styles.status}>
           <Provenance reads={[detail.read]} served={state.served}>
             {" "}

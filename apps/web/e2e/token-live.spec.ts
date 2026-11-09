@@ -74,7 +74,7 @@ test("/token shows the official address, a copy button, Hyvo's pages for it and 
   await expect(status.getByRole("button", { name: "Copy the address" })).toBeVisible({ timeout: 4_000 });
 
   const holding = main.getByRole("region", { name: "What holding it does" });
-  await expect(holding.getByRole("listitem")).toHaveCount(3);
+  await expect(holding.getByRole("listitem")).toHaveCount(6);
   await expect(holding.getByText("2 free runs")).toBeVisible();
   await expect(holding.getByRole("heading", { name: "Who counts as a holder" })).toBeVisible();
   await expect(holding.getByText(RULE)).toBeVisible();

@@ -5,7 +5,7 @@ import { CountUp } from "../components/motion-data/CountUp";
 import { Copied } from "../components/motion-data/Copied";
 import { Decode } from "../components/motion-data/Decode";
 import { Reveal } from "../components/Reveal";
-import { HOLDER_BENEFITS as BENEFITS, HOLDER_RULE_UNSET, PLANNED_RULE, fetchHolderTerms, holderRule } from "../lib/holder";
+import { HOLDER_BENEFITS as BENEFITS, HOLDER_RULE_UNSET, HOLDER_UTILITIES, PLANNED_RULE, fetchHolderTerms, holderRule } from "../lib/holder";
 import { HYVO_TOKEN, ONLY_TOKEN, type OfficialToken } from "../lib/official";
 import { useAsync } from "../lib/use-async";
 import { useDescription, useTitle } from "../lib/use-title";
@@ -21,7 +21,8 @@ const PLANNED: { name: string; line: string }[] = [
 ];
 
 const COMING = "A HYVO token is coming. Holding it will bring free runs, a discount and a place ahead in the queue.";
-const LIVE = "HYVO is live on Robinhood Chain. Holding it brings free runs, a discount and a place ahead in the queue.";
+const LIVE =
+  "HYVO is live on Robinhood Chain. Holding it brings free runs, a discount, a place ahead in the queue, the board live every 10 seconds, a watchlist kept with your account and 25 tracked wallets.";
 
 /**
  * The HYVO token. Before the launch: that it is coming, and that no token is Hyvo's yet. After it:
@@ -71,6 +72,17 @@ export function TokenPage() {
             <b>Ahead in the queue</b>
             <span>Your runs start before runs that are waiting without it.</span>
           </li>
+          {HOLDER_UTILITIES.map((utility) => (
+            <li key={utility.name}>
+              <b>{utility.name}</b>
+              <span>
+                {utility.line}{" "}
+                <Link to={utility.to} viewTransition>
+                  Open it
+                </Link>
+              </span>
+            </li>
+          ))}
         </Reveal>
         {token ? <HolderRule /> : <p className={styles.muted}>{PLANNED_RULE}</p>}
       </section>
