@@ -1,5 +1,6 @@
 /** What makes the Worker fit the Workers Free plan: secp256k1 in WebAssembly, LLM through the AI binding. */
 import { env } from "cloudflare:test";
+import { HealthResponse, runPriceUsd } from "@hyvo/schema";
 import { hashMessage, keccak256, parseSignature, recoverAddress as viemRecover, type Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { afterEach, describe, expect, it } from "vitest";
@@ -76,6 +77,18 @@ describe("the largest run on the free LLM allowance", () => {
     expect(() => checkDailyCap(cfg, quoteRun(cfg, { agents: 84, rounds: 10 }))).not.toThrow();
     expect(() => checkDailyCap(cfg, quoteRun(cfg, { agents: 85, rounds: 10 }))).toThrow(/daily limit/);
     expect(quoteRun(cfg, { agents: 50, rounds: 10 })).toMatchObject({ priceUsd: 1, estimatedCostUsd: 0.033, maxCostUsd: 0.066 });
+  });
+
+  it("is priced on a page from /v1/health exactly as the API charges it", async () => {
+    for (const target of [free, env as Env, { ...env, PRICE_STEP_USD: "0.25", PRICE_FLOOR_USD: "0.5" } as Env]) {
+      const health = HealthResponse.parse(await (await app.request("https://api.test/v1/health", {}, target)).json());
+      const cfg = config(target);
+      for (const size of [{ agents: 4, rounds: 1 }, { agents: 12, rounds: 8 }, { agents: 50, rounds: 10 }, { agents: 84, rounds: 10 }, { agents: 2000, rounds: 7 }]) {
+        for (const discountBps of [0, 2000, 10_000]) {
+          expect(runPriceUsd(health.pricing!, size, discountBps)).toBe(quoteRun(cfg, size, discountBps).priceUsd);
+        }
+      }
+    }
   });
 });
 

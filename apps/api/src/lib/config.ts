@@ -2,9 +2,10 @@
  * Typed configuration from the Worker's vars (wrangler.jsonc) and secrets. A feature whose
  * addresses or RPC are missing is off rather than half-working: payments need RPC_URLS,
  * PAYMENT_ROUTER_ADDRESS and USDG_ADDRESS; oracle commits need RPC_URLS, ORACLE_ADDRESS and
- * ATTESTER_PRIVATE_KEY; holder benefits need RPC_URLS and HYVO_TOKEN_ADDRESS.
+ * ATTESTER_PRIVATE_KEY; holder benefits need RPC_URLS, HYVO_TOKEN_ADDRESS and a HOLDER_MIN above 0, since with a
+ * minimum of 0 no wallet could ever qualify (lib/holder.ts).
  */
-import { getAddress, isAddress, parseUnits, type Address, type Hex } from "viem";
+import { formatUnits, getAddress, isAddress, parseUnits, type Address, type Hex } from "viem";
 import type { Env } from "../env";
 
 export interface Token {
@@ -49,7 +50,9 @@ export interface Config {
   questions: { minDelayS: number; maxDelayS: number };
   sizes: { minAgents: number; maxAgents: number; minRounds: number; maxRounds: number; maxRunDecisions: number; batchSize: number };
   holder: {
+    /** HOLDER_MIN in the token's base units; 0 when it is unset or not a decimal number. */
     min: bigint;
+    /** The same in whole tokens, as a plain decimal string: "1000", "2.5". */
     minText: string;
     discountBps: number;
     freeRunsPerMonth: number;
@@ -78,7 +81,8 @@ function load(env: Env): Config {
   const hyvoDecimals = int(env.HYVO_TOKEN_DECIMALS, 18);
   const key = (env.ATTESTER_PRIVATE_KEY ?? "").trim();
   const attesterKey = /^0x[0-9a-fA-F]{64}$/.test(key) ? (key as Hex) : null;
-  const holderMin = (env.HOLDER_MIN ?? "").trim() || "0";
+  const holderMinText = (env.HOLDER_MIN ?? "").trim();
+  const holderMin = /^[0-9]+(\.[0-9]+)?$/.test(holderMinText) ? parseUnits(holderMinText, hyvoDecimals) : 0n;
   const oracle = address(env.ORACLE_ADDRESS);
   const router = address(env.PAYMENT_ROUTER_ADDRESS);
   const hasRpc = rpcUrls.length > 0;
@@ -122,8 +126,8 @@ function load(env: Env): Config {
       batchSize: int(env.BATCH_SIZE, 10),
     },
     holder: {
-      min: /^[0-9]+(\.[0-9]+)?$/.test(holderMin) ? parseUnits(holderMin, hyvoDecimals) : 0n,
-      minText: holderMin,
+      min: holderMin,
+      minText: formatUnits(holderMin, hyvoDecimals),
       discountBps: Math.min(10_000, int(env.HOLDER_DISCOUNT_BPS, 0)),
       freeRunsPerMonth: int(env.FREE_RUNS_PER_MONTH, 0),
       freeRunMaxAgents: int(env.FREE_RUN_MAX_AGENTS, 50),
@@ -138,7 +142,7 @@ function load(env: Env): Config {
     features: {
       payments: hasRpc && router !== null && usdgAddress !== null,
       oracle: hasRpc && oracle !== null && attesterKey !== null,
-      holder: hasRpc && hyvoAddress !== null,
+      holder: hasRpc && hyvoAddress !== null && holderMin > 0n,
       clone: env.CLONES_ENABLED === "1",
     },
   };

@@ -4,6 +4,7 @@
  */
 import { z } from "zod";
 import { MixInput, QuestionInput, RewindInput, ScenarioInput } from "./jobs";
+import { PriceTerms } from "./pricing";
 import { Address, AgentId, CrowdExpectation, DISCLAIMER, Hash32, PersonaMix, RunId, RunStatus, StopReason, Timestamp } from "./run";
 
 export const RunSummary = z.strictObject({
@@ -77,6 +78,9 @@ export const ErrorResponse = z.strictObject({
   error: z.strictObject({ code: z.string(), message: z.string() }),
 });
 
+/** Whole tokens as a decimal string: "1000", "2.5". */
+const DecimalText = z.string().regex(/^[0-9]+(\.[0-9]+)?$/);
+
 export const HealthResponse = z.strictObject({
   ok: z.literal(true),
   version: z.string(),
@@ -90,6 +94,16 @@ export const HealthResponse = z.strictObject({
     maxRounds: z.int(),
     maxDecisions: z.int().nonnegative(),
   }),
+  /**
+   * Holder benefits, or null while they are off: a wallet qualifies holding at least `min` tokens (whole tokens, a
+   * decimal string) both now and `heldForSeconds` ago. Missing from an API older than the field.
+   */
+  holder: z
+    .strictObject({ min: DecimalText, decimals: z.int().min(0).max(255), heldForSeconds: z.int().positive() })
+    .nullable()
+    .optional(),
+  /** The terms every run's price comes from (`runPriceUsd`), so a page can show it before anything is paid. */
+  pricing: PriceTerms.optional(),
 });
 
 /** A `RunSummary` as derived from `run.json`, before the API adds `publishedAt` and `featured`. */

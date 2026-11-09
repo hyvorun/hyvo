@@ -11,6 +11,7 @@ import type { AppEnv, Env } from "./env";
 import { nowS } from "./lib/clock";
 import { config, webOrigins } from "./lib/config";
 import { ApiError, errorResponse } from "./lib/errors";
+import { holderRequirement } from "./lib/holder";
 import { maxDecisions } from "./lib/pricing";
 import { auth, me } from "./routes/account";
 import { admin } from "./routes/admin";
@@ -43,11 +44,14 @@ app.use(
 app.get("/v1/health", (c) => {
   const cfg = config(c.env);
   const { minAgents, maxAgents, minRounds, maxRounds } = cfg.sizes;
+  const { multiplier, floorUsd, stepUsd, costPerAgentRoundUsd, reportCostUsd } = cfg.pricing;
   return c.json({
     ok: true as const,
     version: c.env.API_VERSION,
     features: cfg.features,
     limits: { minAgents, maxAgents, minRounds, maxRounds, maxDecisions: maxDecisions(cfg) },
+    holder: holderRequirement(cfg),
+    pricing: { multiplier, floorUsd, stepUsd, costPerAgentRoundUsd, reportCostUsd },
   });
 });
 app.route("/v1/auth", auth);

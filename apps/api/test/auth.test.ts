@@ -127,6 +127,15 @@ describe("holder status", () => {
     expect(me.holder).toMatchObject({ enabled: false, eligible: false, freeRunsLeft: 0, discountBps: 0 });
   });
 
+  it("is off with a minimum of 0, since no wallet could qualify", async () => {
+    const target = chainEnv({ HOLDER_MIN: "0" });
+    const chain = new FakeChain(() => NOW).install();
+    chain.balances.set(account(KEYS.user).address.toLowerCase(), { now: 5_000n * 10n ** 18n, past: 5_000n * 10n ** 18n });
+    const headers = await signIn(target, KEYS.user, NOW);
+    const me = MeResponse.parse(await (await call(target, "/v1/me", { headers })).json());
+    expect(me.holder).toMatchObject({ enabled: false, eligible: false, minBalance: "0", freeRunsLeft: 0, discountBps: 0 });
+  });
+
   it("needs the minimum now and 24 h ago", async () => {
     const target = chainEnv();
     const chain = new FakeChain(() => NOW).install();
