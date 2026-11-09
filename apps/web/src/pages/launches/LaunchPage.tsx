@@ -16,6 +16,9 @@ import {
 import { useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router";
 import { Arrow } from "../../components/Icons";
+import { CountUp } from "../../components/motion-data/CountUp";
+import { Decode } from "../../components/motion-data/Decode";
+import { Reveal } from "../../components/Reveal";
 import { Failure } from "../../components/States";
 import { addressUrl, tokenUrl, txUrl } from "../../lib/explorer";
 import { tokenFromPath } from "../../lib/launches";
@@ -199,8 +202,8 @@ function Trades({ detail, state }: { detail: LaunchDetail; state: LaunchState })
         <>
           {trades.summary ? (
             <dl className={styles.ledger}>
-              <Fact label="Trades" value={<span className="num">{trades.summary.trades}</span>} note={`${trades.summary.buys} buys and ${trades.summary.sells} sells.`} />
-              <Fact label="Traders" value={<span className="num">{trades.summary.traders}</span>} note="Different addresses that received the tokens or the pair asset." />
+              <Fact label="Trades" value={<span className="num"><CountUp value={trades.summary.trades} format={String} /></span>} note={`${trades.summary.buys} buys and ${trades.summary.sells} sells.`} />
+              <Fact label="Traders" value={<span className="num"><CountUp value={trades.summary.traders} format={String} /></span>} note="Different addresses that received the tokens or the pair asset." />
               <Fact label="Traded" value={<Amount value={trades.summary.volume} asset={detail.pair} />} note="Before fee and tax." />
               {trades.summary.tax > 0n && <Fact label="Creator tax paid" value={<Amount value={trades.summary.tax} asset={detail.pair} />} />}
             </dl>
@@ -210,11 +213,11 @@ function Trades({ detail, state }: { detail: LaunchDetail; state: LaunchState })
           {recent.length > 0 && (
             <>
               <h3 className={styles.subhead}>Latest trades</h3>
-              <ol className={styles.trades}>
+              <Reveal as="ol" className={`${styles.trades} stagger`}>
                 {recent.map((trade) => (
                   <TradeRow key={`${trade.txHash}:${trade.logIndex}`} trade={trade} pair={pair} decimals={detail.pair.decimals} now={detail.read.timestamp} />
                 ))}
-              </ol>
+              </Reveal>
             </>
           )}
           {trades.fromBlock !== null && trades.toBlock !== null && (
@@ -240,7 +243,7 @@ function TradeRow({ trade, pair, decimals, now }: { trade: Trade; pair: string; 
       </span>
       <span className="mono" title={trade.trader}>
         <span className="visually-hidden">Trader </span>
-        {shortAddress(trade.trader)}
+        <Decode text={shortAddress(trade.trader)} />
       </span>
       <a className={styles.when} href={txUrl(trade.txHash)} target="_blank" rel="noreferrer" title={`Transaction ${trade.txHash}`}>
         {trade.timestamp ? (
@@ -287,8 +290,12 @@ function AddressValue({ address, href }: { address: string; href: string }) {
   return (
     <span className={styles.address}>
       <a className="mono" href={href} target="_blank" rel="noreferrer" title={address}>
-        <span className={styles.wide}>{address}</span>
-        <span className={styles.narrow}>{shortAddress(address, 6, 4)}</span>
+        <span className={styles.wide}>
+          <Decode text={address} duration={900} />
+        </span>
+        <span className={styles.narrow}>
+          <Decode text={shortAddress(address, 6, 4)} />
+        </span>
       </a>
       <button
         type="button"

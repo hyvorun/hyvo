@@ -27,6 +27,8 @@ import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import type { Address } from "viem";
 import { Arrow, CheckMark } from "../../components/Icons";
+import { Decode } from "../../components/motion-data/Decode";
+import { Reveal } from "../../components/Reveal";
 import { Failure } from "../../components/States";
 import { addressUrl, txUrl } from "../../lib/explorer";
 import { shortHash } from "../../lib/format";
@@ -158,7 +160,9 @@ function AddressRow({ address }: { address: Address }) {
   };
   return (
     <div className={styles.addressRow}>
-      <code className="mono">{address}</code>
+      <code className="mono">
+        <Decode text={address} duration={900} />
+      </code>
       <button type="button" className={styles.copy} onClick={copy} aria-label="Copy the contract address">
         {copied ? "Copied" : "Copy"}
       </button>
@@ -690,11 +694,11 @@ function HistoryPanel({ report }: { report: StockReport }) {
       ) : updates.length === 0 ? (
         <p>None up to block {block(report.snapshot.block)}: the multiplier has been 1.0 since the token was deployed.</p>
       ) : (
-        <ol className={styles.history} reversed>
+        <Reveal as="ol" className={`${styles.history} stagger`} reversed>
           {[...rows].reverse().map(({ update, replaced }) => (
             <HistoryRow key={`${update.block}-${update.tx}`} update={update} replaced={replaced} now={report.reading.blockTime} />
           ))}
-        </ol>
+        </Reveal>
       )}
       {changedAfterScan && (
         <p className={styles.note}>

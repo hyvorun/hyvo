@@ -10,6 +10,9 @@ import {
 } from "@hyvo/stocks";
 import { useDeferredValue, useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
+import { CountUp } from "../../components/motion-data/CountUp";
+import { Decode } from "../../components/motion-data/Decode";
+import { Reveal } from "../../components/Reveal";
 import { addressUrl } from "../../lib/explorer";
 import { shortHash } from "../../lib/format";
 import { loadFactoryCount } from "../../lib/stocks";
@@ -148,7 +151,7 @@ export function StocksPage() {
 /** The first rows, alphabetically, until asked for all; every match while filtering. */
 function TokenList({ filter }: { filter: string }) {
   const [showAll, setShowAll] = useState(false);
-  const listRef = useRef<HTMLUListElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const reveal = useRef(false);
   const filtering = filter.trim() !== "";
   const tokens = filtering ? searchSnapshot(filter) : ALPHABETICAL;
@@ -164,7 +167,15 @@ function TokenList({ filter }: { filter: string }) {
   return (
     <section className={styles.listSection} aria-labelledby="stocks-list">
       <div className={styles.listHead}>
-        <h2 id="stocks-list">{filtering ? `${tokens.length} of ${TOTAL} stock tokens` : `${TOTAL} stock tokens`}</h2>
+        <h2 id="stocks-list">
+          {filtering ? (
+            `${tokens.length} of ${TOTAL} stock tokens`
+          ) : (
+            <>
+              <CountUp value={TOTAL} format={String} /> stock tokens
+            </>
+          )}
+        </h2>
         <p>
           Every token the Stock Token factory deployed up to block {SNAPSHOT.block.toLocaleString("en-US")} ({SCAN_DAY}). Names leave out the “• Robinhood
           Token” each of them ends with.
@@ -172,14 +183,14 @@ function TokenList({ filter }: { filter: string }) {
         <FactoryCheck />
       </div>
       {tokens.length > 0 ? (
-        <div>
+        <div ref={listRef}>
           <div className={styles.columns} aria-hidden="true">
             <span>Ticker</span>
             <span>Name</span>
             <span>Contract</span>
             <span>Multiplier changes</span>
           </div>
-          <ul className={styles.list} ref={listRef}>
+          <Reveal as="ul" className={`${styles.list} stagger`}>
             {shown.map((token) => (
               <li key={token.address}>
                 <Link to={`/stocks/${token.symbol}`} viewTransition>
@@ -187,7 +198,8 @@ function TokenList({ filter }: { filter: string }) {
                   <span className={styles.name}>{shortName(token.name)}</span>
                   <span className={`${styles.short} mono`}>
                     <span className="visually-hidden">Contract </span>
-                    {shortHash(token.address, 6, 4)}
+                    {/* Addresses decode as the list first comes in, not on every keystroke of a filter. */}
+                    {filtering ? shortHash(token.address, 6, 4) : <Decode text={shortHash(token.address, 6, 4)} />}
                   </span>
                   <span className={`${styles.changes} num`}>
                     {token.multiplierUpdates.length === 0 ? (
@@ -202,7 +214,7 @@ function TokenList({ filter }: { filter: string }) {
                 </Link>
               </li>
             ))}
-          </ul>
+          </Reveal>
           {shown.length < tokens.length && (
             <div className={styles.more}>
               <button
