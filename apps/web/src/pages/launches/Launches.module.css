@@ -1129,3 +1129,18 @@
   align-items: center;
   gap: var(--space-4) var(--space-6);
 }
+
+/* CSS modules scope keyframe names, so this module keeps its own copy of the shared rise. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* And of the shared fade. */
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
