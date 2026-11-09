@@ -1,6 +1,6 @@
 import { Link, useRouteError } from "react-router";
 import { Failure } from "../components/States";
-import { Arrow } from "../components/Icons";
+import { Arrow, Logomark } from "../components/Icons";
 import { useTitle } from "../lib/use-title";
 import styles from "./pages.module.css";
 
@@ -27,6 +27,9 @@ export function NotFoundPage() {
   useTitle("Page not found");
   return (
     <section className={styles.lost}>
+      <span className={styles.lostSeal}>
+        <Logomark size={44} />
+      </span>
       <header className={styles.pageHead}>
         <h1>This page does not exist</h1>
         <p>The link may be mistyped, or the page has moved.</p>

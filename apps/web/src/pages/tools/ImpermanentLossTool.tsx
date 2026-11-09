@@ -1,9 +1,11 @@
+import { Tween } from "../../components/motion-data/CountUp";
 import { useWidth } from "../../components/use-playback";
 import { formatAmount, formatShare, impermanentLoss, parseAmount, positionValues, PRICE_MOVES } from "../../lib/calc";
 import { ArithmeticNote, NumberField, ToolPage, useDescription, useQueryState } from "./shared";
 import styles from "./Tools.module.css";
 
 const DEFAULTS = { move: "100", deposit: "10" };
+const signedShare = (value: number) => formatShare(value, true);
 /** The chart's price range, as multiples of the starting price, on a log scale. */
 const LOW = 0.1;
 const HIGH = 10;
@@ -54,22 +56,30 @@ export function ImpermanentLossTool() {
             <>
               <div className={styles.lead}>
                 <span>Against holding</span>
-                <b className={`num ${loss < -0.00005 ? styles.down : ""}`}>{formatShare(loss, true)}</b>
+                <b className={`num ${loss < -0.00005 ? styles.down : ""}`}>
+                  <Tween value={loss} format={signedShare} />
+                </b>
                 <small>The position is worth this much less than the same two assets held, before fees.</small>
               </div>
               {values && (
                 <dl className={styles.stats}>
                   <div className={styles.stat}>
                     <dt>Held</dt>
-                    <dd className="num">{formatAmount(values.held)}</dd>
+                    <dd className="num">
+                      <Tween value={values.held} format={formatAmount} />
+                    </dd>
                   </div>
                   <div className={styles.stat}>
                     <dt>In the pool</dt>
-                    <dd className="num">{formatAmount(values.pooled)}</dd>
+                    <dd className="num">
+                      <Tween value={values.pooled} format={formatAmount} />
+                    </dd>
                   </div>
                   <div className={styles.stat}>
                     <dt>Difference</dt>
-                    <dd className="num">{formatAmount(values.pooled - values.held)}</dd>
+                    <dd className="num">
+                      <Tween value={values.pooled - values.held} format={formatAmount} />
+                    </dd>
                   </div>
                 </dl>
               )}

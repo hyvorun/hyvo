@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { Tween } from "../../components/motion-data/CountUp";
 import { formatAmount, formatShare, parseAmount } from "../../lib/calc";
 import { ArithmeticNote, NumberField, ToolPage, useDescription, useQueryState } from "./shared";
 import styles from "./Tools.module.css";
@@ -69,7 +70,9 @@ export function MarketCapTool() {
             <>
               <div className={styles.lead}>
                 <span>Market cap</span>
-                <b className="num">{formatAmount(marketCap)}</b>
+                <b className="num">
+                  <Tween value={marketCap} format={formatAmount} />
+                </b>
                 <small>
                   {formatAmount(circulating)} circulating tokens at {formatAmount(price)} each
                 </small>
@@ -78,14 +81,14 @@ export function MarketCapTool() {
                 <div className={styles.stat}>
                   <dt>Fully diluted value</dt>
                   <dd className="num">
-                    {formatAmount(fdv)}
+                    <Tween value={fdv} format={formatAmount} />
                     <small>the whole supply at this price</small>
                   </dd>
                 </div>
                 <div className={styles.stat}>
                   <dt>Circulating</dt>
                   <dd className="num">
-                    {formatShare(circulating / supply)}
+                    <Tween value={circulating / supply} format={formatShare} />
                     <small>of the total supply</small>
                   </dd>
                 </div>
@@ -93,12 +96,14 @@ export function MarketCapTool() {
                   <>
                     <div className={styles.stat}>
                       <dt>Your tokens are worth</dt>
-                      <dd className="num">{formatAmount(held * price)}</dd>
+                      <dd className="num">
+                        <Tween value={held * price} format={formatAmount} />
+                      </dd>
                     </div>
                     <div className={styles.stat}>
                       <dt>Your share</dt>
                       <dd className="num">
-                        {formatShare(held / supply)}
+                        <Tween value={held / supply} format={formatShare} />
                         <small>of the total supply</small>
                       </dd>
                     </div>
@@ -108,7 +113,7 @@ export function MarketCapTool() {
                   <div className={styles.stat}>
                     <dt>Price at a market cap of {formatAmount(cap)}</dt>
                     <dd className="num">
-                      {formatAmount(cap / circulating)}
+                      <Tween value={cap / circulating} format={formatAmount} />
                       <small>{formatShare(cap / marketCap - 1, true)} from the price above</small>
                     </dd>
                   </div>

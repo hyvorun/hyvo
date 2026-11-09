@@ -2,6 +2,7 @@ import type { HealthResponse } from "@hyvo/schema";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { Disclaimer } from "../components/Disclaimer";
+import { Copied } from "../components/motion-data/Copied";
 import { API_URL, fetchHealth } from "../lib/api";
 import { useTitle } from "../lib/use-title";
 import styles from "./DocsPage.module.css";
@@ -34,7 +35,7 @@ function Code({ children, label }: { children: string; label: string }) {
       <figcaption>
         <span>{label}</span>
         <button type="button" onClick={() => void copy()} aria-label={`Copy: ${label}`}>
-          {copied ? "Copied" : "Copy"}
+          {copied ? <Copied>Copied</Copied> : "Copy"}
         </button>
       </figcaption>
       {/* Scrolls on its own, so it needs to be reachable by keyboard. */}
