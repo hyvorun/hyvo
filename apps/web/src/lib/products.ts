@@ -127,7 +127,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "launches",
     name: "Launches",
-    line: "Every new Pons launch on Robinhood Chain as it lands: its pair asset, phase, creator tax and liquidity, and what is trading most. Read from the chain in your browser.",
+    line: "Every new Pons launch on Robinhood Chain as it lands: its pair asset, phase, creator tax and liquidity, what is trading most, and Chain Pulse, the last 24 hours counted by pair asset, creator tax, graduations and shared names. Read from the chain in your browser.",
     who: "Traders, researchers",
     to: "/launches",
     group: "explore",
