@@ -141,12 +141,18 @@ importers:
       '@hyvo/check':
         specifier: workspace:*
         version: link:../check
+      '@hyvo/launches':
+        specifier: workspace:*
+        version: link:../launches
       '@hyvo/schema':
         specifier: workspace:*
         version: link:../schema
       '@hyvo/sdk':
         specifier: workspace:*
         version: link:../sdk
+      '@hyvo/stocks':
+        specifier: workspace:*
+        version: link:../stocks
       '@types/node':
         specifier: ^24.19.2
         version: 24.19.2
@@ -156,6 +162,9 @@ importers:
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
+      viem:
+        specifier: 2.57.5
+        version: 2.57.5(typescript@7.0.2)(zod@4.6.7)
       vitest:
         specifier: ~5.0.5
         version: 5.0.5(@types/node@24.19.2)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(tsx@4.23.15))

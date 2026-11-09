@@ -1,8 +1,8 @@
 {
   "name": "@hyvo/cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
-  "description": "Hyvo in your terminal: read-only facts about Robinhood Chain tokens with their evidence, and proof of Hyvo's published runs",
+  "description": "Hyvo in your terminal: read-only facts about Robinhood Chain tokens, Pons launches and stock tokens with their evidence, and proof of Hyvo's published runs",
   "type": "module",
   "license": "AGPL-3.0-or-later",
   "homepage": "https://hyvo.run",
@@ -18,6 +18,8 @@
     "robinhood-chain",
     "evm",
     "token",
+    "pons",
+    "stock-tokens",
     "cli",
     "mcp",
     "hyvo"
@@ -42,11 +44,14 @@
   },
   "devDependencies": {
     "@hyvo/check": "workspace:*",
+    "@hyvo/launches": "workspace:*",
     "@hyvo/schema": "workspace:*",
     "@hyvo/sdk": "workspace:*",
+    "@hyvo/stocks": "workspace:*",
     "@types/node": "^24.19.2",
     "esbuild": "0.28.2",
     "typescript": "^7.0.2",
+    "viem": "2.57.5",
     "vitest": "~5.0.5"
   },
   "publishConfig": {
