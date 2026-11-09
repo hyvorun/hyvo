@@ -62,6 +62,25 @@ describe("ChainReader", () => {
     expect([...reader.served]).toEqual(["b.test"]);
   });
 
+  it("asks an endpoint that often refuses a query without an address last for one", async () => {
+    const chain = demoChain({ [A]: { needsAddress: true, needsAddressMessage: "request is too complex/large, try lesser input" }, [B]: {} });
+    const reader = new ChainReader({ callEndpoints: [A], logEndpoints: [{ url: A, maxSpan: 10_000, addresslessLast: true }, B], fetch: chain.fetch });
+    const logs = await reader.getLogs({ topics: [[TOPICS.curveBuy, TOPICS.curveSell]], fromBlock: DEMO_HEAD - 9_999n, toBlock: DEMO_HEAD });
+    expect(logs.length).toBeGreaterThan(0);
+    expect(chain.log.filter((entry) => entry.method === "eth_getLogs").map((entry) => entry.url)).toEqual([B]);
+    expect(reader.stats.refused).toBe(0);
+  });
+
+  it("reads Pocket's 'too complex/large' on a query without an address as a need for one", async () => {
+    const chain = demoChain({ [A]: { needsAddress: true, needsAddressMessage: "request is too complex/large, try lesser input" }, [B]: {} });
+    const reader = new ChainReader({ callEndpoints: [A], logEndpoints: [A, B], fetch: chain.fetch });
+    const query = { topics: [[TOPICS.curveBuy, TOPICS.curveSell]], fromBlock: DEMO_HEAD - 9_999n, toBlock: DEMO_HEAD };
+    expect((await reader.getLogs(query)).length).toBeGreaterThan(0);
+    expect((await reader.getLogs(query)).length).toBeGreaterThan(0);
+    // Refused once, then never asked again for a query without an address.
+    expect(chain.log.filter((entry) => entry.method === "eth_getLogs" && entry.url === A)).toHaveLength(1);
+  });
+
   it("splits an address list to what an endpoint accepts", async () => {
     const chain = demoChain({ [A]: { maxAddresses: 2 } });
     const reader = new ChainReader({ callEndpoints: [A], logEndpoints: [A], fetch: chain.fetch });

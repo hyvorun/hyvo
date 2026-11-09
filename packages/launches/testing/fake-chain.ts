@@ -87,6 +87,8 @@ export interface EndpointRules {
   maxSpan?: number;
   spanMessage?: (limit: number, asked: number) => string;
   needsAddress?: boolean;
+  /** What the endpoint says when it refuses a query without an address. */
+  needsAddressMessage?: string;
   maxAddresses?: number;
   /** Every request fails at the network. */
   down?: boolean;
@@ -220,7 +222,7 @@ export class FakeChain {
     const to = filter.toBlock === "latest" ? this.head : BigInt(filter.toBlock as string);
     const asked = Number(to - from + 1n);
     const addresses = filter.address === undefined ? null : (Array.isArray(filter.address) ? filter.address : [filter.address]).map((a) => lower(String(a)));
-    if (rules.needsAddress && !addresses) throw Object.assign(new Error("invalid argument 0: missing required field 'address' for log filter"), { code: -32602 });
+    if (rules.needsAddress && !addresses) throw Object.assign(new Error(rules.needsAddressMessage ?? "invalid argument 0: missing required field 'address' for log filter"), { code: -32602 });
     if (rules.maxAddresses && addresses && addresses.length > rules.maxAddresses) {
       throw Object.assign(new Error(`invalid argument 0: 'address' filter exceeds the maximum of ${rules.maxAddresses} addresses per request`), { code: -32602 });
     }

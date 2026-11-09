@@ -4,8 +4,9 @@
  * reader only reads: no endpoint here is ever sent a transaction.
  *
  * - dRPC: eth_call and headers; log queries over about 100 blocks only, so not used for logs.
- * - Pocket: often refuses a log query without an address, takes ten addresses at most, and spans
- *   10,001 blocks on most of its nodes and 50,000 on some.
+ * - Pocket: often refuses a log query without an address ("request is too complex/large"), so such a
+ *   query asks it last; takes ten addresses at most, and spans 10,001 blocks on most of its nodes and
+ *   50,000 on some.
  * - Robinhood's own endpoint: log queries over 250,000 blocks with an address and 30,000 without
  *   one. Its terms say it is rate limited and not for production, and some ISPs block its domain
  *   (docs/OPEN_ITEMS.md items 3 and 14), so it comes after Pocket, and is the one that answers a
@@ -19,7 +20,7 @@ const ROBINHOOD = "https://rpc.mainnet.chain.robinhood.com";
 export const CALL_ENDPOINTS: readonly string[] = ["https://robinhood.drpc.org", "https://robinhood.api.pocket.network", ROBINHOOD];
 
 export const LOG_ENDPOINTS: readonly LogEndpointOption[] = [
-  { url: "https://robinhood.api.pocket.network", maxSpan: 10_000 },
+  { url: "https://robinhood.api.pocket.network", maxSpan: 10_000, addresslessLast: true },
   { url: ROBINHOOD, maxSpan: 50_000 },
   { url: "https://rpc.degenprotocol.io/robinhood", maxSpan: 10_000 },
 ];

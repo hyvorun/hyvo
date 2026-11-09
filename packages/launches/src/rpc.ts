@@ -36,8 +36,11 @@ export interface BlockHeader {
 
 export type FetchLike = (input: string, init: RequestInit) => Promise<Response>;
 
-/** A log endpoint, with the widest span it is first asked for when that is known. */
-export type LogEndpointOption = string | { url: string; maxSpan?: number };
+/**
+ * A log endpoint, with the widest span it is first asked for when that is known. `addresslessLast`
+ * marks one that often refuses a query without an address: such a query tries it after the others.
+ */
+export type LogEndpointOption = string | { url: string; maxSpan?: number; addresslessLast?: boolean };
 
 export interface ReaderOptions {
   /** For eth_call, eth_blockNumber and block headers, tried in order. */
@@ -84,6 +87,8 @@ interface LogEndpoint {
   maxSpan: number;
   maxAddresses: number;
   needsAddress: boolean;
+  /** Asked a query without an address only after the other endpoints. */
+  addresslessLast: boolean;
   /** Only serves recent blocks, or refused log queries outright: skipped from then on. */
   disabled: boolean;
   /** Has answered a log query at its current limits; until then it is asked one piece at a time. */
@@ -95,6 +100,8 @@ type Outcome =
   | { kind: "span"; limit: number | null; message: string }
   | { kind: "addresses"; limit: number | null; message: string }
   | { kind: "needs-address"; message: string }
+  /** "Too complex/large": a query without an address needs one there, a query with one is too wide. */
+  | { kind: "complex"; message: string }
   | { kind: "unusable"; message: string }
   | { kind: "retry"; message: string }
   | { kind: "fatal"; message: string; code: number | undefined };
@@ -131,6 +138,8 @@ function classify(message: string, code: number | undefined): Exclude<Outcome, {
   }
   const addresses = /maximum of (\d+) addresses|(\d+) addresses per request/.exec(text);
   if (addresses) return { kind: "addresses", limit: Number(addresses[1] ?? addresses[2]), message };
+  // Pocket, 2026-11-09: "request is too complex/large, try lesser input".
+  if (/too complex|try lesser input/.test(text)) return { kind: "complex", message };
   if (/recent blocks|most recent \d+ blocks|older than|personal token|api key|register at|archive requests?|not supported on free plan/.test(text)) {
     const span = spanLimit(message);
     // dRPC's free plan names 10,000 in its refusal but answers about 100 blocks: too small to use.
@@ -178,9 +187,9 @@ export class ChainReader {
     for (const url of options.jsonOnly ?? []) this.jsonOnly.add(url);
     const maxSpan = options.maxSpan ?? 50_000;
     this.logs = options.logEndpoints.map((option) => {
-      const { url, maxSpan: first } = typeof option === "string" ? { url: option, maxSpan: undefined } : option;
+      const { url, maxSpan: first, addresslessLast = false } = typeof option === "string" ? { url: option, maxSpan: undefined, addresslessLast: false } : option;
       // A span given for the endpoint was measured, so it is not probed first; a guess is.
-      return { url, maxSpan: first ?? maxSpan, maxAddresses: 1_000, needsAddress: false, disabled: false, proven: first !== undefined };
+      return { url, maxSpan: first ?? maxSpan, maxAddresses: 1_000, needsAddress: false, addresslessLast, disabled: false, proven: first !== undefined };
     });
   }
 
@@ -283,7 +292,8 @@ export class ChainReader {
 
     const pick = (piece: Piece): LogEndpoint | null => {
       const usable = this.logs.filter((endpoint) => !endpoint.disabled && (piece.addresses !== null || !endpoint.needsAddress));
-      return usable[piece.attempts % Math.max(1, usable.length)] ?? null;
+      const ordered = piece.addresses !== null ? usable : [...usable.filter((e) => !e.addresslessLast), ...usable.filter((e) => e.addresslessLast)];
+      return ordered[piece.attempts % Math.max(1, ordered.length)] ?? null;
     };
 
     // One piece: cut it to the endpoint's known limits, or ask and sort out the answer. Whatever is
@@ -332,6 +342,15 @@ export class ChainReader {
           return;
         case "needs-address":
           endpoint.needsAddress = true;
+          reasons.push(outcome.message);
+          next.push(piece);
+          return;
+        case "complex":
+          if (piece.addresses === null) endpoint.needsAddress = true;
+          else {
+            endpoint.maxSpan = Math.min(endpoint.maxSpan, Math.floor(Number(piece.to - piece.from + 1n) / 2));
+            if (endpoint.maxSpan < MIN_USEFUL_SPAN) endpoint.disabled = true;
+          }
           reasons.push(outcome.message);
           next.push(piece);
           return;
