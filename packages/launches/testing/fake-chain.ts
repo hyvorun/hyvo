@@ -113,6 +113,10 @@ export interface FakeChainOptions {
   impostors?: FakeImpostor[];
   /** Other tokens that exist but are not launches. */
   tokens?: { address: Address; symbol: string; name: string; decimals: number }[];
+  /** Token balances: token address, then holder address, both any case. A launch's supply defaults to 10^27. */
+  balances?: Record<string, Record<string, bigint>>;
+  /** What the factory's poolManager() answers. */
+  poolManager?: Address;
   endpoints?: Record<string, EndpointRules>;
 }
 
@@ -136,6 +140,8 @@ export class FakeChain {
   readonly v1: FakeV1Launch[];
   readonly impostors: FakeImpostor[];
   readonly tokens: NonNullable<FakeChainOptions["tokens"]>;
+  readonly balances: Map<string, Map<string, bigint>>;
+  readonly poolManager: Address;
   readonly endpoints: Record<string, EndpointRules>;
   /** Every request, for assertions: the endpoint, the method and its params. */
   readonly log: { url: string; method: string; params: unknown[] }[] = [];
@@ -151,6 +157,10 @@ export class FakeChain {
     this.v1 = options.v1 ?? [];
     this.impostors = options.impostors ?? [];
     this.tokens = options.tokens ?? [];
+    this.balances = new Map(
+      Object.entries(options.balances ?? {}).map(([token, holders]) => [lower(token), new Map(Object.entries(holders).map(([holder, value]) => [lower(holder), value]))]),
+    );
+    this.poolManager = options.poolManager ?? "0x8366a39CC670B4001A1121B8F6A443A643e40951";
     this.endpoints = options.endpoints ?? {};
   }
 
@@ -313,7 +323,8 @@ export class FakeChain {
       if (t === lower(ARBSYS)) return encodeFunctionResult({ abi: ARBSYS_ABI, functionName: "arbBlockNumber", result: this.head });
       if (t === lower(MULTICALL3)) return encodeFunctionResult({ abi: MULTICALL3_ABI, functionName: "getCurrentBlockTimestamp", result: BigInt(this.headTime) });
       if (t === lower(PONS_V2_FACTORY)) {
-        const { args } = decodeFunctionData({ abi: FACTORY_ABI, data });
+        const { functionName, args } = decodeFunctionData({ abi: FACTORY_ABI, data });
+        if (functionName === "poolManager") return encodeFunctionResult({ abi: FACTORY_ABI, functionName: "poolManager", result: this.poolManager });
         const token = lower(String((args as readonly unknown[] | undefined)?.[0]));
         const launch = this.launches.find((item) => lower(item.token) === token);
         return encodeFunctionResult({ abi: FACTORY_ABI, functionName: "getLaunchedToken", result: launch ? record(launch) : emptyRecord() });
@@ -325,9 +336,9 @@ export class FakeChain {
         return encodeFunctionResult({ abi: V1_FACTORY_ABI, functionName: "getLaunchedToken", result: v1Record(launch) });
       }
       const asset = this.assets.find((item) => lower(item.address) === t) ?? this.tokens.find((item) => lower(item.address) === t);
-      if (asset) return erc20(data, asset);
+      if (asset) return erc20(data, asset, this.balances.get(t));
       const token = this.launches.find((item) => lower(item.token) === t) ?? this.v1.find((item) => lower(item.token) === t);
-      if (token) return erc20(data, { symbol: token.symbol, name: token.name, decimals: 18 });
+      if (token) return erc20(data, { symbol: token.symbol, name: token.name, decimals: 18, supply: "supply" in token ? token.supply : undefined }, this.balances.get(t));
       const curve = this.launches.find((item) => lower(item.curve) === t);
       if (curve) return curveAnswer(data, curve);
       const impostor = this.impostors.find((item) => lower(item.curve) === t);
@@ -343,10 +354,15 @@ export class FakeChain {
   }
 }
 
-function erc20(data: Hex, token: { symbol: string; name: string; decimals: number }): Hex {
-  const { functionName } = decodeFunctionData({ abi: ERC20_ABI, data });
+function erc20(data: Hex, token: { symbol: string; name: string; decimals: number; supply?: bigint | undefined }, balances?: Map<string, bigint>): Hex {
+  const { functionName, args } = decodeFunctionData({ abi: ERC20_ABI, data });
   if (functionName === "symbol") return encodeFunctionResult({ abi: ERC20_ABI, functionName, result: token.symbol });
   if (functionName === "name") return encodeFunctionResult({ abi: ERC20_ABI, functionName, result: token.name });
+  if (functionName === "totalSupply") return encodeFunctionResult({ abi: ERC20_ABI, functionName, result: token.supply ?? 10n ** 27n });
+  if (functionName === "balanceOf") {
+    const holder = lower(String((args as readonly unknown[])[0]));
+    return encodeFunctionResult({ abi: ERC20_ABI, functionName, result: balances?.get(holder) ?? 0n });
+  }
   return encodeFunctionResult({ abi: ERC20_ABI, functionName: "decimals", result: token.decimals });
 }
 

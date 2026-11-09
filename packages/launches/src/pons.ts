@@ -38,6 +38,9 @@ export const FACTORY_ABI = parseAbi([
   "struct LaunchedToken { address token; address curve; address deployer; address creatorFeeRecipient; address pairToken; uint256 graduationThreshold; uint24 poolFee; int24 tickSpacing; uint16 creatorTaxBps; bool buybackEnabled; uint8 phase; uint256 sweptQuote; uint256 sweptTokens; uint256 sweptAt; bool exists; }",
   "function getLaunchedToken(address token) view returns (LaunchedToken)",
   "function maxCreatorTaxBps() view returns (uint256)",
+  // PonsV2LaunchFactory.sol: `IPoolManager public immutable poolManager;` (Uniswap V4's PoolManager, which holds
+  // the tokens of every V4 pool; docs/OPEN_ITEMS.md item 30).
+  "function poolManager() view returns (address)",
 ]);
 
 export const CURVE_ABI = parseAbi([
@@ -65,10 +68,16 @@ export const V1_FACTORY_ABI = parseAbi([
   "function getLaunchedToken(address token) view returns (LaunchedTokenV1)",
 ]);
 
+/**
+ * PonsV2LauncherToken.sol is OpenZeppelin's ERC20 with ERC20Burnable (in the factory's verified sources), so
+ * `totalSupply()` and `balanceOf(address)` are ERC20.sol's.
+ */
 export const ERC20_ABI = parseAbi([
   "function name() view returns (string)",
   "function symbol() view returns (string)",
   "function decimals() view returns (uint8)",
+  "function totalSupply() view returns (uint256)",
+  "function balanceOf(address account) view returns (uint256)",
 ]);
 
 /** Some old tokens return bytes32 for name() and symbol(). */
