@@ -88,6 +88,30 @@ describe("ChainReader", () => {
     await expect(reader.getLogs({ address: PONS_V2_FACTORY, topics: [], fromBlock: 1n, toBlock: 2n })).rejects.toBeInstanceOf(RpcUnavailableError);
   });
 
+  it("sends plain text, which needs no CORS preflight, and JSON to an endpoint that asks for it", async () => {
+    const chain = demoChain({ [A]: { jsonOnly: true }, [B]: {} });
+    const types: string[] = [];
+    const fetch = (input: string, init: RequestInit) => {
+      types.push(`${input} ${new Headers(init.headers).get("content-type")}`);
+      return chain.fetch(input, init);
+    };
+    const reader = new ChainReader({ callEndpoints: [B, A], logEndpoints: [A], fetch });
+    expect(await reader.blockNumber()).toBe(DEMO_HEAD);
+    await reader.getLogs({ address: PONS_V2_FACTORY, topics: [], fromBlock: DEMO_HEAD - 99n, toBlock: DEMO_HEAD });
+    await reader.getLogs({ address: PONS_V2_FACTORY, topics: [], fromBlock: DEMO_HEAD - 99n, toBlock: DEMO_HEAD });
+    expect(types).toEqual([`${B} text/plain;charset=UTF-8`, `${A} text/plain;charset=UTF-8`, `${A} application/json`, `${A} application/json`]);
+    expect(reader.stats.refused).toBe(0);
+  });
+
+  it("warms the log endpoint's connection while the first call is under way", async () => {
+    const chain = demoChain();
+    const reader = new ChainReader({ callEndpoints: [A], logEndpoints: [B], fetch: chain.fetch });
+    reader.warm();
+    await reader.blockNumber();
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(chain.log.map((entry) => entry.url).sort()).toEqual([A, B]);
+  });
+
   it("only ever reads", async () => {
     const chain = demoChain();
     const reader = new ChainReader({ callEndpoints: [A], logEndpoints: [A], fetch: chain.fetch });

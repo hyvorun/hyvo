@@ -72,6 +72,7 @@ export function useLaunchWindow(hours: number, attempt: number): WindowState {
     };
     setState(START);
     const reader = launchesReader();
+    reader.warm();
 
     (async () => {
       const top = await reader.header("latest");
@@ -163,6 +164,7 @@ export function useLaunch(token: `0x${string}` | null, attempt: number): LaunchS
     const update = (patch: Partial<LaunchState>) => live && setState((current) => ({ ...current, ...patch }));
     setState(LAUNCH_START);
     const reader = launchesReader();
+    reader.warm();
 
     (async () => {
       const lookup = await readLaunch(reader, token, assetCache);

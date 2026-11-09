@@ -94,6 +94,8 @@ export interface EndpointRules {
   rateLimited?: boolean;
   /** Whether logs carry blockTimestamp. */
   timestamps?: boolean;
+  /** Answers HTTP 415 to a body sent as anything but application/json, as geth does. */
+  jsonOnly?: boolean;
 }
 
 export interface FakeChainOptions {
@@ -159,6 +161,11 @@ export class FakeChain {
     const rules = this.rulesFor(input);
     if (rules.down) throw new TypeError("fetch failed");
     if (rules.rateLimited) return new Response("Too Many Requests", { status: 429 });
+    const type = new Headers(init.headers).get("content-type") ?? "";
+    if (rules.jsonOnly && !type.startsWith("application/json")) {
+      this.log.push({ url: input, method: "(refused: content type)", params: [] });
+      return new Response("invalid content type, only application/json is supported", { status: 415 });
+    }
     const body = JSON.parse(String(init.body ?? "{}")) as RpcRequest | RpcRequest[];
     const answer = Array.isArray(body) ? body.map((one) => this.answer(input, one, rules)) : this.answer(input, body, rules);
     return new Response(JSON.stringify(answer), { status: 200, headers: { "content-type": "application/json" } });

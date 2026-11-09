@@ -50,6 +50,8 @@ export interface ReaderOptions {
   maxSpan?: number;
   /** Log requests in flight at once. */
   concurrency?: number;
+  /** Endpoints known to refuse a body sent as plain text: they get JSON from the start. */
+  jsonOnly?: readonly string[];
 }
 
 /** The only JSON-RPC methods this reader ever sends. */
@@ -164,6 +166,8 @@ export class ChainReader {
   /** HTTP requests sent, and how many of them were refused or failed. */
   readonly stats = { requests: 0, refused: 0 };
   private id = 0;
+  /** Endpoints that refuse a JSON-RPC body sent as plain text. */
+  private readonly jsonOnly = new Set<string>();
 
   constructor(options: ReaderOptions) {
     if (options.callEndpoints.length === 0 || options.logEndpoints.length === 0) throw new Error("ChainReader needs at least one endpoint of each kind");
@@ -171,6 +175,7 @@ export class ChainReader {
     this.timeoutMs = options.timeoutMs ?? 12_000;
     this.concurrency = Math.max(1, options.concurrency ?? 6);
     this.callUrls = [...options.callEndpoints];
+    for (const url of options.jsonOnly ?? []) this.jsonOnly.add(url);
     const maxSpan = options.maxSpan ?? 50_000;
     this.logs = options.logEndpoints.map((option) => {
       const { url, maxSpan: first } = typeof option === "string" ? { url: option, maxSpan: undefined } : option;
@@ -188,11 +193,14 @@ export class ChainReader {
   }
 
   private async send(url: string, method: string, params: unknown[]): Promise<Outcome> {
+    // Plain text first: a browser sends it without a CORS preflight, one round trip less. An endpoint
+    // that wants JSON says so (HTTP 415), and gets JSON from then on.
+    const plain = !this.jsonOnly.has(url);
     let response: Response;
     try {
       response = await this.fetcher(url, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": plain ? "text/plain;charset=UTF-8" : "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: ++this.id, method, params }),
         signal: AbortSignal.timeout(this.timeoutMs),
       });
@@ -200,6 +208,10 @@ export class ChainReader {
       return { kind: "retry", message: `${host(url)}: ${error instanceof Error ? error.message : String(error)}` };
     }
     const text = await response.text().catch(() => "");
+    if (plain && (response.status === 415 || /invalid content.?type|only application\/json/i.test(text.slice(0, 200)))) {
+      this.jsonOnly.add(url);
+      return this.send(url, method, params);
+    }
     let body: { result?: unknown; error?: { code?: number; message?: string } } | null = null;
     try {
       body = JSON.parse(text);
@@ -234,6 +246,15 @@ export class ChainReader {
 
   async blockNumber(): Promise<bigint> {
     return BigInt(await this.call<string>("eth_blockNumber"));
+  }
+
+  /**
+   * Opens the connection to the first log endpoint while other requests are under way, so its
+   * first log query does not wait for a handshake. The answer is not used.
+   */
+  warm(): void {
+    const first = this.logs.find((endpoint) => !endpoint.disabled);
+    if (first && first.url !== this.callUrls[0]) void this.post(first.url, "eth_blockNumber", []).catch(() => undefined);
   }
 
   async header(block: bigint | "latest"): Promise<BlockHeader> {
