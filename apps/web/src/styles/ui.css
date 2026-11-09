@@ -1,5 +1,9 @@
 /* Shared parts: buttons, panels and the entrances. Pages add layout in their modules. */
 
+/*
+ * Buttons rise 1px under the pointer, go down quickly when pressed and come back on a spring.
+ * A disabled button never moves.
+ */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -15,15 +19,21 @@
   text-decoration: none;
   cursor: pointer;
   transition:
-    background-color 160ms var(--ease),
-    box-shadow 160ms var(--ease),
-    color 160ms var(--ease),
-    transform 160ms var(--ease),
-    opacity 160ms var(--ease);
+    background-color var(--dur-hover) var(--ease),
+    box-shadow var(--dur-hover) var(--ease),
+    color var(--dur-hover) var(--ease),
+    opacity var(--dur-hover) var(--ease),
+    transform var(--dur-spring) var(--ease-spring);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
 }
 
 .btn:active:not(:disabled) {
-  transform: scale(0.985);
+  transform: translateY(0) scale(0.97);
+  transition-duration: var(--dur-hover), var(--dur-hover), var(--dur-hover), var(--dur-hover), var(--dur-press);
+  transition-timing-function: var(--ease);
 }
 
 .btn:disabled {
@@ -48,6 +58,7 @@
 
 .btn-ghost:hover:not(:disabled) {
   background: var(--raised);
+  box-shadow: inset 0 0 0 1px var(--ink-3);
 }
 
 .btn-sm {
@@ -56,13 +67,20 @@
   font-size: var(--t-xs);
 }
 
-.btn .arrow,
+/* An icon after a button's label leans the way the button goes; the arrow nudges right. */
+.btn svg,
 .arrow-link .arrow {
-  transition: transform 220ms var(--ease-out);
+  flex: none;
+  transition: transform var(--dur-spring) var(--ease-spring);
 }
 
-.btn:hover .arrow,
-.arrow-link:hover .arrow {
+.btn:hover:not(:disabled) > svg:last-child:not(:only-child) {
+  transform: translateX(2px);
+}
+
+.btn:hover:not(:disabled) .arrow,
+.arrow-link:hover .arrow,
+.arrow-link:focus-visible .arrow {
   transform: translateX(3px);
 }
 
@@ -74,12 +92,7 @@
   font-size: var(--t-sm);
   font-weight: 500;
   text-decoration: none;
-  transition: color 160ms var(--ease);
-}
-
-/* The arrow stays beside the last line when the text wraps. */
-.arrow-link .arrow {
-  flex: none;
+  transition: color var(--dur-hover) var(--ease);
 }
 
 .arrow-link:hover {
@@ -92,6 +105,187 @@
   border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+/* --- the shared motion classes ---------------------------------------------------------------- */
+
+/* An interactive card: it rises 2px, its hairline firms up and an arrow inside nudges right. */
+.lift {
+  transition:
+    transform var(--dur-hover) var(--ease),
+    box-shadow var(--dur-hover) var(--ease),
+    background-color var(--dur-hover) var(--ease);
+}
+
+.lift .arrow {
+  transition: transform var(--dur-spring) var(--ease-spring);
+}
+
+.lift:focus-visible,
+.lift:has(:focus-visible) {
+  transform: translateY(-2px);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+}
+
+.lift:focus-visible .arrow,
+.lift:has(:focus-visible) .arrow {
+  transform: translateX(3px);
+}
+
+@media (hover: hover) {
+  .lift:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px var(--rule-strong);
+  }
+
+  .lift:hover .arrow {
+    transform: translateX(3px);
+  }
+}
+
+/* A status dot with a thin ring that widens and fades every 2.4s. Its color follows `color`. */
+.live-dot {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  color: var(--buy);
+  background: currentColor;
+  vertical-align: middle;
+}
+
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0;
+  animation: live-ring 2.4s var(--ease-out) infinite;
+}
+
+@keyframes live-ring {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(2.8);
+  }
+}
+
+/* Press feedback for clickable things that are not buttons. */
+.press {
+  transition: transform var(--dur-spring) var(--ease-spring);
+}
+
+.press:active {
+  transform: scale(0.97);
+  transition-duration: var(--dur-press);
+  transition-timing-function: var(--ease);
+}
+
+/* An inline link whose underline draws in from the left; it wraps like text. */
+.u-link {
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor), linear-gradient(var(--rule-strong), var(--rule-strong));
+  background-position:
+    0 100%,
+    0 100%;
+  background-size:
+    0% 1px,
+    100% 1px;
+  background-repeat: no-repeat;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding-bottom: 1px;
+  transition:
+    background-size 320ms var(--ease-out),
+    color var(--dur-hover) var(--ease);
+}
+
+.u-link:hover,
+.u-link:focus-visible {
+  background-size:
+    100% 1px,
+    100% 1px;
+}
+
+/* A one-time scale-in with a small overshoot, for checks, badges and dots as they appear. */
+.pop {
+  animation: pop var(--dur-spring) var(--ease-spring-pop) backwards;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+/* A one-time shake, two cycles of 3px, for an error or a wrong answer as it appears. */
+.shake {
+  animation: shake 360ms var(--ease);
+}
+
+/* A one-time entrance for something that appears after a load. */
+.enter {
+  animation: rise var(--dur-enter) var(--ease-out) backwards;
+}
+
+/* A one-time open, for panels that appear in place: from 98% and transparent. */
+.open-in {
+  transform-origin: 50% 0;
+  animation: open-in 420ms var(--ease-out) backwards;
+}
+
+@keyframes open-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+/* A check mark (Icons' CheckMark) draws itself once. */
+.draw {
+  stroke-dasharray: 1;
+  animation: draw-in 520ms var(--ease-out) 80ms backwards;
+}
+
+@keyframes draw-in {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Hyvo's seal (Icons' Logomark): parts that a hover can turn or pulse. */
+.seal-ticks,
+.seal-dot {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot::after,
+  .pop,
+  .shake,
+  .enter,
+  .open-in {
+    animation: none;
+  }
+
+  .draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
 }
 
 /* --- entrances -------------------------------------------------------------------------------- */
@@ -114,6 +308,64 @@
     opacity: 1;
     transform: none;
   }
+
+  /*
+   * .stagger: the container stays put and its children come in one after another. An animation,
+   * not a transition, so a child's own hover transitions are untouched once it has arrived.
+   */
+  .reveal.stagger {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .reveal.stagger:not([data-in="true"]) > * {
+    opacity: 0;
+  }
+
+  .reveal.stagger[data-in="true"] > * {
+    animation: rise var(--dur-enter) var(--ease-out) backwards;
+    animation-delay: calc(var(--i, 0) * 70ms + var(--n, 0) * var(--stagger));
+  }
+
+  .reveal.stagger:focus-within > * {
+    opacity: 1;
+    animation: none;
+  }
+
+  .stagger > :nth-child(2) {
+    --n: 1;
+  }
+  .stagger > :nth-child(3) {
+    --n: 2;
+  }
+  .stagger > :nth-child(4) {
+    --n: 3;
+  }
+  .stagger > :nth-child(5) {
+    --n: 4;
+  }
+  .stagger > :nth-child(6) {
+    --n: 5;
+  }
+  .stagger > :nth-child(7) {
+    --n: 6;
+  }
+  .stagger > :nth-child(8) {
+    --n: 7;
+  }
+  .stagger > :nth-child(9) {
+    --n: 8;
+  }
+  .stagger > :nth-child(10) {
+    --n: 9;
+  }
+  .stagger > :nth-child(11) {
+    --n: 10;
+  }
+  .stagger > :nth-child(n + 12) {
+    --n: 11;
+  }
 }
 
 @keyframes rise {
@@ -129,7 +381,7 @@
   }
 }
 
-/* Loading placeholders. */
+/* Loading placeholders: a slow, faint sweep. */
 .skeleton {
   display: block;
   position: relative;
@@ -142,8 +394,8 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(100deg, transparent 20%, var(--rule) 50%, transparent 80%);
-  animation: sweep 1.6s var(--ease) infinite;
+  background: linear-gradient(100deg, transparent 25%, color-mix(in srgb, var(--rule) 70%, transparent) 50%, transparent 75%);
+  animation: sweep 2.2s var(--ease) infinite;
 }
 
 @keyframes sweep {
@@ -152,5 +404,12 @@
   }
   to {
     transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation: none;
+    opacity: 0;
   }
 }
