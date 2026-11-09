@@ -667,10 +667,12 @@ it is read in the visitor's browser through the public endpoints: no Worker rout
 
 **What it reads.** The first read takes the last hour of the factory's `TokenLaunched` and `PoolGraduated` events and the last five
 minutes of `CurveBuy` and `CurveSell` from every emitter, then the rest of the 24 hours of factory events (about 850 launches a day at the
-pace of item 29, so about 1,700 curve reads, six Multicall3 batches). Each refresh after that asks for the blocks since the last read only:
-one header, one factory log query, one trade log query, and one or two Multicall3 calls for the curves that traded and the cards shown (12
-per column). The buys of a launch second are one log query per card, once per launch. Reads stop while the tab is hidden, and the wait
-doubles after each failed read, up to two minutes. An emitter of curve events counts only when the factory's record names it as its
+pace of item 29, so about 1,700 curve reads, six Multicall3 batches). Each refresh after that asks for the blocks since the last read, and
+the 10 seconds before them again (logs an endpoint a little behind the head did not have yet; a trade counts once): one header, one factory
+log query, one trade log query, and Multicall3 calls of up to 300 reads for the curves that traded and the cards shown (12 per column), one
+or two unless many cards list many first-second wallets (40 at most per card). The buys of a launch second are one log query per card, once
+per launch and only once its 60 blocks are behind the head, plus block headers when the endpoint did not add block times to the logs, up to
+the first block past the launch second. Reads stop while the tab is hidden, and the wait doubles after each failed read, up to two minutes. An emitter of curve events counts only when the factory's record names it as its
 token's curve (`verifyCurves`); a pool created for a launch older than the hours read is found through the same record.
 
 **Flags** state a number when it passes a constant in `board.ts`: the creator's wallet at 5% of the supply or more

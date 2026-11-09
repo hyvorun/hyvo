@@ -12,6 +12,7 @@ import {
   CARDS_PER_COLUMN,
   estimateTime,
   ETH,
+  FIRST_SECOND_BLOCKS,
   firstSecondWallets,
   GRADUATED_HOURS,
   inPool,
@@ -53,6 +54,8 @@ export { BOARD_REFRESH_MS };
 const MAX_GAP_SECONDS = 20 * 60;
 /** Emitters of curve events checked against the factory per read, at most. */
 const MAX_STRANGERS = 30;
+/** Each refresh reads the last few seconds again, for logs an endpoint a little behind the head did not have yet. */
+const OVERLAP_SECONDS = 10;
 
 export interface BoardState {
   status: "loading" | "ready" | "error";
@@ -164,13 +167,19 @@ function addFactory(model: Model, scan: { launches: LaunchEvent[]; graduations: 
   }
 }
 
+const tradeId = (trade: Trade) => `${trade.txHash}:${trade.logIndex}`;
+
 function addTrades(model: Model, trades: readonly Trade[]): void {
   const { head, pace } = model;
+  // Blocks read again (the overlap, or a read that failed half way) bring the same logs back: each counts once.
+  const seen = new Set(model.trades.map(tradeId));
   for (const trade of trades) {
-    const stamped = trade.timestamp === null && head && pace ? { ...trade, timestamp: estimateTime(trade.block, head, pace) } : trade;
-    model.trades.push(stamped);
     const key = model.curves.get(lower(trade.curve));
     if (key) model.dirty.add(key);
+    if (seen.has(tradeId(trade))) continue;
+    seen.add(tradeId(trade));
+    const stamped = trade.timestamp === null && head && pace ? { ...trade, timestamp: estimateTime(trade.block, head, pace) } : trade;
+    model.trades.push(stamped);
   }
 }
 
@@ -240,13 +249,14 @@ async function scan(model: Model, from: bigint, to: bigint, tradesFrom: bigint):
     counts.set(key, row);
   }
   const strangers = [...counts.values()].sort((a, b) => b.trades - a.trades).slice(0, MAX_STRANGERS);
-  for (const stranger of strangers) model.checked.add(lower(stranger.curve));
   if (strangers.length > 0) {
-    for (const entry of await verifyCurves(
+    const found = await verifyCurves(
       reader,
       strangers.map((stranger) => stranger.curve),
-    ))
-      addEntry(model, entry);
+    );
+    // Marked once answered: after a failed read they are asked again.
+    for (const stranger of strangers) model.checked.add(lower(stranger.curve));
+    for (const entry of found) addEntry(model, entry);
   }
   await resolveGraduations(model);
 }
@@ -255,16 +265,17 @@ async function scan(model: Model, from: bigint, to: bigint, tradesFrom: bigint):
 async function resolveGraduations(model: Model): Promise<void> {
   const missing = [...model.graduations.keys()].filter((key) => !model.entries.has(key) && !model.recordsAsked.has(key));
   if (missing.length === 0) return;
+  const found = await readRecords(model.reader, missing as Address[]);
   for (const key of missing) model.recordsAsked.add(key);
-  for (const entry of await readRecords(model.reader, missing as Address[])) addEntry(model, entry);
+  for (const entry of found) addEntry(model, entry);
 }
 
 /** The state of the curves that changed, then every shown card's facts and balances, at one block each. */
 async function readState(model: Model): Promise<void> {
   const { reader } = model;
   // A curve that has stopped trading does not change again.
-  const changed = [...model.dirty].filter((key) => model.entries.has(key) && model.facts.get(key)?.graduated !== true);
-  model.dirty.clear();
+  const dirty = [...model.dirty];
+  const changed = dirty.filter((key) => model.entries.has(key) && model.facts.get(key)?.graduated !== true);
   if (changed.length > 0) {
     const answer = await readFacts(
       reader,
@@ -273,6 +284,8 @@ async function readState(model: Model): Promise<void> {
     merge(model, answer.facts);
     model.read = answer.read;
   }
+  // Cleared once read: after a failed read the same curves are read next time.
+  for (const key of dirty) model.dirty.delete(key);
   const cards = shown(model);
   if (cards.length === 0) return;
   const pairs = cards.map((card) => model.entries.get(lower(card.token))!.pairToken);
@@ -284,7 +297,8 @@ async function readState(model: Model): Promise<void> {
       entry: model.entries.get(key)!,
       statics: model.facts.get(key)?.symbol === undefined,
       balances: true,
-      wallets: Array.isArray(first) ? first : [],
+      // Until the first-second wallets are known, their total is not given (not 0).
+      ...(Array.isArray(first) ? { wallets: first } : {}),
     };
   });
   const answer = await readFacts(reader, requests);
@@ -292,17 +306,23 @@ async function readState(model: Model): Promise<void> {
   model.read = answer.read;
 }
 
-/** The wallets that bought in each shown card's launch second, read once per launch, and their balances. */
+/**
+ * The wallets that bought in each shown card's launch second, and their balances. Read once per launch, so
+ * only once the blocks searched are all behind the head: a launch still in its first seconds waits a read.
+ */
 async function readFirstSeconds(model: Model): Promise<void> {
   const { reader, head } = model;
   if (!head) return;
-  const wanted = shown(model).filter((card) => card.block !== null && !model.firstSecond.has(lower(card.token)) && model.facts.get(lower(card.token))?.launchedAt);
+  const wanted = shown(model).filter(
+    (card) => card.block !== null && card.block + FIRST_SECOND_BLOCKS <= head.block && !model.firstSecond.has(lower(card.token)) && model.facts.get(lower(card.token))?.launchedAt,
+  );
   if (wanted.length === 0) return;
   await inPool(wanted, 3, async (card) => {
     const key = lower(card.token);
+    const launchedAt = model.facts.get(key)!.launchedAt!;
     try {
-      const buys = await readLaunchBuys(reader, { curve: card.curve, block: card.block! }, head.block);
-      model.firstSecond.set(key, firstSecondWallets(buys, { curve: card.curve, token: card.token, creator: card.creator, launchedAt: model.facts.get(key)!.launchedAt! }));
+      const buys = await readLaunchBuys(reader, { curve: card.curve, block: card.block!, launchedAt }, head.block);
+      model.firstSecond.set(key, firstSecondWallets(buys, { curve: card.curve, token: card.token, creator: card.creator, launchedAt }));
     } catch {
       model.firstSecond.set(key, "failed");
     }
@@ -315,7 +335,8 @@ async function readFirstSeconds(model: Model): Promise<void> {
   if (requests.length === 0) return;
   const answer = await readFacts(reader, requests);
   merge(model, answer.facts);
-  model.read = answer.read;
+  // The block named is the oldest the cards were read at, as on the launch pages.
+  if (!model.read || answer.read.block < model.read.block) model.read = answer.read;
 }
 
 /** One read of the board. `publish` shows what is read so far. */
@@ -334,7 +355,12 @@ async function tick(model: Model, publish: () => void, live: () => boolean): Pro
   model.head = head;
   const firstFrom = head.block - blocksIn(NEW_MINUTES * 60 + 120, pace) + 1n;
   if (range === "first") await scan(model, firstFrom, head.block, tradesFrom);
-  else if (range) await scan(model, range.from, range.to, tradesFrom);
+  else if (range) {
+    // Every trade since the last read, not only the last five minutes', marks its curve to read again,
+    // or a curve that traded while the tab was hidden would keep its old state.
+    const from = range.from - blocksIn(OVERLAP_SECONDS, pace);
+    await scan(model, from, range.to, from);
+  }
   model.scannedTo = head.block;
   model.trades = pruneTrades(model.trades, head.timestamp - TRADE_MINUTES * 60);
   await readState(model);
@@ -343,7 +369,8 @@ async function tick(model: Model, publish: () => void, live: () => boolean): Pro
   await readFirstSeconds(model);
   publish();
 
-  if (range === "first" && live()) {
+  // Until it is read: a first read that failed after showing the last hour tries again on the next.
+  if (model.history === "reading" && live()) {
     // The rest of the 24 hours: older launches that may be close to graduating, and the pools created.
     try {
       const from = head.block - blocksIn(GRADUATED_HOURS * 3600, pace) + 1n;
