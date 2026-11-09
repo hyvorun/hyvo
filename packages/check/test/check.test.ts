@@ -1,6 +1,6 @@
 // checkToken end to end against the fake Robinhood Chain in fake-chain.ts. No network.
 import { describe, expect, it } from "vitest";
-import { CheckError, checkToken, serializeReport } from "../src/index";
+import { CheckError, checkToken, serializeReport, type FetchLike } from "../src/index";
 import { ADDRESSES } from "../src/registry/addresses";
 import { OPTIONS, OWNER, PAIR, PLAIN_RESULT, TOKEN, fakeChain } from "./fake-chain";
 
@@ -66,6 +66,23 @@ describe("checkToken", () => {
     const report = await checkToken(TOKEN, { ...OPTIONS, rpcUrls: ["https://down.test", "https://rpc.test"], fetch });
     expect(report.block).toBe(254n);
     expect(calls.some((c) => c.url === "https://down.test")).toBe(true);
+  });
+
+  it("sends each JSON-RPC call to every URL twice, or at most rpcAttempts times when asked", async () => {
+    const chain = fakeChain();
+    const sent: string[] = [];
+    // eth_blockNumber never answers; everything else does.
+    const fetch: FetchLike = (url, init) => {
+      if ((JSON.parse(init.body ?? "{}") as { method?: string }).method !== "eth_blockNumber") return chain.fetch(url, init);
+      sent.push(url);
+      return Promise.resolve({ ok: false, status: 503, text: async () => "busy" });
+    };
+    const rpcUrls = ["https://rpc.test/a", "https://rpc.test/b"];
+    await expect(checkToken(TOKEN, { ...OPTIONS, rpcUrls, fetch })).rejects.toMatchObject({ code: "rpc" });
+    expect(sent).toEqual([...rpcUrls, ...rpcUrls]);
+    sent.length = 0;
+    await expect(checkToken(TOKEN, { ...OPTIONS, rpcUrls, fetch, rpcAttempts: 3 })).rejects.toMatchObject({ code: "rpc" });
+    expect(sent).toEqual([...rpcUrls, rpcUrls[0]]);
   });
 
   it("treats Sourcify being down as a skipped source, not a failure", async () => {

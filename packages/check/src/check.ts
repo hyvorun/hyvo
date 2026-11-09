@@ -84,7 +84,7 @@ export async function checkToken(address: string, options: CheckOptions = {}): P
 
   const net = new Net({ fetch: fetchFn, signal: options.signal, timeoutMs: options.timeoutMs ?? DEFAULT_TIMEOUT_MS });
   const rpcUrls = options.rpcUrls && options.rpcUrls.length > 0 ? options.rpcUrls : [...ROBINHOOD_CHAIN.rpcUrls];
-  const rpc = new JsonRpcClient(net, rpcUrls);
+  const rpc = new JsonRpcClient(net, rpcUrls, options.rpcAttempts);
   const sourcify = new SourcifyClient(net, options.sourcifyUrl ?? ROBINHOOD_CHAIN.sourcifyUrl, ROBINHOOD_CHAIN.chainId);
   const blockscout = options.blockscoutKey
     ? new BlockscoutClient(net, options.blockscoutUrl ?? ROBINHOOD_CHAIN.blockscoutApiUrl, options.blockscoutKey)

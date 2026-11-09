@@ -211,6 +211,11 @@ export type FetchLike = (
 export interface CheckOptions {
   /** JSON-RPC endpoints for Robinhood Chain, tried in order. Default `["https://robinhood.drpc.org"]`. */
   rpcUrls?: string[];
+  /**
+   * Requests one JSON-RPC call may send at most, across `rpcUrls`. Default: every URL twice. A Cloudflare Worker sets
+   * it lower to keep a check inside its subrequest limit.
+   */
+  rpcAttempts?: number;
   /** Default `globalThis.fetch`. */
   fetch?: FetchLike;
   /** Aborts every request of the check; `checkToken` then rejects with a CheckError `aborted`. */

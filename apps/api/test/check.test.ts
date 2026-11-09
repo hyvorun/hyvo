@@ -4,10 +4,10 @@
  */
 import { CHECK_NOTICE, CHECK_ORDER, checkToken, serializeReport, type FetchLike } from "@hyvo/check";
 import { getAddress } from "viem";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PAIR, PLAIN_RESULT, TOKEN, fakeChain, type Scenario } from "../../../packages/check/test/fake-chain";
 import type { Env } from "../src/env";
-import { CHECKS_PER_MINUTE, SKIPPED_BY_API, setCheckRuntime } from "../src/lib/check";
+import { CHECKS_PER_MINUTE, RPC_ATTEMPTS, SKIPPED_BY_API, setCheckRuntime } from "../src/lib/check";
 import { iso, setClock } from "../src/lib/clock";
 import { TOOLS } from "../src/routes/mcp";
 import { call, chainEnv, frozenClock, resetDb } from "./helpers";
@@ -34,6 +34,7 @@ beforeEach(async () => {
 afterEach(() => {
   setClock(null);
   setCheckRuntime(null);
+  vi.restoreAllMocks();
 });
 
 /** The fake chain answers every request of a check; Sourcify's real URL goes to its fake Sourcify. */
@@ -192,9 +193,11 @@ describe("GET /v1/check/:token", () => {
   it(
     "stays inside the free plan's 50 subrequests when every call needs the last try",
     async () => {
-      // Three URLs, of which a check uses two. Every call answers only on its fourth try, the last the client makes
-      // (each URL twice). The token is an EIP-1967 proxy and the probe returns nothing, so the check makes every
-      // call it can: 11 calls, 44 requests, and Sourcify for the token and the implementation.
+      // Three URLs, of which a check uses two. Every call answers only on its third try, the last the client makes
+      // (the first URL, the second, the first again). The token is an EIP-1967 proxy and the probe returns nothing,
+      // so the check makes every call it can: 11 calls, 33 requests, and Sourcify for the token and the
+      // implementation. The Cache API's match and put share the quota.
+      const cacheCalls = [vi.spyOn(caches.default, "match"), vi.spyOn(caches.default, "put")];
       target = chainEnv({ RPC_URLS: "http://a.test,http://b.test,http://c.test" });
       const tries = new Map<string, number>();
       const sent: string[] = [];
@@ -205,7 +208,7 @@ describe("GET /v1/check/:token", () => {
         const key = `${method} ${JSON.stringify(params)}`;
         const attempt = (tries.get(key) ?? 0) + 1;
         tries.set(key, attempt);
-        if (attempt < 4) return { ok: false, status: 503, text: async () => "busy" };
+        if (attempt < RPC_ATTEMPTS) return { ok: false, status: 503, text: async () => "busy" };
         if (method === "eth_getStorageAt" && params[1] === IMPLEMENTATION_SLOT) {
           const word = `0x${IMPLEMENTATION.slice(2).toLowerCase().padStart(64, "0")}`;
           return { ok: true, status: 200, text: async () => JSON.stringify({ jsonrpc: "2.0", id, result: word }) };
@@ -218,12 +221,14 @@ describe("GET /v1/check/:token", () => {
       const body = (await response.json()) as Record<string, any>;
       expect(body.code.proxyImplementation).toBe(IMPLEMENTATION);
       expect(body.findings.find((f: { id: string }) => f.id === "sell-simulation")).toMatchObject({ status: "skipped" });
-      expect([...tries.values()].every((n) => n === 4)).toBe(true);
+      expect([...tries.values()].every((n) => n === RPC_ATTEMPTS)).toBe(true);
       expect(tries.size).toBe(11);
-      expect(body.timings.requests).toEqual({ rpc: 44, sourcify: 2, blockscout: 0 });
-      expect(sent).toHaveLength(46);
-      expect(sent.length).toBeLessThanOrEqual(50);
+      expect(body.timings.requests).toEqual({ rpc: 11 * RPC_ATTEMPTS, sourcify: 2, blockscout: 0 });
+      expect(sent).toHaveLength(35);
       expect(sent).not.toContain("http://c.test");
+      const cached = cacheCalls.reduce((sum, spy) => sum + spy.mock.calls.length, 0);
+      expect(cached).toBe(2);
+      expect(sent.length + cached).toBeLessThanOrEqual(50);
     },
     20_000,
   );

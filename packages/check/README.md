@@ -39,6 +39,7 @@ pnpm --filter @hyvo/check check 0x8eee67a8aad993f15b4506975b38c52f6d3ce758 [--et
 | Option | Default | Meaning |
 |---|---|---|
 | `rpcUrls` | `["https://robinhood.drpc.org"]` | JSON-RPC endpoints, tried in order; the list is tried twice. |
+| `rpcAttempts` | every URL twice | Requests one JSON-RPC call may send at most, across `rpcUrls`. Hyvo's API sets 3 to stay inside a Cloudflare Worker's subrequest limit. |
 | `fetch` | `globalThis.fetch` | Any fetch with the shape of `FetchLike`. |
 | `signal` | none | Aborts every request; the promise rejects with `CheckError("aborted")`. |
 | `sourcifyUrl` | `https://sourcify.dev/server` | Sourcify server for verified source, ABIs and deployments. |

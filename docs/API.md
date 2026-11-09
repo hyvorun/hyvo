@@ -470,9 +470,11 @@ not look, and the evidence says why). `CHECKS[id].looksFor` in `@hyvo/check`, an
   `totalSupply()` nor `balanceOf(address)` answers). `503 chain_unavailable` with `Retry-After` when Robinhood Chain cannot be read. `504
   check_timeout` after 25 s. `503 check_disabled` without `RPC_URLS`, or with a `CHAIN_ID` other than 4663.
 - **Rate limit:** 10 checks a minute per IP, shared with `check_token`. An answer from the cache does not count.
-- **Inside the Workers Free plan** (50 subrequests and 10 ms of CPU a request, item 21). A check makes at most 11 JSON-RPC calls, and the
-  client tries each one on every URL twice, so a check uses the first two URLs of `RPC_URLS`: at most 44 requests, plus 1 or 2 to Sourcify,
-  plus 3 to Blockscout when the token's holders are not in the cache: at most 49. A test holds the Worker to that worst case.
+- **Inside the Workers Free plan** (50 subrequests and 10 ms of CPU a request, item 21; the Cache API's `match` and `put` share the
+  subrequest quota, as Cloudflare's limits page says). A check makes at most 11 JSON-RPC calls over the first two URLs of `RPC_URLS`, and
+  sends each at most 3 times (the first URL, the second, the first again): at most 33 requests, plus 1 or 2 to Sourcify, plus a `match` and a
+  `put` for the answer's cache entry, plus, with the key and when the token's holders are not in the cache, 3 to Blockscout and a `match` and
+  a `put` for the holder facts: at most 42. Tests hold the Worker to that worst case, the Cache API's calls counted.
   Measured on 2026-11-09 against dRPC, with the Worker's own bundle in local workerd, for tokens on a Uniswap V2 pair, a Pons curve and a Pons
   V4 pool, USDG (a proxy) and a token on a V4 pool outside Pons: 7 to 10 JSON-RPC requests and 1 or 2 Sourcify requests, 1 to 3.2 s, and an
   answer from the cache in 8 to 20 ms. CPU, measured in Node 24 on recorded answers: 2 to 4 ms a check once the code is warm, more for the

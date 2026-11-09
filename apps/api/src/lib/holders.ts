@@ -12,8 +12,9 @@
  * - Limits. A read is three requests to Blockscout, whose free tier allows 5 requests a second and 100,000 credits a
  *   day (item 24). Each IP may start HOLDER_READS_PER_MINUTE reads a minute through the holders route, and the Worker
  *   as a whole BLOCKSCOUT_READS_PER_MINUTE and BLOCKSCOUT_READS_PER_DAY; past that, or for BLOCKSCOUT_PAUSE_S after
- *   Blockscout answers 429, the facts say so and nothing is asked. Inside a check the three requests
- *   join its own: at most 46 + 3 = 49 of the 50 subrequests a free-plan request may make (check.ts).
+ *   Blockscout answers 429, the facts say so and nothing is asked. Inside a check the three requests and the cache
+ *   entry's match and put join its own: at most 37 + 3 + 2 = 42 of the 50 subrequests a free-plan request may make,
+ *   the Cache API's calls included (check.ts).
  * - CPU. One JSON.parse per answer (the holders page is Blockscout's first page, 50 rows), and only the fields
  *   above are kept.
  */

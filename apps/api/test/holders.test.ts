@@ -9,7 +9,7 @@ import { getAddress } from "viem";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { OWNER, PAIR, TOKEN, fakeChain, type Scenario } from "../../../packages/check/test/fake-chain";
 import type { Env } from "../src/env";
-import { setCheckRuntime } from "../src/lib/check";
+import { RPC_ATTEMPTS, setCheckRuntime } from "../src/lib/check";
 import { iso, setClock } from "../src/lib/clock";
 import { BLOCKSCOUT_READS_PER_MINUTE, HOLDER_READS_PER_MINUTE, holdersSource, redact, setHoldersFetch } from "../src/lib/holders";
 import { runScheduled } from "../src/scheduled";
@@ -193,10 +193,12 @@ describe("GET /v1/check/:token with a Blockscout key", () => {
   });
 
   it(
-    "stays inside the free plan's 50 subrequests with Blockscout's three",
+    "stays inside the free plan's 50 subrequests with Blockscout's three and the Cache API's four",
     async () => {
       // As in check.test.ts: every chain call answers only on its last try, the token is a proxy and the probe returns
-      // nothing, so the check makes all 46 requests it can. Blockscout adds 3.
+      // nothing, so the check makes all the requests it can. Blockscout adds 3, and the Cache API, whose calls share
+      // the quota on the free plan, 4: a match and a put for the check's answer and for the holder facts.
+      const cacheCalls = [vi.spyOn(caches.default, "match"), vi.spyOn(caches.default, "put")];
       target = chainEnv({ BLOCKSCOUT_API_KEY: KEY, RPC_URLS: "http://a.test,http://b.test,http://c.test" });
       const IMPLEMENTATION_SLOT = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
       const implementation = getAddress("0x1234567890abcdef1234567890abcdef12345678");
@@ -212,7 +214,7 @@ describe("GET /v1/check/:token with a Blockscout key", () => {
           const key = `${method} ${JSON.stringify(params)}`;
           const attempt = (tries.get(key) ?? 0) + 1;
           tries.set(key, attempt);
-          if (attempt < 4) return { ok: false, status: 503, text: async () => "busy" };
+          if (attempt < RPC_ATTEMPTS) return { ok: false, status: 503, text: async () => "busy" };
           if (method === "eth_getStorageAt" && params[1] === IMPLEMENTATION_SLOT) {
             const word = `0x${implementation.slice(2).toLowerCase().padStart(64, "0")}`;
             return { ok: true, status: 200, text: async () => JSON.stringify({ jsonrpc: "2.0", id, result: word }) };
@@ -222,9 +224,14 @@ describe("GET /v1/check/:token with a Blockscout key", () => {
       });
       const response = await get(`/v1/check/${TOKEN}`);
       expect(response.status).toBe(200);
-      expect(sent).toHaveLength(46);
+      expect(tries.size).toBe(11);
+      expect([...tries.values()].every((n) => n === RPC_ATTEMPTS)).toBe(true);
+      expect(sent).toHaveLength(11 * RPC_ATTEMPTS + 2);
       expect(asked).toHaveLength(3);
-      expect(sent.length + asked.length).toBeLessThanOrEqual(50);
+      const cached = cacheCalls.reduce((sum, spy) => sum + spy.mock.calls.length, 0);
+      expect(cached).toBe(4);
+      expect(sent.length + asked.length + cached).toBe(42);
+      expect(sent.length + asked.length + cached).toBeLessThanOrEqual(50);
     },
     20_000,
   );
