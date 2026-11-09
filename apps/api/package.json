@@ -4,11 +4,13 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "test": "vitest run --exclude \"scripts/**\" && vitest run --config scripts/vitest.config.ts",
+    "test:scripts": "vitest run --config scripts/vitest.config.ts",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
     "db:migrate:local": "wrangler d1 migrations apply hyvo --local",
     "e2e": "tsx scripts/e2e-local.ts",
-    "deploy:cloudflare": "tsx scripts/deploy-cloudflare.ts"
+    "deploy:cloudflare": "tsx scripts/deploy-cloudflare.ts",
+    "token:go-live": "tsx scripts/token-go-live.ts"
   },
   "dependencies": {
     "@hyvo/check": "workspace:*",
@@ -23,6 +25,7 @@
     "@cloudflare/workers-types": "5.20261019.1",
     "@hyvo/sdk": "workspace:*",
     "@modelcontextprotocol/sdk": "1.32.2",
+    "@types/node": "^24.19.2",
     "tsx": "4.23.15",
     "typescript": "7.0.2",
     "vitest": "~5.0.5",

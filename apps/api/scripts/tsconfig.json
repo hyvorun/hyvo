@@ -1,0 +1,9 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "types": ["node"],
+    "noEmit": true
+  },
+  "include": ["go-live", "token-go-live.ts", "move-ownership.ts", "deploy-cloudflare.ts", "*.test.ts", "vitest.config.ts"]
+}
