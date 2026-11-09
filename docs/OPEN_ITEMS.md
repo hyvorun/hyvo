@@ -410,6 +410,11 @@ plan"), so the scan bisects instead: over the factory's nonce at past blocks to 
 off (item 25); the scan retries until a node has it. Check: every update's old multiplier equals the value in effect when it was sent (a unit test).
 The list page reads the factory's nonce live and says how many tokens were deployed since; a newer token can still be looked up by address.
 
+**Refreshed 2026-11-09, 11:09 UTC**, to block 110,011,251, with `RH_RPC_URL=https://robinhood.api.pocket.network pnpm --filter @hyvo/stocks scan`
+(4,000 RPC calls, a few minutes). The same scan through dRPC first stopped with `"Unknown state. First available state is 1"` (code 27) on an
+`eth_call` at an old block, 40 tries in a row; Pocket served the old state. The result was the same 212 tokens, 71 multiplier updates and 6 name
+changes, with the factory's nonce still 213; only the block and time the list covers moved forward.
+
 **Prices (Chainlink).** Feed addresses come from Chainlink's reference data directory,
 `https://reference-data-directory.vercel.app/feeds-robinhood-mainnet.json` (the data behind docs.chain.link's feed tables; it answers with
 `Access-Control-Allow-Origin: *`, so the browser fetches it, at most once per ten minutes). Hyvo uses only the 33 entries labeled
@@ -509,6 +514,26 @@ refusals, so a change on their side costs a refused request, not an outage.
 lists Pons as `pons-v2`, `pons-v2-dex` and `pons-dot-family` ("Pons V1"). CoinGecko's docs ("Errors & Rate Limits", docs.coingecko.com): keyless
 use has "IP-based rate limiting — shared across all users on the same IP", and the Demo plan, with a key, allows 100 calls a minute. Hyvo
 Launches does not use it: the chain gives the same launches with a block number, and no third party sits in between.
+
+**Chain Pulse** (a section of `/launches`, `packages/launches/src/pulse.ts`) counts the last 24 hours whatever window the visitor picked, in the
+browser, with no Worker route, cron trigger or storage. It reuses the launches and graduations the window already read and asks the factory
+only for the hours before the window, then reads those launches' curves in the same Multicall3 batches as the list. The counts by pair asset and
+the graduations show first, from the events alone (plus a read of any new pair asset's symbol); creator taxes, where each launch trades and
+shared symbols and names follow once every curve is read. With the default 6-hour window that is about 18 more hours of factory events and the
+curve reads of their launches (about 590 launches at the pace measured above, 848 in about 26 hours); with the 24-hour window nothing more is
+read. Its facts, from the verified
+source: a curve's `graduated()` turns true when it is swept, and the factory emits `PoolGraduated` right after it creates the Uniswap V4 pool
+(`PonsV2LaunchFactory.sol`), so a launch counts as "in its Uniswap V4 pool" once that event is seen, "on its Pons curve" while `graduated()` is
+false, and "off its curve, no pool yet" otherwise. Two launches share a symbol or a name when they match apart from case, spaces and a leading
+`$`; the page says that a shared name says nothing about either token.
+
+**Snipe-tax exemptions are left out of the pulse**, because nothing the page reads holds them. In the verified source each launch exempts its
+creator and creator fee recipient automatically and up to 32 more wallets the creator declares (`MAX_SNIPE_TAX_EXEMPTIONS`), through the curve's
+`exemptFromSnipeTax`, which sets `snipeTaxExempt(account)` and emits `SnipeTaxExempted(address indexed account)` from the curve, in the launch
+transaction. The page's reads are the factory's `TokenLaunched` and `PoolGraduated` events and the curves' state; the mapping cannot be listed,
+and the events come from each curve, so counting them would need one more log query per launch block or per ten curves on Pocket (about 780 launches a day),
+or a query without an address that only Robinhood's endpoint answers over 30,000 blocks at a time. Not cheap enough for a page that loads in
+seconds; a keyed endpoint (Founder, point 1 below) would make it one query.
 
 **Left out of the source projects:** Cloesius's creator claims and its Pro pages with their payments in its own token, the leads and outreach
 dashboard, the creator-edited pages and images, its D1 index and the every-minute cron trigger that fed it; Pons Atlas's stock price API
