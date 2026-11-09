@@ -16,6 +16,11 @@ export interface Env {
   LLM_TOKEN?: string;
   /** Signs HyvoOracle.commit; lives only in the Worker. Empty = no oracle commits. */
   ATTESTER_PRIVATE_KEY?: string;
+  /**
+   * Blockscout's API key (docs/OPEN_ITEMS.md item 24), for Hyvo Check's top holders (lib/holders.ts). It goes to
+   * Blockscout and nowhere else: no answer, header, error or log carries it. Empty = holders are skipped.
+   */
+  BLOCKSCOUT_API_KEY?: string;
 
   /** "1" parses and re-hashes each run in the Worker: needs Workers Paid (docs/OPEN_ITEMS.md item 21). */
   VERIFY_RUNS_IN_WORKER: string;

@@ -174,14 +174,18 @@ function failure(what: string, outcome: { status: number } | HttpError): string 
 /**
  * A token's holders and creator from Blockscout's index: three requests at once (`tokens/<address>`,
  * `tokens/<address>/holders`, `addresses/<address>`), each tried once unless `retry429`. Never throws: a part that
- * could not be read is null, with the reason in `holdersMissing` or `creatorMissing`.
+ * could not be read is null, with the reason in `holdersMissing` or `creatorMissing`. `settled`: every request
+ * got an answer that holds until the index changes (200 or 404), so the facts are worth keeping for a while.
  */
-export async function readHolderFacts(token: string, options: HolderReadOptions): Promise<HolderFacts & { requests: number }> {
+export async function readHolderFacts(
+  token: string,
+  options: HolderReadOptions,
+): Promise<HolderFacts & { requests: number; settled: boolean }> {
   const fetchFn = options.fetch ?? (globalThis.fetch?.bind(globalThis) as FetchLike | undefined);
   const base = { source: options.source, totalSupply: null, holderCount: null, holders: null, creator: null };
   if (!fetchFn || !isAddress(token)) {
     const why = !fetchFn ? "no fetch in this environment" : "not an address";
-    return { ...base, holdersMissing: why, creatorMissing: why, requests: 0 };
+    return { ...base, holdersMissing: why, creatorMissing: why, requests: 0, settled: false };
   }
   const net = new Net({ fetch: fetchFn, signal: options.signal, timeoutMs: options.timeoutMs ?? DEFAULT_TIMEOUT_MS });
   const client = new BlockscoutClient(net, options.blockscoutUrl ?? ROBINHOOD_CHAIN.blockscoutApiUrl, options.blockscoutKey, options.retry429 ?? false);
@@ -221,5 +225,6 @@ export async function readHolderFacts(token: string, options: HolderReadOptions)
     creator: creator ? { address: creator.deployer, creationTxHash: creator.creationTxHash } : null,
     creatorMissing,
     requests: net.requests.blockscout,
+    settled: [info, list, created].every((answer) => !(answer instanceof HttpError) && (answer.status === 200 || answer.status === 404)),
   };
 }
