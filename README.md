@@ -74,9 +74,9 @@
 <!-- hyvo-token:start -->
 ## The HYVO token
 
-Hyvo has not launched a token yet, so no token named HYVO is Hyvo's today. On the day it launches, its address
-appears here and on [hyvo.run/token](https://hyvo.run/token), and a token at any other address is not Hyvo's,
-whatever its name. Holding it will bring free runs, a discount and a place ahead in the queue.
+**HYVO is live on Robinhood Chain.** Its official address is [`0xA274A3E2636926390D6b47dAC9a2e11206f96808`](https://robinhoodchain.blockscout.com/address/0xA274A3E2636926390D6b47dAC9a2e11206f96808), the one shown on
+[hyvo.run/token](https://hyvo.run/token). Holding it brings free runs, a discount and a place ahead in the queue. Another token
+uses the name HYVO and Hyvo's tagline and has nothing to do with Hyvo: only the address on hyvo.run/token is Hyvo's.
 <!-- hyvo-token:end -->
 
 ## Check a run yourself

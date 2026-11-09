@@ -5,5 +5,12 @@
   "DAILY_SPEND_CAP_USD": "3",
   "ORACLE_ADDRESS": "0x2FEDc123c38B069cf78e5915852A61022E347642",
   "PUBLIC_API_URL": "https://api.hyvo.run",
-  "RPC_URLS": "https://robinhood.drpc.org,https://rpc.mainnet.chain.robinhood.com,https://robinhood.api.pocket.network"
+  "RPC_URLS": "https://robinhood.drpc.org,https://rpc.mainnet.chain.robinhood.com,https://robinhood.api.pocket.network",
+  "HYVO_TOKEN_ADDRESS": "0xA274A3E2636926390D6b47dAC9a2e11206f96808",
+  "HYVO_TOKEN_DECIMALS": "18",
+  "HOLDER_MIN": "1000000",
+  "PAYMENT_ROUTER_ADDRESS": "0x9ca245cA96dE8BFC13Df4a233ba6E2EcEc9AC6d1",
+  "PAYMENT_ROUTER_DEPLOY_BLOCK": "110147945",
+  "TREASURY_ADDRESS": "0x3F818f145e613bBe4447b8B8e5F11419d75CD50e",
+  "ADMIN_ADDRESSES": "0x3F818f145e613bBe4447b8B8e5F11419d75CD50e"
 }
