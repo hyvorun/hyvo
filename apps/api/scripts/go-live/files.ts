@@ -47,6 +47,6 @@ export function liveReadmeBlock(token: string, explorer: string, site: string): 
   return [
     `**HYVO is live on Robinhood Chain.** Its official address is [\`${token}\`](${explorer}/address/${token}), the one shown on`,
     `[hyvo.run/token](${site}/token). Holding it brings free runs, a discount and a place ahead in the queue. Another token`,
-    "uses the name HYVO and Hyvo's tagline; it is not Hyvo's. Only the address on hyvo.run/token is.",
+    "uses the name HYVO and Hyvo's tagline and has nothing to do with Hyvo: only the address on hyvo.run/token is Hyvo's.",
   ].join("\n");
 }
