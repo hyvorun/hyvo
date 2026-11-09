@@ -17,7 +17,8 @@ export const HOLDER_BENEFITS = { freeRuns: 2, freeAgents: 50, freeRounds: 10, di
 export const HOLDER_UTILITIES = [
   { name: "Board live", line: "The board of new launches refreshes every 10 seconds, instead of every minute.", to: "/board" },
   { name: "Watchlist sync", line: "Your watchlist of launches is kept with your account and reaches every browser you sign in on.", to: "/watchlist" },
-  { name: "25 tracked wallets", line: "Follow up to 25 wallets' trades on Pons curves on Track, instead of 1.", to: "/track" },
+  // No "Pons", "buy", "sell", "fee" or "tax" here: the token page names none of them (e2e/token-live.spec.ts).
+  { name: "25 tracked wallets", line: "Follow up to 25 wallets on Track and see their trades on new launches, instead of 1.", to: "/track" },
 ] as const;
 
 /**
