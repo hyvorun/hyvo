@@ -1,5 +1,5 @@
 import { cloudflareTest, readD1Migrations } from "@cloudflare/vitest-plugin";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [
@@ -16,5 +16,6 @@ export default defineConfig({
       },
     })),
   ],
-  test: { setupFiles: ["./test/apply-migrations.ts"] },
+  // The launch scripts' tests run in Node (`test:scripts`), not in the Workers pool.
+  test: { setupFiles: ["./test/apply-migrations.ts"], exclude: [...configDefaults.exclude, "scripts/**"] },
 });

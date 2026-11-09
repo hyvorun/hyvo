@@ -81,7 +81,9 @@ export const ErrorResponse = z.strictObject({
 /** Whole tokens as a decimal string: "1000", "2.5". */
 const DecimalText = z.string().regex(/^[0-9]+(\.[0-9]+)?$/);
 
-export const HealthResponse = z.strictObject({
+// Not strict: a page built against an older API keeps working when the API adds a field (for example `holder` and
+// `pricing` on 2026-11-09, which a strict schema made the live site reject until its own deploy).
+export const HealthResponse = z.object({
   ok: z.literal(true),
   version: z.string(),
   /** What this API has switched on: a page can say so before asking for a wallet. */

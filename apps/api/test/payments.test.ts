@@ -98,8 +98,8 @@ describe("quotes", () => {
   it("gives eligible holders the discount and priority", async () => {
     chain.balances.set(payer.toLowerCase(), { now: 10n ** 22n, past: 10n ** 22n });
     const discounted = await order({ agents: 500, rounds: 20 });
-    // 7.55 x 0.8 = 6.04 -> $7.
-    expect(discounted).toMatchObject({ priceUsd: 7, discountBps: 2000 });
+    // 7.55 up to the listed $8, then 20% off: $6.40.
+    expect(discounted).toMatchObject({ priceUsd: 6.4, discountBps: 2000 });
   });
 
   it.each([

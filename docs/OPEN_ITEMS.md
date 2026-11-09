@@ -25,7 +25,7 @@ Status: **verified** (checked against an official source or on-chain) · **likel
 | 15 | Payment finality on Robinhood Chain | decision | `PAYMENT_CONFIRMATIONS=20` (about 2 s) |
 | 16 | Historical state for the 24 h holder snapshot | likely | fail closed; the Worker's RPC must keep 24 h of state |
 | 17 | Hyvo token as a payment token | decision | quotes in USDG only |
-| 18 | Price parameters | decision | ×2.5, floor $1, step $1; on Workers AI $0.00005 per agent-round, $0.008 report (measured) |
+| 18 | Price parameters | decision | ×2.5, floor $1, step $1; holders 20% off the listed price ($0.80); on Workers AI $0.00005 per agent-round, $0.008 report (measured) |
 | 19 | Refunds for partial runs | decision | not automatic; reviewed in `/admin` |
 | 20 | Mobile wallets without an injected provider | decision | injected wallets only (no WalletConnect) |
 | 21 | Cloudflare Workers plan | resolved | Workers Free; one trade-off to confirm (SPEC §8.4) |
@@ -244,6 +244,10 @@ The price formula follows SPEC 8.3. `wrangler.jsonc` holds the per-decision cost
 model) and $0.02 for the report: 50 × 10 is $1 with a $0.34 LLM budget, 500 × 20 is $8 with a $6.04 budget. On Workers AI
 the measured cost is lower (`apps/api/production.vars.json`: $0.00005 and $0.008), so 50 × 10 still costs the $1 floor,
 with a $0.066 budget. **Founder:** confirm floor and step. All values are Worker vars.
+
+**Founder, 2026-11-09:** the holder discount (20%, `HOLDER_DISCOUNT_BPS`) comes off the listed price, floor included, so it is
+real at every size: a $1 run costs a holder $0.80 (`runPriceUsd` in `packages/schema/src/pricing.ts`). Holders need at least
+1,000,000 HYVO, now and 24 hours earlier (`HOLDER_MIN`, set by `token:go-live` at the launch).
 
 ## 19. Refunds for partial runs — decision
 

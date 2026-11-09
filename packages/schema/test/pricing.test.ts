@@ -15,10 +15,12 @@ describe("a run's price", () => {
     expect(runPriceUsd(PRODUCTION, { agents: 50, rounds: 10 })).toBe(1);
   });
 
-  it("takes a holder's discount before the step and the floor", () => {
-    expect(runPriceUsd(DEFAULTS, { agents: 2000, rounds: 30 }, 2000)).toBe(37); // 45.05 x 0.8 = 36.04
-    expect(runPriceUsd(DEFAULTS, { agents: 50, rounds: 10 }, 2000)).toBe(1);
-    expect(runPriceUsd(DEFAULTS, { agents: 50, rounds: 10 }, 10_000)).toBe(1);
+  it("takes a holder's discount off the listed price, floor included (founder, 2026-11-09)", () => {
+    expect(runPriceUsd(DEFAULTS, { agents: 2000, rounds: 30 }, 2000)).toBe(36.8); // 45.05 up to 46, x 0.8
+    expect(runPriceUsd(DEFAULTS, { agents: 50, rounds: 10 }, 2000)).toBe(0.8); // the $1 floor, x 0.8
+    expect(runPriceUsd(DEFAULTS, { agents: 50, rounds: 10 }, 0)).toBe(1);
+    // Never free: a discount stops at one cent.
+    expect(runPriceUsd(DEFAULTS, { agents: 50, rounds: 10 }, 10_000)).toBe(0.01);
   });
 
   it("does not add a step for float noise, and keeps whole cents", () => {

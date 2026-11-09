@@ -83,13 +83,20 @@ A balance that cannot be read (RPC down, state older than the node keeps) makes 
 {
   "ok": true,
   "version": "0.3.0",
-  "features": { "payments": false, "oracle": false, "holder": false },   // what this API has switched on
+  "features": { "payments": false, "oracle": false, "holder": false, "clone": false },   // what this API has switched on
   "limits": {
     "minAgents": 10, "maxAgents": 2000, "minRounds": 3, "maxRounds": 30,
     "maxDecisions": 840   // the largest agents x rounds the daily spend cap lets a run start with
-  }
+  },
+  // Holder benefits' terms, or null while they are off (no token address, or HOLDER_MIN 0). min is in whole HYVO.
+  "holder": { "min": "1000000", "decimals": 18, "heldForSeconds": 86400 },
+  // The price terms, so a page can show a run's price before anything is paid (packages/schema/src/pricing.ts).
+  "pricing": { "multiplier": 2.5, "floorUsd": 1, "stepUsd": 1, "costPerAgentRoundUsd": 0.00005, "reportCostUsd": 0.008 }
 }
 ```
+
+A run's price is `max(floorUsd, ceil_step(estimated LLM cost x multiplier))`; a holder's discount comes off that price,
+floor included, so a $1 run costs a holder $0.80. Fields may be added to this answer: read it without rejecting unknown keys.
 
 ### `GET /v1/runs?limit=20&cursor=<opaque>`
 

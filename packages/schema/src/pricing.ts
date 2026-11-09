@@ -3,7 +3,11 @@
  * before anything is paid:
  *
  *   estimatedLlmCost = agents x rounds x costPerAgentRoundUsd + reportCostUsd
- *   price            = max(floorUsd, ceil_step(estimatedLlmCost x multiplier x (1 - discount)))
+ *   listed           = max(floorUsd, ceil_step(estimatedLlmCost x multiplier))
+ *   price            = listed x (1 - discount), in whole cents
+ *
+ * A holder's discount comes off the listed price, floor included (founder, 2026-11-09), so it is real for every size:
+ * a $1 run costs a holder $0.80.
  *
  * The terms are the API's config (wrangler.jsonc), and `GET /v1/health` says what they are.
  */
@@ -35,8 +39,11 @@ export function estimatedCostUsd(terms: PriceTerms, size: RunSize): number {
 
 /** The price in USD, in whole cents. `discountBps` is a holder's discount, 0 for everyone else. */
 export function runPriceUsd(terms: PriceTerms, size: RunSize, discountBps = 0): number {
-  const raw = estimatedCostUsd(terms, size) * terms.multiplier * (1 - discountBps / 10_000);
+  const raw = estimatedCostUsd(terms, size) * terms.multiplier;
   // The epsilon keeps float noise (2.0000000001) from adding a whole step.
   const stepped = Math.ceil(raw / terms.stepUsd - 1e-9) * terms.stepUsd;
-  return Math.round(Math.max(terms.floorUsd, stepped) * 100) / 100;
+  const listed = Math.max(terms.floorUsd, stepped);
+  const price = Math.round(listed * (1 - discountBps / 10_000) * 100) / 100;
+  // A paid run never costs nothing: a discount cannot take it below one cent.
+  return listed > 0 ? Math.max(0.01, price) : 0;
 }
