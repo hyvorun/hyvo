@@ -1,3 +1,4 @@
+import { PONS_V2_FACTORY } from "@hyvo/launches";
 import { DEMO_ASSETS, DEMO_LAUNCHES, DEMO_V1 } from "@hyvo/launches/testing";
 import { expect, test, type Page } from "@playwright/test";
 import { stubLaunchChain } from "./stub-launches";
@@ -55,6 +56,42 @@ test("the most traded count only real Pons curves", async ({ page }) => {
   await items.nth(1).getByRole("link").click();
   await expect(page).toHaveURL(/\/launches\/0x/);
   await expect(page.getByRole("heading", { name: "EMBER", level: 1 })).toBeVisible();
+});
+
+test("Chain Pulse counts the last 24 hours from the reads above and the hours before them", async ({ page }) => {
+  const chain = await stubLaunchChain(page);
+  await page.goto("/launches");
+  const pulse = page.getByRole("region", { name: "Chain Pulse: the last 24 hours" });
+  await pulse.scrollIntoViewIfNeeded();
+  // Ten launches in the 6-hour window, two more earlier in the day; the one from 26 hours ago is left out.
+  const stats = pulse.getByRole("list", { name: "The last 24 hours, counted" });
+  await expect(stats.getByRole("listitem").filter({ hasText: "Launches" })).toContainText("12");
+  await expect(stats.getByRole("listitem").filter({ hasText: "Pair assets" })).toContainText("4");
+  await expect(stats.getByRole("listitem").filter({ hasText: "Curve graduated to its pool" })).toContainText("1");
+  await expect(stats.getByRole("listitem").filter({ hasText: "Charge a creator tax" })).toContainText("50%");
+  await expect(stats.getByRole("listitem").filter({ hasText: "Share a symbol or a name" })).toContainText("4");
+
+  await expect(pulse.getByRole("list", { name: "Where they trade now" })).toContainText("On its Pons curve: 11");
+  await expect(pulse.getByRole("list", { name: "Where they trade now" })).toContainText("In its Uniswap V4 pool: 1");
+  await expect(pulse).toContainText("4 of 12 launches share a symbol or a name with another launch of these hours");
+  const twins = pulse.getByRole("listitem").filter({ hasText: "symbol, 2 launches" });
+  await expect(twins).toHaveCount(2);
+  await expect(twins.first().getByRole("link")).toHaveCount(2);
+  await expect(pulse.getByText(/^Measured on-chain at block/)).toContainText("Not a trading signal.");
+  await expect(pulse).not.toContainText(/\b(safe|scam|rug|honeypot|legit|risky)\b/i);
+
+  // The pulse reuses the window's reads: the factory's events of the last six hours are asked for once
+  // per reader (development runs the page's effect twice, so two readers start), never again by the pulse.
+  const head = 109_867_700;
+  const recent = chain.log.filter((entry) => {
+    if (entry.method !== "eth_getLogs") return false;
+    const filter = entry.params[0] as { address?: string; fromBlock: string };
+    return typeof filter.address === "string" && filter.address.toLowerCase() === PONS_V2_FACTORY.toLowerCase() && Number(BigInt(filter.fromBlock)) > head - 6 * 3600 * 9.6;
+  });
+  // Five queries per reader: 20,000 blocks first, then the rest of the window in 50,000-block pieces.
+  expect(recent.length).toBeGreaterThan(0);
+  expect(recent.length).toBeLessThanOrEqual(2 * 5);
+  await noHorizontalScroll(page);
 });
 
 test("the map draws one system per pair asset, and a keyboard opens one", async ({ page }) => {

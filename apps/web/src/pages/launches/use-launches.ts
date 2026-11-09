@@ -3,8 +3,10 @@
  * being read: the last few thousand blocks first, then the most traded curves, then the whole window.
  */
 import {
+  computePulse,
   findLaunchEvent,
   measurePace,
+  readAssets,
   readCurveTrades,
   readLaunch,
   readLaunches,
@@ -17,11 +19,12 @@ import {
   type LaunchEvent,
   type Lookup,
   type Movers,
+  type Pulse,
   type Snapshot,
   type Trade,
 } from "@hyvo/launches";
 import { useEffect, useState } from "react";
-import { assetCache, launchesReader, RECENT_MINUTES } from "../../lib/launches";
+import { assetCache, launchesReader, PULSE_HOURS, RECENT_MINUTES } from "../../lib/launches";
 
 /** Blocks read first: about half an hour at Robinhood Chain's pace. */
 const FIRST_BLOCKS = 20_000n;
@@ -39,7 +42,23 @@ export interface WindowState {
   graduations: GraduationEvent[];
   served: string[];
   movers: { status: "loading" | "ready" | "error"; data: Movers | null; error: string | null };
+  pulse: PulseState;
 }
+
+/**
+ * The last 24 hours, counted from the launches the window already read plus the hours before it:
+ * "counted" once the launch events are in (counts by pair asset, graduations), "ready" once every
+ * curve is read too (where each trades, creator taxes, shared symbols and names).
+ */
+export interface PulseState {
+  status: "waiting" | "counted" | "ready" | "error";
+  data: Pulse | null;
+  /** The blocks the pulse's facts were read at. */
+  reads: Snapshot[];
+  error: string | null;
+}
+
+const PULSE_START: PulseState = { status: "waiting", data: null, reads: [], error: null };
 
 const START: WindowState = {
   status: "loading",
@@ -52,6 +71,7 @@ const START: WindowState = {
   graduations: [],
   served: [],
   movers: { status: "loading", data: null, error: null },
+  pulse: PULSE_START,
 };
 
 export function failureText(error: unknown): string {
@@ -101,11 +121,17 @@ export function useLaunchWindow(hours: number, attempt: number): WindowState {
         (error: unknown) => update({ movers: { status: "error", data: null, error: failureText(error) } }),
       );
 
+      // Everything read so far, before a shorter window drops what it does not show: the pulse reuses it.
+      const read = { from: firstFrom, launches: newest.launches, graduations: first.graduations, reads: [newest.read] };
       const span = BigInt(Math.round(hours * 3600 * pace));
       const from = head.block - span + 1n;
       if (from < firstFrom) {
         const rest = await scanFactory(reader, from, firstFrom - 1n);
         const older = await readLaunches(reader, rest.launches, assetCache);
+        read.from = from;
+        read.launches = [...read.launches, ...older.launches];
+        read.graduations = [...read.graduations, ...rest.graduations];
+        if (older.launches.length > 0) read.reads = [...read.reads, older.read];
         update((current) => ({
           launches: [...current.launches, ...older.launches],
           graduations: [...current.graduations, ...rest.graduations],
@@ -121,7 +147,44 @@ export function useLaunchWindow(hours: number, attempt: number): WindowState {
         }));
       }
       update({ status: "ready", served: [...reader.served] });
-      await movers;
+
+      // 4. The pulse of the last 24 hours: the launches above, and the hours before them.
+      const pulse = (async () => {
+        const pulseFrom = head.block - BigInt(Math.round(PULSE_HOURS * 3600 * pace)) + 1n;
+        const toBlock = head.block;
+        const known = read.launches.filter((launch) => launch.block === null || launch.block >= pulseFrom);
+        const knownGraduations = read.graduations.filter((graduation) => graduation.block >= pulseFrom);
+        const before = pulseFrom < read.from ? await scanFactory(reader, pulseFrom, read.from - 1n) : { launches: [], graduations: [] };
+        const graduations = [...knownGraduations, ...before.graduations];
+        if (before.launches.length > 0) {
+          // The counts first: they need only the events and the names of their pair assets.
+          await readAssets(
+            reader,
+            before.launches.map((event) => event.pairToken),
+            assetCache,
+          );
+          update({
+            pulse: {
+              status: "counted",
+              data: computePulse({ fromBlock: pulseFrom, toBlock, launches: known, pending: before.launches, graduations, assets: assetCache }),
+              reads: read.reads,
+              error: null,
+            },
+          });
+        }
+        const older = before.launches.length > 0 ? await readLaunches(reader, before.launches, assetCache) : null;
+        update({
+          pulse: {
+            status: "ready",
+            data: computePulse({ fromBlock: pulseFrom, toBlock, launches: older ? [...known, ...older.launches] : known, graduations }),
+            reads: older && older.launches.length > 0 ? [...read.reads, older.read] : read.reads,
+            error: null,
+          },
+          served: [...reader.served],
+        });
+      })().catch((error: unknown) => update((current) => ({ pulse: { ...current.pulse, status: "error", error: failureText(error) } })));
+
+      await Promise.all([movers, pulse]);
     })().catch((error: unknown) => update({ status: "error", error: failureText(error) }));
 
     return () => {

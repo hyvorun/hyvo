@@ -1,11 +1,14 @@
 import { distinctName, formatAmount, formatBps, formatPercent, NATIVE, shortAddress, type Launch } from "@hyvo/launches";
 import { useMemo, useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
+import { CountUp } from "../../components/motion-data/CountUp";
+import { Reveal } from "../../components/Reveal";
 import { Failure } from "../../components/States";
-import { RECENT_MINUTES, WINDOWS, tokenFromPath, windowFrom } from "../../lib/launches";
+import { PULSE_HOURS, RECENT_MINUTES, WINDOWS, tokenFromPath, windowFrom } from "../../lib/launches";
 import { useDescription, useTitle } from "../../lib/use-title";
 import { Atlas } from "./Atlas";
 import { Age, Amount, pairLabel, Provenance, Towards } from "./parts";
+import { Pulse } from "./Pulse";
 import { useLaunchWindow, type WindowState } from "./use-launches";
 import styles from "./Launches.module.css";
 
@@ -87,6 +90,7 @@ export function LaunchesPage() {
               )}
             </section>
           </div>
+          <Pulse state={state} />
           <Newest state={state} now={now} hours={choice.hours} />
           <HowItIsRead />
         </>
@@ -147,18 +151,26 @@ function Stats({ state, hours }: { state: WindowState; hours: number }) {
   const taxed = launches.filter((launch) => (launch.creatorTaxBps ?? 0) > 0).length;
   const movers = state.movers.data;
   const span = hours === 1 ? "the last hour" : `the last ${hours} hours`;
+  const count = (n: number) => Math.round(n).toLocaleString("en-US");
+  const share = (n: number) => (launches.length ? formatPercent(n) : "0%");
   const items = [
-    { value: ready ? launches.length.toLocaleString("en-US") : null, label: `Launches in ${span}` },
-    { value: ready ? state.graduations.length.toLocaleString("en-US") : null, label: `Graduated in ${span}` },
-    { value: ready ? (launches.length ? formatPercent(notEth / launches.length) : "0%") : null, label: `Paired with something other than ETH, across ${pairs.size} pair asset${pairs.size === 1 ? "" : "s"}` },
-    { value: ready ? (launches.length ? formatPercent(taxed / launches.length) : "0%") : null, label: "Charge a creator tax on trades" },
-    { value: movers ? movers.trades.toLocaleString("en-US") : null, label: `Trades on Pons curves in the last ${RECENT_MINUTES} minutes` },
+    { value: ready ? launches.length : null, format: count, label: `Launches in ${span}` },
+    { value: ready ? state.graduations.length : null, format: count, label: `Graduated in ${span}` },
+    { value: ready ? (launches.length ? notEth / launches.length : 0) : null, format: share, label: `Paired with something other than ETH, across ${pairs.size} pair asset${pairs.size === 1 ? "" : "s"}` },
+    { value: ready ? (launches.length ? taxed / launches.length : 0) : null, format: share, label: "Charge a creator tax on trades" },
+    { value: movers ? movers.trades : null, format: count, label: `Trades on Pons curves in the last ${RECENT_MINUTES} minutes` },
   ];
   return (
     <ul className={styles.stats} aria-label={`The ${span} on Pons`}>
       {items.map((item) => (
         <li key={item.label}>
-          {item.value === null ? <span className={`${styles.statWait} skeleton`} aria-hidden="true" /> : <b className="num">{item.value}</b>}
+          {item.value === null ? (
+            <span className={`${styles.statWait} skeleton`} aria-hidden="true" />
+          ) : (
+            <b className="num">
+              <CountUp value={item.value} format={item.format} />
+            </b>
+          )}
           <span>{item.label}</span>
         </li>
       ))}
@@ -179,7 +191,7 @@ function Movers({ state, now }: { state: WindowState; now: number }) {
       {movers.status === "ready" && movers.data && movers.data.rows.length === 0 && <p className={styles.note}>No trades on a Pons curve in these blocks.</p>}
       {movers.status === "ready" && movers.data && movers.data.rows.length > 0 && (
         <>
-          <ol className={styles.movers}>
+          <Reveal as="ol" className={`${styles.movers} stagger`}>
             {movers.data.rows.map(({ launch, activity }) => (
               <li key={launch.curve}>
                 <Link to={`/launches/${launch.token}`} className={styles.rowLink} viewTransition>
@@ -224,7 +236,7 @@ function Movers({ state, now }: { state: WindowState; now: number }) {
                 </Link>
               </li>
             ))}
-          </ol>
+          </Reveal>
           <p className={styles.fine}>
             {movers.data.trades.toLocaleString("en-US")} trades on {movers.data.curves.toLocaleString("en-US")} curves
             {movers.data.everyCurve ? "" : " among the newest launches only: no public endpoint answered a query across every curve"}
@@ -280,11 +292,11 @@ function Newest({ state, now, hours }: { state: WindowState; now: number; hours:
             <span>On its curve</span>
             <span>Creator tax</span>
           </div>
-          <ul className={styles.rows}>
+          <Reveal as="ul" className={`${styles.rows} stagger`}>
             {list.slice(0, shown).map((launch) => (
               <LaunchRow key={launch.token} launch={launch} now={now} />
             ))}
-          </ul>
+          </Reveal>
         </>
       )}
       {list.length > shown && (
@@ -359,6 +371,12 @@ function HowItIsRead() {
         <p>
           A curve graduates when it holds its threshold of the pair asset; the token then trades in a Uniswap V4 pool, and its curve stops. Distance on the map and the
           bar in the list are that one ratio. None of this rates a token. It is not a trading signal, and nothing here is advice.
+        </p>
+        <p>
+          Chain Pulse counts the last {PULSE_HOURS} hours the same way, whatever window you chose: it reuses the launches read above and reads the hours
+          before them. A launch is in its Uniswap V4 pool once the factory has announced that pool with <span className="mono">PoolGraduated</span>, on its
+          curve while the curve&apos;s <span className="mono">graduated()</span> is false, and in between otherwise. Two launches share a symbol or a name
+          when the two match apart from case, spaces and a leading $.
         </p>
         <p>
           Every launch has its own page with the rest of its facts, and a link to <Link to="/check">Hyvo Check</Link>.

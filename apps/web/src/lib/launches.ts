@@ -33,6 +33,9 @@ export function windowFrom(value: string | null): (typeof WINDOWS)[number] {
 /** The minutes "most traded" looks back over. */
 export const RECENT_MINUTES = 15;
 
+/** The hours Chain Pulse counts, whatever window the visitor picked. */
+export const PULSE_HOURS = 24;
+
 /** A Robinhood Chain address in a link, or null. */
 export function tokenFromPath(value: string | undefined): `0x${string}` | null {
   return value && /^0x[0-9a-fA-F]{40}$/.test(value) ? (value as `0x${string}`) : null;
