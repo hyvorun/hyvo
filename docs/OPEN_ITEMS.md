@@ -38,6 +38,7 @@ Status: **verified** (checked against an official source or on-chain) · **likel
 | 28 | Hyvo Stocks: where each fact comes from | verified / decision | on-chain StockFactory record + Chainlink feeds; Robinhood's API and docs not used |
 | 29 | Pons launches for Hyvo Launches: sources and limits | verified / decision | read in the visitor's browser; endpoints in `packages/launches/src/endpoints.ts` |
 | 30 | Hyvo Check: addresses and limits | verified | factories, hook and PoolManager read on-chain on every check; top holders from Blockscout through Hyvo's API (its own key); credit cost per request open |
+| 31 | Hyvo Board | verified / open | read in the visitor's browser, every 15 s (`BOARD_REFRESH_MS`); request count on Robinhood Chain itself not measured yet |
 
 ---
 
@@ -644,3 +645,47 @@ sell reverted with `Error("TransferHelper: TRANSFER_FROM_FAILED")`.
   functions that live in a facet are not in its ABI.
 - Holders come from Blockscout's index (a key: item 24; through Hyvo's API, above), not from the block the rest is read at, and an index can
   trail the chain. Only Blockscout's first page (50 holders) is read, so the deployer outside it is named as not listed.
+
+## 31. Hyvo Board — verified / open
+
+Hyvo Board (`/board`, `packages/launches/src/board.ts` and `board-read.ts`, `apps/web/src/pages/board`) shows every Pons V2 launch as it
+happens, in three columns: New (launched in the last 60 minutes), Final stretch (still on its curve and at least 50% of the way to graduating)
+and Graduated (its Uniswap V4 pool created in the last 24 hours). A launch sits in the furthest column it has reached. Like Launches (item 29)
+it is read in the visitor's browser through the public endpoints: no Worker route, cron trigger or storage.
+
+**From the verified source** (the Pons V2 factory's exact match on Sourcify, the same sources as item 29, read on 2026-11-10):
+
+- `PonsV2LauncherToken` is `ERC20, ERC20Burnable` from OpenZeppelin, and its constructor mints the whole supply to the curve
+  (`_mint(curve_, supply_)`). `balanceOf(address account) view returns (uint256)` is copied from OpenZeppelin's `ERC20.sol` in the same
+  sources into `ERC20_ABI` (`packages/launches/src/pons.ts`).
+- `PonsV2BondingCurve` sets `launchSupply = supply` and `launchedAt = block.timestamp` when it is deployed, so a card's shares are balances
+  over `launchSupply`, and the launch second is the blocks whose time equals `launchedAt`.
+- `buy(quoteIn, minTokensOut, recipient)` sends the tokens to `recipient` and emits `CurveBuy(msg.sender, recipient, spent, tokensOut, fee +
+  snipeTax, tax)`; the first-second buyers are those recipients, the creator's own wallet left out (it is shown on its own).
+- The factory also calls `locker.lockTokenSupply(token, excess)`: part of a supply can sit in the launch locker. The board shows the curve's
+  own balance only, as "Still on the curve".
+
+**What it reads.** The first read takes the last hour of the factory's `TokenLaunched` and `PoolGraduated` events and the last five
+minutes of `CurveBuy` and `CurveSell` from every emitter, then the rest of the 24 hours of factory events (about 850 launches a day at the
+pace of item 29, so about 1,700 curve reads, six Multicall3 batches). Each refresh after that asks for the blocks since the last read only:
+one header, one factory log query, one trade log query, and one or two Multicall3 calls for the curves that traded and the cards shown (12
+per column). The buys of a launch second are one log query per card, once per launch. Reads stop while the tab is hidden, and the wait
+doubles after each failed read, up to two minutes. An emitter of curve events counts only when the factory's record names it as its
+token's curve (`verifyCurves`); a pool created for a launch older than the hours read is found through the same record.
+
+**Flags** state a number when it passes a constant in `board.ts`: the creator's wallet at 5% of the supply or more
+(`CREATOR_SHARE_FLAG`), the first-second buyers at 10% or more together (`FIRST_SECOND_SHARE_FLAG`), a creator tax of 5% or more
+(`CREATOR_TAX_FLAG_BPS`). They never rate a token.
+
+**Limits.**
+
+- First-second buyers are read only for launches whose launch event the board read (the last 24 hours); an older launch says "Not read".
+- Final stretch covers the launches of the last 24 hours and the curves seen trading while the board is open; an older curve past half way
+  that does not trade is not found without a scan of the whole history.
+- When no endpoint answers a log query without an address, trades are counted on the shown curves only, and the page says so (item 29,
+  Founder point 1).
+- The header has room for Board from 1000px wide and in the phone's sideways row. Measured with the HYVO address build, at 900px with
+  Oracle shown the bar overflowed by 13px, so between 641px and 999px Board is in the footer and the product list only.
+
+**Open:** the requests and bytes of a first read and of a refresh against Robinhood Chain itself (not measured yet), and the refresh interval per
+viewer: the hook takes it as a parameter, and a later step sets it.

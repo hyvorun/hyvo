@@ -399,6 +399,15 @@
   }
 }
 
+/* Wider than a phone, narrower than 1000px: below that the bar has no room for one more link. */
+@media not all and (max-width: 640px) {
+  @media not all and (min-width: 1000px) {
+    .roomier {
+      display: none;
+    }
+  }
+}
+
 .theme:hover {
   color: var(--ink);
 }

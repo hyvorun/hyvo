@@ -65,10 +65,15 @@ export const V1_FACTORY_ABI = parseAbi([
   "function getLaunchedToken(address token) view returns (LaunchedTokenV1)",
 ]);
 
+/**
+ * PonsV2LauncherToken is OpenZeppelin's ERC20 with ERC20Burnable and mints its whole supply to its curve
+ * (`_mint(curve_, supply_)`); `balanceOf` is copied from OpenZeppelin's ERC20.sol in the same verified sources.
+ */
 export const ERC20_ABI = parseAbi([
   "function name() view returns (string)",
   "function symbol() view returns (string)",
   "function decimals() view returns (uint8)",
+  "function balanceOf(address account) view returns (uint256)",
 ]);
 
 /** Some old tokens return bytes32 for name() and symbol(). */

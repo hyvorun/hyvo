@@ -39,18 +39,20 @@ type TransitionDocument = Document & { startViewTransition?: (update: () => void
 /**
  * The header's links, in order. Runs, Check, Launches and Stocks show at every width. Where the bar
  * runs short of room the others give way (the footer has them all): `wide` links show from 900px,
- * `roomy` ones wherever the bar has room for them, which on a phone is its sideways scroll.
+ * `roomy` ones wherever the bar has room for them, which on a phone is its sideways scroll, and
+ * `roomier` ones the same from 1000px.
  */
-const NAV: { to: string; label: string; show?: "wide" | "roomy" }[] = [
+const NAV: { to: string; label: string; show?: "wide" | "roomy" | "roomier" }[] = [
   { to: "/runs", label: "Runs" },
   { to: "/check", label: "Check" },
   { to: "/launches", label: "Launches" },
+  { to: "/board", label: "Board", show: "roomier" },
   { to: "/stocks", label: "Stocks" },
   { to: "/tools", label: "Tools", show: "roomy" },
   { to: "/oracle", label: "Oracle", show: "wide" },
   { to: "/docs", label: "Docs", show: "roomy" },
 ];
-const SHOW = { wide: styles.wideOnly, roomy: styles.roomy };
+const SHOW = { wide: styles.wideOnly, roomy: styles.roomy, roomier: styles.roomier };
 
 export function Layout() {
   const [theme, setTheme] = useState<Theme>(readTheme);
@@ -205,6 +207,9 @@ export function Layout() {
           </Link>
           <Link to="/launches" viewTransition>
             Launches
+          </Link>
+          <Link to="/board" viewTransition>
+            Board
           </Link>
           <Link to="/stocks" viewTransition>
             Stocks

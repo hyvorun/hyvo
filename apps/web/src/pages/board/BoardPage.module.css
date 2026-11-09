@@ -1,0 +1,419 @@
+/* Hyvo Board: three columns of launch cards. Hairlines and platinum text as on the Launches pages; the
+   flags are plain hairline chips, never a warning color. */
+
+.page {
+  display: grid;
+  gap: var(--space-6);
+  padding-top: var(--space-8);
+  min-width: 0;
+}
+
+.head {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  animation: rise 700ms var(--ease-out) both;
+}
+
+.head h1 {
+  font-size: var(--t-3xl);
+  letter-spacing: -0.03em;
+}
+
+.lead {
+  max-width: 64ch;
+  color: var(--ink-2);
+  font-size: var(--t-lg);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.status {
+  display: grid;
+  gap: 4px;
+  min-height: 22px;
+}
+
+.read {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.read a,
+.measured a {
+  color: var(--ink-2);
+}
+
+/* The dot's place while no read is under way: the same size, still. */
+.still {
+  display: inline-block;
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-3);
+  opacity: 0.5;
+}
+
+.stale {
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+}
+
+.fine {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.unknown {
+  color: var(--ink-3);
+}
+
+/* --- columns, and the tabs that stand for them on a phone --------------------------------------- */
+
+.tabs {
+  display: flex;
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+}
+
+.tabs button {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 6px;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--t-sm);
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--ease),
+    color 160ms var(--ease);
+}
+
+.tabs button[aria-selected="true"] {
+  background: var(--raised);
+  color: var(--ink);
+}
+
+.tabs button:focus-visible {
+  outline-offset: -2px;
+}
+
+.tabs .num {
+  color: var(--ink-3);
+}
+
+.columns {
+  display: grid;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.column {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  min-width: 0;
+  animation: rise 800ms var(--ease-out) 100ms both;
+}
+
+.column:not([data-active="true"]) {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .tabs {
+    display: none;
+  }
+
+  .columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--space-5);
+  }
+
+  .column:not([data-active="true"]) {
+    display: grid;
+  }
+}
+
+.columnHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 4px var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--rule);
+}
+
+.columnHead h2 {
+  font-size: var(--t-xl);
+}
+
+.count {
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+}
+
+.columnHead p {
+  grid-column: 1 / -1;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+}
+
+.empty {
+  padding: var(--space-4) 0;
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+}
+
+.waiting {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.waiting span {
+  height: 148px;
+  border-radius: var(--radius-lg);
+}
+
+/* --- cards --------------------------------------------------------------------------------------- */
+
+.cards {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+.card:has(.open:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.open {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* The whole card opens the launch; the Check link sits above this layer. */
+.open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.open:focus-visible {
+  outline: 0;
+}
+
+.open b {
+  font-weight: 550;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.name {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.check {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+  text-decoration: none;
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  transition:
+    color 160ms var(--ease),
+    background-color 160ms var(--ease);
+}
+
+.check:hover {
+  background: var(--raised);
+  color: var(--ink);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px var(--space-3);
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.pair {
+  color: var(--accent-text);
+  font-family: var(--font-mono);
+}
+
+.progress {
+  min-height: 18px;
+}
+
+.done {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-text);
+  font-size: var(--t-xs);
+}
+
+.done::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+  background: var(--accent);
+}
+
+.facts {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+  font-size: var(--t-xs);
+}
+
+.facts div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px var(--space-3);
+}
+
+.facts dt {
+  color: var(--ink-3);
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--ink-2);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flags li {
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  color: var(--ink);
+  font-size: var(--t-2xs);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  animation: fade 400ms var(--ease-out) both;
+}
+
+/* --- the foot of the page ------------------------------------------------------------------------ */
+
+.foot {
+  display: grid;
+  gap: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+}
+
+.measured {
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+}
+
+.measured strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.how {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 72ch;
+}
+
+.how h2 {
+  font-size: var(--t-lg);
+}
+
+.how p {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .head,
+  .column,
+  .flags li {
+    animation: none;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
