@@ -129,6 +129,29 @@
   gap: var(--space-2) var(--space-4);
 }
 
+/* The price, said before the button that spends it: the label and the amount on one line, where it comes from on the
+   next. The amount keeps its width while it loads, so nothing moves when it arrives. */
+.price {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 2px var(--space-3);
+  margin: 0;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.price b {
+  min-width: 6ch;
+  color: var(--ink);
+  font-size: var(--t-lg);
+  font-weight: 500;
+}
+
+.price .small {
+  grid-column: 1 / -1;
+}
+
 .section {
   display: grid;
   gap: var(--space-3);

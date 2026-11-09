@@ -6,8 +6,26 @@ import { Crowd } from "./Crowd";
 import { Arrow, CheckMark } from "./Icons";
 import styles from "./JobStatus.module.css";
 
-/** A paid run that is not published yet: where it is in the queue, and what happens next. The crowd
- * fills as the rounds are played. */
+/**
+ * Where what a failed run cost went, which depends on how it was paid (`JobView.refund`): from a prepaid balance it is
+ * already back there; paid on-chain it is refunded to the paying wallet; a holder's free run goes back to this month's.
+ */
+export function failedRunMoney(refund: JobView["refund"]): string {
+  switch (refund) {
+    case "credited":
+      return "Its price went straight back to the prepaid balance it was paid from.";
+    case "sent":
+      return "The payment was refunded to the wallet that paid.";
+    case "due":
+      return "The payment will be refunded to the wallet that paid it.";
+    default:
+      return "It was a free run, and it went back to the wallet's free runs for this month.";
+  }
+}
+
+/** A run that is not published yet: where it is in the queue, and what happens next. The crowd fills as the rounds are
+ * played. It may have been paid on-chain, from a prepaid balance or with a holder's free run, and the page says nothing
+ * that holds for only one of them. */
 export function JobStatus({ runId, job }: { runId: string; job: JobView }) {
   const rounds = job.progress?.rounds ?? null;
   const round = job.progress?.round ?? 0;
@@ -25,7 +43,7 @@ export function JobStatus({ runId, job }: { runId: string; job: JobView }) {
         {job.status === "queued" && (
           <>
             <h1>Your run is in the queue</h1>
-            <p>The payment is confirmed. A runner picks the run up next; this page updates on its own.</p>
+            <p>Nothing more is needed from you. A runner picks the run up next; this page updates on its own.</p>
           </>
         )}
         {job.status === "running" && (
@@ -49,12 +67,8 @@ export function JobStatus({ runId, job }: { runId: string; job: JobView }) {
           <>
             <h1>This run could not be completed</h1>
             <p>
-              It failed twice, so it will not start again.{" "}
-              {job.refund === "sent"
-                ? "The payment was refunded to the wallet that paid."
-                : job.refund === "due"
-                  ? "The payment will be refunded to the wallet that paid it."
-                  : "Free runs are given back to the wallet's monthly allowance."}
+              {job.attempt > 1 ? "It failed twice, so it will not start again." : "It failed in a way another attempt would not fix, so it will not start again."}{" "}
+              {failedRunMoney(job.refund)}
             </p>
             <Link to="/new" className="arrow-link" viewTransition>
               Start a new run <Arrow />

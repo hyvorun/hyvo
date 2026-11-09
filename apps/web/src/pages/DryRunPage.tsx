@@ -1,14 +1,56 @@
-import { DRYRUN_LIMITS, DryRunRequest, type DryRunView } from "@hyvo/schema";
+import { DRYRUN_LIMITS, DryRunRequest, runPriceUsd, type DryRunView, type HealthResponse, type RunSize } from "@hyvo/schema";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { PaymentsNote } from "../components/PaymentsNote";
 import { Reveal } from "../components/Reveal";
 import { useWalletSession, Web3 } from "../components/Web3";
-import { ApiError, createDryRun, fetchDryRuns } from "../lib/api";
+import { ApiError, createDryRun, fetchDryRuns, fetchHealth, fetchMe } from "../lib/api";
 import { formatUsd } from "../lib/draft";
 import { formatDate, shortHash } from "../lib/format";
+import { useAsync } from "../lib/use-async";
 import { useTitle } from "../lib/use-title";
 import styles from "./DryRunPage.module.css";
+
+/** This wallet's holder discount once it is signed in, as the API will apply it: 0 until then, and for everyone else. */
+function useHolderDiscount(token: string | null): number {
+  const [discountBps, setDiscountBps] = useState(0);
+  useEffect(() => {
+    setDiscountBps(0);
+    if (!token) return;
+    let current = true;
+    fetchMe(token).then(
+      (me) => current && setDiscountBps(me.holder.eligible ? me.holder.discountBps : 0),
+      () => undefined,
+    );
+    return () => {
+      current = false;
+    };
+  }, [token]);
+  return discountBps;
+}
+
+/** /v1/health, or null while it loads or when it cannot be read. */
+export function useHealth(): HealthResponse | null {
+  const health = useAsync(fetchHealth, "health");
+  return health.status === "ready" ? health.data : null;
+}
+
+/**
+ * The price of a run paid from the balance, said before the button that spends it: the API's own terms (`/v1/health`)
+ * through the function the API charges with, and this wallet's holder discount once it is signed in. The line holds
+ * its place while the terms load or the size is not valid yet, so nothing below it moves.
+ */
+export function BalancePrice({ health, size, token }: { health: HealthResponse | null; size: RunSize | null; token: string | null }) {
+  const discountBps = useHolderDiscount(token);
+  const price = health?.pricing && size ? runPriceUsd(health.pricing, size, discountBps) : null;
+  return (
+    <p className={styles.price} role="status">
+      <span>Price</span>
+      <b className="num">{price === null ? "–" : formatUsd(price)}</b>
+      <span className={styles.small}>{price !== null && discountBps > 0 ? `with your ${discountBps / 100}% holder discount, from your prepaid balance` : "from your prepaid balance"}</span>
+    </p>
+  );
+}
 
 export function DryRunPage() {
   useTitle("Dry Run");
@@ -34,8 +76,17 @@ interface Fields {
 
 const EMPTY: Fields = { target: "address", address: "", bytecode: "", abi: "", description: "", invariants: "", agents: "12", rounds: "8" };
 
-/** The form as a submission, or what is wrong with it, by field. */
-export function toSubmission(fields: Fields): { body: DryRunRequest | null; errors: Record<string, string> } {
+/** The size the form holds, when it is one the API would take: within the Dry Run's bounds and `/v1/health`'s `maxDecisions`. */
+export function dryRunSize(fields: Pick<Fields, "agents" | "rounds">, maxDecisions: number | null): RunSize | null {
+  const agents = Number(fields.agents);
+  const rounds = Number(fields.rounds);
+  if (!Number.isInteger(agents) || agents < DRYRUN_LIMITS.minAgents || agents > DRYRUN_LIMITS.maxAgents) return null;
+  if (!Number.isInteger(rounds) || rounds < DRYRUN_LIMITS.minRounds || rounds > DRYRUN_LIMITS.maxRounds) return null;
+  return maxDecisions !== null && agents * rounds > maxDecisions ? null : { agents, rounds };
+}
+
+/** The form as a submission, or what is wrong with it, by field. `maxDecisions` is `/v1/health`'s, once it is known. */
+export function toSubmission(fields: Fields, maxDecisions: number | null = null): { body: DryRunRequest | null; errors: Record<string, string> } {
   const errors: Record<string, string> = {};
   let abi: unknown;
   if (fields.abi.trim()) {
@@ -57,6 +108,10 @@ export function toSubmission(fields: Fields): { body: DryRunRequest | null; erro
   const rounds = Number(fields.rounds);
   if (!Number.isInteger(agents) || agents < DRYRUN_LIMITS.minAgents || agents > DRYRUN_LIMITS.maxAgents) errors.agents = `Use ${DRYRUN_LIMITS.minAgents} to ${DRYRUN_LIMITS.maxAgents}.`;
   if (!Number.isInteger(rounds) || rounds < DRYRUN_LIMITS.minRounds || rounds > DRYRUN_LIMITS.maxRounds) errors.rounds = `Use ${DRYRUN_LIMITS.minRounds} to ${DRYRUN_LIMITS.maxRounds}.`;
+  // What the API's daily limit lets through, as /new keeps its runs to it.
+  if (!errors.agents && !errors.rounds && maxDecisions !== null && agents * rounds > maxDecisions) {
+    errors.agents = `For now, users × rounds can be at most ${maxDecisions.toLocaleString("en-US")}.`;
+  }
   if (Object.keys(errors).length > 0) return { body: null, errors };
   const candidate = {
     balance: true as const,
@@ -84,6 +139,8 @@ function Submit() {
   const [busy, setBusy] = useState(false);
   const [earlier, setEarlier] = useState<DryRunView[]>([]);
   const token = wallet.session?.token ?? null;
+  const health = useHealth();
+  const maxDecisions = health?.limits.maxDecisions ?? null;
   const set = (patch: Partial<Fields>) => setFields((current) => ({ ...current, ...patch }));
 
   const refresh = useCallback(() => {
@@ -94,7 +151,7 @@ function Submit() {
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setFailure(null);
-    const { body, errors: found } = toSubmission(fields);
+    const { body, errors: found } = toSubmission(fields, maxDecisions);
     setErrors(found);
     if (!body) return;
     const session = await wallet.ensureSession();
@@ -161,13 +218,14 @@ function Submit() {
             {(props) => <input {...props} inputMode="numeric" value={fields.rounds} onChange={(e) => set({ rounds: e.target.value })} />}
           </Field>
         </div>
+        <BalancePrice health={health} size={dryRunSize(fields, maxDecisions)} token={token} />
         <PaymentsNote className={styles.small} />
         <div className={styles.actions}>
           <button type="submit" className="btn btn-primary" disabled={busy || wallet.busy !== null}>
             {wallet.busy === "connecting" ? "Connecting your wallet…" : wallet.busy === "signing" ? "Sign the message in your wallet…" : busy ? "Starting…" : "Start the Dry Run"}
           </button>
           <p className={styles.small}>
-            Paid from your <Link to="/account">prepaid balance</Link>. If it fails, the money goes back.
+            If it fails, the price goes back to your <Link to="/account">prepaid balance</Link>.
           </p>
         </div>
       </Reveal>

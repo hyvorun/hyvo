@@ -408,6 +408,17 @@ describe("holder free runs", () => {
     expect((await json(target, "/v1/runs", credit, user)).status).toBe(201);
   });
 
+  it("are closed, and paid runs carry no discount or priority, while the minimum to hold is 0", async () => {
+    target = chainEnv({ HOLDER_MIN: "0" });
+    user = await signIn(target, KEYS.user, NOW);
+    chain.balances.set(payer.toLowerCase(), { now: 10n ** 22n, past: 10n ** 22n });
+    const refused = await json(target, "/v1/runs", credit, user);
+    expect(refused.status).toBe(503);
+    expect(await refused.text()).toContain("holder_disabled");
+    const quoted = await json(target, "/v1/quotes", { scenario, agents: 50, rounds: 10 }, user);
+    expect(OrderResponse.parse(await quoted.json()).order.discountBps).toBe(0);
+  });
+
   it("refuses wallets that were not holders 24 h ago, and runs that are too big", async () => {
     chain.balances.set(payer.toLowerCase(), { now: 10n ** 22n, past: 0n });
     expect((await json(target, "/v1/runs", credit, user)).status).toBe(403);

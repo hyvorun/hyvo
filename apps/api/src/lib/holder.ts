@@ -9,7 +9,8 @@ import { chainFor } from "./chain";
 import { utcMonth } from "./clock";
 import type { Config } from "./config";
 
-const DAY_S = 86_400;
+/** How long a wallet must already have held the minimum: it is read now and at the block of this long ago. */
+export const HELD_FOR_S = 86_400;
 /** How far the block found for "24 h ago" may be from it. */
 const SNAPSHOT_TOLERANCE_S = 600;
 
@@ -39,6 +40,12 @@ export async function returnCredit(db: D1Database, address: string, now: number)
     .prepare("UPDATE credit_usage SET used = used - 1 WHERE address = ? AND month = ? AND used > 0")
     .bind(address.toLowerCase(), utcMonth(now))
     .run();
+}
+
+/** `GET /v1/health`'s `holder`: what a wallet must hold, and for how long, or null while holder benefits are off. */
+export function holderRequirement(cfg: Config): { min: string; decimals: number; heldForSeconds: number } | null {
+  if (!cfg.features.holder || !cfg.hyvoToken) return null;
+  return { min: cfg.holder.minText, decimals: cfg.hyvoToken.decimals, heldForSeconds: HELD_FOR_S };
 }
 
 /** What holding the token changes about a paid run: its discount and its place in the queue. */
@@ -73,7 +80,7 @@ export async function holderStatus(db: D1Database, cfg: Config, address: string,
   try {
     const chain = chainFor(cfg);
     now_ = await chain.balanceOf(token.address, owner);
-    const block = await blockAt(cfg, now - DAY_S);
+    const block = await blockAt(cfg, now - HELD_FOR_S);
     then = block === null ? null : await chain.balanceOf(token.address, owner, block);
   } catch (error) {
     console.warn(JSON.stringify({ level: "warn", event: "holder_balance_failed", error: String(error).slice(0, 200) }));

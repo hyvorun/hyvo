@@ -2,10 +2,11 @@
  * Quotes (SPEC 8.3, money rule 4): estimatedLlmCost = agents x rounds x COST_PER_AGENT_ROUND_USD
  * + REPORT_COST_USD; price = max(PRICE_FLOOR_USD, ceil_step(estimatedLlmCost x PRICE_MULTIPLIER x
  * (1 - discount))). Each run's LLM budget is the estimate x BUDGET_HEADROOM, never more than the
- * price, so a paid run cannot spend more than it brought in.
+ * price, so a paid run cannot spend more than it brought in. The formula itself is `runPriceUsd` in
+ * @hyvo/schema, which the web app uses to show a price before anything is paid.
  */
 import type { JobSpec, MixInput, QuestionInput, ScenarioInput } from "@hyvo/schema";
-import { JOB_SPEC_VERSION } from "@hyvo/schema";
+import { estimatedCostUsd as estimateFromTerms, JOB_SPEC_VERSION, runPriceUsd } from "@hyvo/schema";
 import { parseUnits } from "viem";
 import type { Config, Token } from "./config";
 import { ApiError } from "./errors";
@@ -52,8 +53,7 @@ export function jobTimeoutFor(cfg: Config, size: RunSize): number {
 }
 
 export function estimateCostUsd(cfg: Config, size: RunSize): number {
-  const p = cfg.pricing;
-  return round6(size.agents * size.rounds * p.costPerAgentRoundUsd + p.reportCostUsd);
+  return estimateFromTerms(cfg.pricing, size);
 }
 
 function maxLlmCalls(cfg: Config, size: RunSize): number {
@@ -65,10 +65,7 @@ function maxLlmCalls(cfg: Config, size: RunSize): number {
 export function quoteRun(cfg: Config, size: RunSize, discountBps = 0): Quote {
   const p = cfg.pricing;
   const estimatedCostUsd = estimateCostUsd(cfg, size);
-  const raw = estimatedCostUsd * p.multiplier * (1 - discountBps / 10_000);
-  // The epsilon keeps float noise (2.0000000001) from adding a whole step.
-  const stepped = Math.ceil(raw / p.stepUsd - 1e-9) * p.stepUsd;
-  const priceUsd = Math.round(Math.max(p.floorUsd, stepped) * 100) / 100;
+  const priceUsd = runPriceUsd(p, size, discountBps);
   return {
     estimatedCostUsd,
     priceUsd,

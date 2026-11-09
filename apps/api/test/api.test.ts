@@ -3,6 +3,7 @@ import {
   ArtifactResponse,
   FeaturedRunResponse,
   hashRun,
+  HealthResponse,
   PublishResponse,
   RunListResponse,
   RunResponse,
@@ -56,12 +57,44 @@ describe("health", () => {
   it("answers ok with the version", async () => {
     const response = await request("/v1/health");
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({
+    const body = await response.json();
+    expect(body).toEqual({
       ok: true,
       version: env.API_VERSION,
       features: { payments: false, oracle: false, holder: false, clone: false },
       limits: { minAgents: 10, maxAgents: 2000, minRounds: 3, maxRounds: 30, maxDecisions: 15_000 },
+      holder: null,
+      pricing: { multiplier: 2.5, floorUsd: 1, stepUsd: 1, costPerAgentRoundUsd: 0.0003, reportCostUsd: 0.02 },
     });
+    expect(HealthResponse.parse(body)).toEqual(body);
+  });
+
+  /** The API with a token address and an RPC, and HOLDER_MIN as given. */
+  async function holderHealth(holderMin: string | undefined) {
+    const target = { ...env, RPC_URLS: "http://chain.test", HYVO_TOKEN_ADDRESS: "0x00000000000000000000000000000000000000a3", HOLDER_MIN: holderMin } as Env;
+    return HealthResponse.parse(await (await app.request("https://api.test/v1/health", {}, target)).json());
+  }
+
+  it("says what a holder must hold, and for how long, once holder benefits are on", async () => {
+    const health = await holderHealth("1000");
+    expect(health.features.holder).toBe(true);
+    expect(health.holder).toEqual({ min: "1000", decimals: 18, heldForSeconds: 86_400 });
+    expect((await holderHealth(" 2.50 ")).holder).toEqual({ min: "2.5", decimals: 18, heldForSeconds: 86_400 });
+  });
+
+  it("keeps holder benefits off while no wallet could qualify: a minimum of 0, none, or one that is not a number", async () => {
+    for (const holderMin of ["0", "0.0", "", undefined, "1,000", "lots"]) {
+      const health = await holderHealth(holderMin);
+      expect(health.features.holder, String(holderMin)).toBe(false);
+      expect(health.holder, String(holderMin)).toBeNull();
+    }
+  });
+
+  it("keeps holder benefits off without a token address, whatever the minimum", async () => {
+    const target = { ...env, RPC_URLS: "http://chain.test", HYVO_TOKEN_ADDRESS: "", HOLDER_MIN: "1000" } as Env;
+    const health = HealthResponse.parse(await (await app.request("https://api.test/v1/health", {}, target)).json());
+    expect(health.features.holder).toBe(false);
+    expect(health.holder).toBeNull();
   });
 });
 
