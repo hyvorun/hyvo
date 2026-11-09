@@ -1,0 +1,44 @@
+{
+  "name": "hyvo",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Hyvo in your terminal: read-only facts about Robinhood Chain tokens with their evidence, and proof of Hyvo's published runs",
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://hyvo.run",
+  "keywords": [
+    "robinhood-chain",
+    "evm",
+    "token",
+    "cli",
+    "mcp",
+    "hyvo"
+  ],
+  "bin": {
+    "hyvo": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc --noEmit -p tsconfig.json && node build.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepack": "node build.mjs"
+  },
+  "devDependencies": {
+    "@hyvo/check": "workspace:*",
+    "@hyvo/schema": "workspace:*",
+    "@hyvo/sdk": "workspace:*",
+    "@types/node": "^24.19.2",
+    "esbuild": "0.28.2",
+    "typescript": "^7.0.2",
+    "vitest": "~5.0.5"
+  }
+}
