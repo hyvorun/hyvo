@@ -74,7 +74,7 @@ or `skipped` (it could not look, and the evidence says why). `CHECKS[id].looksFo
 | `blocklist` | Address blocklist | `blacklist`, `setBlocked`, `freeze(address)` and similar | same |
 | `pause` | Pause or trading switch | `pause`, `setTradingEnabled`, `enableTrading` and similar | same |
 | `venue` | Trading venue | Where the token trades against ETH | Pons factories, Uniswap factories, the V4 PoolManager |
-| `sell-simulation` | Sell simulation | After the buy: a transfer or sell that reverts, or any step short of the venue's own math (a buy that reverts is `skipped`) | the probe, in one `eth_call` |
+| `sell-simulation` | Sell or transfer shortfall | After the buy: a transfer or sell that reverts, or any step short of the venue's own math (a buy that reverts is `skipped`) | the probe, in one `eth_call` |
 | `holders` | Top holders | The share of the 10 largest holders, burn addresses and pools left out | Blockscout (needs a key) |
 | `deployer` | Deployer | Who created or launched the token | the Pons factories' records, Sourcify, Blockscout |
 

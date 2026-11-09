@@ -64,8 +64,8 @@ test("a taxed token: every step arrives short of its promise, and the page says 
   await expect(exit).toContainText("Uniswap V2 pair with WETH");
 
   await expect(page.getByRole("region", { name: "Every check, with its evidence" }).getByRole("listitem")).toHaveCount(11);
-  await expect(finding(page, "Sell simulation")).toContainText("Found");
-  await expect(finding(page, "Sell simulation")).toContainText("5% short of the router's quote");
+  await expect(finding(page, "Sell or transfer shortfall")).toContainText("Found");
+  await expect(finding(page, "Sell or transfer shortfall")).toContainText("5% short of the router's quote");
   await expect(finding(page, "Fee or tax setter")).toContainText("setTaxes(uint256,uint256)");
   await expect(finding(page, "Top holders")).toContainText("Skipped");
   await expect(finding(page, "Top holders")).toContainText("Blockscout");
@@ -101,8 +101,8 @@ test("a sell that reverts: the reason from the chain, and no round trip", async 
   await expect(sell).not.toContainText("Difference");
   await expect(page.getByRole("region", { name: "Buy, send, sell back" })).toContainText("No round trip: the sell did not go through.");
 
-  await expect(finding(page, "Sell simulation")).toContainText("Found");
-  await expect(finding(page, "Sell simulation")).toContainText('the sell reverted with Error("TransferHelper: TRANSFER_FROM_FAILED")');
+  await expect(finding(page, "Sell or transfer shortfall")).toContainText("Found");
+  await expect(finding(page, "Sell or transfer shortfall")).toContainText('the sell reverted with Error("TransferHelper: TRANSFER_FROM_FAILED")');
   await fitsTheScreen(page);
 });
 
@@ -120,7 +120,7 @@ test("a token with no venue: no simulation, and the reason", async ({ page }) =>
   await expect(exit.getByRole("listitem")).toHaveCount(0);
 
   await expect(finding(page, "Trading venue")).toContainText("Not found");
-  await expect(finding(page, "Sell simulation")).toContainText("Skipped");
+  await expect(finding(page, "Sell or transfer shortfall")).toContainText("Skipped");
   await expect(page.getByText(`Measured on-chain at block ${BLOCK}. Not a trading signal.`)).toBeVisible();
   await fitsTheScreen(page);
 });

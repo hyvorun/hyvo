@@ -26,7 +26,7 @@ describe("what watch compares", () => {
     const first = observe(null, sampleReport());
     const next = withFinding(sampleReport(), "sell-simulation", "found", "the sell reverted with Error(\"no\")");
     expect(observe(first.known, next).changes).toEqual([
-      { what: "Sell simulation", from: "not found", to: "found", evidence: "the sell reverted with Error(\"no\")" },
+      { what: "Sell or transfer shortfall", from: "not found", to: "found", evidence: "the sell reverted with Error(\"no\")" },
     ]);
   });
 

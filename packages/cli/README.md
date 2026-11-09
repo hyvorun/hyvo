@@ -74,7 +74,7 @@ A real report, read on 2026-11-09 from a token launched on a Pons bonding curve 
   found      Trading venue
              the Pons v2 bonding curve 0x2DE9…b4c9, quoted in native ETH: curve fee 1%, creator tax
              1%, snipe tax at this block 0%
-  not found  Sell simulation
+  not found  Sell or transfer shortfall
              at block 109,887,933 through the Pons v2 curve 0x2DE9…b4c9: the buy of 0.001 ETH
              delivered 582,835.84 tokens, matching the curve's math after its fee and taxes; sending
              58,283.58 to a fresh address delivered 58,283.58 (in full); the sell brought back

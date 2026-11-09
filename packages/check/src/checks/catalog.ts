@@ -35,7 +35,7 @@ export const CHECKS: Record<CheckId, { title: string; looksFor: string }> = {
     looksFor: "Where the token trades against ETH: a Pons launch, a Uniswap V2 pair or V3 pool with WETH, or a V4 pool.",
   },
   "sell-simulation": {
-    title: "Sell simulation",
+    title: "Sell or transfer shortfall",
     looksFor:
       "After a simulated buy at one block: a transfer or sell that reverts, or any step that arrives short of what the venue's own math promised.",
   },

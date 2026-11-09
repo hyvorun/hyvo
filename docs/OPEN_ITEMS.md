@@ -514,7 +514,7 @@ dashboard, the creator-edited pages and images, its D1 index and the every-minut
    others, and then it goes to Robinhood's own endpoint, whose terms say it is rate limited and not for production (item 3), and which some
    ISPs block (item 14). When no endpoint answers it, the page counts the newest launches' curves only, and says so. A keyed endpoint that
    serves such queries (Alchemy, item 3) would remove the dependence; decide whether to get one.
-2. Real token names and symbols appear, because visitors look them up. Only on-chain facts are shown and nothing rates a token. Confirm.
+2. Real token names and symbols appear, because visitors look them up. Only on-chain facts are shown and nothing rates a token. **Confirmed by the founder on 2026-11-09.**
 3. Launches is in the footer and the product list (a new Explore group), not in the header. Decide whether the header gets it.
 
 ## 30. Hyvo Check: addresses and limits — verified

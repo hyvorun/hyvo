@@ -88,7 +88,7 @@ export function sampleReport(overrides: Partial<CheckReport> = {}): CheckReport 
       { id: "venue", title: "Trading venue", status: "found", evidence: `the Uniswap V2 pair ${PAIR} with WETH holds 12.5 WETH and 1,000,000 SMPL` },
       {
         id: "sell-simulation",
-        title: "Sell simulation",
+        title: "Sell or transfer shortfall",
         status: "not_found",
         evidence:
           "at block 107,512,345 through the Uniswap V2 pair 0x1111…1111: the buy of 0.001 ETH delivered 79.83 tokens, as the router's quote promised; sending 7.98 to a fresh address delivered 7.98 (in full); the sell brought back 0.000894 ETH, as the router's quote promised; the round trip lost 0.6% of what the sold part cost",

@@ -6,6 +6,14 @@
   "type": "module",
   "license": "AGPL-3.0-or-later",
   "homepage": "https://hyvo.run",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyvorun/hyvo.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/hyvorun/hyvo/issues"
+  },
   "keywords": [
     "robinhood-chain",
     "evm",
