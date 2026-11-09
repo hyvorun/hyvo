@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@hyvo/check": "workspace:*",
+    "@hyvo/launches": "workspace:*",
     "@hyvo/schema": "workspace:*",
     "hono": "^4.13.16",
     "tiny-secp256k1": "2.2.4",

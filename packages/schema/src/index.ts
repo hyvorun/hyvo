@@ -7,3 +7,4 @@ export * from "./api";
 export * from "./jobs";
 export * from "./pricing";
 export * from "./summary";
+export * from "./launches";

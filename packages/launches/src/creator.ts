@@ -11,6 +11,8 @@
 import { decodeEventLog, getAddress, isAddress, type Address, type Hex } from "viem";
 import { FACTORY_ABI, PONS_V2_FACTORY, PONS_V2_FACTORY_BLOCK, TOPICS } from "./pons";
 
+export { PONS_V2_FACTORY, PONS_V2_FACTORY_BLOCK };
+
 /** Blockscout answers at most this many logs to one getLogs query. */
 export const LOGS_PER_PAGE = 1000;
 

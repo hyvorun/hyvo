@@ -50,7 +50,7 @@ export const BLOCKSCOUT_DAY_SCOPE = "blockscout-day";
 /** After Blockscout answers 429, this isolate asks it nothing for this long, rather than at once again. */
 export const BLOCKSCOUT_PAUSE_S = 30;
 /** Blockscout's own keyed API for chain 4663 (item 24). */
-const BLOCKSCOUT_API_URL = "https://api.blockscout.com/4663/api";
+export const BLOCKSCOUT_API_URL = "https://api.blockscout.com/4663/api";
 /** A request to Blockscout that has not answered by then counts as no answer. */
 const REQUEST_TIMEOUT_MS = 5_000;
 const ADDRESS = /^0x[0-9a-fA-F]{40}$/;
@@ -76,6 +76,11 @@ export interface HoldersAnswer {
 let fetchOverride: FetchLike | null = null;
 /** Until when (Unix seconds) this isolate asks Blockscout nothing: set by a 429. */
 let pausedUntil = 0;
+
+/** After Blockscout answered 429 to any read (holders or a creator's launches), ask it nothing for a while. */
+export function pauseBlockscout(now: number): void {
+  pausedUntil = Math.max(pausedUntil, now + BLOCKSCOUT_PAUSE_S);
+}
 
 /** Tests only: answer Blockscout's requests with `fetch`, and forget any 429; `null` restores the Worker's own fetch. */
 export function setHoldersFetch(next: FetchLike | null): void {
@@ -153,7 +158,7 @@ export async function holderFacts(
         ...(fetchOverride ? { fetch: fetchOverride } : {}),
       });
       ({ settled, requests, limited, ...facts } = read);
-      if (limited) pausedUntil = Math.max(pausedUntil, now + BLOCKSCOUT_PAUSE_S);
+      if (limited) pauseBlockscout(now);
     }
   } catch (error) {
     why = "Hyvo's API could not read Blockscout's index just now";
@@ -194,7 +199,7 @@ export async function holderFacts(
  * BLOCKSCOUT_PAUSE_S in this isolate, then the Worker's reads this minute, then its reads this UTC day. The day's
  * count is taken last, so reads the minute's limit turns away do not use it up.
  */
-async function mayNotRead(env: Env, now: number): Promise<string | null> {
+export async function mayNotRead(env: Env, now: number): Promise<string | null> {
   if (pausedUntil > now) {
     return `Blockscout's API answered 429 to Hyvo's API in the last ${BLOCKSCOUT_PAUSE_S} s; ask again in ${pausedUntil - now} s`;
   }
