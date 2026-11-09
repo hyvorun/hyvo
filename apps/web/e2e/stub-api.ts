@@ -37,6 +37,16 @@ export const goldenEntry = {
 
 const oracleView = { status: "confirmed", txHash: COMMIT_TX, blockNumber: 16, chainId: 4663, oracleAddress: ADDRESSES.oracle };
 
+/** GET /v1/calibration before any question has been resolved. A test can route its own record over it. */
+export const emptyCalibration = {
+  counts: { hits: 0, misses: 0, noLean: 0, void: 0, open: 0 },
+  hitRate: null,
+  buckets: ["50-60%", "60-70%", "70-80%", "80-90%", "90-100%"].map((label) => ({ label, hits: 0, misses: 0 })),
+  resolved: [],
+  open: [],
+  disclaimer: DISCLAIMER,
+};
+
 function job(status: string, round: number | null) {
   return {
     status,
@@ -197,6 +207,10 @@ async function answer(
   if (path === "/v1/oracle") {
     return json({ chainId: 4663, oracleAddress: ADDRESSES.oracle, entries: [goldenEntry], nextCursor: null, disclaimer: DISCLAIMER });
   }
+  if (path === `/v1/oracle/${golden.runId}`) {
+    return json({ entry: goldenEntry, chainId: 4663, oracleAddress: ADDRESSES.oracle, onChain: null, matches: null, disclaimer: DISCLAIMER });
+  }
+  if (path === "/v1/calibration") return json(emptyCalibration);
   if (path === "/v1/auth/siwe/nonce") return json({ nonce: "abcdefghijklmnopqrstuvwx", expiresAt: "2100-01-01T00:00:00Z" }, 201);
   if (path === "/v1/auth/siwe/verify") {
     const address = /0x[0-9a-fA-F]{40}/.exec(String(body?.message ?? ""))?.[0] ?? "";
@@ -224,5 +238,7 @@ async function answer(
     const order = { ...quotedOrder("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"), status: "paid", paidAt: "2026-11-03T12:02:00Z", runId: NEW_RUN_ID };
     return json({ order, check: "paid", message: "Payment confirmed. The run is queued." });
   }
+  // A path the stub has no answer for. STUB_API_WARN=1 names each one, to find what a spec is missing.
+  if (process.env.STUB_API_WARN) console.warn(`stub-api: no answer for ${url.pathname}${url.search}`);
   return json({ error: { code: "not_found", message: "unknown run" } }, 404);
 }
