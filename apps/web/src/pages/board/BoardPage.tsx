@@ -299,9 +299,9 @@ function HowItIsRead({ refreshMs }: { refreshMs: number }) {
       <p>
         Your browser asks Robinhood Chain&apos;s public endpoints for the Pons V2 launch factory&apos;s <span className="mono">TokenLaunched</span> and{" "}
         <span className="mono">PoolGraduated</span> events of the last {GRADUATED_HOURS} hours, and for the curves&apos; <span className="mono">CurveBuy</span> and{" "}
-        <span className="mono">CurveSell</span> events of the last {TRADE_MINUTES} minutes. Then it reads every launch&apos;s curve and the balances on each card in
-        one call at one block, the block named above. Every {Math.round(refreshMs / 1000)} seconds it asks only for the blocks since its last read, and it stops
-        while this tab is hidden.
+        <span className="mono">CurveSell</span> events of the last {TRADE_MINUTES} minutes. Then it reads the curves and the balances on each card through
+        Multicall3, and names the block they were read at above. Every {Math.round(refreshMs / 1000)} seconds it asks only for the blocks since its last read (and
+        a few seconds before them again, for an endpoint a little behind), and it stops while this tab is hidden.
       </p>
       <p>
         A launch sits in one column, the furthest it has reached. Progress is what the curve holds of its pair asset over the amount at which it graduates. The

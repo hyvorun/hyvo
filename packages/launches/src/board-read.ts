@@ -35,7 +35,9 @@ export async function readTradeLogs(
   try {
     return { trades: decodeTrades(await reader.getLogs({ topics, fromBlock, toBlock })), everyCurve: true };
   } catch (error) {
-    if (!(error instanceof RpcUnavailableError) || fallback.length === 0) throw error;
+    if (!(error instanceof RpcUnavailableError)) throw error;
+    // With no curve known yet there is nothing to ask for: no trades are counted, rather than no board.
+    if (fallback.length === 0) return { trades: [], everyCurve: false };
     const wanted = new Set(fallback.map(lower));
     const logs = await reader.getLogs({ address: [...fallback], topics, fromBlock, toBlock });
     return { trades: decodeTrades(logs.filter((log) => wanted.has(lower(log.address)))), everyCurve: false };
@@ -119,6 +121,7 @@ export interface FactsRequest {
   statics: boolean;
   /** The creator's and the curve's balances, and the listed wallets'. */
   balances: boolean;
+  /** The first-second wallets. Left out while they are not known, so no total is given for them. */
   wallets?: readonly Address[];
 }
 
@@ -149,8 +152,8 @@ export async function readFacts(reader: ChainReader, requests: readonly FactsReq
   }
   const answer = await multicall(reader, reads);
   const facts = new Map<string, FactsRead>();
-  for (const { entry, balances } of requests) {
-    facts.set(lower(entry.token), { liquidity: null, graduated: null, ...(balances ? { walletsBalance: 0n } : {}) });
+  for (const { entry, balances, wallets } of requests) {
+    facts.set(lower(entry.token), { liquidity: null, graduated: null, ...(balances && wallets ? { walletsBalance: 0n } : {}) });
   }
   for (const slot of slots) {
     const row = facts.get(slot.key)!;
@@ -190,15 +193,21 @@ export async function readFacts(reader: ChainReader, requests: readonly FactsReq
 /**
  * The buys on a launch's curve in the blocks right after its launch block, each with its block's time:
  * from the log when the endpoint adds it, else from the block's header. The caller keeps the ones of the
- * launch second (board.ts firstSecondWallets).
+ * launch second (board.ts firstSecondWallets). Given the curve's `launchedAt`, headers stop at the first
+ * block past it: block times never go down, so the buys after it are not of the launch second, and keep
+ * no time.
  */
-export async function readLaunchBuys(reader: ChainReader, entry: { curve: Address; block: bigint }, head: bigint): Promise<Trade[]> {
+export async function readLaunchBuys(reader: ChainReader, entry: { curve: Address; block: bigint; launchedAt?: number }, head: bigint): Promise<Trade[]> {
   const to = entry.block + FIRST_SECOND_BLOCKS > head ? head : entry.block + FIRST_SECOND_BLOCKS;
   const logs = await reader.getLogs({ address: entry.curve, topics: [TOPICS.curveBuy], fromBlock: entry.block, toBlock: to });
   const trades = decodeTrades(logs.filter((log) => lower(log.address) === lower(entry.curve)));
-  const missing = [...new Set(trades.filter((trade) => trade.timestamp === null).map((trade) => trade.block))];
+  const missing = [...new Set(trades.filter((trade) => trade.timestamp === null).map((trade) => trade.block))].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   if (missing.length === 0) return trades;
   const times = new Map<bigint, number>();
-  for (const block of missing.slice(0, Number(FIRST_SECOND_BLOCKS) + 1)) times.set(block, (await reader.header(block)).timestamp);
+  for (const block of missing) {
+    const time = (await reader.header(block)).timestamp;
+    times.set(block, time);
+    if (entry.launchedAt !== undefined && time > entry.launchedAt) break;
+  }
   return trades.map((trade) => (trade.timestamp === null ? { ...trade, timestamp: times.get(trade.block) ?? null } : trade));
 }
