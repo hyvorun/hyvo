@@ -2,8 +2,8 @@ import type { HealthResponse, RunV1 } from "@hyvo/schema";
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 import { Reveal } from "../../components/Reveal";
-import { ADDRESSES } from "../../lib/addresses";
 import { modelLabel } from "../../lib/format";
+import { HYVO_TOKEN, ONLY_TOKEN } from "../../lib/official";
 import styles from "./Briefs.module.css";
 import shared from "./Section.module.css";
 
@@ -58,10 +58,18 @@ export function Questions({ run, features }: { run: RunV1 | null; features: Heal
     },
     {
       q: "Is there a token?",
-      a: (
+      a: HYVO_TOKEN ? (
         <>
-          {ADDRESSES.hyvoToken ? "Yes, HYVO." : "One is coming: HYVO."} Holding it {ADDRESSES.hyvoToken ? "brings" : "will bring"} free runs, a discount and a place
-          ahead in the queue. More on the <Link to="/token">token page</Link>.
+          Yes: HYVO, at{" "}
+          <span className="mono" style={{ overflowWrap: "anywhere" }}>
+            {HYVO_TOKEN.address}
+          </span>{" "}
+          on Robinhood Chain. {ONLY_TOKEN} Holding it brings free runs, a discount and a place ahead in the queue. More on the{" "}
+          <Link to="/token">token page</Link>.
+        </>
+      ) : (
+        <>
+          One is coming: HYVO. Holding it will bring free runs, a discount and a place ahead in the queue. More on the <Link to="/token">token page</Link>.
         </>
       ),
     },

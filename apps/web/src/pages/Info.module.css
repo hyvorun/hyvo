@@ -228,9 +228,115 @@
   line-height: 1.6;
 }
 
+/* After the launch: the one address, large, with what to do with it. */
+
+.official {
+  gap: var(--space-4);
+}
+
+.status .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+}
+
 .bigAddress {
-  font-size: var(--t-md);
+  color: var(--ink);
+  font-size: clamp(1.0625rem, 0.7rem + 1.5vw, 1.75rem);
+  line-height: 1.3;
   overflow-wrap: anywhere;
+}
+
+.addressActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+}
+
+.status .addressActions a {
+  color: var(--ink-2);
+}
+
+.status .addressActions a:hover {
+  color: var(--ink);
+}
+
+/* Both labels of the copy button in one cell: the cell is as wide as the wider, so the button never resizes. */
+.swap {
+  display: inline-grid;
+  justify-items: center;
+}
+
+.swap > * {
+  grid-area: 1 / 1;
+}
+
+.away {
+  visibility: hidden;
+}
+
+.status .only {
+  max-width: none;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+  color: var(--ink);
+}
+
+/* Who counts as a holder: the sentence comes with the API's answer. */
+.holder {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 68ch;
+}
+
+.holder h3 {
+  font-size: var(--t-md);
+}
+
+/*
+ * Each sentence the rule can be holds its room in the same cell from the start, hidden and out of
+ * the accessibility tree, so the paragraph is already as tall as the answer will make it.
+ */
+.rule {
+  display: grid;
+  color: var(--ink);
+  font-size: var(--t-lg);
+  line-height: 1.5;
+}
+
+.rule::before,
+.rule::after,
+.rule > * {
+  grid-area: 1 / 1;
+}
+
+.rule::before,
+.rule::after {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.rule::before {
+  content: attr(data-unset);
+  content: attr(data-unset) / "";
+}
+
+.rule::after {
+  content: attr(data-sample);
+  content: attr(data-sample) / "";
+}
+
+/* On /trust: the token beside the site and the X account. */
+.prose .tokenLine {
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.tokenLine b {
+  font-weight: 500;
 }
 
 .benefits {
