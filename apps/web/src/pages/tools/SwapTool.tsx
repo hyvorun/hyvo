@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { Tween } from "../../components/motion-data/CountUp";
 import { useWidth } from "../../components/use-playback";
 import { formatAmount, formatShare, parseAmount, quote, roundTrip, TRADE_SHARES, type PoolState, type Quote, type Side } from "../../lib/calc";
 import { formatScaled, priceUnit, type PriceUnit } from "../../lib/format";
@@ -6,6 +7,7 @@ import { ArithmeticNote, NumberField, ToolPage, useDescription, useQueryState } 
 import styles from "./Tools.module.css";
 
 const DEFAULTS = { eth: "5", tokens: "1b", fee: "1", side: "eth", amount: "0.5" };
+const signedShare = (value: number) => formatShare(value, true);
 
 /** A swap against a constant-product pool: what comes out, the price move, and the round trip. */
 export function SwapTool() {
@@ -107,7 +109,7 @@ function Readout({ result, unit, trip }: { result: Quote; unit: PriceUnit; trip:
       <div className={styles.lead}>
         <span>You get</span>
         <b className="num">
-          {formatAmount(result.amountOut)} {ethIn ? "tokens" : "ETH"}
+          <Tween value={result.amountOut} format={formatAmount} /> {ethIn ? "tokens" : "ETH"}
         </b>
         <small>
           for {formatAmount(result.amountIn)} {ethIn ? "ETH" : "tokens"}, of which {formatAmount(result.fee)} {ethIn ? "ETH" : "tokens"} is the fee
@@ -116,19 +118,21 @@ function Readout({ result, unit, trip }: { result: Quote; unit: PriceUnit; trip:
       <dl className={styles.stats}>
         <div className={styles.stat}>
           <dt>Pool price moves</dt>
-          <dd className={`num ${result.priceMove >= 0 ? styles.up : styles.down}`}>{formatShare(result.priceMove, true)}</dd>
+          <dd className={`num ${result.priceMove >= 0 ? styles.up : styles.down}`}>
+            <Tween value={result.priceMove} format={signedShare} />
+          </dd>
         </div>
         <div className={styles.stat}>
           <dt>Worse than the pool price</dt>
           <dd className="num">
-            {formatShare(result.costVsSpot)}
+            <Tween value={result.costVsSpot} format={formatShare} />
             <small>fee included</small>
           </dd>
         </div>
         <div className={styles.stat}>
           <dt>Average price</dt>
           <dd className="num">
-            {formatScaled(result.averagePrice, unit)}
+            <Tween value={result.averagePrice} format={(value) => formatScaled(value, unit)} />
             <small>{unit.label}</small>
           </dd>
         </div>

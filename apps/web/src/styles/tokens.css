@@ -39,6 +39,23 @@
 
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  /*
+   * Motion. Hover and color changes take --dur-hover, a press goes down in --dur-press and comes
+   * back on a spring, entrances take --dur-enter with --ease-out and siblings follow --stagger
+   * apart. Springs are damped springs sampled into linear() (components/motion/spring.ts):
+   * --ease-spring travels about 4% past the end, for releases and toggles; --ease-spring-pop about
+   * 11%, kept for small things that appear (dots, checks, badges).
+   */
+  --dur-press: 100ms;
+  --dur-hover: 180ms;
+  --dur-spring: 460ms;
+  --dur-enter: 600ms;
+  --dur-enter-long: 800ms;
+  --stagger: 55ms;
+  --ease-spring: linear(0, 0.0409, 0.1401, 0.2693, 0.4078, 0.5417, 0.6625, 0.7657, 0.8497, 0.9151, 0.9635, 0.9973, 1.0192, 1.0318, 1.0375, 1.0382, 1.0358, 1.0315, 1.0264, 1.0211, 1.0161, 1.0116, 1.0079, 1.0049, 1.0026, 1.0009, 0.9998, 0.9991, 1);
+  --ease-spring-pop: linear(0, 0.0627, 0.2125, 0.4006, 0.5912, 0.7613, 0.8983, 0.9981, 1.0623, 1.0962, 1.1068, 1.101, 1.0856, 1.0656, 1.0452, 1.0268, 1.0119, 1.0009, 0.9938, 0.9899, 0.9886, 0.9891, 0.9907, 0.9928, 0.995, 0.997, 0.9986, 0.9998, 1);
 
   color-scheme: dark;
   --paper: #0a0d13;
@@ -68,6 +85,8 @@
   --dot-line: rgb(216 224 240 / 14%);
   --focus: #b7c3dd;
   --glass: rgb(10 13 19 / 82%);
+  --selection: rgb(195 204 219 / 22%);
+  --caret: var(--accent);
 }
 
 @media (min-width: 720px) {
@@ -105,4 +124,6 @@
   --dot-line: rgb(18 21 27 / 16%);
   --focus: #2c3a55;
   --glass: rgb(250 251 252 / 84%);
+  --selection: rgb(44 58 85 / 16%);
+  --caret: var(--accent);
 }

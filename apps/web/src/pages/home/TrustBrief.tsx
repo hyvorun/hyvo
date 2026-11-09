@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { Arrow } from "../../components/Icons";
+import { Decode } from "../../components/motion-data/Decode";
 import { Reveal } from "../../components/Reveal";
 import { ADDRESSES } from "../../lib/addresses";
 import { addressUrl } from "../../lib/explorer";
@@ -51,30 +52,30 @@ export function TrustBrief() {
         <p>Three of these are enforced by contracts on Robinhood Chain that anyone can read. The trust page shows how to check every one.</p>
       </Reveal>
 
-      <ul className={styles.promises}>
-        {PROMISES.map((item, index) => (
-          <Reveal as="li" index={index % 3} key={item.never}>
+      <Reveal as="ul" className={`${styles.promises} stagger`}>
+        {PROMISES.map((item) => (
+          <li key={item.never}>
             <h3>
               <span className={styles.never}>Never</span> {item.never.charAt(0).toLowerCase() + item.never.slice(1)}
             </h3>
             <p>{item.how}</p>
-          </Reveal>
+          </li>
         ))}
-      </ul>
+      </Reveal>
 
       {(contracts.length > 0 || SOURCE_URL) && (
-        <Reveal className={styles.contracts}>
+        <Reveal className={`${styles.contracts} stagger`}>
           {contracts.map((contract) => (
-            <a key={contract.name} href={addressUrl(contract.address)} target="_blank" rel="noreferrer" className={styles.contract}>
+            <a key={contract.name} href={addressUrl(contract.address)} target="_blank" rel="noreferrer" className={`${styles.contract} press`}>
               <span className={styles.contractName}>{contract.name}</span>
               <span className="mono" title={contract.address}>
-                {shortHash(contract.address, 6, 4)}
+                <Decode text={shortHash(contract.address, 6, 4)} />
               </span>
               <span className={styles.contractWhat}>{contract.what}</span>
             </a>
           ))}
           {SOURCE_URL && (
-            <a href={SOURCE_URL} target="_blank" rel="noreferrer" className={styles.contract}>
+            <a href={SOURCE_URL} target="_blank" rel="noreferrer" className={`${styles.contract} press`}>
               <span className={styles.contractName}>Source</span>
               <span className="mono">AGPL-3.0</span>
               <span className={styles.contractWhat}>The engine and this site</span>

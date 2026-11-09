@@ -4,6 +4,7 @@ import { txUrl } from "../lib/explorer";
 import { shortHash } from "../lib/format";
 import styles from "./HashBadge.module.css";
 import { CheckMark } from "./Icons";
+import { Decode } from "./motion-data/Decode";
 
 /** The run's oracle commit: confirmed on Robinhood Chain (with its transaction), or on its way. */
 export function OracleBadge({ runId, oracle }: { runId: string; oracle: OracleView | null }) {
@@ -19,7 +20,7 @@ export function OracleBadge({ runId, oracle }: { runId: string; oracle: OracleVi
       </span>
       {oracle.txHash && (
         <a className={`${styles.hash} mono`} href={txUrl(oracle.txHash)} target="_blank" rel="noreferrer" title={oracle.txHash}>
-          {shortHash(oracle.txHash, 6, 4)}
+          <Decode text={shortHash(oracle.txHash, 6, 4)} />
         </a>
       )}
       {confirmed && (

@@ -1,8 +1,10 @@
 import type { RunV1 } from "@hyvo/schema";
-import type { CSSProperties, ReactNode } from "react";
+import { useId, type CSSProperties, type ReactNode } from "react";
 import { Link } from "react-router";
 import { Disclaimer } from "../../components/Disclaimer";
 import { Arrow } from "../../components/Icons";
+import { CountUp } from "../../components/motion-data/CountUp";
+import { Decode } from "../../components/motion-data/Decode";
 import { Reveal, useInView } from "../../components/Reveal";
 import { fetchRunStatus } from "../../lib/api";
 import { blockUrl, txUrl } from "../../lib/explorer";
@@ -190,6 +192,11 @@ function PathStep({ step, index, beforeCommit }: { step: Step; index: number; be
   );
 }
 
+/** A block number that ticks up through its last thousand or so blocks, like a chain catching up. */
+function BlockNumber({ block }: { block: number }) {
+  return <CountUp className="num" value={block} from={Math.max(0, block - 1200)} format={whole} />;
+}
+
 type RunStatus = Awaited<ReturnType<typeof fetchRunStatus>>;
 type StatusState = ReturnType<typeof useAsync<RunStatus | null>>;
 
@@ -232,7 +239,7 @@ function stepsFor(run: RunV1, status: StatusState): Step[] {
             <>
               Transaction{" "}
               <a className="mono" href={txUrl(committed.txHash)} target="_blank" rel="noreferrer" title={committed.txHash}>
-                {shortHash(committed.txHash, 8, 6)}
+                <Decode text={shortHash(committed.txHash, 8, 6)} />
               </a>
               {gap !== null && <>, {plural(gap, "block", "blocks")} after the fork, while the real chain kept going</>}.
             </>
@@ -256,7 +263,7 @@ function stepsFor(run: RunV1, status: StatusState): Step[] {
       ...(world.forkBlock !== null && {
         block: (
           <a href={blockUrl(world.forkBlock)} target="_blank" rel="noreferrer">
-            Block <span className="num">{whole(world.forkBlock)}</span>
+            Block <BlockNumber block={world.forkBlock} />
           </a>
         ),
       }),
@@ -266,7 +273,7 @@ function stepsFor(run: RunV1, status: StatusState): Step[] {
             "A plain local test chain, not a fork of Robinhood Chain. "
           ) : (
             <>
-              Chain <span className="num">{world.chainId}</span> at block <span className="num">{whole(world.forkBlock)}</span>.{" "}
+              Chain <span className="num">{world.chainId}</span> at block <BlockNumber block={world.forkBlock} />.{" "}
             </>
           )}
           {pool?.kind === "real"
@@ -310,19 +317,29 @@ function stepsFor(run: RunV1, status: StatusState): Step[] {
         <>
           <p className={styles.counts}>
             <span>
-              <b className="num">{whole(run.rounds.length)}</b> {run.rounds.length === 1 ? "round" : "rounds"}
+              <b className="num">
+                <CountUp value={run.rounds.length} format={whole} />
+              </b> {run.rounds.length === 1 ? "round" : "rounds"}
             </span>
             <span>
-              <b className="num">{whole(facts.decisions)}</b> decisions
+              <b className="num">
+                <CountUp value={facts.decisions} format={whole} />
+              </b> decisions
             </span>
             <span data-tone="post">
-              <b className="num">{whole(facts.posts)}</b> posts
+              <b className="num">
+                <CountUp value={facts.posts} format={whole} />
+              </b> posts
             </span>
             <span data-tone="buy">
-              <b className="num">{whole(facts.buys)}</b> buys
+              <b className="num">
+                <CountUp value={facts.buys} format={whole} />
+              </b> buys
             </span>
             <span data-tone="sell">
-              <b className="num">{whole(facts.sells)}</b> sells
+              <b className="num">
+                <CountUp value={facts.sells} format={whole} />
+              </b> sells
             </span>
           </p>
           <PriceLine prices={prices} turningRound={report.turningPoint?.round ?? null} symbol={symbol} />
@@ -364,7 +381,7 @@ function stepsFor(run: RunV1, status: StatusState): Step[] {
       here: (
         <>
           <p className={`${styles.hash} mono`} title={run.hash}>
-            {shortHash(run.hash, 10, 8)}
+            <Decode text={shortHash(run.hash, 10, 8)} duration={800} />
           </p>
           <p className={styles.small}>Its page recomputes this from the file, in your browser.</p>
         </>
@@ -374,7 +391,7 @@ function stepsFor(run: RunV1, status: StatusState): Step[] {
       ...(commitBlock !== null && {
         block: (
           <a href={blockUrl(commitBlock)} target="_blank" rel="noreferrer">
-            Block <span className="num">{whole(commitBlock)}</span>
+            Block <BlockNumber block={commitBlock} />
           </a>
         ),
       }),
@@ -387,6 +404,7 @@ function stepsFor(run: RunV1, status: StatusState): Step[] {
 
 /** The pool's price after each round, with the turning point shaded. Drawn from the run file. */
 function PriceLine({ prices, turningRound, symbol }: { prices: number[]; turningRound: number | null; symbol: string }) {
+  const id = useId();
   const width = 320;
   const height = 64;
   const pad = 4;
@@ -410,8 +428,16 @@ function PriceLine({ prices, turningRound, symbol }: { prices: number[]; turning
         role="img"
         aria-label={`The ${symbol} pool's price after ${rounds === 1 ? "its one round" : `each of ${rounds} rounds`}${moved}${band ? `; the turning point was round ${turningRound}` : ""}.`}
       >
+        <defs>
+          {/* The line is uncovered left to right as its step comes into view. */}
+          <clipPath id={`${id}-wipe`}>
+            <rect className={styles.wipe} x={-pad} y={-pad} width={width + 2 * pad} height={height + 2 * pad} />
+          </clipPath>
+        </defs>
         {band && <rect className={styles.band} x={band.from} y={0} width={band.to - band.from} height={height} />}
-        <path className={styles.priceLine} d={line} vectorEffect="non-scaling-stroke" />
+        <g clipPath={`url(#${id}-wipe)`}>
+          <path className={styles.priceLine} d={line} vectorEffect="non-scaling-stroke" />
+        </g>
       </svg>
       <figcaption>Pool price after each round{band ? `. Shaded: the turning point, round ${turningRound}.` : "."}</figcaption>
     </figure>

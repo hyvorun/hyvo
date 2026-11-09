@@ -36,34 +36,36 @@ export function Capabilities({ features, loading }: { features: Features | null;
           {PRODUCTS.map((item, index) => {
             const status = statuses[index];
             return (
-              <Reveal as="li" index={index % 4} key={item.name} className={styles.row}>
-                <h3 className={styles.name}>
-                  <Link to={item.to} viewTransition>
-                    {item.name}
-                  </Link>
-                </h3>
-                <p className={styles.line}>{item.line}</p>
-                <p className={styles.who}>
-                  <span className="visually-hidden">For: </span>
-                  {item.who}
-                </p>
-                {showStatus && (
-                  <p className={styles.status} data-tone={status?.tone ?? "unknown"}>
-                    {status ? (
-                      <>
-                        <span className={styles.dot} aria-hidden="true" />
-                        {status.text}
-                      </>
-                    ) : (
-                      <span className={`${styles.wait} skeleton`} aria-hidden="true" />
-                    )}
+              <Reveal as="li" index={index % 4} key={item.name} className={styles.item}>
+                <div className={`${styles.row} lift`}>
+                  <h3 className={styles.name}>
+                    <Link to={item.to} viewTransition>
+                      {item.name}
+                    </Link>
+                  </h3>
+                  <p className={styles.line}>{item.line}</p>
+                  <p className={styles.who}>
+                    <span className="visually-hidden">For: </span>
+                    {item.who}
                   </p>
-                )}
-                <span className={styles.chevron} aria-hidden="true">
-                  <svg viewBox="0 0 16 16" width="14" height="14">
-                    <path d="M6 3.5 10.5 8 6 12.5" />
-                  </svg>
-                </span>
+                  {showStatus && (
+                    <p className={styles.status} data-tone={status?.tone ?? "unknown"}>
+                      {status ? (
+                        <>
+                          <span className={`${styles.dot} ${status.tone === "live" ? "live-dot" : ""}`} aria-hidden="true" />
+                          {status.text}
+                        </>
+                      ) : (
+                        <span className={`${styles.wait} skeleton`} aria-hidden="true" />
+                      )}
+                    </p>
+                  )}
+                  <span className={`${styles.chevron} arrow`} aria-hidden="true">
+                    <svg viewBox="0 0 16 16" width="14" height="14">
+                      <path d="M6 3.5 10.5 8 6 12.5" />
+                    </svg>
+                  </span>
+                </div>
               </Reveal>
             );
           })}

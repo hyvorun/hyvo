@@ -51,6 +51,13 @@ a {
   text-underline-offset: 3px;
 }
 
+/* Links ease between colors; a part with its own transition keeps it. */
+:where(a) {
+  transition:
+    color var(--dur-hover) var(--ease),
+    text-decoration-color var(--dur-hover) var(--ease);
+}
+
 button {
   font: inherit;
   color: inherit;
@@ -64,13 +71,39 @@ textarea {
 }
 
 ::selection {
-  background: var(--accent-soft);
+  background: var(--selection);
+  color: var(--ink);
+}
+
+input,
+textarea,
+[contenteditable] {
+  caret-color: var(--caret);
 }
 
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* In-page #links glide; route changes still jump to the top (Layout scrolls with "instant"). */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* The ring settles in from a little further out. No specificity, so a part's own animation wins. */
+  :where(:focus-visible) {
+    animation: focus-settle 220ms var(--ease-out);
+  }
+}
+
+@keyframes focus-settle {
+  from {
+    outline-offset: 5px;
+    outline-color: transparent;
+  }
 }
 
 /* Prices and counts: figures of one width, so they do not jitter as they change. */
@@ -95,14 +128,230 @@ textarea {
   white-space: nowrap;
 }
 
+/* --- form fields ------------------------------------------------------------------------------ */
+
+/*
+ * Pages style their own fields; these rules have no specificity (:where), so they only add the
+ * motion: borders and rings ease in, a field that turns invalid shakes once, a checkbox draws its
+ * check, a radio's dot springs in and a range thumb grows under the pointer.
+ */
+:where(input, select, textarea) {
+  transition:
+    box-shadow var(--dur-hover) var(--ease),
+    border-color var(--dur-hover) var(--ease),
+    background-color var(--dur-hover) var(--ease),
+    color var(--dur-hover) var(--ease);
+}
+
+:where(input, select, textarea)[aria-invalid="true"] {
+  animation: shake 360ms var(--ease);
+}
+
+:where(input[type="checkbox"], input[type="radio"]) {
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 0;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  vertical-align: -3px;
+  appearance: none;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-hover) var(--ease),
+    box-shadow var(--dur-hover) var(--ease),
+    transform var(--dur-spring) var(--ease-spring);
+}
+
+:where(input[type="checkbox"]) {
+  border-radius: 4px;
+}
+
+:where(input[type="radio"]) {
+  border-radius: 50%;
+}
+
+:where(input[type="checkbox"], input[type="radio"]):hover {
+  box-shadow: inset 0 0 0 1px var(--ink-3);
+}
+
+:where(input[type="checkbox"], input[type="radio"]):active {
+  transform: scale(0.9);
+  transition-duration: var(--dur-press);
+  transition-timing-function: var(--ease);
+}
+
+:where(input[type="checkbox"]):checked {
+  background: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+/* The check is two strokes, each drawn along its length: the short one, then the long one. */
+:where(input[type="checkbox"])::before,
+:where(input[type="checkbox"])::after {
+  content: "";
+  position: absolute;
+  height: 1.75px;
+  border-radius: 1px;
+  background: var(--on-primary);
+  transform-origin: 0 50%;
+  opacity: 0;
+}
+
+/* In shares of the box, so a page can size the box: the path runs (25%, 51%) to (43%, 69%) to (78%, 29%). */
+:where(input[type="checkbox"])::before {
+  left: 25%;
+  top: calc(51% - 0.875px);
+  width: 29.4%;
+  transform: rotate(45deg) scaleX(0);
+}
+
+:where(input[type="checkbox"])::after {
+  left: 43.1%;
+  top: calc(69.4% - 0.875px);
+  width: 53.2%;
+  transform: rotate(-49.8deg) scaleX(0);
+}
+
+:where(input[type="checkbox"]):checked::before,
+:where(input[type="checkbox"]):checked::after {
+  opacity: 1;
+  transition: transform 130ms var(--ease-out);
+}
+
+:where(input[type="checkbox"]):checked::before {
+  transform: rotate(45deg) scaleX(1);
+}
+
+:where(input[type="checkbox"]):checked::after {
+  transform: rotate(-49.8deg) scaleX(1);
+  transition-duration: 200ms;
+  transition-delay: 100ms;
+}
+
+:where(input[type="radio"]):checked {
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+:where(input[type="radio"])::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: var(--primary);
+  transform: scale(0);
+}
+
+:where(input[type="radio"]):checked::after {
+  transform: scale(1);
+  transition: transform var(--dur-spring) var(--ease-spring-pop);
+}
+
+:where(input[type="range"])::-webkit-slider-thumb {
+  transition: transform var(--dur-hover) var(--ease-spring);
+}
+
+:where(input[type="range"]):is(:hover, :active)::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+
+:where(input[type="range"])::-moz-range-thumb {
+  transition: transform var(--dur-hover) var(--ease-spring);
+}
+
+:where(input[type="range"]):is(:hover, :active)::-moz-range-thumb {
+  transform: scale(1.2);
+}
+
+/* --- disclosures ------------------------------------------------------------------------------ */
+
+/*
+ * Every <details> opens and closes smoothly where the browser can size to auto, and its marker is a
+ * chevron that turns. A summary that draws its own icon keeps it.
+ */
+summary:not(:has(svg)) {
+  list-style: none;
+}
+
+summary:not(:has(svg))::-webkit-details-marker {
+  display: none;
+}
+
+summary:not(:has(svg))::before {
+  content: "";
+  display: inline-block;
+  width: 0.4em;
+  height: 0.4em;
+  margin: 0 0.65em 0.14em 0.1em;
+  border-right: 1.5px solid var(--ink-3);
+  border-bottom: 1.5px solid var(--ink-3);
+  transform: rotate(-45deg);
+  transition:
+    transform 260ms var(--ease-out),
+    border-color var(--dur-hover) var(--ease);
+}
+
+summary:not(:has(svg)):hover::before {
+  border-color: var(--ink);
+}
+
+details[open] > summary:not(:has(svg))::before {
+  transform: rotate(45deg);
+}
+
+@supports (interpolate-size: allow-keywords) and selector(::details-content) {
+  @media (prefers-reduced-motion: no-preference) {
+    details {
+      interpolate-size: allow-keywords;
+    }
+
+    details::details-content {
+      block-size: 0;
+      overflow: clip;
+      overflow-clip-margin: 6px;
+      opacity: 0;
+      transition:
+        block-size 340ms var(--ease-out),
+        opacity 260ms var(--ease),
+        content-visibility 340ms allow-discrete;
+    }
+
+    details[open]::details-content {
+      block-size: auto;
+      opacity: 1;
+    }
+  }
+}
+
 /* --- page changes ---------------------------------------------------------------------------- */
 
+/* The old page fades out quickly; the new one fades in as it rises 6px. The header stays still. */
 ::view-transition-old(root) {
-  animation: 120ms var(--ease) both page-out;
+  animation: 120ms var(--ease-in) both page-out;
 }
 
 ::view-transition-new(root) {
-  animation: 260ms var(--ease-out) both page-in;
+  animation: 360ms var(--ease-out) 40ms both page-in;
+}
+
+::view-transition-group(site-header),
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+/* A theme change cross-fades the whole page, header included, in place. */
+:root[data-switching="theme"]::view-transition-old(root) {
+  animation: 260ms var(--ease) both page-out;
+}
+
+:root[data-switching="theme"]::view-transition-new(root) {
+  animation: 260ms var(--ease) both page-fade;
 }
 
 @keyframes page-out {
@@ -114,17 +363,44 @@ textarea {
 @keyframes page-in {
   from {
     opacity: 0;
+    transform: translateY(6px);
   }
 }
 
+@keyframes page-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: none;
+  }
+  15%,
+  55% {
+    transform: translateX(-3px);
+  }
+  35%,
+  75% {
+    transform: translateX(3px);
+  }
+}
+
+/* Reduced motion: everything lands in its final state at once, delays included. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after,
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
   }
 }

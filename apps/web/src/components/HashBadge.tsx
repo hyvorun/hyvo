@@ -4,6 +4,7 @@ import { shortHash } from "../lib/format";
 import { hashInBackground } from "../lib/hash-run";
 import styles from "./HashBadge.module.css";
 import { CheckMark } from "./Icons";
+import { Decode } from "./motion-data/Decode";
 
 type Check = "checking" | "verified" | "mismatch";
 
@@ -39,11 +40,17 @@ export function HashBadge({ run }: { run: RunV1 }) {
       <span className={styles.seal} aria-hidden="true">
         {check === "verified" ? <CheckMark size={13} /> : check === "mismatch" ? "×" : ""}
       </span>
-      <span className={styles.state}>
+      <span className={`${styles.state} ${check === "mismatch" ? "shake" : ""}`}>
         {check === "checking" ? "Checking hash…" : check === "verified" ? "Hash verified in your browser" : "Hash does not match"}
       </span>
       <button type="button" className={`${styles.hash} mono`} onClick={copy} aria-label="Copy the run hash">
-        {copied ? "copied" : shortHash(run.hash, 8, 6)}
+        {copied ? (
+          <span className={styles.copied}>
+            <CheckMark size={11} /> copied
+          </span>
+        ) : (
+          <Decode text={shortHash(run.hash, 8, 6)} />
+        )}
       </button>
     </div>
   );

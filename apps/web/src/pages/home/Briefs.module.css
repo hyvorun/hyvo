@@ -52,7 +52,10 @@
   padding: 16px 20px 18px;
   background: var(--surface);
   text-decoration: none;
-  transition: background-color 160ms var(--ease);
+  /* With .press: the card sinks under a press and springs back. */
+  transition:
+    background-color 160ms var(--ease),
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .contract:hover {
@@ -216,6 +219,29 @@
 
 .question[open] summary svg {
   transform: rotate(45deg);
+}
+
+/* Each plus draws its two strokes as the list comes in, the second a beat after the first. */
+@media screen and (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .answers summary svg path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 520ms var(--ease-out) 260ms;
+  }
+
+  .answers summary svg path + path {
+    transition-delay: 380ms;
+  }
+
+  :global(.reveal[data-in="true"]).answers summary svg path,
+  .answers:focus-within summary svg path {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* The answer slides in under its question as it opens. */
+.question[open] .answer {
+  animation: rise 420ms var(--ease-out);
 }
 
 .question summary:focus-visible {

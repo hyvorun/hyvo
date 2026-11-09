@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { Arrow } from "../../components/Icons";
+import { CountUp } from "../../components/motion-data/CountUp";
 import { Reveal } from "../../components/Reveal";
 import { ADDRESSES } from "../../lib/addresses";
 import { HOLDER_DRAFT } from "../../lib/holder";
@@ -20,22 +21,26 @@ export function TokenBrief() {
         </p>
       </Reveal>
 
-      <ul className={styles.benefits} data-count="3">
-        <Reveal as="li" index={0}>
-          <b className="num">{HOLDER_DRAFT.freeRuns} free runs</b>
+      <Reveal as="ul" className={`${styles.benefits} stagger`} data-count="3">
+        <li>
+          <b className="num">
+            <CountUp value={HOLDER_DRAFT.freeRuns} format={String} /> free runs
+          </b>
           <span>
             a month, of up to {HOLDER_DRAFT.freeAgents} agents and {HOLDER_DRAFT.freeRounds} rounds.
           </span>
-        </Reveal>
-        <Reveal as="li" index={1}>
-          <b className="num">{HOLDER_DRAFT.discountPct}% off</b>
+        </li>
+        <li>
+          <b className="num">
+            <CountUp value={HOLDER_DRAFT.discountPct} format={(n) => `${n}%`} /> off
+          </b>
           <span>every paid run, Dry Run and Rewind.</span>
-        </Reveal>
-        <Reveal as="li" index={2}>
+        </li>
+        <li>
           <b>Ahead in the queue</b>
           <span>Your runs start before runs that are waiting without it.</span>
-        </Reveal>
-      </ul>
+        </li>
+      </Reveal>
 
       <div className={styles.tokenFoot}>
         <p className={styles.fine}>Draft numbers, set at the launch.</p>

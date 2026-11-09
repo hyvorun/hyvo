@@ -1,6 +1,8 @@
 import type { CalibrationEntry, CalibrationResponse, OpenQuestion } from "@hyvo/schema";
 import { Link } from "react-router";
 import { Disclaimer } from "../components/Disclaimer";
+import { CountUp } from "../components/motion-data/CountUp";
+import { Reveal, useInView } from "../components/Reveal";
 import { Failure, Loading } from "../components/States";
 import { fetchCalibration } from "../lib/api";
 import { txUrl } from "../lib/explorer";
@@ -21,9 +23,11 @@ const LEAN: Record<CalibrationEntry["expectation"], string> = { yes: "leaned yes
 function Votes({ yes, no, unsure }: { yes: number; no: number; unsure: number }) {
   const total = Math.max(1, yes + no + unsure);
   const share = (count: number) => `${(count / total) * 100}%`;
+  // The bar grows from nothing the first time it is seen.
+  const [ref, seen] = useInView<HTMLSpanElement>(0.3);
   return (
     <span className={styles.votes}>
-      <span className={styles.bar} aria-hidden="true">
+      <span ref={ref} className={styles.bar} data-in={seen} aria-hidden="true">
         <i className={styles.yes} style={{ width: share(yes) }} />
         <i className={styles.no} style={{ width: share(no) }} />
       </span>
@@ -58,19 +62,25 @@ function Record({ data }: { data: CalibrationResponse }) {
 
       <section className={styles.tally} aria-label="The record so far">
         <div>
-          <b className="num">{counts.hits}</b>
+          <b className="num">
+            <CountUp value={counts.hits} format={String} />
+          </b>
           <span>Hits</span>
         </div>
         <div>
-          <b className="num">{counts.misses}</b>
+          <b className="num">
+            <CountUp value={counts.misses} format={String} />
+          </b>
           <span>Misses</span>
         </div>
         <div>
-          <b className="num">{hitRate === null ? "n/a" : `${Math.round(hitRate * 100)}%`}</b>
+          <b className="num">{hitRate === null ? "n/a" : <CountUp value={Math.round(hitRate * 100)} format={(n) => `${n}%`} />}</b>
           <span>{decided === 0 ? "Nothing to rate yet" : `Hit rate, of ${decided}`}</span>
         </div>
         <div>
-          <b className="num">{counts.open}</b>
+          <b className="num">
+            <CountUp value={counts.open} format={String} />
+          </b>
           <span>Still open</span>
         </div>
       </section>
@@ -84,11 +94,11 @@ function Record({ data }: { data: CalibrationResponse }) {
         <section className={styles.section} aria-labelledby="by-firmness">
           <h2 id="by-firmness">By how firm the lean was</h2>
           <p className={styles.small}>The larger side's share of the yes and no answers. A firm lean that often misses is worth less than it looks.</p>
-          <ul className={styles.buckets}>
-            {buckets.map((bucket) => {
+          <Reveal as="ul" className={styles.buckets}>
+            {buckets.map((bucket, index) => {
               const total = bucket.hits + bucket.misses;
               return (
-                <li key={bucket.label}>
+                <li key={bucket.label} style={{ "--i": index } as React.CSSProperties}>
                   <span className="num">{bucket.label}</span>
                   <span className={styles.bucketBar} aria-hidden="true">
                     <i className={styles.hitFill} style={{ width: total ? `${(bucket.hits / total) * 100}%` : 0 }} />
@@ -98,7 +108,7 @@ function Record({ data }: { data: CalibrationResponse }) {
                 </li>
               );
             })}
-          </ul>
+          </Reveal>
         </section>
       )}
 

@@ -111,7 +111,12 @@ function List({
             {group.items.map((item) => (
               <li key={item.id} data-done={ticks.has(item.id)}>
                 <label>
-                  <input type="checkbox" checked={ticks.has(item.id)} onChange={(event) => onToggle(item.id, event.target.checked)} />
+                  <span className={list.check}>
+                    <input type="checkbox" checked={ticks.has(item.id)} onChange={(event) => onToggle(item.id, event.target.checked)} />
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M3.6 8.4 6.6 11.4 12.4 5" pathLength={1} />
+                    </svg>
+                  </span>
                   <span className={list.text}>
                     <b>{item.text}</b>
                     <span>{item.detail}</span>

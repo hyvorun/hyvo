@@ -143,9 +143,9 @@ export function Checkout({
       <div className={styles.wallet}>
         {wallet.session ? (
           <>
-            <span className={styles.dot} aria-hidden="true" />
+            <span className={`${styles.dot} pop`} aria-hidden="true" />
             Signed in as <span className="mono">{shortHash(wallet.session.address, 6, 4)}</span>
-            <button type="button" className={styles.link} onClick={wallet.signOut}>
+            <button type="button" className={`${styles.link} press`} onClick={wallet.signOut}>
               Sign out
             </button>
           </>

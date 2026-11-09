@@ -16,6 +16,10 @@
   list-style: none;
 }
 
+.item {
+  display: grid;
+}
+
 /* Stacked: the name and its status on one line, what it does and who it is for below. The side
    padding, taken back from the gutter, gives the focus ring room around the text. */
 .row {
@@ -166,12 +170,12 @@
 }
 
 @media (min-width: 1140px) and (hover: hover) {
-  /* The row's own fade-in stays in the list, or the hover background would replace it. */
+  /* The list item fades in; the row inside it lifts on hover (.lift), and its background follows. */
   .row {
     transition:
       background-color 160ms var(--ease),
-      opacity 700ms var(--ease-out) calc(var(--i, 0) * 70ms),
-      transform 800ms var(--ease-out) calc(var(--i, 0) * 70ms);
+      box-shadow 180ms var(--ease),
+      transform 200ms var(--ease-out);
   }
 
   .row:hover {

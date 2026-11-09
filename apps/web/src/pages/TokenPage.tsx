@@ -1,3 +1,5 @@
+import { CountUp } from "../components/motion-data/CountUp";
+import { Reveal } from "../components/Reveal";
 import { ADDRESSES } from "../lib/addresses";
 import { addressUrl } from "../lib/explorer";
 import { HOLDER_DRAFT as DRAFT } from "../lib/holder";
@@ -38,28 +40,32 @@ export function TokenPage() {
 
       <section className={styles.section} aria-labelledby="token-holding">
         <h2 id="token-holding">What holding it does</h2>
-        <ul className={styles.benefits}>
+        <Reveal as="ul" className={`${styles.benefits} stagger`}>
           <li>
-            <b className="num">{DRAFT.freeRuns} free runs</b>
+            <b className="num">
+              <CountUp value={DRAFT.freeRuns} format={String} /> free runs
+            </b>
             <span>
               each month, of up to {DRAFT.freeAgents} agents and {DRAFT.freeRounds} rounds.
             </span>
           </li>
           <li>
-            <b className="num">{DRAFT.discountPct}% off</b>
+            <b className="num">
+              <CountUp value={DRAFT.discountPct} format={(n) => `${n}%`} /> off
+            </b>
             <span>every paid run, Dry Run and Rewind.</span>
           </li>
           <li>
             <b>Ahead in the queue</b>
             <span>Your runs start before runs that are waiting without it.</span>
           </li>
-        </ul>
+        </Reveal>
         <p className={styles.muted}>Draft numbers, set at the launch.</p>
       </section>
 
       <section className={styles.section} aria-labelledby="token-planned">
         <h2 id="token-planned">Planned for holders</h2>
-        <ul className={styles.planned}>
+        <Reveal as="ul" className={`${styles.planned} stagger`}>
           {PLANNED.map((item) => (
             <li key={item.name}>
               <span className={styles.tag}>Planned</span>
@@ -67,7 +73,7 @@ export function TokenPage() {
               <span>{item.line}</span>
             </li>
           ))}
-        </ul>
+        </Reveal>
       </section>
 
       <p className={styles.fine}>Nothing on this page is financial advice, or an offer of anything.</p>

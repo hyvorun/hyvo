@@ -216,8 +216,9 @@ export function ReplayChart({ run, replay, unit, position, width, horizon = fals
       })}
 
       <path className={styles.ghost} d={path(n - 1)} />
-      <path d={area} fill={`url(#${id}-area)`} />
-      <path className={styles.trace} d={line} />
+      <path className={styles.area} d={area} fill={`url(#${id}-area)`} />
+      {/* pathLength lets the line draw itself in once, whatever its length; playback is unchanged. */}
+      <path className={styles.trace} d={line} pathLength={1} />
 
       {!horizon && (
         <g className={styles.groups}>
@@ -233,7 +234,9 @@ export function ReplayChart({ run, replay, unit, position, width, horizon = fals
         </g>
       )}
 
-      <g clipPath={`url(#${id}-played)`}>{markLayer}</g>
+      <g className={styles.marks} clipPath={`url(#${id}-played)`}>
+        {markLayer}
+      </g>
 
       <g className={styles.playhead}>
         <line x1={x(position)} x2={x(position)} y1={top - 6} y2={layout.bottom + 2} />

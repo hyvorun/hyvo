@@ -27,7 +27,79 @@
 .roundTitle {
   font-size: var(--t-sm);
   letter-spacing: -0.01em;
-  animation: fade 300ms var(--ease);
+  animation: title-in 360ms var(--ease-out);
+}
+
+@keyframes title-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* Who is about to post, while the replay plays: three dots, then the handle. It takes no room of
+   its own in the layout, so nothing moves when it comes and goes. */
+.typing {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--ink-3);
+  font-size: var(--t-2xs);
+  opacity: 0;
+  transition: opacity 180ms var(--ease);
+}
+
+.typing[data-on="true"] {
+  opacity: 1;
+}
+
+.typer {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dots {
+  display: inline-flex;
+  flex: none;
+  gap: 3px;
+}
+
+.dots i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--post);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .typing[data-on="true"] .dots i {
+    animation: typing-dot 900ms var(--ease) infinite;
+  }
+
+  .typing[data-on="true"] .dots i:nth-child(2) {
+    animation-delay: 150ms;
+  }
+
+  .typing[data-on="true"] .dots i:nth-child(3) {
+    animation-delay: 300ms;
+  }
+}
+
+@keyframes typing-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: none;
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
 }
 
 .tabs {
@@ -113,12 +185,45 @@
 /* --- a post ------------------------------------------------------------------------------------ */
 
 .post {
+  position: relative;
   display: grid;
   grid-template-columns: 26px minmax(0, 1fr);
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--rule);
   animation: item-in 420ms var(--ease-out);
+}
+
+/* The post that just landed is lit for a moment, then settles into the feed. */
+.post[data-fresh="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--post-soft);
+  opacity: 0;
+  pointer-events: none;
+  animation: fresh 1400ms var(--ease) both;
+}
+
+@keyframes fresh {
+  15% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* The persona mark of a new post turns in with its post. */
+.post .avatar svg {
+  animation: avatar-in 480ms cubic-bezier(0.34, 1.56, 0.64, 1) 80ms both;
+}
+
+@keyframes avatar-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-20deg);
+  }
 }
 
 @keyframes item-in {

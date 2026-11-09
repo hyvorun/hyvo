@@ -61,13 +61,16 @@ export function CrowdGuide({ seated }: { seated: Map<string, number> | null }) {
                   aria-controls="archetype-panel"
                   tabIndex={active === id ? 0 : -1}
                   className={styles.tab}
+                  data-persona={id}
                   onClick={() => setActive(id)}
                   onKeyDown={(event) => onKey(event, index)}
                 >
-                  <PersonaIcon persona={id} size={15} />
+                  <span className={styles.tabIcon} aria-hidden="true">
+                    <PersonaIcon persona={id} size={15} />
+                  </span>
                   <span className={styles.name}>{PROFILES[id].label}</span>
                   {count > 0 && (
-                    <span className={`${styles.count} num`}>
+                    <span className={`${styles.count} num pop`}>
                       {count.toLocaleString("en-US")}
                       <span className="visually-hidden"> in the run above</span>
                     </span>
@@ -82,7 +85,7 @@ export function CrowdGuide({ seated }: { seated: Map<string, number> | null }) {
         <div role="tabpanel" id="archetype-panel" aria-labelledby={`archetype-${active}`} className={styles.panel} tabIndex={0}>
           <div key={active} className={styles.panelBody}>
             <div className={styles.panelHead}>
-              <span className={styles.panelIcon} aria-hidden="true">
+              <span className={styles.panelIcon} data-persona={active} aria-hidden="true">
                 <PersonaIcon persona={active} size={20} />
               </span>
               <div>
