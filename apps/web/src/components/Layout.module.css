@@ -254,6 +254,78 @@
   transition-timing-function: var(--ease);
 }
 
+/* HYVO's address beside the X link: one press copies it. The short address shows where there is room. */
+.ca {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--rule);
+  color: var(--ink-3);
+  font: inherit;
+  font-size: var(--t-xs);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color var(--dur-hover) var(--ease),
+    background-color var(--dur-hover) var(--ease),
+    box-shadow var(--dur-hover) var(--ease),
+    transform var(--dur-press) var(--ease-spring);
+}
+
+.ca:hover {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+}
+
+@media (hover: hover) {
+  .ca:hover {
+    background-color: var(--accent-soft);
+  }
+}
+
+.ca:active {
+  transform: scale(0.95);
+}
+
+.ca svg {
+  flex: none;
+}
+
+.caLabel {
+  color: var(--ink-2);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.caAddr {
+  display: none;
+}
+
+@media (min-width: 1180px) {
+  .caAddr {
+    display: inline;
+  }
+}
+
+/* Wider than a phone and narrower than 720px, the bar is tightest: the address button keeps only its label. */
+@media not all and (max-width: 640px) {
+  @media not all and (min-width: 720px) {
+    .ca {
+      gap: 0;
+      padding: 0 7px;
+    }
+
+    .ca svg {
+      display: none;
+    }
+  }
+}
+
 /* Hyvo's official X account, so a lookalike is easy to tell apart. The handle shows where there is room. */
 .social {
   display: inline-flex;

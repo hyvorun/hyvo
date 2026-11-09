@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { Link, NavLink, Outlet, useLocation } from "react-router";
-import { OFFICIAL } from "../lib/official";
-import { Logomark } from "./Icons";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
+import { HYVO_TOKEN, OFFICIAL } from "../lib/official";
+import { CheckMark, Logomark } from "./Icons";
 import styles from "./Layout.module.css";
 import { useNavIndicator } from "./motion/use-nav-indicator";
 import { useScrolled } from "./motion/use-scrolled";
@@ -147,6 +147,7 @@ export function Layout() {
             ))}
           </nav>
           <div className={styles.end}>
+            {HYVO_TOKEN && <TokenAddress address={HYVO_TOKEN.address} />}
             <a className={styles.social} href={OFFICIAL.x.url} target="_blank" rel="noreferrer" aria-label={`Hyvo on X, ${OFFICIAL.x.handle}`}>
               <XMark />
               <span className={styles.handle}>{OFFICIAL.x.handle}</span>
@@ -252,6 +253,55 @@ export function Layout() {
         </nav>
       </footer>
     </div>
+  );
+}
+
+/**
+ * HYVO's address in the header, beside the X link: one press copies it, the full address is in its title, and
+ * without a clipboard it opens /token. Shown only once the token has launched.
+ */
+function TokenAddress({ address }: { address: string }) {
+  const navigate = useNavigate();
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 1600);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopied(true);
+    } catch {
+      navigate("/token");
+    }
+  };
+  return (
+    <button type="button" className={styles.ca} onClick={copy} title={address} aria-label={`Copy HYVO's address, ${address}`}>
+      <span className={styles.caLabel}>CA</span>
+      <span className={`mono ${styles.caAddr}`}>
+        {address.slice(0, 6)}…{address.slice(-4)}
+      </span>
+      {copied ? (
+        <span className="pop" aria-hidden="true">
+          <CheckMark size={13} />
+        </span>
+      ) : (
+        <CopyIcon />
+      )}
+      <span className="visually-hidden" role="status">
+        {copied ? "Copied HYVO's address" : ""}
+      </span>
+    </button>
+  );
+}
+
+function CopyIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
+      <rect x="5.5" y="5.5" width="8" height="8" rx="1.6" />
+      <path d="M10.5 3.6V3.2a1.6 1.6 0 0 0-1.6-1.6H3.6A1.6 1.6 0 0 0 2 3.2v5.3a1.6 1.6 0 0 0 1.6 1.6H4" />
+    </svg>
   );
 }
 

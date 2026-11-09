@@ -157,3 +157,29 @@ test("/trust lists the token next to the site and the X account", async ({ page 
   await expect(main.getByText(/has not launched a token yet/)).toHaveCount(0);
   await noHorizontalScroll(page);
 });
+
+test("the header shows HYVO's address beside the X link, and one press copies it", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await stubApi(page);
+  await page.goto("/");
+  const ca = page.locator("header").getByRole("button", { name: `Copy HYVO's address, ${token()}` });
+  await expect(ca).toBeVisible();
+  await expect(ca).toHaveAttribute("title", token());
+  // The address sits just before the X link.
+  const x = page.locator("header").getByRole("link", { name: /Hyvo on X/ });
+  expect((await ca.boundingBox())!.x).toBeLessThan((await x.boundingBox())!.x);
+  await ca.click();
+  await expect(page.locator("header").getByRole("status")).toHaveText("Copied HYVO's address");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(token());
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+});
+
+for (const width of [1440, 1180, 1024, 860, 720, 700, 641, 390]) {
+  test(`the header with HYVO's address fits at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await stubApi(page);
+    await page.goto("/");
+    await expect(page.locator("header").getByRole("button", { name: /Copy HYVO's address/ })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+  });
+}
