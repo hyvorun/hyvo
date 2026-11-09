@@ -306,17 +306,24 @@
 
 /*
  * Where the bar runs short of room and does not scroll yet, the links that are not essential give
- * way (Layout's NAV says which); the footer still has them.
+ * way (Layout's NAV says which); the footer still has them. These meet the phone rules (max-width:
+ * 640px) and the wide ones (min-width: 900px) exactly: zoom and non-integer device scales give
+ * fractional widths, and at 640.5px a min-width: 641px would leave the bar neither scrolling nor
+ * short of links. `not all and (min-width: 900px)` is "narrower than 900px" in every browser; range
+ * syntax would be built down to a `not (…)` that older ones drop.
  */
-@media (max-width: 899px) {
+@media not all and (min-width: 900px) {
   .wideOnly {
     display: none;
   }
 }
 
-@media (min-width: 641px) and (max-width: 799px) {
-  .roomy {
-    display: none;
+/* Wider than a phone, narrower than 800px. */
+@media not all and (max-width: 640px) {
+  @media not all and (min-width: 800px) {
+    .roomy {
+      display: none;
+    }
   }
 }
 
