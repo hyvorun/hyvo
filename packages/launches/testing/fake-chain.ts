@@ -113,7 +113,15 @@ export interface FakeChainOptions {
   impostors?: FakeImpostor[];
   /** Other tokens that exist but are not launches. */
   tokens?: { address: Address; symbol: string; name: string; decimals: number }[];
+  /** Balances of launch tokens; any other holder's balance is 0. */
+  balances?: FakeBalance[];
   endpoints?: Record<string, EndpointRules>;
+}
+
+export interface FakeBalance {
+  token: Address;
+  holder: Address;
+  amount: bigint;
 }
 
 interface RpcRequest {
@@ -136,6 +144,7 @@ export class FakeChain {
   readonly v1: FakeV1Launch[];
   readonly impostors: FakeImpostor[];
   readonly tokens: NonNullable<FakeChainOptions["tokens"]>;
+  readonly balances: FakeBalance[];
   readonly endpoints: Record<string, EndpointRules>;
   /** Every request, for assertions: the endpoint, the method and its params. */
   readonly log: { url: string; method: string; params: unknown[] }[] = [];
@@ -151,7 +160,13 @@ export class FakeChain {
     this.v1 = options.v1 ?? [];
     this.impostors = options.impostors ?? [];
     this.tokens = options.tokens ?? [];
+    this.balances = options.balances ?? [];
     this.endpoints = options.endpoints ?? {};
+  }
+
+  /** A launch token's balance of `holder`, both lowercased. */
+  balanceOf(token: string, holder: string): bigint {
+    return this.balances.find((item) => lower(item.token) === token && lower(item.holder) === holder)?.amount ?? 0n;
   }
 
   timeOf(block: bigint): number {
@@ -327,7 +342,7 @@ export class FakeChain {
       const asset = this.assets.find((item) => lower(item.address) === t) ?? this.tokens.find((item) => lower(item.address) === t);
       if (asset) return erc20(data, asset);
       const token = this.launches.find((item) => lower(item.token) === t) ?? this.v1.find((item) => lower(item.token) === t);
-      if (token) return erc20(data, { symbol: token.symbol, name: token.name, decimals: 18 });
+      if (token) return erc20(data, { symbol: token.symbol, name: token.name, decimals: 18 }, (holder) => this.balanceOf(t, holder));
       const curve = this.launches.find((item) => lower(item.curve) === t);
       if (curve) return curveAnswer(data, curve);
       const impostor = this.impostors.find((item) => lower(item.curve) === t);
@@ -343,10 +358,11 @@ export class FakeChain {
   }
 }
 
-function erc20(data: Hex, token: { symbol: string; name: string; decimals: number }): Hex {
-  const { functionName } = decodeFunctionData({ abi: ERC20_ABI, data });
+function erc20(data: Hex, token: { symbol: string; name: string; decimals: number }, balanceOf: (holder: string) => bigint = () => 0n): Hex {
+  const { functionName, args } = decodeFunctionData({ abi: ERC20_ABI, data });
   if (functionName === "symbol") return encodeFunctionResult({ abi: ERC20_ABI, functionName, result: token.symbol });
   if (functionName === "name") return encodeFunctionResult({ abi: ERC20_ABI, functionName, result: token.name });
+  if (functionName === "balanceOf") return encodeFunctionResult({ abi: ERC20_ABI, functionName, result: balanceOf(lower(String(args[0]))) });
   return encodeFunctionResult({ abi: ERC20_ABI, functionName: "decimals", result: token.decimals });
 }
 
