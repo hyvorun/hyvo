@@ -230,6 +230,29 @@ describe("reading the board's facts from the chain", () => {
     expect(shareOf(row.walletsBalance!, row.supply!)).toBe(0.18);
   });
 
+  it("reads no block header past the launch second once it knows the launch time", async () => {
+    const { chain, reader } = setup({ timestamps: false });
+    // More buys after the late one: their blocks are past the launch second too.
+    const later = [40n, 50n].map((offset) => ({ curve: FIZZ.curve, side: "buy" as const, trader: fakeAddress(`later:${offset}`), quote: 1n, tokens: 1n, block: FIZZ.block + offset }));
+    chain.trades.push(...later);
+    const headers = () => chain.log.filter((item) => item.method === "eth_getBlockByNumber").map((item) => BigInt(String(item.params[0])));
+    const buys = await readLaunchBuys(reader, { ...entry, launchedAt: FIZZ.launchedAt }, DEMO_HEAD);
+    expect(firstSecondWallets(buys, { curve: FIZZ.curve, token: FIZZ.token, creator: FIZZ.creator, launchedAt: FIZZ.launchedAt })).toEqual([...BOARD_SNIPERS]);
+    expect(headers()).not.toContain(FIZZ.block + 40n);
+    expect(headers()).not.toContain(FIZZ.block + 50n);
+    expect(buys.filter((item) => item.block >= FIZZ.block + 40n).every((item) => item.timestamp === null)).toBe(true);
+  });
+
+  it("gives the first-second total only for wallets it was given, so an unknown total is not 0", async () => {
+    const { reader } = setup();
+    const { facts } = await readFacts(reader, [{ entry, statics: false, balances: true }]);
+    const row = facts.get(FIZZ.token.toLowerCase())!;
+    expect(row.walletsBalance).toBeUndefined();
+    expect(shareOf(row.creatorBalance!, SUPPLY)).toBe(0.62);
+    const none = await readFacts(reader, [{ entry, statics: false, balances: true, wallets: [] }]);
+    expect(none.facts.get(FIZZ.token.toLowerCase())!.walletsBalance).toBe(0n);
+  });
+
   it("finds launches through the factory's record, and only real curves among emitters", async () => {
     const { reader } = setup();
     const records = await readRecords(reader, [DEMO_OLDER.token, fakeAddress("nobody")]);
@@ -246,5 +269,7 @@ describe("reading the board's facts from the chain", () => {
     const fallback = await readTradeLogs(setup({ needsAddress: true }).reader, DEMO_HEAD - 2_880n, DEMO_HEAD, [FIZZ.curve]);
     expect(fallback.everyCurve).toBe(false);
     expect(new Set(fallback.trades.map((item) => item.curve.toLowerCase()))).toEqual(new Set([FIZZ.curve.toLowerCase()]));
+    // With no curve known yet, nothing is counted and the board still reads.
+    expect(await readTradeLogs(setup({ needsAddress: true }).reader, DEMO_HEAD - 2_880n, DEMO_HEAD, [])).toEqual({ trades: [], everyCurve: false });
   });
 });
