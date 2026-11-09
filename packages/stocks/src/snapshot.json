@@ -1,0 +1,3859 @@
+{
+ "version": 1,
+ "chainId": 4663,
+ "factory": "0x4783C67b63dE2B358Ac5951a7D41F47A38F3C046",
+ "block": 109864570,
+ "time": "2026-11-09T06:56:18Z",
+ "factoryNonce": 213,
+ "tokens": [
+  {
+   "address": "0xc93a8c440CEa26D7445dF01729f193b27965099f",
+   "uid": "0x000000000000000000000000000000007c0032b6e6ad4c7f93fb2a5c6a5dab99",
+   "symbol": "WEEK",
+   "name": "Roundhill Weekly T-Bill ETF • Robinhood Token",
+   "deployed": {
+    "block": 19698,
+    "time": "2026-05-27T20:17:41Z",
+    "tx": "0x10613165e57593b280ed9c751540b89d6c32acce008743af010e0d17dd8588dd",
+    "name": "Roundhill Weekly T-Bill ETF",
+    "symbol": "WEEK"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 154326,
+     "time": "2026-06-23T14:55:19Z",
+     "tx": "0xb2d2c4dfcd7b3cce3a6b0e2c28d1fec2ebb0f979378c18d0b717bd357c43bf2d",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "2000000000000000000",
+     "effectiveAt": 1782226680
+    },
+    {
+     "block": 154448,
+     "time": "2026-06-23T15:10:04Z",
+     "tx": "0x3b04378b43cd852dd3d9f4fe6e84fa8b523e46afb4251e7b3a42aeb5d661781a",
+     "oldMultiplier": "2000000000000000000",
+     "newMultiplier": "1000000000000000000",
+     "effectiveAt": 1782227580
+    },
+    {
+     "block": 176471,
+     "time": "2026-06-24T22:03:08Z",
+     "tx": "0x96cd9b086e135c95da47057cf3f1c5f8e8a4f0d1ea24d2df0ecb2eddf5955025",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1003091262135922330",
+     "effectiveAt": 1782339000
+    },
+    {
+     "block": 242671,
+     "time": "2026-06-26T20:50:51Z",
+     "tx": "0x27e31b674338efc7e0c17b18d9b5d0da676810d3dadcb891cc62ceb22818d15c",
+     "oldMultiplier": "1003091262135922330",
+     "newMultiplier": "2006182524271844660",
+     "effectiveAt": 1782739800
+    }
+   ],
+   "metadataUpdates": [
+    {
+     "block": 6171588,
+     "time": "2026-07-10T15:01:38Z",
+     "tx": "0xb472f7c3a3c61820fcdefc13ee8b39c00e66e7fa5f4530fb354020d0a8b3baa9",
+     "name": "Roundhill Weekly T-Bill ETF • Robinhood Token",
+     "symbol": "WEEK"
+    }
+   ]
+  },
+  {
+   "address": "0x322F0929c4625eD5bAd873c95208D54E1c003b2d",
+   "uid": "0x00000000000000000000000000000000cfece3244ea34bb29414dd9488b32d9f",
+   "symbol": "TSLA",
+   "name": "Tesla • Robinhood Token",
+   "deployed": {
+    "block": 34767,
+    "time": "2026-06-05T14:08:35Z",
+    "tx": "0xc4c1c585493272cb137f1039546033e9200c249e82579f77eed26041929e80a8",
+    "name": "Tesla • Robinhood Token",
+    "symbol": "TSLA"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC",
+   "uid": "0x00000000000000000000000000000000915f477416294f5099a5e0e09f327ce5",
+   "symbol": "NVDA",
+   "name": "NVIDIA • Robinhood Token",
+   "deployed": {
+    "block": 45898,
+    "time": "2026-06-09T18:53:36Z",
+    "tx": "0xcdb797c54ff55ef4008f254c486cc52d7393a65a6e6fb622c44b0260eecb755f",
+    "name": "NVIDIA • Robinhood Token",
+    "symbol": "NVDA"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 58952659,
+     "time": "2026-09-09T23:50:42Z",
+     "tx": "0x4ac23f2e58e2c4962dcd701c2beff581e87f3995152a29d527c07a3afd67d956",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000775159164630595",
+     "effectiveAt": 1788998430
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x82DA4646242e1D962e96e932269Dc644c94a9CaA",
+   "uid": "0x000000000000000000000000000000001805c8a4eb1a4b3fa49e2698c0da6baa",
+   "symbol": "WDAY",
+   "name": "Workday • Robinhood Token",
+   "deployed": {
+    "block": 46112,
+    "time": "2026-06-09T21:12:11Z",
+    "tx": "0xc4b86c7467cc39bdbbf3093aea042225bada07d9ec4c92beae3d0b764e062454",
+    "name": "Workday • Robinhood Token",
+    "symbol": "WDAY"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xC583c60aeF9Dc401Da72cEC1B404743a93cea1Cc",
+   "uid": "0x000000000000000000000000000000000a924e0d878747e586c22887bc2d82b1",
+   "symbol": "QBTS",
+   "name": "D-Wave Quantum Inc. Common Stock • Robinhood Token",
+   "deployed": {
+    "block": 46113,
+    "time": "2026-06-09T21:12:15Z",
+    "tx": "0x43b281ceead452e8c0b04cc8854676fe61bc86ebc1e06c0dd0d0eac76450e455",
+    "name": "D-Wave Quantum • Robinhood Token",
+    "symbol": "QBTS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": [
+    {
+     "block": 20823927,
+     "time": "2026-07-27T15:01:51Z",
+     "tx": "0x0fc277269d98c2b970d61158cf2c397b574084f7985ca833ce77fdc3ba0407de",
+     "name": "D-Wave Quantum Inc. Common Stock • Robinhood Token",
+     "symbol": "QBTS"
+    }
+   ]
+  },
+  {
+   "address": "0x4D21483a44Bf67a86b77E3dA301411880797D452",
+   "uid": "0x0000000000000000000000000000000047129a8e0f8f4091841e4004bfa08013",
+   "symbol": "BA",
+   "name": "Boeing • Robinhood Token",
+   "deployed": {
+    "block": 46114,
+    "time": "2026-06-09T21:12:18Z",
+    "tx": "0xa6166a82dc109adade0af08cdb2565b5e513fe26c7def55d23431183c747a5e5",
+    "name": "Boeing • Robinhood Token",
+    "symbol": "BA"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x282e87451E10fA6679BC7D76C69BE44cD3fC777C",
+   "uid": "0x00000000000000000000000000000000dceece67a8c740f180047f65ccb4c44a",
+   "symbol": "FLNC",
+   "name": "Fluence Energy • Robinhood Token",
+   "deployed": {
+    "block": 46115,
+    "time": "2026-06-09T21:12:21Z",
+    "tx": "0x567faeb7d51f0b811aacf67d335eb7073efa67ad20c0769ed9ddb8fda3d2fed9",
+    "name": "Fluence Energy • Robinhood Token",
+    "symbol": "FLNC"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xBEF75684C43c4ea7BD18Dd532a2244674Ee8b926",
+   "uid": "0x000000000000000000000000000000002850ddf4a89a4195905c49a4ef7af8a5",
+   "symbol": "NNE",
+   "name": "Nano Nuclear Energy • Robinhood Token",
+   "deployed": {
+    "block": 46121,
+    "time": "2026-06-09T21:12:41Z",
+    "tx": "0xd50808a7bdebb4102568e1ccf1930382ca000d77c1177303f32689824602ad44",
+    "name": "Nano Nuclear Energy • Robinhood Token",
+    "symbol": "NNE"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x666716999E75d2652398FF830Bbc2e485946E140",
+   "uid": "0x000000000000000000000000000000002d84b37fb4cd431c8c62831a96fb72ad",
+   "symbol": "ARM",
+   "name": "Arm Holdings plc • Robinhood Token",
+   "deployed": {
+    "block": 46122,
+    "time": "2026-06-09T21:12:45Z",
+    "tx": "0x70d1d43c0897785fdfbbb9d77496754452a39179e3c6b8fb41824374943c34da",
+    "name": "Arm Holdings plc • Robinhood Token",
+    "symbol": "ARM"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x5e81213613b6B86EaB4c6c50d718d34359459786",
+   "uid": "0x0000000000000000000000000000000032d0504fcc1a48ff8ac9b29185578559",
+   "symbol": "TTWO",
+   "name": "Take-Two Interactive Software • Robinhood Token",
+   "deployed": {
+    "block": 46123,
+    "time": "2026-06-09T21:12:48Z",
+    "tx": "0x2c6948c516a827816b9e91ec53461abb67292f1a6196bedd0d489de3e1d80026",
+    "name": "Take-Two Interactive Software • Robinhood Token",
+    "symbol": "TTWO"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x4e62068525Ab11FE768e29dfD00ef909B9803016",
+   "uid": "0x000000000000000000000000000000005b0a57398f2f4322b011fb98da1f785f",
+   "symbol": "LULU",
+   "name": "Lululemon • Robinhood Token",
+   "deployed": {
+    "block": 46124,
+    "time": "2026-06-09T21:13:10Z",
+    "tx": "0xd17d5ebb1c5357aa6c059c7d2a62a07d665f4d81231c0636593970958eab3746",
+    "name": "Lululemon • Robinhood Token",
+    "symbol": "LULU"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xf1953DAB6FaD537488d5A022361FfAa8B4c95eC6",
+   "uid": "0x00000000000000000000000000000000c23820045b544bafbdc0dd622098fcc3",
+   "symbol": "INOD",
+   "name": "Innodata • Robinhood Token",
+   "deployed": {
+    "block": 46125,
+    "time": "2026-06-09T21:13:13Z",
+    "tx": "0xdd4376df91ef30a0ae35d5f3b3cd2c56967c389b9258ac7d8a9e0533ecbae5ce",
+    "name": "Innodata • Robinhood Token",
+    "symbol": "INOD"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x9b23573b156B52565012F5cE02CDF60AFBaa70Be",
+   "uid": "0x00000000000000000000000000000000c6257ac357d34120ba22c2589ba17cc9",
+   "symbol": "PENG",
+   "name": "Penguin Solutions • Robinhood Token",
+   "deployed": {
+    "block": 46126,
+    "time": "2026-06-09T21:13:16Z",
+    "tx": "0x9c8ad1d736bf0a0f39fa03ef60ffe298b816199199198bd8e2ba2fc92f5d4e6c",
+    "name": "Penguin Solutions • Robinhood Token",
+    "symbol": "PENG"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xcBB95BBF36099d34dA091dc6Fa6F49EfA257Cee3",
+   "uid": "0x00000000000000000000000000000000730835cf25474184af89c27075a82be1",
+   "symbol": "CLSK",
+   "name": "CleanSpark • Robinhood Token",
+   "deployed": {
+    "block": 46127,
+    "time": "2026-06-09T21:13:19Z",
+    "tx": "0x8cb245c32489930171f2f36d9e7b3121fb0d3d28e5f20eb968f9f904e62188bb",
+    "name": "CleanSpark • Robinhood Token",
+    "symbol": "CLSK"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x1AF6446f07eb1d97c546AFC8c9544cBDF3AD5137",
+   "uid": "0x00000000000000000000000000000000778bc606b4504ca0babd4e171d5262ee",
+   "symbol": "ASTS",
+   "name": "AST SpaceMobile • Robinhood Token",
+   "deployed": {
+    "block": 46128,
+    "time": "2026-06-09T21:13:23Z",
+    "tx": "0x636056e0dc410706d46b6c826ad37f55a8efbc5cb113e562e3cd93801749bb64",
+    "name": "AST SpaceMobile • Robinhood Token",
+    "symbol": "ASTS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x8eF20885F94e3D9bc7eB3080279188Bd5ED7c08C",
+   "uid": "0x00000000000000000000000000000000a5fc7b0af972454baf7c124f624ae97f",
+   "symbol": "LITE",
+   "name": "Lumentum • Robinhood Token",
+   "deployed": {
+    "block": 46129,
+    "time": "2026-06-09T21:14:10Z",
+    "tx": "0xa825fd592c83ef826880f4a0d1bd5a312a672551f1da9fa69a503e768d2d9b04",
+    "name": "Lumentum • Robinhood Token",
+    "symbol": "LITE"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xeB30663bDFf0622Ef4e4E5cBb4E975F19f33f51D",
+   "uid": "0x000000000000000000000000000000002e3b98468b2d49bea9b69a2b92228fa6",
+   "symbol": "FUTU",
+   "name": "Futu Holdings • Robinhood Token",
+   "deployed": {
+    "block": 46130,
+    "time": "2026-06-09T21:14:13Z",
+    "tx": "0xb9a3db401f060b631e29941ea6afc07d35986a723514c01f03af8a886711cec2",
+    "name": "Futu Holdings • Robinhood Token",
+    "symbol": "FUTU"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x05b37Fb53A299a1b874A619e1c4C404D52C36F4C",
+   "uid": "0x000000000000000000000000000000003bc66ed8f2314091a365604b4c01aef5",
+   "symbol": "RDDT",
+   "name": "Reddit • Robinhood Token",
+   "deployed": {
+    "block": 46131,
+    "time": "2026-06-09T21:14:17Z",
+    "tx": "0x247f3a20b1c5fa7517e635276ae321ba9b61ef123d5033281a2f3eaccae84390",
+    "name": "Reddit • Robinhood Token",
+    "symbol": "RDDT"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x558378E000D634A36593E338eBacdd6207640EfE",
+   "uid": "0x00000000000000000000000000000000b6f6e756b7ff46b88238c18d0bc07fd4",
+   "symbol": "IONQ",
+   "name": "IonQ • Robinhood Token",
+   "deployed": {
+    "block": 46133,
+    "time": "2026-06-09T21:14:40Z",
+    "tx": "0x24c9ae852e9d1383585de01dfdeccf5b3ddfde0df883e9c11810e15fb1c44fed",
+    "name": "IonQ • Robinhood Token",
+    "symbol": "IONQ"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x8cF07C5A878945185d327aAa6e33FAa95F95e7bF",
+   "uid": "0x00000000000000000000000000000000e5c73eb672384c37ab8554f9ebe3131a",
+   "symbol": "CELH",
+   "name": "Celsius • Robinhood Token",
+   "deployed": {
+    "block": 46134,
+    "time": "2026-06-09T21:14:44Z",
+    "tx": "0x9e7252943cf64cca1152cb25ab7612257bacd764cecae6127372f6b5c253642f",
+    "name": "Celsius • Robinhood Token",
+    "symbol": "CELH"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xA8eB3BCcbf2017eE7CBfb652eB51CF2E1B153289",
+   "uid": "0x00000000000000000000000000000000d491ee29c5564368830ce787289dcae8",
+   "symbol": "XNDU",
+   "name": "Xanadu Quantum • Robinhood Token",
+   "deployed": {
+    "block": 46135,
+    "time": "2026-06-09T21:14:47Z",
+    "tx": "0xa170fe89365b79f70de296be8f31c14f503ad51bd3f026e89f6bebf6db6303e2",
+    "name": "Xanadu Quantum • Robinhood Token",
+    "symbol": "XNDU"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xb8DBf92F9741c9ac1c32115E78581f23509916FD",
+   "uid": "0x0000000000000000000000000000000004a960b45163413698f0f69b5454785d",
+   "symbol": "APLD",
+   "name": "Applied Digital • Robinhood Token",
+   "deployed": {
+    "block": 46136,
+    "time": "2026-06-09T21:15:10Z",
+    "tx": "0x55be53923015d83863b5048ef4331ea47704bf3c292896c6b46ce7c02e5c2e1f",
+    "name": "Applied Digital • Robinhood Token",
+    "symbol": "APLD"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x47F93d52cBeC7C6D2CfC080e154002370a60dAEA",
+   "uid": "0x00000000000000000000000000000000f6e013126d524981acc9df053b0c19ea",
+   "symbol": "ASML",
+   "name": "ASML Holding NV • Robinhood Token",
+   "deployed": {
+    "block": 46137,
+    "time": "2026-06-09T21:15:13Z",
+    "tx": "0x0497336f2eae9e06c1c1d1caa344bf6d08a29517ad8ece2a4490327efd28db8b",
+    "name": "ASML Holding NV • Robinhood Token",
+    "symbol": "ASML"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 29439914,
+     "time": "2026-08-06T15:01:01Z",
+     "tx": "0x1f74e07c6a56f9cf89b70d4b09263abe20c577757269be45608af2a30328ee6a",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000101323251417769",
+     "effectiveAt": 1786029025
+    },
+    {
+     "block": 98815287,
+     "time": "2026-10-27T00:01:01Z",
+     "tx": "0xa64c81aa757104be4ea430485115cc14fb68880b9f26d2ffea46022edcd2c2d9",
+     "oldMultiplier": "1000101323251417769",
+     "newMultiplier": "1000877991671177134",
+     "effectiveAt": 1793059835
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x48961813349333209994750ffA89b3c5C22eC969",
+   "uid": "0x0000000000000000000000000000000014f96c01ad254647b2617a5686d6053a",
+   "symbol": "MXL",
+   "name": "MaxLinear • Robinhood Token",
+   "deployed": {
+    "block": 48213,
+    "time": "2026-06-10T15:18:15Z",
+    "tx": "0x35291ed58c0f482da18593d63bab9264b6b42f539a259d9bcfedd11022d218af",
+    "name": "MaxLinear • Robinhood Token",
+    "symbol": "MXL"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x4189F0c66EBBB0bfeF1C31f763131361EF32f77C",
+   "uid": "0x0000000000000000000000000000000022d137a64ac743aa991898cc4c1d7af4",
+   "symbol": "PR",
+   "name": "Permian Resources • Robinhood Token",
+   "deployed": {
+    "block": 48214,
+    "time": "2026-06-10T15:18:48Z",
+    "tx": "0x41968d0430ce45268a5c689328b1c44f5aa5e97001e4929758fa4b6b6477a639",
+    "name": "Permian Resources • Robinhood Token",
+    "symbol": "PR"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 64062986,
+     "time": "2026-09-16T00:01:01Z",
+     "tx": "0x81f4f290ae140538cda6ff63538b3eb5aee01c04dac6e9acb0c6eff7cd91d4f7",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1004477942292229526",
+     "effectiveAt": 1789517433
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x5c90450Bbb4273D7b2f17CF6917AEB237A569679",
+   "uid": "0x000000000000000000000000000000002e030d9bc86c45e2b9e02418dd312548",
+   "symbol": "CBRS",
+   "name": "Cerebras Systems • Robinhood Token",
+   "deployed": {
+    "block": 48216,
+    "time": "2026-06-10T15:19:05Z",
+    "tx": "0x7e8aaa8015e9cbd95b23d33a2c7aaf50ace8c5a8033a0548f615f1376a8c4261",
+    "name": "Cerebras Systems • Robinhood Token",
+    "symbol": "CBRS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x9651342CeA770aE9a2969Ba2A52611523146aef9",
+   "uid": "0x000000000000000000000000000000001cf204e4aa464340bf2e68461ff6d8d3",
+   "symbol": "CCL",
+   "name": "Carnival Corporation • Robinhood Token",
+   "deployed": {
+    "block": 48217,
+    "time": "2026-06-10T15:19:43Z",
+    "tx": "0x4af74332d0644534c04131c617f49b1e168edac5af6ff125d636f5550b0bc304",
+    "name": "Carnival Corporation • Robinhood Token",
+    "symbol": "CCL"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 50955407,
+     "time": "2026-08-31T15:01:22Z",
+     "tx": "0x391030f47dae3d1ac98f9f4384c31186fad48fae6d62d1b3fae5e1449e2fdd02",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1021486444855206408",
+     "effectiveAt": 1788189026
+    },
+    {
+     "block": 107180314,
+     "time": "2026-11-06T01:02:50Z",
+     "tx": "0x26c58b92be66f853bebfa90284a20cfdda36e66e5c40a98f29dce3c3b045c71c",
+     "oldMultiplier": "1021486444855206408",
+     "newMultiplier": "1025055519837832948",
+     "effectiveAt": 1793927539
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xE0444EF8BF4eD74f74FD73686e2ddF4C1c5591E8",
+   "uid": "0x00000000000000000000000000000000500f14b2a92f44d6998e0e2b9cc9387e",
+   "symbol": "NFLX",
+   "name": "Netflix • Robinhood Token",
+   "deployed": {
+    "block": 48218,
+    "time": "2026-06-10T15:19:46Z",
+    "tx": "0xebd6f2dceee43589809e3646f447366a892c18ac45862e3b22fedff927996ddb",
+    "name": "Netflix • Robinhood Token",
+    "symbol": "NFLX"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xa5D4968421bA94814Be3B136b15cf422101aC1a3",
+   "uid": "0x00000000000000000000000000000000c8fa21fd16c744c9ac5c7f5a60ca433a",
+   "symbol": "LUNR",
+   "name": "Intuitive Machines • Robinhood Token",
+   "deployed": {
+    "block": 48219,
+    "time": "2026-06-10T15:19:49Z",
+    "tx": "0x44f264dd87e54c028beae52a759088076f6ee5b17c0a328cd3e4d7424b1aeb0c",
+    "name": "Intuitive Machines • Robinhood Token",
+    "symbol": "LUNR"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xDdf2266b79abf0B48898959B0ed6E6adf512be74",
+   "uid": "0x00000000000000000000000000000000f92f60961bbe43028a23a3d52174b320",
+   "symbol": "MDB",
+   "name": "MongoDB • Robinhood Token",
+   "deployed": {
+    "block": 48220,
+    "time": "2026-06-10T15:19:53Z",
+    "tx": "0xc258525a34ad55f2f030165a1f9dc58f49ca97f9034b6899074cf57486538c88",
+    "name": "MongoDB • Robinhood Token",
+    "symbol": "MDB"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x44c4F142009036cF477eD2d09932051843137CF1",
+   "uid": "0x00000000000000000000000000000000da64fede272447a3b772423f0962a984",
+   "symbol": "ZM",
+   "name": "Zoom • Robinhood Token",
+   "deployed": {
+    "block": 48221,
+    "time": "2026-06-10T15:19:56Z",
+    "tx": "0xaacf4e60f8c76a5d1702dcfd7f8f868649f6b1ca8fb0a270aeda4c975660dbb6",
+    "name": "Zoom • Robinhood Token",
+    "symbol": "ZM"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x941AE714EC6D8130c7B75d67160Ca08f1e7d11Dd",
+   "uid": "0x0000000000000000000000000000000014eaef73a2c44d62b7952cfd0a44ff51",
+   "symbol": "DELL",
+   "name": "Dell • Robinhood Token",
+   "deployed": {
+    "block": 48222,
+    "time": "2026-06-10T15:19:59Z",
+    "tx": "0x19354710ea7ac8d6ea57143fcaf492eba50b7e1a962648126f3cb88610dd347c",
+    "name": "Dell • Robinhood Token",
+    "symbol": "DELL"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 26853518,
+     "time": "2026-08-03T15:00:48Z",
+     "tx": "0x8881e24ee42a7fdac96523e3166e8361ea72d24c45f2f6991a1da174acb531a8",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000063708620124549",
+     "effectiveAt": 1785769823
+    },
+    {
+     "block": 93020772,
+     "time": "2026-10-20T00:01:02Z",
+     "tx": "0x6d0e2ffaa984db67539f239eca7ed83c0232f1f5edd5a72b44c92ea303cc3cb0",
+     "oldMultiplier": "1000063708620124549",
+     "newMultiplier": "1001019944360538286",
+     "effectiveAt": 1792455029
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x98E75885157C80992A8D41b696D8c9C6Fb30A926",
+   "uid": "0x00000000000000000000000000000000df2cb1370b1b41a8b896a706fefae931",
+   "symbol": "SOFI",
+   "name": "SoFi Technologies • Robinhood Token",
+   "deployed": {
+    "block": 48223,
+    "time": "2026-06-10T15:20:02Z",
+    "tx": "0x7f76fa50232b6b9270b77cc61691872626bb7e3042e8540fec3e0d00b1b64ce5",
+    "name": "SoFi Technologies • Robinhood Token",
+    "symbol": "SOFI"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xB1BF26c1D20ff267A4f93550d1E0d06ac40a114B",
+   "uid": "0x00000000000000000000000000000000c4aa88df91204d23a4ff43cd0768298d",
+   "symbol": "RIVN",
+   "name": "Rivian Automotive • Robinhood Token",
+   "deployed": {
+    "block": 48224,
+    "time": "2026-06-10T15:20:06Z",
+    "tx": "0xfe49ad5bdab2e2200b501d93abb5f783c9a0c50cd0b4b6ff47bbdb64b85db4de",
+    "name": "Rivian Automotive • Robinhood Token",
+    "symbol": "RIVN"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xf23250dac154D05Bb671CB0d0eBEf3c635c79CE2",
+   "uid": "0x00000000000000000000000000000000413cbb2a5e924576a297ccb67c272298",
+   "symbol": "UPS",
+   "name": "UPS • Robinhood Token",
+   "deployed": {
+    "block": 48225,
+    "time": "2026-06-10T15:20:10Z",
+    "tx": "0x3b7999299af3b94b714985b47c6b248bf47c6e820b4577f9cec75efa380fc7e2",
+    "name": "UPS • Robinhood Token",
+    "symbol": "UPS"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 54355503,
+     "time": "2026-09-04T15:00:41Z",
+     "tx": "0xc3a0a692808a98d480dc407c4817334ba33ca4d8d60de81b9b7c320fcfba81bb",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1002208724969205741",
+     "effectiveAt": 1788534626
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x1Cdad396DB64BDa184d5182A97Dd9B3C62100b7D",
+   "uid": "0x0000000000000000000000000000000002c4d1ce31ec4310b2c507c921a52b70",
+   "symbol": "P",
+   "name": "Everpure • Robinhood Token",
+   "deployed": {
+    "block": 48227,
+    "time": "2026-06-10T15:20:44Z",
+    "tx": "0x6a064a091fe5b250ef56d55bcdf8ffdf373b95eef92c3c145ca876673f24f027",
+    "name": "Everpure • Robinhood Token",
+    "symbol": "P"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xea72Ecca2d0f6bFA1394DBBCff85b52CD4233931",
+   "uid": "0x000000000000000000000000000000001adecf2c6a3749f9873b8926b5977c0a",
+   "symbol": "CRWD",
+   "name": "CrowdStrike Holdings • Robinhood Token",
+   "deployed": {
+    "block": 48228,
+    "time": "2026-06-10T15:20:47Z",
+    "tx": "0x9c01c7c92ce4a70145d57713b57da38f6905cd81204d4926069e59455d486b93",
+    "name": "CrowdStrike Holdings • Robinhood Token",
+    "symbol": "CRWD"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 978630,
+     "time": "2026-07-02T01:01:22Z",
+     "tx": "0x07884f2f2440316a996ab3a9c0f8bce962ec872af6924745f5a04a9e9ac1d31f",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "4000000000000000000",
+     "effectiveAt": 1782999000
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x27c99fBde9D0d2AA4f4Bfb4943f237843DdF6958",
+   "uid": "0x00000000000000000000000000000000d4bd519623e545bf91b7ea590c66801e",
+   "symbol": "DDOG",
+   "name": "Datadog • Robinhood Token",
+   "deployed": {
+    "block": 48230,
+    "time": "2026-06-10T15:20:51Z",
+    "tx": "0x4773886d9f7d467c5c9e1eaf0879d4eca152d04c5152740f6edf63859a552a68",
+    "name": "Datadog • Robinhood Token",
+    "symbol": "DDOG"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x284358abc07F9359f19f4b5b4aC91901Be2597Ba",
+   "uid": "0x0000000000000000000000000000000031a6c09d095b4d49b4155de0040da68f",
+   "symbol": "RGTI",
+   "name": "Rigetti Computing • Robinhood Token",
+   "deployed": {
+    "block": 48231,
+    "time": "2026-06-10T15:20:54Z",
+    "tx": "0x641712081c63352983446443565743b6d381cf70944582da84d9ebcb9f0821af",
+    "name": "Rigetti Computing • Robinhood Token",
+    "symbol": "RGTI"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x7dc013eB55e436f30d7ED1AFE4E36d6e45e3c3f7",
+   "uid": "0x00000000000000000000000000000000968cee5f446f422d876c7661ff20b373",
+   "symbol": "ZS",
+   "name": "Zscaler • Robinhood Token",
+   "deployed": {
+    "block": 48232,
+    "time": "2026-06-10T15:20:58Z",
+    "tx": "0x325890181ae6241246738766c372ed6a93d42e3e2f6d3fd0a2ee6f6cfc1139e0",
+    "name": "Zscaler • Robinhood Token",
+    "symbol": "ZS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x521Cf887E6531c6F667b5BC4D896E5d9bfE8EB2E",
+   "uid": "0x00000000000000000000000000000000a47bbc4c8a0b4f44a6d1aff3242b3088",
+   "symbol": "AAOI",
+   "name": "Applied Optoelectronics • Robinhood Token",
+   "deployed": {
+    "block": 48233,
+    "time": "2026-06-10T15:21:01Z",
+    "tx": "0xe4e166627498abf0df66cc933a96e6e75f1d197aa278d3c5b03240c129abce24",
+    "name": "Applied Optoelectronics • Robinhood Token",
+    "symbol": "AAOI"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x3b14C39E89D60D627b42a1A4CA45b5bb45Fc12e2",
+   "uid": "0x000000000000000000000000000000007cacd0cd4c0547d480e89459e648592b",
+   "symbol": "RKLB",
+   "name": "Rocket Lab Corporation • Robinhood Token",
+   "deployed": {
+    "block": 48234,
+    "time": "2026-06-10T15:21:04Z",
+    "tx": "0x7016a5fbcb83b20816b14e68c274213a3982c1e7558b27d999152ecc7f3e60f0",
+    "name": "Rocket Lab Corporation • Robinhood Token",
+    "symbol": "RKLB"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xcf6B2D875361be807EAfa57458c80f28521F9333",
+   "uid": "0x00000000000000000000000000000000a20e50a9f81946d58dafdad20661ec10",
+   "symbol": "POET",
+   "name": "POET Technologies • Robinhood Token",
+   "deployed": {
+    "block": 48235,
+    "time": "2026-06-10T15:21:25Z",
+    "tx": "0x874e1d7ae2cba87d650bd8162065c6a839cd104bdf7d94bb9499fd978951ba35",
+    "name": "POET Technologies • Robinhood Token",
+    "symbol": "POET"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xec262a75e413fAfD0dF80480274532C79D42da09",
+   "uid": "0x00000000000000000000000000000000c91ba6e57a1c493f99cae2174e43c86e",
+   "symbol": "MSTR",
+   "name": "Strategy Inc. • Robinhood Token",
+   "deployed": {
+    "block": 48238,
+    "time": "2026-06-10T15:21:44Z",
+    "tx": "0xa704b03d58cb994a0df5f7448343be0f32994642de8b780b0b7e4998d56d6d5b",
+    "name": "Strategy Inc. • Robinhood Token",
+    "symbol": "MSTR"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x6ddb95405db6179012Bff2fFf7E0F8d49cF00137",
+   "uid": "0x00000000000000000000000000000000fadb2b13fcf8491ebb8f8cfd105ff872",
+   "symbol": "NASA",
+   "name": "Tema Space Innovators ETF • Robinhood Token",
+   "deployed": {
+    "block": 48239,
+    "time": "2026-06-10T15:21:47Z",
+    "tx": "0xc5864b17933e3c02b2989314aaf4645f4d6c41c7e269a8c1c7c6fe8d2c0c1ec9",
+    "name": "Tema Space Innovators ETF • Robinhood Token",
+    "symbol": "NASA"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x0E6e67Ba88e7b5d9B67636A215c76779B948dE79",
+   "uid": "0x00000000000000000000000000000000bb970311792440cebde7cef41f80d446",
+   "symbol": "UMC",
+   "name": "United Microelectronics • Robinhood Token",
+   "deployed": {
+    "block": 48240,
+    "time": "2026-06-10T15:21:51Z",
+    "tx": "0x0eb4316d0812eb4c7e5f2b0d31d903f0f2c023ff5d62716c33b3939d4918fb3c",
+    "name": "United Microelectronics • Robinhood Token",
+    "symbol": "UMC"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x75742c18BC1f1C5c5f448f4C9D9C6F66dafAAa38",
+   "uid": "0x00000000000000000000000000000000f379ff90efb54b4cb6280fc923e38926",
+   "symbol": "SOXX",
+   "name": "iShares Semiconductor ETF • Robinhood Token",
+   "deployed": {
+    "block": 48241,
+    "time": "2026-06-10T15:21:54Z",
+    "tx": "0xcf0bffa225746422e849c5c32d62f2aab98ce2a124ea403361a041c4cb5ac984",
+    "name": "iShares Semiconductor ETF • Robinhood Token",
+    "symbol": "SOXX"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 64062899,
+     "time": "2026-09-16T00:00:52Z",
+     "tx": "0x25ca20c977b0e0c206bd48e76515c85e9971b7397d950059cff00500ba912269",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000450838210425960",
+     "effectiveAt": 1789517433
+    },
+    {
+     "block": 105928538,
+     "time": "2026-11-04T13:16:31Z",
+     "tx": "0x9120b4256309caa0ba67b4496e53cd6c08ea4168450d952525f85c79c4d2620f",
+     "oldMultiplier": "1000450838210425960",
+     "newMultiplier": "3001352514631277879",
+     "effectiveAt": 1793802600
+    },
+    {
+     "block": 106055512,
+     "time": "2026-11-04T16:55:24Z",
+     "tx": "0xf23eaafc8e312687c269c2f143303c0cf96ee5c3ae7eef45c3ce364eb80a232e",
+     "oldMultiplier": "3001352514631277879",
+     "newMultiplier": "1000450838210425960",
+     "effectiveAt": 1793813520
+    },
+    {
+     "block": 106372093,
+     "time": "2026-11-05T02:00:38Z",
+     "tx": "0xd7244f0392fc91fae18a5cb5509a1fac75d01d054e4476e5dab805bedd43d1fc",
+     "oldMultiplier": "1000450838210425960",
+     "newMultiplier": "3001352514631277880",
+     "effectiveAt": 1793889000
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xc01aA1fECeC0605b13bc84874ff7256C0f5F562a",
+   "uid": "0x000000000000000000000000000000000cfe41021541408ab92f19e6af2fa729",
+   "symbol": "SMCI",
+   "name": "Super Micro Computer • Robinhood Token",
+   "deployed": {
+    "block": 48242,
+    "time": "2026-06-10T15:21:58Z",
+    "tx": "0x5b26dbe8e5bdc7afe647e3526e5d2d13bebdb931ffc71a959041530052801e5b",
+    "name": "Super Micro Computer • Robinhood Token",
+    "symbol": "SMCI"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x0C3260aF4B8f13a69c4c2dFb84fD667890CDFa14",
+   "uid": "0x000000000000000000000000000000008fcfbfc7a42c40d4aa44dc7dc943b078",
+   "symbol": "NOW",
+   "name": "ServiceNow • Robinhood Token",
+   "deployed": {
+    "block": 48244,
+    "time": "2026-06-10T15:22:01Z",
+    "tx": "0x9b4e0d331d17aa7b4e756098651581efc4ec7a47d2c139327a2baa75db842ca1",
+    "name": "ServiceNow • Robinhood Token",
+    "symbol": "NOW"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x89776d4Cd68193597A2fC132cfaC1fDe36CCeA8a",
+   "uid": "0x0000000000000000000000000000000036e64f28008640f9ab10ed949faf23b2",
+   "symbol": "TSEM",
+   "name": "Tower Semiconductor • Robinhood Token",
+   "deployed": {
+    "block": 48245,
+    "time": "2026-06-10T15:22:05Z",
+    "tx": "0xe88bd08f265862f8a29b8c480fb2f7960b78bc387c8e6bee16370668fb936fce",
+    "name": "Tower Semiconductor • Robinhood Token",
+    "symbol": "TSEM"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xF0AB0c93bE6F41369d302e55db1A96b3c430212D",
+   "uid": "0x00000000000000000000000000000000612c7fa7477f4f21b3a425f180cffd86",
+   "symbol": "IREN",
+   "name": "IREN Limited • Robinhood Token",
+   "deployed": {
+    "block": 48250,
+    "time": "2026-06-10T15:22:50Z",
+    "tx": "0xbc6b4724c1adcac1050534438baf272a5738192a09ce5a1d57ebc5bcdd503289",
+    "name": "IREN Limited • Robinhood Token",
+    "symbol": "IREN"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x408c14038a04f7bD235329E26d2bf569ee20e250",
+   "uid": "0x000000000000000000000000000000002ea76ec420fa43ab81d6734184f7058a",
+   "symbol": "NU",
+   "name": "Nu • Robinhood Token",
+   "deployed": {
+    "block": 48251,
+    "time": "2026-06-10T15:22:53Z",
+    "tx": "0xabe8fd765a56d606f655be3afc95a9933b984ab0d5c4a7aceafae269301c9185",
+    "name": "Nu • Robinhood Token",
+    "symbol": "NU"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x36046893810a7E7fCE501229d57dc3FC8c8716d0",
+   "uid": "0x00000000000000000000000000000000a98d1e2ff1ea4e54a538680595585902",
+   "symbol": "AMAT",
+   "name": "Applied Materials • Robinhood Token",
+   "deployed": {
+    "block": 48252,
+    "time": "2026-06-10T15:22:56Z",
+    "tx": "0x54c7185ad73fca65724a36551e6d13f5bc9c2c27e3cb60bfe7e77f976c298f37",
+    "name": "Applied Materials • Robinhood Token",
+    "symbol": "AMAT"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 60346800,
+     "time": "2026-09-11T15:01:36Z",
+     "tx": "0x2a3ed01be18866d44a1ca93b451caba9feaba045bff264bf6e1450b4dc2fcf98",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000044656302636618",
+     "effectiveAt": 1789139430
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x92Ef19E82bD8fF36661DE838D5eaE7e5CEF0EfFE",
+   "uid": "0x00000000000000000000000000000000d6571fe1a63748a4b7b79b37612dc9b8",
+   "symbol": "RDW",
+   "name": "Redwire • Robinhood Token",
+   "deployed": {
+    "block": 48253,
+    "time": "2026-06-10T15:23:00Z",
+    "tx": "0x786085dfc50db0361928d61d3fdd72df105fb46a6d5d06d82cc5974d84d4d23d",
+    "name": "Redwire • Robinhood Token",
+    "symbol": "RDW"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x95052ddcd5DC25641657424A8Cf04834997E1730",
+   "uid": "0x000000000000000000000000000000000b2d487cedd9423a890231379e09bbb6",
+   "symbol": "SATS",
+   "name": "EchoStar • Robinhood Token",
+   "deployed": {
+    "block": 48254,
+    "time": "2026-06-10T15:23:03Z",
+    "tx": "0x58d684654ced0d7a61c83dcd421f7ca8b3d05e965c8e7c2a18e777030183fb5d",
+    "name": "EchoStar • Robinhood Token",
+    "symbol": "SATS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x39EC44Bee4F6A116c6F9B8De566848a985C53C60",
+   "uid": "0x000000000000000000000000000000004ed544ce43734899971a27f98af8972e",
+   "symbol": "ELF",
+   "name": "e.l.f. Beauty • Robinhood Token",
+   "deployed": {
+    "block": 48255,
+    "time": "2026-06-10T15:23:07Z",
+    "tx": "0xf683098e0d81030ff675a164ae0f096f15d6ff81770baecbf0ad4a18560f0ad5",
+    "name": "e.l.f. Beauty • Robinhood Token",
+    "symbol": "ELF"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x59818904ab4cE163b3cE4FfB64f2D6Ca02c434B4",
+   "uid": "0x000000000000000000000000000000009448faa0b7c14ea798a7787a8cb9db5a",
+   "symbol": "QUBT",
+   "name": "Quantum Computing • Robinhood Token",
+   "deployed": {
+    "block": 48256,
+    "time": "2026-06-10T15:23:10Z",
+    "tx": "0x30fd13256b30c02f2c7c36fd552ac245f3bbc992b0389520c4b95771acde23f2",
+    "name": "Quantum Computing • Robinhood Token",
+    "symbol": "QUBT"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x58FfE4a942d3885bAa22D7520691F611EF09e7AA",
+   "uid": "0x000000000000000000000000000000002e890a0884474abd86ba66b19722e827",
+   "symbol": "TSM",
+   "name": "Taiwan Semiconductor Manufacturing • Robinhood Token",
+   "deployed": {
+    "block": 48257,
+    "time": "2026-06-10T15:23:14Z",
+    "tx": "0x6e3449f096d61c5dd74573160f1e83e447c655958b0f42b074c2e5a382b80277",
+    "name": "Taiwan Semiconductor Manufacturing • Robinhood Token",
+    "symbol": "TSM"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 64062939,
+     "time": "2026-09-16T00:00:56Z",
+     "tx": "0x53888b0500828784f8eb5e98b22e2becf1e5d9b00d4e48c26d0b440e08f34037",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1001463024159690554",
+     "effectiveAt": 1789517433
+    },
+    {
+     "block": 80347763,
+     "time": "2026-10-05T00:03:01Z",
+     "tx": "0x3ec41fca900ab92c68ff37c424fe16f0840ccb64fd62d14b1a05172b27dae3fd",
+     "oldMultiplier": "1001463024159690554",
+     "newMultiplier": "1002728577037771211",
+     "effectiveAt": 1791159151
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x1b0E319c6A659F002271B69dB8A7df2F911c153E",
+   "uid": "0x00000000000000000000000000000000c5ac9420091c4f9eb3ff1fdd1d2b60c6",
+   "symbol": "GME",
+   "name": "GameStop • Robinhood Token",
+   "deployed": {
+    "block": 48258,
+    "time": "2026-06-10T15:23:18Z",
+    "tx": "0xea9c4f734d4ead19b047ecedc50e19b9b6f46f0404ca11517f04614f7e037eed",
+    "name": "GameStop • Robinhood Token",
+    "symbol": "GME"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xf9B46d3D1B22199D4D1025a9cEDB540A33F1a2d5",
+   "uid": "0x0000000000000000000000000000000098d983331a5245e98847e635b93eb920",
+   "symbol": "XOM",
+   "name": "ExxonMobil Holdings Corporation • Robinhood Token",
+   "deployed": {
+    "block": 48259,
+    "time": "2026-06-10T15:23:21Z",
+    "tx": "0x43fd88ff3a7e9b8f4c6a20af82bf25d622c6b111c73c66b4f3eb4d84ce5689d8",
+    "name": "Exxon Mobil • Robinhood Token",
+    "symbol": "XOM"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 60346845,
+     "time": "2026-09-11T15:01:41Z",
+     "tx": "0x2cd7aa15b670f84e1302097b2bc3e07282c6cef0148b70b7bc3b0f920a49cdbd",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1001039563764661900",
+     "effectiveAt": 1789139430
+    }
+   ],
+   "metadataUpdates": [
+    {
+     "block": 5333616,
+     "time": "2026-07-09T15:42:41Z",
+     "tx": "0x594b0ebd749645a9fd89eeff2aeaeba9b4a34fe37636df3713da0f35c7495210",
+     "name": "ExxonMobil Holdings Corporation • Robinhood Token",
+     "symbol": "XOM"
+    }
+   ]
+  },
+  {
+   "address": "0x8005d266423c7ea827372c9c864491e5786600ea",
+   "uid": "0x00000000000000000000000000000000ac7debdd1135468e9b6a35678f81bb28",
+   "symbol": "LLY",
+   "name": "Eli Lilly • Robinhood Token",
+   "deployed": {
+    "block": 48260,
+    "time": "2026-06-10T15:23:47Z",
+    "tx": "0x2c620cb609bf395396c32dc4420e2b79b345bdae605bbb10a4836eb25706cbca",
+    "name": "Eli Lilly • Robinhood Token",
+    "symbol": "LLY"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 60346735,
+     "time": "2026-09-11T15:01:30Z",
+     "tx": "0xb20fb11da8a57ff41835258059c4c80ae7a5a454db171f9fdd30802924289c03",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000002288774375687",
+     "effectiveAt": 1789139430
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xAd622320e520de39e72d41EF07438C3Fd3354875",
+   "uid": "0x00000000000000000000000000000000eefd305f8fd04bdb882b158b0b30d776",
+   "symbol": "SPMO",
+   "name": "Invesco S&P 500 Momentum ETF • Robinhood Token",
+   "deployed": {
+    "block": 48261,
+    "time": "2026-06-10T15:23:50Z",
+    "tx": "0xf2f0ee2da13869ade72aa223b12f389abda92db416fee7b446107329e2259e2e",
+    "name": "Invesco S&P 500 Momentum ETF • Robinhood Token",
+    "symbol": "SPMO"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 72458704,
+     "time": "2026-09-25T18:56:51Z",
+     "tx": "0xbd2190b74fa987ab344fac2284948e53e33e0f07dfe81163f39391baa84ed7d4",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1002024883742416310",
+     "effectiveAt": 1790363201
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xad25Ac6C84D497db898fa1E8387bf6Af3532a1c4",
+   "uid": "0x000000000000000000000000000000006ef9da606f504495ad7de6a7a58b87cd",
+   "symbol": "BABA",
+   "name": "Alibaba • Robinhood Token",
+   "deployed": {
+    "block": 48262,
+    "time": "2026-06-10T15:23:54Z",
+    "tx": "0x88a34ee9d451ac54e9618ef1a8a047838b6f872b52618646d79c35c64da689f7",
+    "name": "Alibaba • Robinhood Token",
+    "symbol": "BABA"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x0f17206447090e464C277571124dD2688E48AEA9",
+   "uid": "0x00000000000000000000000000000000ad4edb65cfed4b93a3f768502f7ac2b2",
+   "symbol": "QCOM",
+   "name": "Qualcomm • Robinhood Token",
+   "deployed": {
+    "block": 48263,
+    "time": "2026-06-10T15:23:57Z",
+    "tx": "0x62c4ab79e0fd3ce79978cc6e185abcf9f818953e2ae63f038247b4f86c297154",
+    "name": "Qualcomm • Robinhood Token",
+    "symbol": "QCOM"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 72318000,
+     "time": "2026-09-25T15:01:17Z",
+     "tx": "0x4ad3dc4ba35567d476722ea16011f5db6f32776729bff7ceff6b28ba4b2dc361",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1001228122794792830",
+     "effectiveAt": 1790349047
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x15Cd20759CE7F3285c29A319dE2D1A2e098c6f43",
+   "uid": "0x000000000000000000000000000000008ffcea951a5b43138e764a75e22284f9",
+   "symbol": "XLK",
+   "name": "State Street Technology Select Sector SPDR ETF • Robinhood Token",
+   "deployed": {
+    "block": 48264,
+    "time": "2026-06-10T15:24:01Z",
+    "tx": "0x8d84f56be149405de15d7345a0b21fcc206bacba3917eaa9d70547c43e0b18a5",
+    "name": "State Street Technology Select Sector SPDR ETF • Robinhood Token",
+    "symbol": "XLK"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 68357795,
+     "time": "2026-09-21T00:11:04Z",
+     "tx": "0xf4e850ef0965aafdc64e0e46ddaa0d8288a7d70ecab2e9ee9d5788d64cc9dba4",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000804404520428861",
+     "effectiveAt": 1789950036
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x7f0aBeF0C07280F82c6a08ead09dEd6BAE2C13Fc",
+   "uid": "0x000000000000000000000000000000008a8710f26e424b2dbc1f6b5de9f267b8",
+   "symbol": "EWY",
+   "name": "iShares MSCI South Korea fund • Robinhood Token",
+   "deployed": {
+    "block": 48265,
+    "time": "2026-06-10T15:24:04Z",
+    "tx": "0xfe92bec627abdd1cdbfc20e3bdf6152d14e4981def9d71b6ab9ebfb86eb2f705",
+    "name": "iShares MSCI South Korea fund • Robinhood Token",
+    "symbol": "EWY"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x9D9c6684F596F66a64C030B93A886D51Fd4D7931",
+   "uid": "0x00000000000000000000000000000000994b82ab24514d439fccc87156df35f9",
+   "symbol": "NBIS",
+   "name": "Nebius Group • Robinhood Token",
+   "deployed": {
+    "block": 48266,
+    "time": "2026-06-10T15:24:08Z",
+    "tx": "0x3493a58c1eda709dc210c04a0c6878b758fc8dcf598d0a1a574d60ca7badb6ee",
+    "name": "Nebius Group • Robinhood Token",
+    "symbol": "NBIS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x25C288E6D899b9BC30160965aD9644c67e73bE0C",
+   "uid": "0x00000000000000000000000000000000952cedaaab6e4593b884e68a4efbf481",
+   "symbol": "F",
+   "name": "Ford Motor • Robinhood Token",
+   "deployed": {
+    "block": 48267,
+    "time": "2026-06-10T15:24:11Z",
+    "tx": "0x10f66754816e0dfcfc9b539550e7d3be80e9269321af2f81deda9de4184a3a13",
+    "name": "Ford Motor • Robinhood Token",
+    "symbol": "F"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 52665452,
+     "time": "2026-09-02T15:00:41Z",
+     "tx": "0x17717969d77a298b876c0c3c735b6367ee1f75e1906f67953a6a30dc35cc442e",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000145502866134027",
+     "effectiveAt": 1788361826
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xF0C4BF4C582cb3836e98394b1d4e7B7281101bE8",
+   "uid": "0x00000000000000000000000000000000eed533334fe84ce08253d5b1dcff7373",
+   "symbol": "RBLX",
+   "name": "Roblox • Robinhood Token",
+   "deployed": {
+    "block": 48271,
+    "time": "2026-06-10T15:24:46Z",
+    "tx": "0x611d4a37487644d0256d3945eb15c05f7c6b047e48530a721e9011c7a0194e7e",
+    "name": "Roblox • Robinhood Token",
+    "symbol": "RBLX"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x56d23beE5f41A7120170b0c603Dae30128e460e9",
+   "uid": "0x00000000000000000000000000000000482927a418d1476c8ee89e119bf61fc7",
+   "symbol": "INTU",
+   "name": "Intuit • Robinhood Token",
+   "deployed": {
+    "block": 48272,
+    "time": "2026-06-10T15:24:49Z",
+    "tx": "0x0e17f676017cb4657e236366125d2fc5c9d636b03f9841ddb1abd65c98c0f065",
+    "name": "Intuit • Robinhood Token",
+    "symbol": "INTU"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 82917080,
+     "time": "2026-10-08T01:06:43Z",
+     "tx": "0xb4bc5cc1ebf0e18cfa9e3c5d0304187ffe3a9c7549df9494a9b8472a2e959ba3",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1003226934400018698",
+     "effectiveAt": 1791422178
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xF53F66751B1Eff985311b693531E3290F600c410",
+   "uid": "0x00000000000000000000000000000000b82496d605ca4b019c9200daa049f52f",
+   "symbol": "SHOP",
+   "name": "Shopify • Robinhood Token",
+   "deployed": {
+    "block": 48273,
+    "time": "2026-06-10T15:24:53Z",
+    "tx": "0xd26f84c775e646572818a24f3cb6a36c666bee1bf87c5bdbc628eb3e69753185",
+    "name": "Shopify • Robinhood Token",
+    "symbol": "SHOP"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xb02e3E1b7f68559427C2D9100566E4F3CC5b7611",
+   "uid": "0x00000000000000000000000000000000f4490c70d10441ed96fdbab10d8dbef0",
+   "symbol": "RVI",
+   "name": "Robinhood Ventures Fund I • Robinhood Token",
+   "deployed": {
+    "block": 48274,
+    "time": "2026-06-10T15:24:56Z",
+    "tx": "0x5575d43f9ce0c9df027dde2a8b4f17cfb6386e9185fe07dd1dfa740d1fee910c",
+    "name": "Robinhood Ventures Fund I • Robinhood Token",
+    "symbol": "RVI"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xe93237C50D904957Cf27E7B1133b510C669c2e74",
+   "uid": "0x00000000000000000000000000000000307bb0113ca54f93adf80f4ff2bf681a",
+   "symbol": "MSFT",
+   "name": "Microsoft • Robinhood Token",
+   "deployed": {
+    "block": 48275,
+    "time": "2026-06-10T15:24:59Z",
+    "tx": "0xf295721b9ed2f53d0fac44bbeebae8a94275bb7eeb45c801cc6c2a5d2dc09f7e",
+    "name": "Microsoft • Robinhood Token",
+    "symbol": "MSFT"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 60346891,
+     "time": "2026-09-11T15:01:46Z",
+     "tx": "0x4df2fb31b1e2a4804e73bc8121b0186f3d56d642980de79f77c6fb55c8c82800",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000412952576205964",
+     "effectiveAt": 1789139430
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xaF3D76f1834A1d425780943C99Ea8A608f8a93f9",
+   "uid": "0x00000000000000000000000000000000c2425be3658540dd8e2424cbf3c5c649",
+   "symbol": "AAPL",
+   "name": "Apple • Robinhood Token",
+   "deployed": {
+    "block": 48276,
+    "time": "2026-06-10T15:25:02Z",
+    "tx": "0x5ddd494c3217a5e3ef5b8f32471669c4d09d544354d790e744cd9c39ded5901b",
+    "name": "Apple • Robinhood Token",
+    "symbol": "AAPL"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 36345344,
+     "time": "2026-08-14T15:03:06Z",
+     "tx": "0x6d72ca599d812b9eb483fa82ba204e6d079e981b675669c9b659b7fac8adff35",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000566080061092436",
+     "effectiveAt": 1786720366
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xa30FA36Db767ad9eD3f7a60fC79526fB4d56D344",
+   "uid": "0x00000000000000000000000000000000949bd039a8ae465d9cf9336068188b55",
+   "symbol": "USO",
+   "name": "United States Oil Fund • Robinhood Token",
+   "deployed": {
+    "block": 48277,
+    "time": "2026-06-10T15:25:06Z",
+    "tx": "0x278e112b7d91cc7e732e4ea4c3d7ba67d6f49ea2eb485434e4cfb97bc9da886e",
+    "name": "United States Oil Fund • Robinhood Token",
+    "symbol": "USO"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x86923f96303D656E4aa86D9d42D1e57ad2023fdC",
+   "uid": "0x0000000000000000000000000000000086aeaac3c7d9422c90f6fd41aff0eaf7",
+   "symbol": "AMD",
+   "name": "AMD • Robinhood Token",
+   "deployed": {
+    "block": 48278,
+    "time": "2026-06-10T15:25:09Z",
+    "tx": "0x2c3cc72a4447b3da794de13759173ec2f1943667a8a84f6e629791fb890afc86",
+    "name": "AMD • Robinhood Token",
+    "symbol": "AMD"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x411eFb0E7f985935DAec3D4C3ebaEa0d0AD7D89f",
+   "uid": "0x00000000000000000000000000000000ddf030d4e25046cab85b3d8c7cd86553",
+   "symbol": "SLV",
+   "name": "iShares Silver Trust • Robinhood Token",
+   "deployed": {
+    "block": 48279,
+    "time": "2026-06-10T15:25:12Z",
+    "tx": "0x0dd6b844b00d758bb8d263394e92707f0d5a2d042d0aea7261b9029e43ad8a54",
+    "name": "iShares Silver Trust • Robinhood Token",
+    "symbol": "SLV"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xdF0992E440dD0be65BD8439b609d6D4366bf1CB5",
+   "uid": "0x000000000000000000000000000000005047f8f8a1a34a9ebee52a4155570807",
+   "symbol": "CRCL",
+   "name": "Circle Internet Group • Robinhood Token",
+   "deployed": {
+    "block": 48280,
+    "time": "2026-06-10T15:25:47Z",
+    "tx": "0xca96a047ec257cb74d9e65126691b5ca0fb74a6cabf6546ec03b8ad0c5ec9211",
+    "name": "Circle Internet Group • Robinhood Token",
+    "symbol": "CRCL"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xc0D6457C16Cc70d6790Dd43521C899C87ce02f35",
+   "uid": "0x00000000000000000000000000000000343e7beca03644bcba2e50b8236784f5",
+   "symbol": "META",
+   "name": "Meta Platforms • Robinhood Token",
+   "deployed": {
+    "block": 48281,
+    "time": "2026-06-10T15:25:50Z",
+    "tx": "0x1bb867f8a7af03bb4a88d55b6e2c9804dcd59c78b4d022bce4fc4cae473cad80",
+    "name": "Meta Platforms • Robinhood Token",
+    "symbol": "META"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 68357919,
+     "time": "2026-09-21T00:11:17Z",
+     "tx": "0x8928618da3daf1cc5a9e9f7a0e76d7bc28df824fea7d6838434a9c085c6b0b5e",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000541459879451635",
+     "effectiveAt": 1789950036
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x5f10A1C971B69e47e059e1dC91901B59b3fB49C3",
+   "uid": "0x000000000000000000000000000000007f48cdbfaced4ff4b34fbc832f449c33",
+   "symbol": "CRWV",
+   "name": "CoreWeave • Robinhood Token",
+   "deployed": {
+    "block": 48282,
+    "time": "2026-06-10T15:25:54Z",
+    "tx": "0x9c22f178cf2c318d0f264c4dbdaad90a4082fc53257f527aa9afce3eaf0dcabc",
+    "name": "CoreWeave • Robinhood Token",
+    "symbol": "CRWV"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x822CC93fFD030293E9842c30BBD678F530701867",
+   "uid": "0x00000000000000000000000000000000d73a53e43ed744d4b5d42c5293ba51ad",
+   "symbol": "BE",
+   "name": "Bloom Energy • Robinhood Token",
+   "deployed": {
+    "block": 48283,
+    "time": "2026-06-10T15:25:57Z",
+    "tx": "0xe43e5d43554551f8c875fa1e5ab6954891e452e7e677864caa3dff83cdd20b56",
+    "name": "Bloom Energy • Robinhood Token",
+    "symbol": "BE"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x2e0847E8910a9732eB3fb1bb4b70a580ADAD4FE3",
+   "uid": "0x0000000000000000000000000000000053b69e2076884cc9ae2ada9bc7095df3",
+   "symbol": "GOOGL",
+   "name": "Alphabet Class A • Robinhood Token",
+   "deployed": {
+    "block": 48284,
+    "time": "2026-06-10T15:26:00Z",
+    "tx": "0xab0abdd10d4a76ce910148b7fbc8b20bdd12778ab3b521ad760473371ec362b2",
+    "name": "Alphabet Class A • Robinhood Token",
+    "symbol": "GOOGL"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 63746832,
+     "time": "2026-09-15T15:00:42Z",
+     "tx": "0x8b9babad437e92388a66f13a03db0ee998a96831c244d1620d88115810b65c51",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000193924414112587",
+     "effectiveAt": 1789485027
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x894E1EC2D74FFE5AEF8Dc8A9e84686acCB964F2A",
+   "uid": "0x000000000000000000000000000000007454a90b4aab491389ce9fa3c485de42",
+   "symbol": "PLTR",
+   "name": "Palantir Technologies • Robinhood Token",
+   "deployed": {
+    "block": 48285,
+    "time": "2026-06-10T15:26:04Z",
+    "tx": "0x70077c1e6a9d529f5a6762a87c5bd56d09e6460a22df16ffadd21700535f817f",
+    "name": "Palantir Technologies • Robinhood Token",
+    "symbol": "PLTR"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xc72b96e0E48ecd4DC75E1e45396e26300BC39681",
+   "uid": "0x000000000000000000000000000000002eb75a2c20d7423881b4f812c27d0abe",
+   "symbol": "INTC",
+   "name": "Intel • Robinhood Token",
+   "deployed": {
+    "block": 48286,
+    "time": "2026-06-10T15:26:07Z",
+    "tx": "0xba27995b574590bdcc4142519ef3db12336ac0ebfd7e27699f6b39e4a155d561",
+    "name": "Intel • Robinhood Token",
+    "symbol": "INTC"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xD5f3879160bc7c32ebb4dC785F8a4F505888de68",
+   "uid": "0x000000000000000000000000000000002470b933c52d47ccad017ed9ee80c9ed",
+   "symbol": "QQQ",
+   "name": "Invesco QQQ • Robinhood Token",
+   "deployed": {
+    "block": 48287,
+    "time": "2026-06-10T15:26:10Z",
+    "tx": "0x0f4f2e42afe85a268b5a8ee13f55b3efa38ef71225ee3ab5d1fcdeee88db9a8c",
+    "name": "Invesco QQQ • Robinhood Token",
+    "symbol": "QQQ"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 69210998,
+     "time": "2026-09-22T00:00:50Z",
+     "tx": "0x6331915e6ddac124b1ea59b0db720892615fbd8ffbbea59cc9772147e326bba6",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000700791241405425",
+     "effectiveAt": 1790035834
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x12f190a9F9d7D37a250758b26824B97CE941bF54",
+   "uid": "0x000000000000000000000000000000004f508d5e2a7042299694d85c2f362ad2",
+   "symbol": "AMZN",
+   "name": "Amazon • Robinhood Token",
+   "deployed": {
+    "block": 48288,
+    "time": "2026-06-10T15:26:45Z",
+    "tx": "0x821303e5c5d2c274e32dad35d6c5ee8ba138b9b5861bcf4d5d5fb6d5e5cc91ff",
+    "name": "Amazon • Robinhood Token",
+    "symbol": "AMZN"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xb0992820E760d836549ba69BC7598b4af75dEE03",
+   "uid": "0x00000000000000000000000000000000be23b7c535e841a3b1bae97bc0166eae",
+   "symbol": "ORCL",
+   "name": "Oracle • Robinhood Token",
+   "deployed": {
+    "block": 48289,
+    "time": "2026-06-10T15:26:49Z",
+    "tx": "0xbc126ebcd570d11d1dfd69a9d6fe450cabf4f64fc5ff8b3aeb405fdb09804efb",
+    "name": "Oracle • Robinhood Token",
+    "symbol": "ORCL"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 20823272,
+     "time": "2026-07-27T15:00:45Z",
+     "tx": "0xdb44087be277205a6819d8656cdd87e1c0a061822798c735f3efdf94bbfc9bd7",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1002210914971013375",
+     "effectiveAt": 1785165023
+    },
+    {
+     "block": 83719997,
+     "time": "2026-10-09T00:01:07Z",
+     "tx": "0xb0825c346f5ca3e1fd465b74bb3f9b45d09b3aca39aae20d206e65a6c9bec4ec",
+     "oldMultiplier": "1002210914971013375",
+     "newMultiplier": "1004762916906792672",
+     "effectiveAt": 1791504632
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x92FD66527192E3e61d4DDd13322Aa222DE86F9B5",
+   "uid": "0x000000000000000000000000000000005f7e82ad6e4c4b60ba76497863fe4a67",
+   "symbol": "SGOV",
+   "name": "iShares 0-3 Month Treasury Bond • Robinhood Token",
+   "deployed": {
+    "block": 48290,
+    "time": "2026-06-10T15:26:52Z",
+    "tx": "0x413765bb3a05d9de2fbf4786104e7489d9ba198531ca1b5be580300530b423e4",
+    "name": "iShares 0-3 Month Treasury Bond • Robinhood Token",
+    "symbol": "SGOV"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 4629631,
+     "time": "2026-07-08T20:05:10Z",
+     "tx": "0x79292bc8af671bd6fc4ebc8f5e7a27c814d87988e175cbfab2ab1db1df0efbfb",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000957519890990718",
+     "effectiveAt": 1783541672
+    },
+    {
+     "block": 30302195,
+     "time": "2026-08-07T15:00:36Z",
+     "tx": "0x94aaa4c5c537412b8a5ed4a1933cc8ee7cb3c5bc903a741e11d4aada5dc02ebd",
+     "oldMultiplier": "1000957519890990718",
+     "newMultiplier": "1002981519346766532",
+     "effectiveAt": 1786115424
+    },
+    {
+     "block": 51269236,
+     "time": "2026-08-31T23:50:51Z",
+     "tx": "0xf33317c324c4d1d53278dd5c0fcb6ca3afeea41ccf39441ecada548148f5f4e7",
+     "oldMultiplier": "1002981519346766532",
+     "newMultiplier": "1005101770003214918",
+     "effectiveAt": 1788220826
+    },
+    {
+     "block": 76929117,
+     "time": "2026-10-01T00:00:48Z",
+     "tx": "0x17eef4102c7aadc5403096deb3e462cf006f1b745eb287e452b16337bd8235bd",
+     "oldMultiplier": "1005101770003214918",
+     "newMultiplier": "1007186931447954063",
+     "effectiveAt": 1790813435
+    },
+    {
+     "block": 103818974,
+     "time": "2026-11-02T01:01:20Z",
+     "tx": "0x6dbca1dd3d3182c1af449b9f5934908e459677ccb500f1e302d777823afb7487",
+     "oldMultiplier": "1007186931447954063",
+     "newMultiplier": "1009470411670283410",
+     "effectiveAt": 1793581843
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xd917B029C761D264c6A312BBbcDA868658eF86a6",
+   "uid": "0x0000000000000000000000000000000051d8408eb0484cb6bd003337551fddd5",
+   "symbol": "USAR",
+   "name": "USA Rare Earth • Robinhood Token",
+   "deployed": {
+    "block": 48291,
+    "time": "2026-06-10T15:26:55Z",
+    "tx": "0x5d5b69d8d03b7da72ba332cb8eb59f2c111f6213c57c8c4072ca520c59b5dad0",
+    "name": "USA Rare Earth • Robinhood Token",
+    "symbol": "USAR"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xfF080c8ce2E5feadaCa0Da81314Ae59D232d4afD",
+   "uid": "0x000000000000000000000000000000007757415150a94b50a879cdc04dc90664",
+   "symbol": "MU",
+   "name": "Micron Technology • Robinhood Token",
+   "deployed": {
+    "block": 48292,
+    "time": "2026-06-10T15:26:59Z",
+    "tx": "0x6d6035b4c364f52ba394c7bc6ea38c5724d13c67e4cf148543fdc875fb4c19dc",
+    "name": "Micron Technology • Robinhood Token",
+    "symbol": "MU"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 18239875,
+     "time": "2026-07-24T15:00:40Z",
+     "tx": "0x7ceb72589f22e0257aeb44441275c6f9d835d1baa4a0c8f4cf87a4e08286cb69",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000074823219171086",
+     "effectiveAt": 1784905824
+    },
+    {
+     "block": 87922949,
+     "time": "2026-10-14T00:00:41Z",
+     "tx": "0xaa329bbad36841870fbf9dec98d74eaf4ebdc8c204d61cdf1d265185943cdb1b",
+     "oldMultiplier": "1000074823219171086",
+     "newMultiplier": "1000183456682946507",
+     "effectiveAt": 1791936630
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xB90A19fF0Af67f7779afF50A882A9CfF42446400",
+   "uid": "0x0000000000000000000000000000000046e46cc63fe842ebbdfe6187bda403d6",
+   "symbol": "SNDK",
+   "name": "Sandisk Corporation • Robinhood Token",
+   "deployed": {
+    "block": 48293,
+    "time": "2026-06-10T15:27:03Z",
+    "tx": "0xe7e6be70fd28fc92dc962ff734e0082c31b87bb122d0be3eedb3f1409d5debb6",
+    "name": "Sandisk Corporation • Robinhood Token",
+    "symbol": "SNDK"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x117cc2133c37B721F49dE2A7a74833232B3B4C0C",
+   "uid": "0x000000000000000000000000000000001c6f27a62789417d8ed359ed3c2d3da1",
+   "symbol": "SPY",
+   "name": "SPDR S&P 500 ETF Trust • Robinhood Token",
+   "deployed": {
+    "block": 48294,
+    "time": "2026-06-10T15:27:06Z",
+    "tx": "0x68b343238e46406e466aba0fa206cdcad84f27ba610dbfb2bd48fba8e0d52842",
+    "name": "SPDR S&P 500 ETF Trust • Robinhood Token",
+    "symbol": "SPY"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 65779981,
+     "time": "2026-09-18T00:00:49Z",
+     "tx": "0x2fe45ab24d1b3fa87883f8b08daf29dae969c5b43d0afe9ccca299c11a641025",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1001717991187472003",
+     "effectiveAt": 1789690233
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x7c04E6A3368F2A1DE3874f0e80d2e0A1a9915da6",
+   "uid": "0x0000000000000000000000000000000040b2153b3d3d4715b8d22a15ba1acff2",
+   "symbol": "GLW",
+   "name": "Corning • Robinhood Token",
+   "deployed": {
+    "block": 48314,
+    "time": "2026-06-10T15:42:35Z",
+    "tx": "0xe6ec55d8b691a3681e1cb86c9c6eedfaf9fb68cb854f88973a62595e476a16d2",
+    "name": "Corning • Robinhood Token",
+    "symbol": "GLW"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x25EE805ac369b6E3F8bF5764c682d34a37cb7175",
+   "uid": "0x0000000000000000000000000000000007d51dc360b444c89e93d10c4323283d",
+   "symbol": "NOK",
+   "name": "Nokia • Robinhood Token",
+   "deployed": {
+    "block": 48315,
+    "time": "2026-06-10T15:42:38Z",
+    "tx": "0x521cfd72d4640b54eb8fa7e376c93742c2f488fad026a34f43ed2803ad9d452b",
+    "name": "Nokia • Robinhood Token",
+    "symbol": "NOK"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x4EA005168D7F09a7A0Ba9D1DEf21a479950E44C2",
+   "uid": "0x00000000000000000000000000000000e0e44220991548d0b030699e3062c2a7",
+   "symbol": "COST",
+   "name": "Costco • Robinhood Token",
+   "deployed": {
+    "block": 48316,
+    "time": "2026-06-10T15:42:41Z",
+    "tx": "0x4399da645053772f5c937e006efabf6819bb7da2bbeb2b75c8f96f2187f1f116",
+    "name": "Costco • Robinhood Token",
+    "symbol": "COST"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 32889913,
+     "time": "2026-08-10T15:01:06Z",
+     "tx": "0x728a9545a0d36b55ef5b4c12a9b9a3565e22167abe78f4453efb78d1292fcf62",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000612040296259656",
+     "effectiveAt": 1786374624
+    },
+    {
+     "block": 104325986,
+     "time": "2026-11-02T15:35:50Z",
+     "tx": "0xc525e38894efc06670c3c5d797d6cc2ac70d5a85d1c6bb6a1b234d70659d1ab9",
+     "oldMultiplier": "1000612040296259656",
+     "newMultiplier": "1001622089988220043",
+     "effectiveAt": 1793634338
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xbE6702d7b70315376dC48a3293f24f0982F86386",
+   "uid": "0x00000000000000000000000000000000b9e9686fc0904e87aef5134b823020e3",
+   "symbol": "NVTS",
+   "name": "Navitas Semiconductor • Robinhood Token",
+   "deployed": {
+    "block": 48317,
+    "time": "2026-06-10T15:42:45Z",
+    "tx": "0xd62a7c1951e5fd37d1b1a4c4c62ce09a7cf4221d82fb0f159036c8d9c87e62f9",
+    "name": "Navitas Semiconductor • Robinhood Token",
+    "symbol": "NVTS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x156E175DD063a8cE274C50654eF40e0032b3fbcF",
+   "uid": "0x000000000000000000000000000000001bbb45628de84cb2917abd26680c7ab9",
+   "symbol": "AVGO",
+   "name": "Broadcom • Robinhood Token",
+   "deployed": {
+    "block": 48318,
+    "time": "2026-06-10T15:42:49Z",
+    "tx": "0x2f0fa08ef9d56949b7a22f81c0edc5b60b85036495a34d051412f1ad9f748a71",
+    "name": "Broadcom • Robinhood Token",
+    "symbol": "AVGO"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 68357872,
+     "time": "2026-09-21T00:11:12Z",
+     "tx": "0x4f48d60ed90f20583ba87a441e10983c1beb0bf067a85124849d49396fbefdc8",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1001257318662278132",
+     "effectiveAt": 1789950036
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x6330D8C3178a418788dF01a47479c0ce7CCF450b",
+   "uid": "0x00000000000000000000000000000000970b46dbdece4ae4958a53815e62a85a",
+   "symbol": "COIN",
+   "name": "Coinbase • Robinhood Token",
+   "deployed": {
+    "block": 48319,
+    "time": "2026-06-10T15:42:57Z",
+    "tx": "0xb87d94fad3d5a2bd8f4df3da5f89c5e1dab22dc12c13752a5ea00d397d079ecf",
+    "name": "Coinbase • Robinhood Token",
+    "symbol": "COIN"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x62fd0668e10D8B72339BE2DCF7643001688ff13B",
+   "uid": "0x00000000000000000000000000000000aa33b104a54c4de08cc929fb8e8af349",
+   "symbol": "MRVL",
+   "name": "Marvell Technology • Robinhood Token",
+   "deployed": {
+    "block": 48320,
+    "time": "2026-06-10T15:43:00Z",
+    "tx": "0xeb3d284a5f5759cb21a859bed0ff9e70f21f743f7fb7f1f6297a00632cfd37fe",
+    "name": "Marvell Technology • Robinhood Token",
+    "symbol": "MRVL"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 83720133,
+     "time": "2026-10-09T00:01:21Z",
+     "tx": "0x6456a1f0869c075f1b797ac9139376c0a8b59e42941becc3e9006db31d4e62c1",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000151336736428647",
+     "effectiveAt": 1791504633
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x33C18e2CC8AE9AE486e785090D86B2CE632FF994",
+   "uid": "0x000000000000000000000000000000002c6575fd526a41d382f1d8d9a099a639",
+   "symbol": "DRAM",
+   "name": "Roundhill Memory ETF • Robinhood Token",
+   "deployed": {
+    "block": 48429,
+    "time": "2026-06-10T16:35:37Z",
+    "tx": "0xd78f48da35079c0ea71b8fa8b55069c03d1c4090823a0dee9c0dd789d67787df",
+    "name": "Roundhill Memory ETF • Robinhood Token",
+    "symbol": "DRAM"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x4a0E65A3EcceC6dBe60AE065F2e7bb85Fae35eEa",
+   "uid": "0x000000000000000000000000000000001aa9c9cc0bf34c5e95cfe7168463d310",
+   "symbol": "SPCX",
+   "name": "Space Exploration Technologies Corp. Class A Common Stock • Robinhood Token",
+   "deployed": {
+    "block": 58487,
+    "time": "2026-06-15T14:53:14Z",
+    "tx": "0x89276c749bc5f49f41775d5e80d833f07918f64d9b111cf0f6f553a75ac24d19",
+    "name": "SpaceX • Robinhood Token",
+    "symbol": "SPCX"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": [
+    {
+     "block": 6171630,
+     "time": "2026-07-10T15:01:42Z",
+     "tx": "0xa1206b7d2ce460a577c117ccb89ada65d2a9f5993aa63362fd69efaace1a7043",
+     "name": "Space Exploration Technologies Corp. Class A Common Stock • Robinhood Token",
+     "symbol": "SPCX"
+    }
+   ]
+  },
+  {
+   "address": "0x84CAb63bc87912E71ad199ff14A0bA45de68FeF8",
+   "uid": "0x000000000000000000000000000000002b98fc3881db4479b3827d5ca058d31a",
+   "symbol": "SKHY",
+   "name": "SK hynix Inc. American Depositary Shares • Robinhood Token",
+   "deployed": {
+    "block": 8691227,
+    "time": "2026-07-13T13:08:18Z",
+    "tx": "0x4cb43f6446a179f15350078677ee3c6c2ef762ba0f42707475fb625f165c98d9",
+    "name": "SK hynix Inc. American Depositary Shares • Robinhood Token",
+    "symbol": "SKHY"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 82036794,
+     "time": "2026-10-07T00:00:51Z",
+     "tx": "0x46b393e617bdbe7caf29d4557e53ba3e31c96110d82360708dc2d207aa12abb6",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000060353549285624",
+     "effectiveAt": 1791331831
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x7066A64c24e4206CD62E83bf198c1E7EB361F51e",
+   "uid": "0x00000000000000000000000000000000fb3ae5faa7f7465a95815518c4cd7a8b",
+   "symbol": "PFE",
+   "name": "Pfizer • Robinhood Token",
+   "deployed": {
+    "block": 20946617,
+    "time": "2026-07-27T18:28:57Z",
+    "tx": "0x0d61ba88bb0244b9484f28026ce3cbd7e6c2d3e5e921b9d0ed7373bc15dca795",
+    "name": "Pfizer • Robinhood Token",
+    "symbol": "PFE"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 107180342,
+     "time": "2026-11-06T01:02:53Z",
+     "tx": "0x56552081ea95ff6f8d1b4c5c28e4cd13f41fdd7812114653da186dfa4b9f4cab",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1010110827092460624",
+     "effectiveAt": 1793927539
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xfb2664f07B6Aadd29ea7a59D8859b1AeB8645cDa",
+   "uid": "0x00000000000000000000000000000000ba4c7482f4e048f9a8d4a19fa2d1227a",
+   "symbol": "PATH",
+   "name": "UiPath • Robinhood Token",
+   "deployed": {
+    "block": 20946654,
+    "time": "2026-07-27T18:29:01Z",
+    "tx": "0xc06282a078f6f88e48700ac5ff36ccb736d17a87e3eed1cb1662828d7eb79e04",
+    "name": "UiPath • Robinhood Token",
+    "symbol": "PATH"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x43B07D15cE533bEc5476d70C22a78a1B2B662155",
+   "uid": "0x00000000000000000000000000000000645f1b5c9e1a4a0e8fa96d05e16df733",
+   "symbol": "MRNA",
+   "name": "Moderna • Robinhood Token",
+   "deployed": {
+    "block": 20946697,
+    "time": "2026-07-27T18:29:05Z",
+    "tx": "0x7bdd59f42509e55e55d6c4756223bc129f176428e4b2c404472bed0e089ea8cb",
+    "name": "Moderna • Robinhood Token",
+    "symbol": "MRNA"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x26dCbfb34FC83CAbD6990f449674efDc6097fF85",
+   "uid": "0x00000000000000000000000000000000d3de17a58c1a4b58bd07bef4b9123e7f",
+   "symbol": "VSAT",
+   "name": "ViaSat • Robinhood Token",
+   "deployed": {
+    "block": 20946783,
+    "time": "2026-07-27T18:29:14Z",
+    "tx": "0x5b962f5f9da4f76043853c0dcf872af7e61ceb6b73ffd6502801ec6ea2e68fe4",
+    "name": "ViaSat • Robinhood Token",
+    "symbol": "VSAT"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x116F00968269B7bfbaD4109cE591d6E74c0601d4",
+   "uid": "0x00000000000000000000000000000000c8325c5c9c7e4ca2a3d8344500c5c483",
+   "symbol": "NET",
+   "name": "Cloudflare, Inc. Class A common stock • Robinhood Token",
+   "deployed": {
+    "block": 20946819,
+    "time": "2026-07-27T18:29:17Z",
+    "tx": "0x292ef2fc6a9c9227c0a223f0d66cb281201862e581bf64ea54accf60bbc1f780",
+    "name": "Cloudflare • Robinhood Token",
+    "symbol": "NET"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": [
+    {
+     "block": 48389722,
+     "time": "2026-08-28T15:01:04Z",
+     "tx": "0x9ac67cd0b1b7d6c323d398be63790399b0e010b69f27aa13be0914077df798a0",
+     "name": "Cloudflare, Inc. Class A common stock • Robinhood Token",
+     "symbol": "NET"
+    }
+   ]
+  },
+  {
+   "address": "0x1D11f0496982706C5e14A514D4E79F2e6BdE4516",
+   "uid": "0x00000000000000000000000000000000d8a566c761e845fc8adffb9b2295c3ee",
+   "symbol": "DJT",
+   "name": "Trump Media & Technology Group • Robinhood Token",
+   "deployed": {
+    "block": 20946859,
+    "time": "2026-07-27T18:29:21Z",
+    "tx": "0x8608bf0433e080759482e49a892695170e0a85fbadff56cab12aa9dbfd16d531",
+    "name": "Trump Media & Technology Group • Robinhood Token",
+    "symbol": "DJT"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x1Eebee7F74517e0279dFb09d25B0407bEEc3FDd6",
+   "uid": "0x00000000000000000000000000000000a12860406ce84eb098e3861878aaf584",
+   "symbol": "SMR",
+   "name": "NuScale Power • Robinhood Token",
+   "deployed": {
+    "block": 20946898,
+    "time": "2026-07-27T18:29:25Z",
+    "tx": "0x7f37bf31de781454d1b8c1ee71c87bafa0941e0536a82f101c8e6b2bec294fdb",
+    "name": "NuScale Power • Robinhood Token",
+    "symbol": "SMR"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x57b0030166DB0C31690d1A5aA167e2e26e2C29a4",
+   "uid": "0x0000000000000000000000000000000065968801094d4f8794208f387f3fe9f9",
+   "symbol": "LRCX",
+   "name": "Lam Research Corp • Robinhood Token",
+   "deployed": {
+    "block": 20946935,
+    "time": "2026-07-27T18:29:29Z",
+    "tx": "0x63c6b81786771ac9fe7df05e24eb9ebf35e65bdb203f6f3485462b2350f501ca",
+    "name": "Lam Research Corp • Robinhood Token",
+    "symbol": "LRCX"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 70068206,
+     "time": "2026-09-23T00:00:47Z",
+     "tx": "0x2095d389e1ad9f39036b521ccc611a7c799007b60ab09cbe6bfb60a68b3188dc",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000732562938505984",
+     "effectiveAt": 1790122233
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xd95B44124e475743a7589e68F3D74008A5536D44",
+   "uid": "0x00000000000000000000000000000000022015c295294037bfe416d3e45327b9",
+   "symbol": "CRM",
+   "name": "Salesforce • Robinhood Token",
+   "deployed": {
+    "block": 20946974,
+    "time": "2026-07-27T18:29:33Z",
+    "tx": "0x08aa58b5dc8ccc30687d8ec68777b44f2050932f8ed13741df55965399405640",
+    "name": "Salesforce • Robinhood Token",
+    "symbol": "CRM"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 65383603,
+     "time": "2026-09-17T12:56:32Z",
+     "tx": "0xc6189b8fcc4e3e0a92fdd33b0c74c0646165112f113af6782866ca460c64edde",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1001148322800714293",
+     "effectiveAt": 1789650372
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x9ECe29A4A2397C0a35fb5fA8EE2b9509130a98cc",
+   "uid": "0x0000000000000000000000000000000053906f8ddb574007aea297c4467f567b",
+   "symbol": "FISV",
+   "name": "Fiserv • Robinhood Token",
+   "deployed": {
+    "block": 20947012,
+    "time": "2026-07-27T18:29:37Z",
+    "tx": "0x8fef52b9765dd0b346aac6a3868fcd97fd3f76a319bdb0b6453e1ae73265d696",
+    "name": "Fiserv • Robinhood Token",
+    "symbol": "FISV"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x94B8AAE43A1cCc08Aa64B7D1F29b4D920aF4a0C9",
+   "uid": "0x00000000000000000000000000000000bf86ec8b050b46a9a7ad5a532b90c6af",
+   "symbol": "GEV",
+   "name": "GE Vernova • Robinhood Token",
+   "deployed": {
+    "block": 20947047,
+    "time": "2026-07-27T18:29:40Z",
+    "tx": "0x1bef10de0005ae1d09acda97d7fd10dc0c315971a4c6abae85bcf10b04c61284",
+    "name": "GE Vernova • Robinhood Token",
+    "symbol": "GEV"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x072f979c2CAc8e1391B0162a87Fee094bF8744a0",
+   "uid": "0x000000000000000000000000000000008f38b46a1c554840a92533677cce89ad",
+   "symbol": "SMH",
+   "name": "VanEck Semiconductor ETF • Robinhood Token",
+   "deployed": {
+    "block": 20947096,
+    "time": "2026-07-27T18:29:45Z",
+    "tx": "0x12f51913ba3ad3422ddfce314ba648aabb4c2c67e1f44e9fdf8fd5b1ce045207",
+    "name": "VanEck Semiconductor ETF • Robinhood Token",
+    "symbol": "SMH"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xBE274710Bf3d9567e1B290eF6a5F9f90ca016FD8",
+   "uid": "0x000000000000000000000000000000009cc71272a7ec45f0adb8a7469632dd4d",
+   "symbol": "SHY",
+   "name": "iShares 1-3 Year Treasury Bond ETF • Robinhood Token",
+   "deployed": {
+    "block": 20947135,
+    "time": "2026-07-27T18:29:49Z",
+    "tx": "0x2cd216f35053dce36feb1081f7bd38ca8a26e33bb17fc0d3b94821df9f6c7dd4",
+    "name": "iShares 1-3 Year Treasury Bond ETF • Robinhood Token",
+    "symbol": "SHY"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 77787926,
+     "time": "2026-10-02T00:01:20Z",
+     "tx": "0x76953d868d9079bc8e890efc504a4165035f356f2691466ed3ba6de06f704ba2",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1002055340428983545",
+     "effectiveAt": 1790899862
+    },
+    {
+     "block": 104659121,
+     "time": "2026-11-03T01:01:10Z",
+     "tx": "0x94b4ed64e318785e0840e1d7e68386a8a5012f6256287a7bd78a92bfb9425579",
+     "oldMultiplier": "1002055340428983545",
+     "newMultiplier": "1004203015647541769",
+     "effectiveAt": 1793668241
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x92F9F459F1a9a5AD266b182BE7Bffd1C6c666894",
+   "uid": "0x00000000000000000000000000000000bf2748d148654427a4034359cbfb6f91",
+   "symbol": "COHR",
+   "name": "Coherent • Robinhood Token",
+   "deployed": {
+    "block": 20947170,
+    "time": "2026-07-27T18:29:53Z",
+    "tx": "0x5c23318766d925389ce627b67936277e6fd740de148873ab6f7740f9381247dc",
+    "name": "Coherent • Robinhood Token",
+    "symbol": "COHR"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xFDE6b5d9BB419B10C23268c74e369AbFF39C0460",
+   "uid": "0x00000000000000000000000000000000311078f293cf441789d7bc7eb9480228",
+   "symbol": "RCAT",
+   "name": "Red Cat • Robinhood Token",
+   "deployed": {
+    "block": 20947204,
+    "time": "2026-07-27T18:29:56Z",
+    "tx": "0x5e29f8a5622aa297d29a7d686ed88cc86a18a6471f8784253943a36c8fa928e7",
+    "name": "Red Cat • Robinhood Token",
+    "symbol": "RCAT"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xbBD09F72b025360FeE5C928053Dca6248d35be54",
+   "uid": "0x000000000000000000000000000000000467fac1d4da4c0e9ae874314fc8d784",
+   "symbol": "ON",
+   "name": "ON Semiconductor • Robinhood Token",
+   "deployed": {
+    "block": 20947244,
+    "time": "2026-07-27T18:30:00Z",
+    "tx": "0x32f591878799ec2d52a76809c6608d94e7a75d10e3f4435a2901b3271752ef01",
+    "name": "ON Semiconductor • Robinhood Token",
+    "symbol": "ON"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x52D50D0280AD1054b43f052bD70a49a212A1b128",
+   "uid": "0x00000000000000000000000000000000c5e6650eefa247d599fba9cf6dd5bdad",
+   "symbol": "MPWR",
+   "name": "Monolithic Power Systems • Robinhood Token",
+   "deployed": {
+    "block": 20947284,
+    "time": "2026-07-27T18:30:04Z",
+    "tx": "0x997114c61661484e640ca5180308594a0b1ba11ff715b2031ef394c65df4da6f",
+    "name": "Monolithic Power Systems • Robinhood Token",
+    "symbol": "MPWR"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 76070684,
+     "time": "2026-09-30T00:01:27Z",
+     "tx": "0x403cf31e2e0bbad103b58c6bec491e44809a30890ba34afed72f53f1ce13b8e1",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1001003337041156841",
+     "effectiveAt": 1790727051
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x59dd09d4900C2E4B5F75b7c0d4E6796fcc234Cb1",
+   "uid": "0x00000000000000000000000000000000d2ef3f28627f47539db72dbe14c6f1f7",
+   "symbol": "HPE",
+   "name": "HP Enterprise • Robinhood Token",
+   "deployed": {
+    "block": 20947327,
+    "time": "2026-07-27T18:30:09Z",
+    "tx": "0x6fc7a652b3c313846cfd05caa7108676e2d5a3318ff1e66f92fffa3aff0369e2",
+    "name": "HP Enterprise • Robinhood Token",
+    "symbol": "HPE"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 64924198,
+     "time": "2026-09-17T00:05:53Z",
+     "tx": "0x44d2c674d74b6bbb890c3e5822e909f4fe773b865bfe701ffa1612e757d0c1ea",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1001716957939304938",
+     "effectiveAt": 1789604133
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x28bABD556b60E53663B8615036479a29c2CDd1Bf",
+   "uid": "0x00000000000000000000000000000000b423c47a2fed4814a7f1c3c05e1dcb97",
+   "symbol": "ANET",
+   "name": "Arista • Robinhood Token",
+   "deployed": {
+    "block": 20947367,
+    "time": "2026-07-27T18:30:13Z",
+    "tx": "0xc7b5589d0de482111a7058159058d77fe48331e10b18fc9871566edd08e6cd12",
+    "name": "Arista • Robinhood Token",
+    "symbol": "ANET"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x3139D77Ace0cbAA5bDfD38bD1F1911a794AF0B0e",
+   "uid": "0x00000000000000000000000000000000cbe64873637849e38e848d35826726d4",
+   "symbol": "ABCL",
+   "name": "Abcellera Biologics • Robinhood Token",
+   "deployed": {
+    "block": 20947402,
+    "time": "2026-07-27T18:30:16Z",
+    "tx": "0x40381a8a5701f353d24e095ba7320473ce4bf66726498cc9792eaab0bb9364ee",
+    "name": "Abcellera Biologics • Robinhood Token",
+    "symbol": "ABCL"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xC9a981FEE1F9DEc688bb123ccDeCc63D0deBFC4e",
+   "uid": "0x000000000000000000000000000000001db61e88b20b481093c556e4d07195b5",
+   "symbol": "GLD",
+   "name": "SPDR Gold Trust • Robinhood Token",
+   "deployed": {
+    "block": 20947470,
+    "time": "2026-07-27T18:30:23Z",
+    "tx": "0xdf751e8a4525f75031900c69e0491cfa10bc0feacae41e5a9224531697ac980a",
+    "name": "SPDR Gold Trust • Robinhood Token",
+    "symbol": "GLD"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x03BC731Ffb162cdd7B98D3C6542bFC291126075d",
+   "uid": "0x00000000000000000000000000000000450b2a4327ce4062b527224efc49589a",
+   "symbol": "FLY",
+   "name": "Firefly Aerospace Inc. • Robinhood Token",
+   "deployed": {
+    "block": 20947507,
+    "time": "2026-07-27T18:30:27Z",
+    "tx": "0xabe8c7a2f9d544048c5f1aaed0aaef7394904301ec1cb0156e4236573c1b8b86",
+    "name": "Firefly Aerospace Inc. • Robinhood Token",
+    "symbol": "FLY"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x2D427692E928fa156ec22acfaBaFA0447C5805B7",
+   "uid": "0x000000000000000000000000000000001acf6eeea06d40c5b323c903f77bd6d1",
+   "symbol": "GLXY",
+   "name": "Galaxy Digital Inc. • Robinhood Token",
+   "deployed": {
+    "block": 20947542,
+    "time": "2026-07-27T18:30:30Z",
+    "tx": "0x9e6204fb1b882207afa5225d04b0494233e54fd2d906d6bb3bea52d4e31b7c57",
+    "name": "Galaxy Digital Inc. • Robinhood Token",
+    "symbol": "GLXY"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xA249BAF1063Af884807C1E1400AEf7784836917E",
+   "uid": "0x00000000000000000000000000000000a27266921f864cf2aa69baad4124d11f",
+   "symbol": "APP",
+   "name": "AppLovin • Robinhood Token",
+   "deployed": {
+    "block": 20947577,
+    "time": "2026-07-27T18:30:34Z",
+    "tx": "0x588d97cb970642882ad19b25c5e79fa6671286f7f1e83524d401934065230084",
+    "name": "AppLovin • Robinhood Token",
+    "symbol": "APP"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xaE517A2903E68bd929Dfd15be875F8369D53e94a",
+   "uid": "0x0000000000000000000000000000000068576a5b6aee4a6bbc9f0d91f47e3918",
+   "symbol": "CEG",
+   "name": "Constellation Energy • Robinhood Token",
+   "deployed": {
+    "block": 20947610,
+    "time": "2026-07-27T18:30:37Z",
+    "tx": "0x2da9625a247c1e6318bef2a6515818c12661bd46e1ff26dbd48fafca1935f6f5",
+    "name": "Constellation Energy • Robinhood Token",
+    "symbol": "CEG"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xAEa445c5F3DB1a462998ccC422A875A361ee5d99",
+   "uid": "0x00000000000000000000000000000000e42a66686f784f69abb7759114f38f51",
+   "symbol": "HWM",
+   "name": "Howmet Aerospace • Robinhood Token",
+   "deployed": {
+    "block": 20947652,
+    "time": "2026-07-27T18:30:41Z",
+    "tx": "0xd0f9bb1fed4ad3ea99bb20cbfabf6be57898bdd7ef1558b4baab19ee27b7f59c",
+    "name": "Howmet Aerospace • Robinhood Token",
+    "symbol": "HWM"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 107180373,
+     "time": "2026-11-06T01:02:56Z",
+     "tx": "0x89fe3c57707205238622ea163d072df1b7f92fdc46740687ad06f35cfa797f2c",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000473517252257273",
+     "effectiveAt": 1793927539
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x6006ed4B2F94110851ff7509D97D034f0EeD9226",
+   "uid": "0x0000000000000000000000000000000034a1e548dfdc4b7cbf162648f20ccffc",
+   "symbol": "VICR",
+   "name": "Vicor • Robinhood Token",
+   "deployed": {
+    "block": 20947687,
+    "time": "2026-07-27T18:30:45Z",
+    "tx": "0xd7982d3ea96410a8537ecdef96773cbf3ca2d1e1e9418636597c81306782c1b9",
+    "name": "Vicor • Robinhood Token",
+    "symbol": "VICR"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xB7EDfE2F33C1aC06830a971dFb559bDe8A2a3d76",
+   "uid": "0x00000000000000000000000000000000f9809b86bf2c492dadb606c7871465a4",
+   "symbol": "QNT",
+   "name": "Quantinuum Inc. Class A • Robinhood Token",
+   "deployed": {
+    "block": 20947723,
+    "time": "2026-07-27T18:30:48Z",
+    "tx": "0x5984fb56e122ea4ac75e0e8afedd95884f6962d7f868162e12ce312a46f8a4bc",
+    "name": "Quantinuum Inc. Class A • Robinhood Token",
+    "symbol": "QNT"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x9Ab02Ead789b6903c3c44d0ED32F9c707CDF12FD",
+   "uid": "0x0000000000000000000000000000000094e84a8622774d5699842d9b0621b871",
+   "symbol": "PWR",
+   "name": "Quanta • Robinhood Token",
+   "deployed": {
+    "block": 20947762,
+    "time": "2026-07-27T18:30:52Z",
+    "tx": "0xe2d0ec4bccf6f4e3a7b9dfb940f4f17875b4eb191784b8a1ac6d09684c3f6667",
+    "name": "Quanta • Robinhood Token",
+    "symbol": "PWR"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x41F4267525a8AFf329540eF24fD83d9044758B33",
+   "uid": "0x000000000000000000000000000000008616857c3143457db8534cc7ccac1420",
+   "symbol": "FIG",
+   "name": "Figma • Robinhood Token",
+   "deployed": {
+    "block": 20947845,
+    "time": "2026-07-27T18:31:01Z",
+    "tx": "0x69238dde5f2c1f49795c2357e5863c5db05d86edc3e64a104882b843ecdfe7cd",
+    "name": "Figma • Robinhood Token",
+    "symbol": "FIG"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xC27dBD474aF5181c5A8777903690D8D262D12648",
+   "uid": "0x00000000000000000000000000000000cdf9557e169847919e821c0a7bbb4fd3",
+   "symbol": "AXON",
+   "name": "Axon • Robinhood Token",
+   "deployed": {
+    "block": 20947880,
+    "time": "2026-07-27T18:31:04Z",
+    "tx": "0x114a3112dc256c85067d88c385d6cc98360e91fe556f51fc6efd45b0ad07b522",
+    "name": "Axon • Robinhood Token",
+    "symbol": "AXON"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xEB61c0Ed490A367d4E3631cCf8a74B3bfc7E775D",
+   "uid": "0x00000000000000000000000000000000f759d1fccdb8418a8970ee6932aa6584",
+   "symbol": "HII",
+   "name": "Huntington Ingalls • Robinhood Token",
+   "deployed": {
+    "block": 20947933,
+    "time": "2026-07-27T18:31:08Z",
+    "tx": "0x0e0d59d952715442a22f932f88d088b704240ac506b31e4a2615000ed3cdce09",
+    "name": "Huntington Ingalls • Robinhood Token",
+    "symbol": "HII"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x1c690498150252222C275A5CEd69d3A6b1f52D5E",
+   "uid": "0x00000000000000000000000000000000d198f900bc014be980442c67f2444460",
+   "symbol": "EWT",
+   "name": "iShares MSCI Taiwan Capped ETF • Robinhood Token",
+   "deployed": {
+    "block": 20947973,
+    "time": "2026-07-27T18:31:12Z",
+    "tx": "0xa97869bd1a47c56f3d8c6b68b08e4c31e979f65b5b1f5622a4cb2823a6ce1eb4",
+    "name": "iShares MSCI Taiwan Capped ETF • Robinhood Token",
+    "symbol": "EWT"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xc6Cbad1016b38B797610c25E1dc7D95988B1f362",
+   "uid": "0x0000000000000000000000000000000059499b681f6d4d558c653682dd74910e",
+   "symbol": "MOD",
+   "name": "Modine • Robinhood Token",
+   "deployed": {
+    "block": 20948005,
+    "time": "2026-07-27T18:31:15Z",
+    "tx": "0x6c2678f2d233b79c73b10fe3913d70653460df2ece1cfd45727c97fbcb11627b",
+    "name": "Modine • Robinhood Token",
+    "symbol": "MOD"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x237c16D66590F67B886d978ACD362EAeaD8B18c7",
+   "uid": "0x00000000000000000000000000000000794a29855a8f4a9998510dfa2604da94",
+   "symbol": "POWL",
+   "name": "Powell Industries • Robinhood Token",
+   "deployed": {
+    "block": 20948039,
+    "time": "2026-07-27T18:31:19Z",
+    "tx": "0x631db3ddc8204dcacc44408199362e8b53d6e8252cb4e59d7dff9d1ad06d6e05",
+    "name": "Powell Industries • Robinhood Token",
+    "symbol": "POWL"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xb334C5cE741B80B5B671F47F5C269Cb193fe8E24",
+   "uid": "0x0000000000000000000000000000000092891cbd0b204f8a87d7878e0fbd60a8",
+   "symbol": "JOBY",
+   "name": "Joby Aviation • Robinhood Token",
+   "deployed": {
+    "block": 20948072,
+    "time": "2026-07-27T18:31:22Z",
+    "tx": "0xf6ebdf42b77dec0212ba42a4227d82b82bdc9da6b8620ff800c0e9257e2d9821",
+    "name": "Joby Aviation • Robinhood Token",
+    "symbol": "JOBY"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x44f6D488021f8233B9416294d1FE9b1fEe28382d",
+   "uid": "0x0000000000000000000000000000000003bd94e037654c6a9828af2137edd3c3",
+   "symbol": "CIEN",
+   "name": "Ciena • Robinhood Token",
+   "deployed": {
+    "block": 20948118,
+    "time": "2026-07-27T18:31:27Z",
+    "tx": "0xc07233153a63c48cf1e0e018fc0535dc703904da2db75bb37f4bd2548979edf8",
+    "name": "Ciena • Robinhood Token",
+    "symbol": "CIEN"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xBf449977089c718C004a66C554B26B94ef3Ad4De",
+   "uid": "0x00000000000000000000000000000000819d5f213b4746e79145d1fc118dcfed",
+   "symbol": "CLS",
+   "name": "Celestica • Robinhood Token",
+   "deployed": {
+    "block": 20948260,
+    "time": "2026-07-27T18:31:41Z",
+    "tx": "0xf8cb33e64ec6aafa02ab6a39ced24ad3e931e1827a90d54556d309f9df1087d1",
+    "name": "Celestica • Robinhood Token",
+    "symbol": "CLS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xf7181b63Fdb858558A74ba96BC42732684cd7965",
+   "uid": "0x00000000000000000000000000000000c1fbbd1f58eb47a1a1d16285e48e2f20",
+   "symbol": "NAVN",
+   "name": "Navan • Robinhood Token",
+   "deployed": {
+    "block": 20948295,
+    "time": "2026-07-27T18:31:45Z",
+    "tx": "0x4e9caee6bd3ba23fef8b99129431f4117ada4f64973a98eaaa892d90a9e5fb52",
+    "name": "Navan • Robinhood Token",
+    "symbol": "NAVN"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x48d60243c66437c6ac3c2495Be94747aEd5Dfe25",
+   "uid": "0x00000000000000000000000000000000441407e9a0ab483bb0d6191d23bcb654",
+   "symbol": "LHX",
+   "name": "L3Harris • Robinhood Token",
+   "deployed": {
+    "block": 20948335,
+    "time": "2026-07-27T18:31:49Z",
+    "tx": "0x09c81c855ea57d4eae5326d0027f1c52d701b2b4740cec7ed89ed625dc5f9929",
+    "name": "L3Harris • Robinhood Token",
+    "symbol": "LHX"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 68894296,
+     "time": "2026-09-21T15:11:15Z",
+     "tx": "0x63e2256ceeee54b768f478aeeafc355f6cb34dbc5d2b2075334121b4c20fa79f",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1004922488323561562",
+     "effectiveAt": 1790004027
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x77E655E37F4d913fB9540e0d541D824171a60e81",
+   "uid": "0x000000000000000000000000000000006f1951b0f7c348a480d9c135679778f7",
+   "symbol": "SIMO",
+   "name": "Silicon Motion • Robinhood Token",
+   "deployed": {
+    "block": 20948370,
+    "time": "2026-07-27T18:31:52Z",
+    "tx": "0x42cd7264197cc02232ceabf0df0d98d7a7e3352fe1fc3e158060dfa0ad224628",
+    "name": "Silicon Motion • Robinhood Token",
+    "symbol": "SIMO"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 106338259,
+     "time": "2026-11-05T01:02:04Z",
+     "tx": "0xb2f0944fd5db36b69db83c5d622604591bb02a7031184642a825b2f344a9fceb",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1002144055355468904",
+     "effectiveAt": 1793841109
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xF52597345A8Edf418bc4071b4a35112472277D3e",
+   "uid": "0x000000000000000000000000000000007001c5951f374630b5f3f52fd1ff2022",
+   "symbol": "WDC",
+   "name": "Western Digital • Robinhood Token",
+   "deployed": {
+    "block": 20948407,
+    "time": "2026-07-27T18:31:56Z",
+    "tx": "0xc8e5e63ac8b4bf816dc191dfd50b071328aad9673c2dd27b8de2101873f49a8d",
+    "name": "Western Digital • Robinhood Token",
+    "symbol": "WDC"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 57331474,
+     "time": "2026-09-08T02:24:49Z",
+     "tx": "0x622c00f5e99864fcf2f2e7ff963ff47b2de4c7d9fc64b0a7a487672bd14dde1b",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000217565250523909",
+     "effectiveAt": 1788834869
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xE674C5c071821f48BB2d12CAdb83617Eff438f9e",
+   "uid": "0x00000000000000000000000000000000fd5ac74e9eef4893809f4ce110f6415c",
+   "symbol": "ZETA",
+   "name": "Zeta Global • Robinhood Token",
+   "deployed": {
+    "block": 20948441,
+    "time": "2026-07-27T18:32:00Z",
+    "tx": "0x63681a3878ab9a7a089bb80e6264629c766beda431f826ed1d303df6cfe7930e",
+    "name": "Zeta Global • Robinhood Token",
+    "symbol": "ZETA"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x2778C5024D5cA2CdB0f8eAD671ffc69963AdCD9C",
+   "uid": "0x000000000000000000000000000000007dadfeb7f65f49fb9fb1bc94bbbf2d1e",
+   "symbol": "TER",
+   "name": "Teradyne • Robinhood Token",
+   "deployed": {
+    "block": 20948475,
+    "time": "2026-07-27T18:32:03Z",
+    "tx": "0x1aba26958376e12584c1a7a4ae16ce57a6dd0976e640e989b8ff27a92315db28",
+    "name": "Teradyne • Robinhood Token",
+    "symbol": "TER"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 74888884,
+     "time": "2026-09-28T15:01:25Z",
+     "tx": "0x94174405793a33c4a624369a77f6133279c1bb2d5991bf292972100c07830f78",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000647857966979018",
+     "effectiveAt": 1790608228
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x05a3d1Cd21d0C88145E82600E62e7E496e0F222B",
+   "uid": "0x00000000000000000000000000000000c40c1aabe3514588ae86defffe868021",
+   "symbol": "AMC",
+   "name": "AMC Entertainment • Robinhood Token",
+   "deployed": {
+    "block": 20948513,
+    "time": "2026-07-27T18:32:07Z",
+    "tx": "0x3843bb4b8a424cb3c8a9dca15fae71f7594905e12a19ceed7f3fd0c124cb5afa",
+    "name": "AMC Entertainment • Robinhood Token",
+    "symbol": "AMC"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xceF9027c7d6985b85f0BA431125073529A947A68",
+   "uid": "0x000000000000000000000000000000006b598b911bbf43ee8ca6be4dd7267f6d",
+   "symbol": "BULL",
+   "name": "Webull • Robinhood Token",
+   "deployed": {
+    "block": 20948552,
+    "time": "2026-07-27T18:32:11Z",
+    "tx": "0xac698774db8a344f901b843def075a89fd27c7cb6d7ef5409621dc2a8b8d68c8",
+    "name": "Webull • Robinhood Token",
+    "symbol": "BULL"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xF543967EEBB6f1917992eF0E68De63ab07a5a0dA",
+   "uid": "0x0000000000000000000000000000000052b1bd2848fd4837baefc662660c6b28",
+   "symbol": "CSCO",
+   "name": "Cisco Systems • Robinhood Token",
+   "deployed": {
+    "block": 20948587,
+    "time": "2026-07-27T18:32:14Z",
+    "tx": "0x96d1a2ab8df78736084f6b33b683a202beba4172fd4e6e1c89b0e0e272848b7d",
+    "name": "Cisco Systems • Robinhood Token",
+    "symbol": "CSCO"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 77788044,
+     "time": "2026-10-02T00:01:32Z",
+     "tx": "0xeb9204d4d877a5bcc4fd95678059852429f66c56a5a5d2df7dbbb74ef9e95733",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1002674650028132112",
+     "effectiveAt": 1790899862
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xfAf9cb261B5FCC1f404Bb10CD39C5c6C1974E612",
+   "uid": "0x00000000000000000000000000000000a705ceeae1b44d8981ab86169e52891e",
+   "symbol": "AEIS",
+   "name": "Advanced Energy • Robinhood Token",
+   "deployed": {
+    "block": 20948623,
+    "time": "2026-07-27T18:32:18Z",
+    "tx": "0xb66e1cae6fb5eb1116c6a7085cbda1e2f5459ff4aee90ce7d9108d5302ada800",
+    "name": "Advanced Energy • Robinhood Token",
+    "symbol": "AEIS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x232B8ed6377BE97813853B0Ac104c4Cda8378d1B",
+   "uid": "0x00000000000000000000000000000000d44f85ce72274d6e867a54fa2f4009cb",
+   "symbol": "ADBE",
+   "name": "Adobe • Robinhood Token",
+   "deployed": {
+    "block": 20948654,
+    "time": "2026-07-27T18:32:21Z",
+    "tx": "0x2c2aae663fcec370f6e5fce8ee9d013d417589cc81d7cada4beec22443f2b2c7",
+    "name": "Adobe • Robinhood Token",
+    "symbol": "ADBE"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x96b933C74eCB4A0926b9210cef7b743EF46be2E9",
+   "uid": "0x00000000000000000000000000000000fb93cee635bd469e8dc9849f12f889aa",
+   "symbol": "KLAC",
+   "name": "KLA • Robinhood Token",
+   "deployed": {
+    "block": 20948694,
+    "time": "2026-07-27T18:32:25Z",
+    "tx": "0x9129420dfd37ce8a434418996c0f6587c8e1590c26dbbb952bc62d7a659de841",
+    "name": "KLA • Robinhood Token",
+    "symbol": "KLAC"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xAA4d64474c172010aB57719cb9951E6142a100d3",
+   "uid": "0x00000000000000000000000000000000b6231b1f45a647a1930f919f161df020",
+   "symbol": "PL",
+   "name": "Planet Labs • Robinhood Token",
+   "deployed": {
+    "block": 20948729,
+    "time": "2026-07-27T18:32:29Z",
+    "tx": "0x4d83a27c8283026021d3917b383934b3b5828a49c0248f3a8ecc61ec0689f79e",
+    "name": "Planet Labs • Robinhood Token",
+    "symbol": "PL"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x0b5fb4031cae9163db10B169Ee72685F0EdC8545",
+   "uid": "0x00000000000000000000000000000000e2f7326613594997b83c3fa7c2e63d70",
+   "symbol": "TTD",
+   "name": "Trade Desk • Robinhood Token",
+   "deployed": {
+    "block": 20948763,
+    "time": "2026-07-27T18:32:32Z",
+    "tx": "0x3398d990c426a9f2fcc9232bbdd04207eb9234727498ce00583beaa66faeaff0",
+    "name": "Trade Desk • Robinhood Token",
+    "symbol": "TTD"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x5F604fBA1162193A4388A5DFa56F556f3E133cC2",
+   "uid": "0x000000000000000000000000000000000747a25837b6475c8da1a66b7d036988",
+   "symbol": "AEHR",
+   "name": "Aehr • Robinhood Token",
+   "deployed": {
+    "block": 20948804,
+    "time": "2026-07-27T18:32:36Z",
+    "tx": "0x9b09da9e4b7fafb819509cb3b7dc5e348813985ee714ccc1ed3bd62e82ddb3b2",
+    "name": "Aehr • Robinhood Token",
+    "symbol": "AEHR"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xd63ABB2C13d7a8421a8017a712802053568e3C1D",
+   "uid": "0x00000000000000000000000000000000c89bb960aac6406fb95b34dc136a6016",
+   "symbol": "SCHD",
+   "name": "Schwab US Dividend Equity ETF • Robinhood Token",
+   "deployed": {
+    "block": 20948840,
+    "time": "2026-07-27T18:32:40Z",
+    "tx": "0xee5a5b2304ddd169d20c3d25c2cf5759f62bece99e21725cd856e1c27d5bbfdf",
+    "name": "Schwab US Dividend Equity ETF • Robinhood Token",
+    "symbol": "SCHD"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 70926092,
+     "time": "2026-09-24T00:00:56Z",
+     "tx": "0x11af5b79ea834f50d14c28ea86d03a23f3ff0b252da5402df163a3d8216de329",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1005538606893683992",
+     "effectiveAt": 1790208634
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x4D67253bc223e6b0e104F1084c1fb2b669dDC41b",
+   "uid": "0x000000000000000000000000000000008e29de423e4b4105b3644e645fda354a",
+   "symbol": "CRDO",
+   "name": "Credo Technology Group • Robinhood Token",
+   "deployed": {
+    "block": 20948873,
+    "time": "2026-07-27T18:32:43Z",
+    "tx": "0x118411911fd5893077e5ad859f47614d88e72fb746a55cfc4d80fc5ae2662340",
+    "name": "Credo Technology Group • Robinhood Token",
+    "symbol": "CRDO"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x7c148F74ac7445D1F28366b7FcDC6792a9Fcd0Cf",
+   "uid": "0x00000000000000000000000000000000ff5617943e99488d87281bae9b706d53",
+   "symbol": "IBRX",
+   "name": "ImmunityBio, • Robinhood Token",
+   "deployed": {
+    "block": 20948909,
+    "time": "2026-07-27T18:32:47Z",
+    "tx": "0x6aa123439c6de6ec879298795e7dbd8fa3668c537efa070226f1672312820cbc",
+    "name": "ImmunityBio, • Robinhood Token",
+    "symbol": "IBRX"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x63D5a3b6939a33f1e75d8Bcd85759858239600DB",
+   "uid": "0x00000000000000000000000000000000b5fe9845954e479aa8519666c3f56476",
+   "symbol": "CTSH",
+   "name": "Cognizant • Robinhood Token",
+   "deployed": {
+    "block": 20948942,
+    "time": "2026-07-27T18:32:50Z",
+    "tx": "0x9bb001cb6bc309a17b4116de598a5e46a5f0495aaf734acf69eb4167643a3907",
+    "name": "Cognizant • Robinhood Token",
+    "symbol": "CTSH"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xc02f12B9fe9E707079EC0d546f3050d3F6C1F8bD",
+   "uid": "0x00000000000000000000000000000000dfb6ab4d0e0f4cc5bff6d60396755b5f",
+   "symbol": "DOCN",
+   "name": "DigitalOcean • Robinhood Token",
+   "deployed": {
+    "block": 20948981,
+    "time": "2026-07-27T18:32:54Z",
+    "tx": "0xde15803430d8ed1014aa07833254226c79b63e3305977148a6484fb4e9bf422b",
+    "name": "DigitalOcean • Robinhood Token",
+    "symbol": "DOCN"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xcF364ea52787e289De6F32077834056E3E70D6A8",
+   "uid": "0x000000000000000000000000000000006d5054df7b5d4f8f8a11cc01084242e7",
+   "symbol": "UNH",
+   "name": "UnitedHealth • Robinhood Token",
+   "deployed": {
+    "block": 20949016,
+    "time": "2026-07-27T18:32:57Z",
+    "tx": "0x4da698358ec426c45559061bd52a6560c1b5e5fc5b0ae7e77aa2abd793a35682",
+    "name": "UnitedHealth • Robinhood Token",
+    "symbol": "UNH"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 62453696,
+     "time": "2026-09-14T02:29:10Z",
+     "tx": "0x1cf421a3d4491b59379495ea58f3f0a955776b12ee9917a381a2ef23f4efff5e",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1004241501039702113",
+     "effectiveAt": 1789353521
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x99D9D8663545151603863C5AcbD6FC3218899009",
+   "uid": "0x000000000000000000000000000000009148f90c74194b4ab333453c9ddaccbf",
+   "symbol": "AMBA",
+   "name": "Ambarella • Robinhood Token",
+   "deployed": {
+    "block": 20949048,
+    "time": "2026-07-27T18:33:01Z",
+    "tx": "0x3ba9db861be5165ef396f79374847bb51bf15fd69f87f3fb0ec06f77fe4e565a",
+    "name": "Ambarella • Robinhood Token",
+    "symbol": "AMBA"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x348Be1A8663f15edDe5CDf8A96BB69078f7aB6Fd",
+   "uid": "0x00000000000000000000000000000000e0c9d26f234a467fa738e2642dd815ca",
+   "symbol": "WULF",
+   "name": "TeraWulf • Robinhood Token",
+   "deployed": {
+    "block": 20949088,
+    "time": "2026-07-27T18:33:05Z",
+    "tx": "0x52dea228ba405ec2dbd7827996a4c797bc114475d7c4c816096419e98f362a23",
+    "name": "TeraWulf • Robinhood Token",
+    "symbol": "WULF"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x8B2f88497f15A18E9D4FFa1a8fFB8538399aE774",
+   "uid": "0x00000000000000000000000000000000d9dd6bf798564cfd8d65f3f95fc915c3",
+   "symbol": "OKLO",
+   "name": "Oklo • Robinhood Token",
+   "deployed": {
+    "block": 20949123,
+    "time": "2026-07-27T18:33:08Z",
+    "tx": "0xa85238be1e8f9da8fef624a1cdc4ee6307408664ee20532ae17c62abbad76e5b",
+    "name": "Oklo • Robinhood Token",
+    "symbol": "OKLO"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x63b814DDBd6BF339f25Fed8c36158a008D5B373e",
+   "uid": "0x00000000000000000000000000000000289ac6c307ef486d8201efa27fa14d63",
+   "symbol": "GE",
+   "name": "General Electric • Robinhood Token",
+   "deployed": {
+    "block": 20949159,
+    "time": "2026-07-27T18:33:12Z",
+    "tx": "0x8e6f59c85ccbbf77eb310ab67a699a6a5f81e292ad85c314a6cfaa7b4f2a7bef",
+    "name": "General Electric • Robinhood Token",
+    "symbol": "GE"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 80347805,
+     "time": "2026-10-05T00:03:05Z",
+     "tx": "0x6305ae4936a0b4cdbbb67a9fbce5c6f3f2e2233af10a1c8cfc18045f631a7908",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1001049053505552371",
+     "effectiveAt": 1791159151
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xB039597eD45CBa7B6E2fb9E8BE51802969CEe5Be",
+   "uid": "0x00000000000000000000000000000000423f62d0b1e146a3b90e9b1ffcbf6e16",
+   "symbol": "PANW",
+   "name": "Palo Alto Networks • Robinhood Token",
+   "deployed": {
+    "block": 20949196,
+    "time": "2026-07-27T18:33:16Z",
+    "tx": "0xcb915df9399c71e7cdd8073cf8786d856f89d86ab0642b493fc2bedd59242096",
+    "name": "Palo Alto Networks • Robinhood Token",
+    "symbol": "PANW"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x373C06c4f7BDe527D7Dae4BA169E42b55E393CeD",
+   "uid": "0x00000000000000000000000000000000c0c36a7e53234128bcb2e369ebc065c2",
+   "symbol": "AUR",
+   "name": "Aurora Innovation • Robinhood Token",
+   "deployed": {
+    "block": 20949237,
+    "time": "2026-07-27T18:33:20Z",
+    "tx": "0xbeef59b3836b5dd55be730470fe5fa252d1cbb5ef46f06739ecd7057c8eda17c",
+    "name": "Aurora Innovation • Robinhood Token",
+    "symbol": "AUR"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xC93f4d80e268AB922e871bd169156C3CC41894e6",
+   "uid": "0x000000000000000000000000000000000cd0e8a5e7c341e09f4532de2dc256b2",
+   "symbol": "MTSI",
+   "name": "MACOM • Robinhood Token",
+   "deployed": {
+    "block": 20949272,
+    "time": "2026-07-27T18:33:23Z",
+    "tx": "0xb93c14aab03ed31bf46f9a16aeead919d108badeb0c208513beb75bbbb37c4e8",
+    "name": "MACOM • Robinhood Token",
+    "symbol": "MTSI"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x141eEa040c2250eEc0314e336975e81f85f6585e",
+   "uid": "0x000000000000000000000000000000005756ed74636b4fb7a1cb3bbdbd18eb64",
+   "symbol": "AXTI",
+   "name": "AXT • Robinhood Token",
+   "deployed": {
+    "block": 20949311,
+    "time": "2026-07-27T18:33:27Z",
+    "tx": "0x88773fb235ec66649d322cdb8b978954a7e7b9347a9b3dde9b8f3ee2cd13dc6f",
+    "name": "AXT • Robinhood Token",
+    "symbol": "AXTI"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x285b231728c7E4333799183DF1094d775246a535",
+   "uid": "0x000000000000000000000000000000008a8af3575ac442b8ab46c2d966b2107d",
+   "symbol": "SLS",
+   "name": "SELLAS Life Sciences • Robinhood Token",
+   "deployed": {
+    "block": 20949350,
+    "time": "2026-07-27T18:33:31Z",
+    "tx": "0x41a1e8084cdc529bae8666694afe298f8d29379a118e91d2357c8498eeda1be3",
+    "name": "SELLAS Life Sciences • Robinhood Token",
+    "symbol": "SLS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x565D3ff42D7d880287e5796B4c708632bE0cA098",
+   "uid": "0x00000000000000000000000000000000c83966f852cd4e0fba909b61e89f5cde",
+   "symbol": "JEPQ",
+   "name": "J.P. Morgan Exchange-Traded Fund Trust JPMorgan Nasdaq Equity Premium Income ETF • Robinhood Token",
+   "deployed": {
+    "block": 20949387,
+    "time": "2026-07-27T18:33:35Z",
+    "tx": "0x82c06aa88d1b05e979c21475375a39a2c124564e5f3147de4e1c17d78c060380",
+    "name": "J.P. Morgan Exchange-Traded Fund Trust JPMorgan Nasdaq Equity Premium Income ETF • Robinhood Token",
+    "symbol": "JEPQ"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x12e3c047bf9AeCAF9dDC98c05C31BFD1dd043993",
+   "uid": "0x00000000000000000000000000000000b3a0668c099e4767b0be3e33d2542cae",
+   "symbol": "KSS",
+   "name": "Kohls Corporation • Robinhood Token",
+   "deployed": {
+    "block": 20949425,
+    "time": "2026-07-27T18:33:39Z",
+    "tx": "0x4159bbb3f4b48019f3fe6448e158c9fbfe415950d92f651b66af3aabd35b5770",
+    "name": "Kohls Corporation • Robinhood Token",
+    "symbol": "KSS"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 58096279,
+     "time": "2026-09-08T23:50:53Z",
+     "tx": "0x5f7066cbb048bfe76452fdafc353c75c03cf246c7e59b68f489f83d06eae21e3",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1004610068732316661",
+     "effectiveAt": 1788912027
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x980dcf6766FA79f5Cf0c4AAdb3ab477ff15a9619",
+   "uid": "0x00000000000000000000000000000000c0d3fe37e35240d1a0f311a07e2b9fc4",
+   "symbol": "IBM",
+   "name": "IBM • Robinhood Token",
+   "deployed": {
+    "block": 20949463,
+    "time": "2026-07-27T18:33:42Z",
+    "tx": "0xf6fa4d4a2df66d951ac494a408e7395ddb75d5c60bdc66874734f72d755a6178",
+    "name": "IBM • Robinhood Token",
+    "symbol": "IBM"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xF6589F11Bc40b669e584073F428B05562F568733",
+   "uid": "0x000000000000000000000000000000002993bb34578a4b92b8addda0fc4d697b",
+   "symbol": "SNAP",
+   "name": "Snap • Robinhood Token",
+   "deployed": {
+    "block": 20949500,
+    "time": "2026-07-27T18:33:46Z",
+    "tx": "0x5e51531eafd8fdb2684ad48e783f1c473bd5a4db4ed44053c2a5d209c976e70a",
+    "name": "Snap • Robinhood Token",
+    "symbol": "SNAP"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x329fcACEb9AD6F9580DD5F643fed0646900D043c",
+   "uid": "0x000000000000000000000000000000005cca09f06be14aea89a8ea6265026644",
+   "symbol": "LMT",
+   "name": "Lockheed • Robinhood Token",
+   "deployed": {
+    "block": 20949538,
+    "time": "2026-07-27T18:33:50Z",
+    "tx": "0xb8ed70331eb82a368e64abc59a6b8ca73e9dbc41ee0462626d759116b05b6ca5",
+    "name": "Lockheed • Robinhood Token",
+    "symbol": "LMT"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 74888832,
+     "time": "2026-09-28T15:01:20Z",
+     "tx": "0xb07ab6fa84ff553c6c04d29cdea6f3bb59efa2612fa87dd29afa4b072c492930",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000021050802889793",
+     "effectiveAt": 1790608228
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x561e2a49212b7cCF47f2744Ccb83e200722fADBc",
+   "uid": "0x0000000000000000000000000000000051fd963e99794a83a5e429d05ddc0347",
+   "symbol": "VST",
+   "name": "Vistra • Robinhood Token",
+   "deployed": {
+    "block": 20949579,
+    "time": "2026-07-27T18:33:54Z",
+    "tx": "0x141b338922c145626999f983c210f86f53b7109b6a837ef37afefb1963d0bdf5",
+    "name": "Vistra • Robinhood Token",
+    "symbol": "VST"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 68357834,
+     "time": "2026-09-21T00:11:08Z",
+     "tx": "0x8e773a31369dd9da2cc3b29d64ca42d63b63c9402f00dac20abb6534bfbedde4",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1001114738710796417",
+     "effectiveAt": 1789950036
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x93Dbb1d2Dc5D63F4abACFF30485273f538Df68Ac",
+   "uid": "0x000000000000000000000000000000000ca816dd2ffb4c279c52c5fa87bd431e",
+   "symbol": "FIX",
+   "name": "Comfort Systems • Robinhood Token",
+   "deployed": {
+    "block": 20949620,
+    "time": "2026-07-27T18:33:58Z",
+    "tx": "0x51288e994b70b8182d7fc5050b4870d26057ec5c340e5f2947e75f47b7ce5fd9",
+    "name": "Comfort Systems • Robinhood Token",
+    "symbol": "FIX"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xa4f319104089FE321dc8093C6E707d4fE190A988",
+   "uid": "0x00000000000000000000000000000000551774b7a07e4f24a8901f266c16a86d",
+   "symbol": "CVNA",
+   "name": "Carvana • Robinhood Token",
+   "deployed": {
+    "block": 20949656,
+    "time": "2026-07-27T18:34:02Z",
+    "tx": "0xdf3eba87dcdfcdf69c76d16b88abac9c82e3cae2f8fe64b850cfb5f39fb6a091",
+    "name": "Carvana • Robinhood Token",
+    "symbol": "CVNA"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x62200915e7DEab1eC7f79fb246daDbB80eACdDd0",
+   "uid": "0x000000000000000000000000000000006e6855f045c84b9cabd44da9108be2f8",
+   "symbol": "CLOV",
+   "name": "Clover Health Investments • Robinhood Token",
+   "deployed": {
+    "block": 20949691,
+    "time": "2026-07-27T18:34:05Z",
+    "tx": "0x37f873dee7c4e4c96340cf4a6648bd8e6df3f21872076dc3f37e7c111b90900b",
+    "name": "Clover Health Investments • Robinhood Token",
+    "symbol": "CLOV"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x7FD06a4d81cCfA3F351394E144d5191874C31313",
+   "uid": "0x00000000000000000000000000000000a8a9aa61c79e45b48d4ae5e9b6941ed1",
+   "symbol": "KTOS",
+   "name": "Kratos Defense & Security Solutions • Robinhood Token",
+   "deployed": {
+    "block": 20949729,
+    "time": "2026-07-27T18:34:09Z",
+    "tx": "0x26142b2863ed82f891675feb25d27ffa5853879dc736f778b21803354fce678c",
+    "name": "Kratos Defense & Security Solutions • Robinhood Token",
+    "symbol": "KTOS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x40E7a279850e443f582059ae5dC1c3b6563E6395",
+   "uid": "0x0000000000000000000000000000000060d13e3566ea42a0a83a3224fd446109",
+   "symbol": "OUST",
+   "name": "Ouster • Robinhood Token",
+   "deployed": {
+    "block": 20949763,
+    "time": "2026-07-27T18:34:13Z",
+    "tx": "0xbe369c2963e209d5a856cf0163160d3b19d2f56b324f0f042e80ee11ca30c674",
+    "name": "Ouster • Robinhood Token",
+    "symbol": "OUST"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xDd356AA38F40A7b7076755aC854B6FBb1F0D305B",
+   "uid": "0x00000000000000000000000000000000efb0e40b668c4b92876632971560e252",
+   "symbol": "AMKR",
+   "name": "Amkor Technology • Robinhood Token",
+   "deployed": {
+    "block": 20949804,
+    "time": "2026-07-27T18:34:17Z",
+    "tx": "0xf53599db91d197d7d02c1cdfc88526ef432d8213756c2f29e3963c8b5502ae97",
+    "name": "Amkor Technology • Robinhood Token",
+    "symbol": "AMKR"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 70604066,
+     "time": "2026-09-23T15:00:53Z",
+     "tx": "0xa8178a6ee3c7c9c55904d255e978f581ebf1eed1c686c4d8cde025ba72bd96e3",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000866850964062008",
+     "effectiveAt": 1790176227
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xFA78C12E6488814A0262E4e802749a4a737d5fB7",
+   "uid": "0x000000000000000000000000000000008f9ceee3a7954365bdd32ff0094d9b0f",
+   "symbol": "VRT",
+   "name": "Vertiv • Robinhood Token",
+   "deployed": {
+    "block": 20949841,
+    "time": "2026-07-27T18:34:21Z",
+    "tx": "0x0c61f9425cfb8379bd2ddf3d02c2b5dec0e2d276b415be78b5a70c50805d4b66",
+    "name": "Vertiv • Robinhood Token",
+    "symbol": "VRT"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 62453660,
+     "time": "2026-09-14T02:29:07Z",
+     "tx": "0x71ff5185219e82e5cf2b360d0f9e6cf45738466c89025a3c9a60e7e8b8807e69",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000162788892052072",
+     "effectiveAt": 1789353521
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xBa0CAB75495255d0cB58E22B648bFED4ECD1F47E",
+   "uid": "0x000000000000000000000000000000002087239447ce4fcb8c6194c8941d287c",
+   "symbol": "SNOW",
+   "name": "Snowflake • Robinhood Token",
+   "deployed": {
+    "block": 20949878,
+    "time": "2026-07-27T18:34:24Z",
+    "tx": "0x4869a6b9f00e5359017ede22756317dcc9a5ed895f313374b33ac8b34a5bb769",
+    "name": "Snowflake • Robinhood Token",
+    "symbol": "SNOW"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x3FB8976980d486084b2eb4a404BD12e72823958f",
+   "uid": "0x00000000000000000000000000000000d246e0e1cfa541deb327dcae22f1328a",
+   "symbol": "FTNT",
+   "name": "Fortinet • Robinhood Token",
+   "deployed": {
+    "block": 20949910,
+    "time": "2026-07-27T18:34:28Z",
+    "tx": "0x5390a8c384156ff483ae48e4efd39ce32b5b766b16a42a27f71547b5064bcd2c",
+    "name": "Fortinet • Robinhood Token",
+    "symbol": "FTNT"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x8ff63eAeEe3fE54Ba450c4F5538064Ec5A893Aef",
+   "uid": "0x00000000000000000000000000000000f1469aaabbf6434cb8820d1026a28460",
+   "symbol": "ONTO",
+   "name": "Onto Innovation • Robinhood Token",
+   "deployed": {
+    "block": 20949945,
+    "time": "2026-07-27T18:34:31Z",
+    "tx": "0xdfaa4f4454319187cf73621d0e76a733e26cababaa1cd27a2865c8ed32cbea09",
+    "name": "Onto Innovation • Robinhood Token",
+    "symbol": "ONTO"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x03DfbBE0AC4E7bCDaFd08eD41A400326B77D8c80",
+   "uid": "0x00000000000000000000000000000000b1ab18e03806432eac8895cdd289a769",
+   "symbol": "JNJ",
+   "name": "Johnson & Johnson • Robinhood Token",
+   "deployed": {
+    "block": 20949982,
+    "time": "2026-07-27T18:34:35Z",
+    "tx": "0xbec91ac2edb25c706eb70801b9137b3a48b866b207d9b318b49b6fc9c3d1882d",
+    "name": "Johnson & Johnson • Robinhood Token",
+    "symbol": "JNJ"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 58637294,
+     "time": "2026-09-09T15:00:41Z",
+     "tx": "0x64c7bfc1e54fe6ca6fb7cbda1b5d8d934f8fb0968c74704684c5e85ef6a5f831",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1000021490286701962",
+     "effectiveAt": 1788966626
+    }
+   ],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x748c32c3ca24eDf31ea597Db1F3d330a7a6DA3Dc",
+   "uid": "0x0000000000000000000000000000000069bc82da7c264394bdf6b23c8b0cd399",
+   "symbol": "ALAB",
+   "name": "Astera Labs, Inc. • Robinhood Token",
+   "deployed": {
+    "block": 20950021,
+    "time": "2026-07-27T18:34:39Z",
+    "tx": "0xfe1de5e4a4bfb12cd15052aec765faacef169051ee0777bbd429d1f1bd0fdccf",
+    "name": "Astera Labs, Inc. • Robinhood Token",
+    "symbol": "ALAB"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xCceE82fE024c36fA15E1005edE3E9e4787e23D09",
+   "uid": "0x00000000000000000000000000000000e56a9632bdd64f7ea0745b48971ad047",
+   "symbol": "HIMS",
+   "name": "Hims & Hers Health • Robinhood Token",
+   "deployed": {
+    "block": 20950062,
+    "time": "2026-07-27T18:34:43Z",
+    "tx": "0x54a124f46db63cef7d1ecbdf8daf9ddc1ff16864b5b7a7453c29fefeb03b98e3",
+    "name": "Hims & Hers Health • Robinhood Token",
+    "symbol": "HIMS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x6E3Dfd9f7e1649BaA14D25cac18C94d62dB10A54",
+   "uid": "0x00000000000000000000000000000000a153b6084a5743dfa4e4264b02cc0737",
+   "symbol": "SOUN",
+   "name": "SoundHound AI • Robinhood Token",
+   "deployed": {
+    "block": 20950099,
+    "time": "2026-07-27T18:34:47Z",
+    "tx": "0x2b83939d4f653a18b89ec7008ed26b9334dd1bdc6c7e5c27875792e4d14aed5d",
+    "name": "SoundHound AI • Robinhood Token",
+    "symbol": "SOUN"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x5B97476b922F3305131B8f0B9D333172E87f4aaE",
+   "uid": "0x0000000000000000000000000000000007a456595d454eafba36fa1fb508973e",
+   "symbol": "TEAM",
+   "name": "Atlassian Corporation • Robinhood Token",
+   "deployed": {
+    "block": 20950133,
+    "time": "2026-07-27T18:34:50Z",
+    "tx": "0xe7a43018e0542aec15714416c57b5e3ba73b99bcf9df34e627e612c61bf06955",
+    "name": "Atlassian Corporation • Robinhood Token",
+    "symbol": "TEAM"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x756Bc80af765C82da966a788858d65aDF14f3793",
+   "uid": "0x00000000000000000000000000000000159fb9b112cb4ac8acec13e01d48e763",
+   "symbol": "RUN",
+   "name": "Sunrun • Robinhood Token",
+   "deployed": {
+    "block": 20950216,
+    "time": "2026-07-27T18:34:58Z",
+    "tx": "0xda9c2b18665b19fdd08300ea10df65f5e114bb1572c22c249f09209e783b3d45",
+    "name": "Sunrun • Robinhood Token",
+    "symbol": "RUN"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x0594134DF3f171a354D9C85eBD65b7A6148F6D09",
+   "uid": "0x000000000000000000000000000000007bf2fcc61eea41048648bcfbe4066b63",
+   "symbol": "VTI",
+   "name": "Vanguard Morningstar Total Stock Market ETF • Robinhood Token",
+   "deployed": {
+    "block": 20950257,
+    "time": "2026-07-27T18:35:02Z",
+    "tx": "0xf7b4f489e6cb5ed99366f65c3b8fbc000f507b2b14cb3db2e2f78ecdf8b6c1b8",
+    "name": "Vanguard Total Stock Market ETF • Robinhood Token",
+    "symbol": "VTI"
+   },
+   "multiplierUpdates": [
+    {
+     "block": 74351599,
+     "time": "2026-09-28T00:01:00Z",
+     "tx": "0xfa0d93715e2852a00c6f4a791b61a5b94b2ad782b5236b269acede2919b59a13",
+     "oldMultiplier": "1000000000000000000",
+     "newMultiplier": "1001751012345030813",
+     "effectiveAt": 1790554251
+    }
+   ],
+   "metadataUpdates": [
+    {
+     "block": 22583309,
+     "time": "2026-07-29T16:05:08Z",
+     "tx": "0x8f5a7dbe7be2cc55c8f8a0a7fb91a5c89a5844240c47061c04f7abfc1c36bfbd",
+     "name": "Vanguard Morningstar Total Stock Market ETF • Robinhood Token",
+     "symbol": "VTI"
+    }
+   ]
+  },
+  {
+   "address": "0xACEF2e09adb47aD6aBeBAD9fF06689E60615C2B6",
+   "uid": "0x00000000000000000000000000000000f87aee91942940d0acf2e657187332af",
+   "symbol": "INDA",
+   "name": "iShares MSCI India ETF • Robinhood Token",
+   "deployed": {
+    "block": 20950291,
+    "time": "2026-07-27T18:35:06Z",
+    "tx": "0x4c4adf39a042370e9902465274723937c43fcc68ee4371f4cc6f4bcc8582f556",
+    "name": "iShares MSCI India ETF • Robinhood Token",
+    "symbol": "INDA"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xEAf2512dFC1bEAc608F8794B3793CD4E02894Aa6",
+   "uid": "0x00000000000000000000000000000000aad6874f8eba489d8a46fe1cbddc8db4",
+   "symbol": "JBL",
+   "name": "Jabil Inc. • Robinhood Token",
+   "deployed": {
+    "block": 20950328,
+    "time": "2026-07-27T18:35:10Z",
+    "tx": "0x72be3ca031830b801c1110cc25c61be5498026603214082f8c9568a4c1f7b047",
+    "name": "Jabil Inc. • Robinhood Token",
+    "symbol": "JBL"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xF6290b5e7C26502e2dA514C31509849718EA76A5",
+   "uid": "0x00000000000000000000000000000000f7eed20de20b4d05851c48313f1701b7",
+   "symbol": "AVAV",
+   "name": "AeroVironment • Robinhood Token",
+   "deployed": {
+    "block": 20950365,
+    "time": "2026-07-27T18:35:13Z",
+    "tx": "0xea279756fafbe5663cdb16f0a3b815b574d22bd1107a6d6f5d9fbabde2e4503a",
+    "name": "AeroVironment • Robinhood Token",
+    "symbol": "AVAV"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xb1969f6604CA1AE7a2cD3F1827876e914594CA2D",
+   "uid": "0x00000000000000000000000000000000b7d8350ca5a94c8f999bcee3b17c079d",
+   "symbol": "TE",
+   "name": "T1 Energy • Robinhood Token",
+   "deployed": {
+    "block": 20950404,
+    "time": "2026-07-27T18:35:17Z",
+    "tx": "0x7ac90ff1f756c5dd3e1bf73eb1276f00c7d9f1925aa99c2deb9a200d735480bd",
+    "name": "T1 Energy • Robinhood Token",
+    "symbol": "TE"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xB1CC0EC7Db69Cf43539119814df40071b9d61793",
+   "uid": "0x000000000000000000000000000000006ae9a2c6d30a4d379e93169d2441876b",
+   "symbol": "TEM",
+   "name": "Tempus AI • Robinhood Token",
+   "deployed": {
+    "block": 20950437,
+    "time": "2026-07-27T18:35:21Z",
+    "tx": "0xe6802c4a5c9db39d382342241c55b3af753fdf01b986556dbe284fc16e7e52cd",
+    "name": "Tempus AI • Robinhood Token",
+    "symbol": "TEM"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x9e7ABD3C9139D14E4c86DcE0e455AAB7A0C2FB3E",
+   "uid": "0x0000000000000000000000000000000025191a136aab4e5fa41b67ec3218a093",
+   "symbol": "WYFI",
+   "name": "WhiteFiber, Inc. • Robinhood Token",
+   "deployed": {
+    "block": 20950470,
+    "time": "2026-07-27T18:35:24Z",
+    "tx": "0x8f11122fb9c1d8074f75f63ae6c8629ff11db1e1b3dee1771264284dbb4707eb",
+    "name": "WhiteFiber, Inc. • Robinhood Token",
+    "symbol": "WYFI"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xB853bC83a753342a4f8320ea680b4B1E84118D21",
+   "uid": "0x000000000000000000000000000000005d6501818f804e87ab5b352105bbad0a",
+   "symbol": "INFQ",
+   "name": "Infleqtion • Robinhood Token",
+   "deployed": {
+    "block": 20950504,
+    "time": "2026-07-27T18:35:27Z",
+    "tx": "0x9f66430ab36995a48ce039412ef5e617cfe2bf839e91196dbead4e0456c21364",
+    "name": "Infleqtion • Robinhood Token",
+    "symbol": "INFQ"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xa48F22A46C0F1C46CA7D111CB6c137c271987180",
+   "uid": "0x0000000000000000000000000000000021d840250ab344d198503610448348fe",
+   "symbol": "FICO",
+   "name": "Fair Isaac • Robinhood Token",
+   "deployed": {
+    "block": 20950535,
+    "time": "2026-07-27T18:35:30Z",
+    "tx": "0x4f45361f84b9062935f644de76243486a3a3b2de9cf3e3e304ebe25eb4cd51b5",
+    "name": "Fair Isaac • Robinhood Token",
+    "symbol": "FICO"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x48E39E56aCdbA37b09020C0b734A613C9a2f100A",
+   "uid": "0x00000000000000000000000000000000551774850f194601b6cdefc8c802696d",
+   "symbol": "BB",
+   "name": "Blackberry • Robinhood Token",
+   "deployed": {
+    "block": 20950571,
+    "time": "2026-07-27T18:35:34Z",
+    "tx": "0xe3c1b1597d6996f619c1b6bedaa16c0b6cee1dc2d65e002ded4e0431f51ed752",
+    "name": "Blackberry • Robinhood Token",
+    "symbol": "BB"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x2F62fC9fAbb470C690f141c28340eD832bB27020",
+   "uid": "0x000000000000000000000000000000006604af6b5c4a4031a29417ec8c2f8c53",
+   "symbol": "BND",
+   "name": "Vanguard Total Bond Market ETF • Robinhood Token",
+   "deployed": {
+    "block": 21689593,
+    "time": "2026-07-28T15:11:34Z",
+    "tx": "0xe9c20281b870dad5cb51c06b52f4f29fffb8faf51211c3ebced43cb8e42004bd",
+    "name": "Vanguard Total Bond Market ETF • Robinhood Token",
+    "symbol": "BND"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xbbB6c29bCc3a1028A2B54310DF73F4F7A3bcB373",
+   "uid": "0x00000000000000000000000000000000c7329b9bb5d442f1b4d30c5fcdee91e5",
+   "symbol": "PEACH_DEFI_1",
+   "name": "PEACH_DEFI_1 • Robinhood Token",
+   "deployed": {
+    "block": 58748161,
+    "time": "2026-09-09T18:07:09Z",
+    "tx": "0x0436f9446d0ea8575ea048edad894aa0df2a2cf89b4a93c15a5085cbe560afa9",
+    "name": "PEACH_DEFI_1 • Robinhood Token",
+    "symbol": "PEACH_DEFI_1"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x9a7842EDed60b0FE1e03eEc342C82A397c821eD0",
+   "uid": "0x00000000000000000000000000000000af62cef6d31544d1a0da8953101a42a2",
+   "symbol": "BMNR",
+   "name": "BitMine Immersion Technologies • Robinhood Token",
+   "deployed": {
+    "block": 99357604,
+    "time": "2026-10-27T15:45:31Z",
+    "tx": "0x618efc99e99e9fddeae5694338f98aae999b6ddca56376746086d543776224bd",
+    "name": "BitMine Immersion Technologies • Robinhood Token",
+    "symbol": "BMNR"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xbd335Aa5A1693F0121A5c0Ef18A080E9958DA78b",
+   "uid": "0x00000000000000000000000000000000d963cf2db3144da7bc75eece7dd4feb4",
+   "symbol": "UBER",
+   "name": "Uber • Robinhood Token",
+   "deployed": {
+    "block": 99357883,
+    "time": "2026-10-27T15:45:59Z",
+    "tx": "0x2ccb1e99a59b292308abed703d56a18bd58acd99ce9441bcc51f88fa5327eb6b",
+    "name": "Uber • Robinhood Token",
+    "symbol": "UBER"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x2fdaa4604F10F4AE7f66fa48A174bCd25b1ece20",
+   "uid": "0x00000000000000000000000000000000443f25aca2614eb4b1a6b3fb4fe4621d",
+   "symbol": "MCD",
+   "name": "McDonald's • Robinhood Token",
+   "deployed": {
+    "block": 99358171,
+    "time": "2026-10-27T15:46:28Z",
+    "tx": "0x732715e5f45312a1c4d8b9cdc24ea4da2596f9a901ef25f55909418c5055a383",
+    "name": "McDonald's • Robinhood Token",
+    "symbol": "MCD"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x07c44dA0848960bFf894F17584dB8B2F60B2409E",
+   "uid": "0x0000000000000000000000000000000026e1db941a0a4a849cf140abd8862567",
+   "symbol": "JPM",
+   "name": "JPMorgan Chase • Robinhood Token",
+   "deployed": {
+    "block": 99358178,
+    "time": "2026-10-27T15:46:29Z",
+    "tx": "0x2079cb5a96f83b865e8c27f6c368ce5b6126a2d842ccf943e085e86995532bd6",
+    "name": "JPMorgan Chase • Robinhood Token",
+    "symbol": "JPM"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x501B1B3B79750313AD2C4CcCD08586c4C17d7283",
+   "uid": "0x00000000000000000000000000000000bda958e5aa084da28243c0c4178f0ae4",
+   "symbol": "DIS",
+   "name": "Disney • Robinhood Token",
+   "deployed": {
+    "block": 99358466,
+    "time": "2026-10-27T15:46:58Z",
+    "tx": "0x4fe6d024d44543f5a25b852e5a002932483f3fb7ee5a3ff2c374547b86625235",
+    "name": "Disney • Robinhood Token",
+    "symbol": "DIS"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xa45aBDc77918F7B9199b022eEe400C0BC5712BD2",
+   "uid": "0x000000000000000000000000000000005089f0338d7544c3b337c40574c7ef49",
+   "symbol": "PYPL",
+   "name": "PayPal • Robinhood Token",
+   "deployed": {
+    "block": 99358479,
+    "time": "2026-10-27T15:46:59Z",
+    "tx": "0x2ebf68e0e6d39e2714346a15972c5c461d0fc580679dd63f43f3c1db149fb45e",
+    "name": "PayPal • Robinhood Token",
+    "symbol": "PYPL"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0x9BFF87700337babF5099e99F322F888DafB1d551",
+   "uid": "0x000000000000000000000000000000000dd725c68f94489f8400e4fb3dde8c5f",
+   "symbol": "V",
+   "name": "Visa • Robinhood Token",
+   "deployed": {
+    "block": 99358564,
+    "time": "2026-10-27T15:47:08Z",
+    "tx": "0x933800b2d91ee46123cb5bf3a2b42ccbcb377aeb6ec774b9e9cefe9530e52ca1",
+    "name": "Visa • Robinhood Token",
+    "symbol": "V"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  },
+  {
+   "address": "0xBDFa7A06458Aa26b8E736E0fC87aD37C3BB8Ac2e",
+   "uid": "0x000000000000000000000000000000004ef67b27c2f14d30b60d17885651c565",
+   "symbol": "GDX",
+   "name": "VanEck Gold Miners ETF • Robinhood Token",
+   "deployed": {
+    "block": 99358760,
+    "time": "2026-10-27T15:47:28Z",
+    "tx": "0x65bc6f9d4441dc6a385abce3b1f7e3ec3a914ae83eeddbbd39eb18009f7ba339",
+    "name": "VanEck Gold Miners ETF • Robinhood Token",
+    "symbol": "GDX"
+   },
+   "multiplierUpdates": [],
+   "metadataUpdates": []
+  }
+ ]
+}
