@@ -177,6 +177,24 @@ export const MeResponse = z.strictObject({
 });
 
 // ---------------------------------------------------------------------------------------------
+// HYVO holder utilities: saved launches and followed wallets, kept with a holder's account
+
+/** Launches a watchlist holds at most. */
+export const WATCHLIST_MAX = 200;
+/** Wallets a holder can follow on /track. */
+export const TRACKED_MAX_HOLDER = 25;
+/** Wallets anyone else can follow, in their own browser. */
+export const TRACKED_MAX_FREE = 1;
+
+/** PUT /v1/account/watchlist: the whole list, in the order to keep. Repeated addresses are kept once. */
+export const WatchlistRequest = z.strictObject({ tokens: z.array(Address).max(WATCHLIST_MAX) });
+export const WatchlistResponse = z.strictObject({ tokens: z.array(Address).max(WATCHLIST_MAX), updatedAt: Timestamp.nullable() });
+
+/** PUT /v1/account/tracked: the whole list of followed wallets. */
+export const TrackedRequest = z.strictObject({ wallets: z.array(Address).max(TRACKED_MAX_HOLDER) });
+export const TrackedResponse = z.strictObject({ wallets: z.array(Address).max(TRACKED_MAX_HOLDER), updatedAt: Timestamp.nullable() });
+
+// ---------------------------------------------------------------------------------------------
 // Quotes, orders and payments
 
 /** What to run. Crowd and round bounds come from the API config and are checked there. */
@@ -647,6 +665,10 @@ export type SiweVerifyRequest = z.infer<typeof SiweVerifyRequest>;
 export type SessionResponse = z.infer<typeof SessionResponse>;
 export type HolderStatus = z.infer<typeof HolderStatus>;
 export type MeResponse = z.infer<typeof MeResponse>;
+export type WatchlistRequest = z.infer<typeof WatchlistRequest>;
+export type WatchlistResponse = z.infer<typeof WatchlistResponse>;
+export type TrackedRequest = z.infer<typeof TrackedRequest>;
+export type TrackedResponse = z.infer<typeof TrackedResponse>;
 export type QuoteRequest = z.infer<typeof QuoteRequest>;
 export type PaymentToken = z.infer<typeof PaymentToken>;
 export type OrderStatus = z.infer<typeof OrderStatus>;
