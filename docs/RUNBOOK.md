@@ -321,27 +321,138 @@ Wrangler secret instead. The first real commit took 87 ms of CPU in the Worker a
 past the free plan's 10 ms and both tolerated (`ok`). There is one such pair per published run: watch for `exceededCpu` with
 `npx wrangler tail --format json` when many go out in a day.
 
-**Move ownership and the treasury to the founder's wallet.** The deployer wallet sends three transactions:
+**Ownership, the treasury and payments** move on launch day, together with the token (section 4): ownership and the treasury
+go from the deployer wallet to the wallet the founder launches HYVO from (docs/OPEN_ITEMS.md item 12), and paid runs open in
+the same deploy. Two scripts do it, and both are dry runs unless told otherwise.
+
+### 4. Launch day: HYVO, then paid runs
+
+The founder launches HYVO on Pons V2 from his own wallet and sends its contract address (CA) and that wallet's address.
+From that message to a site that says "HYVO is live" takes about 20 minutes. Everything that follows is a dry run first.
+Nothing here signs anything for the founder; the transactions from the deployer wallet go out only after he says yes.
+
+Founder decisions this follows: the site talks about the token only as what holding it does; quotes stay in USDG and HYVO is
+never a payment token (docs/OPEN_ITEMS.md item 17), so nobody calls `PaymentRouter.setTokenAllowed` for it; paid runs open
+together with the token; another token already uses the name HYVO and Hyvo's tagline, so only the address on
+<https://hyvo.run/token> is Hyvo's.
+
+**Ready before the day.** The runner is set up (section 2) and has played a run. The deployer wallet holds a little ETH: a dry
+run on 2026-11-09 estimated the three ownership calls at 127,545 gas, 0.0000026 ETH at 0.02 gwei, and the wallet held
+0.0000325 ETH. The founder's wallet holds a little ETH for two `acceptOwnership()` calls. The founder has chosen
+`HOLDER_MIN`, the HYVO a wallet must hold for holder benefits, in whole HYVO; 0 keeps them off.
+
+| # | Who | Step | Time |
+|---|---|---|---|
+| 1 | Founder | Launch on Pons V2: name `Hyvo`, symbol `HYVO`. Send the CA, the wallet and `HOLDER_MIN` | |
+| 2 | Claude | `token:go-live` dry run | 1 min |
+| 3 | Claude, then the founder's yes | `move-ownership` dry run, then `--send` | 3 min |
+| 4 | Founder | `acceptOwnership()` on both contracts (can wait; payments do not need it) | 3 min |
+| 5 | Claude | `token:go-live --write`, review, commit | 2 min |
+| 6 | Claude | Runner on, deploy | 6 min |
+| 7 | Claude | Checks, one paid run | 5 min |
+
+**1. Founder: launch.** On Pons V2, from the launch wallet. Then send three things: the CA, the wallet's address, and
+`HOLDER_MIN`. Check: Blockscout shows the contract at the CA.
+
+**2. Claude: read the token, change nothing.**
 
 ```
-cast send <router> "setTreasury(address)" <founder> --private-key $DEPLOYER_PRIVATE_KEY --rpc-url <rpc>
-cast send <router> "transferOwnership(address)" <founder> --private-key $DEPLOYER_PRIVATE_KEY --rpc-url <rpc>
-cast send <oracle> "transferOwnership(address)" <founder> --private-key $DEPLOYER_PRIVATE_KEY --rpc-url <rpc>
+pnpm --filter @hyvo/api token:go-live -- --token <CA> --founder <wallet> --holder-min <HOLDER_MIN> --open-payments
 ```
 
-Nothing changes hands until the founder's wallet calls `acceptOwnership()` on each contract, on the Write tab of the verified
-contract on Blockscout, or from a Safe later on. Send what is left in the deployer wallet back, and take `TREASURY_ADDRESS`
-in the next step from the chain.
+It reads at one block, through `RPC_URLS` in `apps/api/production.vars.json` (`--rpc` replaces them): the code at the CA, its
+name, symbol, decimals and supply, and the Pons V2 factory's record of it (creator, fee recipient, curve, pair, creator tax,
+phase). Check:
 
-**Open payments.** This needs the public source (docs/OPEN_ITEMS.md item 1) and the founder's answer on item 21. Add
-`PAYMENT_ROUTER_ADDRESS`, `PAYMENT_ROUTER_DEPLOY_BLOCK`, `TREASURY_ADDRESS` and `ADMIN_ADDRESSES` to `production.vars.json` and
-deploy, start the runner, play one small paid run end to end, and verify it on `/oracle`.
+- `REFUSED` when the address has no code, does not answer like a token, or the factory does not name the founder's wallet
+  as its creator. Stop and ask the founder. `--force` goes on anyway, loudly; use it only when he confirms the address in
+  writing. Nothing overrides "no code".
+- `WARNING` when the name and symbol are not `Hyvo` and `HYVO`: ask before going on.
+- The line `HOLDER_MIN ... is N% of the total supply`: a number far from what he meant is a typo.
+- This first run also says `REFUSED ... PaymentRouter's treasury is ..., not the founder's wallet`. That is expected: step 3
+  moves it. Without `--open-payments` the token goes live alone and paid runs stay closed.
 
-### 4. The token launch, last
+**3. Claude: move the treasury and ownership.**
 
-After the launch on Pons: `HYVO_TOKEN_ADDRESS` and `HOLDER_MIN` (> 0 turns holder benefits on) in
-`production.vars.json`, deploy again, and a Safe transaction `PaymentRouter.setTokenAllowed(<token>, true)` if the token
-should be accepted as payment (quotes are in USDG until a token price source exists, docs/OPEN_ITEMS.md item 17).
+```
+pnpm --filter @hyvo/api move-ownership -- --founder <wallet>          # the three calls, the chain's state, the gas
+pnpm --filter @hyvo/api move-ownership -- --founder <wallet> --send   # only after the founder's yes
+```
+
+The dry run prints `PaymentRouter.setTreasury`, `PaymentRouter.transferOwnership` and `HyvoOracle.transferOwnership`, each with
+what the chain says now and its gas, and the deployer's balance. Compare the wallet in its first line with the founder's
+message character by character: an ownership accepted by a wrong wallet cannot be taken back. With `--send` it loads
+`DEPLOYER_PRIVATE_KEY` from `chain/.env` at run time (never printed), refuses a key that is not the deployer in
+`chain/deployments/4663.json`, sends the calls one at a time, each after the last one's receipt, skips what is done already,
+and reads the chain back. Check: `ok` on all three lines, with treasury = the founder's wallet and pending owner = the
+founder's wallet on both contracts. A failed call: run the same command again.
+
+**4. Founder: accept ownership.** On Blockscout, for each contract, the Write tab of the verified contract, connect the launch
+wallet, call `acceptOwnership()`:
+
+- PaymentRouter <https://robinhoodchain.blockscout.com/address/0x9ca245cA96dE8BFC13Df4a233ba6E2EcEc9AC6d1>
+- HyvoOracle <https://robinhoodchain.blockscout.com/address/0x2FEDc123c38B069cf78e5915852A61022E347642>
+
+Payments need only the treasury, which moved in step 3, so steps 5 to 7 do not wait for this. Until he accepts, the deployer
+still owns both. Check: `move-ownership -- --founder <wallet>` says "The founder's wallet owns both contracts". Then send what
+is left in the deployer wallet back.
+
+**5. Claude: write.**
+
+```
+pnpm --filter @hyvo/api token:go-live -- --token <CA> --founder <wallet> --holder-min <HOLDER_MIN> --open-payments --write
+git diff -- chain/deployments/4663.json apps/api/production.vars.json README.md
+```
+
+All or nothing: it writes only when no check refuses. It sets
+
+- `chain/deployments/4663.json`: `hyvoToken`, and `treasury` and `owner` as the chain reports them;
+- `apps/api/production.vars.json`: `HYVO_TOKEN_ADDRESS`, `HYVO_TOKEN_DECIMALS` and `HOLDER_MIN`; with `--open-payments`
+  also `PAYMENT_ROUTER_ADDRESS`, `PAYMENT_ROUTER_DEPLOY_BLOCK` (the head block now, where the payment scan starts, not the
+  deploy block), `TREASURY_ADDRESS` and `ADMIN_ADDRESSES` (the founder's wallet, added to any already there);
+- `README.md`: what lies between `<!-- hyvo-token:start -->` and `<!-- hyvo-token:end -->` becomes the official address,
+  linked to Blockscout, and <https://hyvo.run/token>. Without the markers the README is left as is, with a warning.
+
+Commit the three files. Running the command again changes nothing.
+
+**6. Claude: runner on, then deploy.** Paid runs need the runner (section 2), so start it first if it is not running. Then:
+
+```
+pnpm --filter @hyvo/api deploy:cloudflare          # names the account, changes nothing
+pnpm --filter @hyvo/api deploy:cloudflare --yes
+```
+
+The deploy refuses `PAYMENT_ROUTER_ADDRESS` without a wallet in `ADMIN_ADDRESSES`: nobody could record a refund or pause the
+queue. The Worker gets the new vars; the web app is built again with `VITE_HYVO_TOKEN_ADDRESS` from the deployment file, which
+switches `/token`, `/trust` and the home page.
+
+**7. Claude: check, then one paid run.**
+
+```
+pnpm --filter @hyvo/api token:go-live -- --token <CA> --founder <wallet> --holder-min <HOLDER_MIN> --open-payments --verify
+```
+
+- The script: `features.holder` and `features.payments` true on <https://api.hyvo.run/v1/health>, and `holder.min` equal to
+  `HOLDER_MIN`.
+- <https://hyvo.run/token> shows the CA, linked to Blockscout: compare it with the founder's message. `/trust` and the home page
+  no longer say that no token has launched. On a phone and a laptop.
+- `/admin` opens for the founder's wallet.
+- One small paid run: quote on `/new` (in USDG), pay, watch the runner take it, then verify it on `/oracle`.
+- Push the commit when the founder says so: the README on GitHub then names the address.
+
+The founder announces only after these pass, with the address copied from <https://hyvo.run/token>.
+
+**Roll back.** The token and payments are Worker vars and a web build, so a deploy undoes them:
+
+- The whole go-live: `git revert <the go-live commit>` (the three files come back as they were, README included), then
+  `pnpm --filter @hyvo/api deploy:cloudflare --yes`. By hand: `hyvoToken` back to `0x0000000000000000000000000000000000000000`
+  in the deployment file, `HYVO_TOKEN_ADDRESS` and the payment keys out of `production.vars.json`, the README block back, deploy.
+  Holder benefits switch off and `/token` says no token has launched.
+- Paid runs only: take `PAYMENT_ROUTER_ADDRESS` out of `production.vars.json`, keep `ADMIN_ADDRESSES`, deploy. Jobs already
+  paid are still played, and `/admin` still records refunds. A payment sent to PaymentRouter while payments are off is not
+  recorded: find it among the router's `Paid` events on Blockscout and refund it by hand from the treasury.
+- Ownership: before the founder accepts, `move-ownership --send` with the right wallet replaces the pending owner and the
+  treasury. After he accepts, only his wallet can change them (`setTreasury`, `transferOwnership`).
 
 ## What the free plans allow
 
