@@ -22,6 +22,9 @@ export type BlockscoutContract = { verified: boolean; abi: AbiItem[] | null };
 /** Blockscout's first page of holders holds 50; more is never kept. */
 export const MAX_HOLDERS = 50;
 
+/** Why there are no holders when Blockscout's page lists none: a fact about the index, not a share of 0%. */
+export const NO_HOLDERS_LISTED = "Blockscout's index lists no holders for the token yet";
+
 export class BlockscoutClient {
   constructor(
     private readonly net: Net,
@@ -110,7 +113,10 @@ export function parseTokenInfo(json: unknown): { totalSupply: bigint | null; hol
   };
 }
 
-/** `tokens/<address>/holders`: each holder's address and balance, at most MAX_HOLDERS. Null when there is no list. */
+/**
+ * `tokens/<address>/holders`: each holder's address and balance, at most MAX_HOLDERS. An empty list when the page
+ * lists no holder; null when there is no list, or when it has rows and none of them can be read.
+ */
 export function parseHolders(json: unknown): { address: Address; value: bigint }[] | null {
   if (!json || typeof json !== "object") return null;
   const items = (json as Record<string, unknown>).items;
@@ -124,7 +130,7 @@ export function parseHolders(json: unknown): { address: Address; value: bigint }
     if (typeof row!.value !== "string" || !/^\d{1,78}$/.test(row!.value)) continue;
     out.push({ address: toChecksumAddress(hash), value: BigInt(row!.value) });
   }
-  return out;
+  return out.length === 0 && items.length > 0 ? null : out;
 }
 
 /** `addresses/<address>`: who created the contract, and in which transaction. Null when Blockscout names no creator. */
@@ -174,18 +180,20 @@ function failure(what: string, outcome: { status: number } | HttpError): string 
 /**
  * A token's holders and creator from Blockscout's index: three requests at once (`tokens/<address>`,
  * `tokens/<address>/holders`, `addresses/<address>`), each tried once unless `retry429`. Never throws: a part that
- * could not be read is null, with the reason in `holdersMissing` or `creatorMissing`. `settled`: every request
- * got an answer that holds until the index changes (200 or 404), so the facts are worth keeping for a while.
+ * could not be read is null, with the reason in `holdersMissing` or `creatorMissing`. A page that lists no holder
+ * counts as holders not read yet, never as holders who hold nothing. `settled`: every request got an answer that
+ * holds until the index changes (200 or 404), and the page listed holders, so the facts are worth keeping for a while.
+ * `limited`: Blockscout answered 429 to at least one of them, so a caller can wait before it asks again.
  */
 export async function readHolderFacts(
   token: string,
   options: HolderReadOptions,
-): Promise<HolderFacts & { requests: number; settled: boolean }> {
+): Promise<HolderFacts & { requests: number; settled: boolean; limited: boolean }> {
   const fetchFn = options.fetch ?? (globalThis.fetch?.bind(globalThis) as FetchLike | undefined);
   const base = { source: options.source, totalSupply: null, holderCount: null, holders: null, creator: null };
   if (!fetchFn || !isAddress(token)) {
     const why = !fetchFn ? "no fetch in this environment" : "not an address";
-    return { ...base, holdersMissing: why, creatorMissing: why, requests: 0, settled: false };
+    return { ...base, holdersMissing: why, creatorMissing: why, requests: 0, settled: false, limited: false };
   }
   const net = new Net({ fetch: fetchFn, signal: options.signal, timeoutMs: options.timeoutMs ?? DEFAULT_TIMEOUT_MS });
   const client = new BlockscoutClient(net, options.blockscoutUrl ?? ROBINHOOD_CHAIN.blockscoutApiUrl, options.blockscoutKey, options.retry429 ?? false);
@@ -202,14 +210,17 @@ export async function readHolderFacts(
   ]);
 
   const tokenInfo = !(info instanceof HttpError) && info.status === 200 ? parseTokenInfo(info.json) : null;
-  const holders = !(list instanceof HttpError) && list.status === 200 ? parseHolders(list.json) : null;
+  const listed = !(list instanceof HttpError) && list.status === 200 ? parseHolders(list.json) : null;
+  const holders = listed !== null && listed.length > 0 ? listed : null;
   const creator = !(created instanceof HttpError) && created.status === 200 ? parseCreator(created.json) : null;
   const holdersMissing =
     holders !== null
       ? null
       : list instanceof HttpError || list.status !== 200
         ? failure("the token's holders", list)
-        : "Blockscout's API gave no list of holders";
+        : listed === null
+          ? "Blockscout's API gave no list of holders"
+          : NO_HOLDERS_LISTED;
   const creatorMissing =
     creator !== null
       ? null
@@ -225,6 +236,9 @@ export async function readHolderFacts(
     creator: creator ? { address: creator.deployer, creationTxHash: creator.creationTxHash } : null,
     creatorMissing,
     requests: net.requests.blockscout,
-    settled: [info, list, created].every((answer) => !(answer instanceof HttpError) && (answer.status === 200 || answer.status === 404)),
+    settled:
+      !(listed !== null && listed.length === 0) &&
+      [info, list, created].every((answer) => !(answer instanceof HttpError) && (answer.status === 200 || answer.status === 404)),
+    limited: [info, list, created].some((answer) => !(answer instanceof HttpError) && answer.status === 429),
   };
 }

@@ -9,9 +9,10 @@ import { getAddress } from "viem";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { OWNER, PAIR, TOKEN, fakeChain, type Scenario } from "../../../packages/check/test/fake-chain";
 import type { Env } from "../src/env";
-import { setCheckRuntime } from "../src/lib/check";
+import { RPC_ATTEMPTS, setCheckRuntime } from "../src/lib/check";
 import { iso, setClock } from "../src/lib/clock";
 import { BLOCKSCOUT_READS_PER_MINUTE, HOLDER_READS_PER_MINUTE, holdersSource, redact, setHoldersFetch } from "../src/lib/holders";
+import { runScheduled } from "../src/scheduled";
 import { call, chainEnv, frozenClock, resetDb } from "./helpers";
 
 /** A fake key, made to stand out: it must never come back in an answer, a header or a log. */
@@ -172,6 +173,15 @@ describe("GET /v1/check/:token with a Blockscout key", () => {
     expect(finding(slow, "holders").evidence).toBe("Blockscout's API did not answer in time for the token's holders");
   }, 20_000);
 
+  it("leaves the holders skipped when Blockscout's page lists none, and does not keep that answer", async () => {
+    const { asked } = install({}, { holders: { status: 200, body: { items: [], next_page_params: null } } });
+    const body = (await (await get(`/v1/check/${TOKEN}`)).json()) as Record<string, any>;
+    expect(finding(body, "holders")).toMatchObject({ status: "skipped", evidence: "Blockscout's index lists no holders for the token yet" });
+    clock.advance(60);
+    await get(`/v1/check/${TOKEN}`);
+    expect(asked).toHaveLength(6); // asked again: an empty page is not kept for the window
+  });
+
   it("answers as today without a key", async () => {
     target = chainEnv();
     const { asked } = install();
@@ -183,10 +193,12 @@ describe("GET /v1/check/:token with a Blockscout key", () => {
   });
 
   it(
-    "stays inside the free plan's 50 subrequests with Blockscout's three",
+    "stays inside the free plan's 50 subrequests with Blockscout's three and the Cache API's four",
     async () => {
       // As in check.test.ts: every chain call answers only on its last try, the token is a proxy and the probe returns
-      // nothing, so the check makes all 46 requests it can. Blockscout adds 3.
+      // nothing, so the check makes all the requests it can. Blockscout adds 3, and the Cache API, whose calls share
+      // the quota on the free plan, 4: a match and a put for the check's answer and for the holder facts.
+      const cacheCalls = [vi.spyOn(caches.default, "match"), vi.spyOn(caches.default, "put")];
       target = chainEnv({ BLOCKSCOUT_API_KEY: KEY, RPC_URLS: "http://a.test,http://b.test,http://c.test" });
       const IMPLEMENTATION_SLOT = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
       const implementation = getAddress("0x1234567890abcdef1234567890abcdef12345678");
@@ -202,7 +214,7 @@ describe("GET /v1/check/:token with a Blockscout key", () => {
           const key = `${method} ${JSON.stringify(params)}`;
           const attempt = (tries.get(key) ?? 0) + 1;
           tries.set(key, attempt);
-          if (attempt < 4) return { ok: false, status: 503, text: async () => "busy" };
+          if (attempt < RPC_ATTEMPTS) return { ok: false, status: 503, text: async () => "busy" };
           if (method === "eth_getStorageAt" && params[1] === IMPLEMENTATION_SLOT) {
             const word = `0x${implementation.slice(2).toLowerCase().padStart(64, "0")}`;
             return { ok: true, status: 200, text: async () => JSON.stringify({ jsonrpc: "2.0", id, result: word }) };
@@ -212,9 +224,14 @@ describe("GET /v1/check/:token with a Blockscout key", () => {
       });
       const response = await get(`/v1/check/${TOKEN}`);
       expect(response.status).toBe(200);
-      expect(sent).toHaveLength(46);
+      expect(tries.size).toBe(11);
+      expect([...tries.values()].every((n) => n === RPC_ATTEMPTS)).toBe(true);
+      expect(sent).toHaveLength(11 * RPC_ATTEMPTS + 2);
       expect(asked).toHaveLength(3);
-      expect(sent.length + asked.length).toBeLessThanOrEqual(50);
+      const cached = cacheCalls.reduce((sum, spy) => sum + spy.mock.calls.length, 0);
+      expect(cached).toBe(4);
+      expect(sent.length + asked.length + cached).toBe(42);
+      expect(sent.length + asked.length + cached).toBeLessThanOrEqual(50);
     },
     20_000,
   );
@@ -264,8 +281,53 @@ describe("GET /v1/check/:token/holders", () => {
     expect(body.holdersMissing).toBe("Blockscout's API answered 429 for the token's holders: its free tier allows 5 requests a second");
     expect(body.creator).toBeNull();
     expect(body.creatorMissing).toBe("Blockscout's API answered 500 for the token's creator");
+    clock.advance(30); // past the pause a 429 starts, inside the same ten-minute window
     await get(`/v1/check/${TOKEN}/holders`);
     expect(asked).toHaveLength(6);
+  });
+
+  it("asks Blockscout nothing for 30 s after it answers 429, then asks again", async () => {
+    const { asked } = install({}, { holders: { status: 429, body: {} } });
+    await get(`/v1/check/${TOKEN}/holders`);
+    expect(asked).toHaveLength(3);
+    const paused = await get(`/v1/check/${other(1)}/holders`);
+    expect(paused.status).toBe(200);
+    expect(paused.headers.get("Cache-Control")).toBe("no-store");
+    const body = (await paused.json()) as Record<string, any>;
+    expect(body.holdersMissing).toBe("Blockscout's API answered 429 to Hyvo's API in the last 30 s; ask again in 30 s");
+    expect(body.creatorMissing).toBe(body.holdersMissing);
+    clock.advance(10);
+    expect(((await (await get(`/v1/check/${other(2)}/holders`)).json()) as Record<string, any>).holdersMissing).toMatch(/ask again in 20 s$/);
+    expect(asked).toHaveLength(3);
+    clock.advance(20);
+    await get(`/v1/check/${other(3)}/holders`);
+    expect(asked).toHaveLength(6);
+  });
+
+  it("stops reading Blockscout for the day after 30,000 reads, a count the cron keeps all day", async () => {
+    const { asked } = install();
+    const now = clock.now();
+    const day = now - (now % 86_400);
+    expect(now - day).toBeGreaterThan(3_600); // more than an hour into the UTC day
+    const seed = (key: string, start: number, count: number) =>
+      target.DB.prepare("INSERT INTO rate_limits (key, window_start, count) VALUES (?, ?, ?)").bind(key, start, count).run();
+    await seed(`blockscout-day:worker:${day}`, day, 30_000);
+    await seed(`blockscout:worker:${now - 7_200}`, now - 7_200, 5);
+    // The cron drops the counts of minutes past, not the day's.
+    await runScheduled(chainEnv({ BLOCKSCOUT_API_KEY: KEY, RPC_URLS: "" }), now);
+    const kept = await target.DB.prepare("SELECT key FROM rate_limits").all<{ key: string }>();
+    expect(kept.results.map((row) => row.key)).toEqual([`blockscout-day:worker:${day}`]);
+
+    const spent = await get(`/v1/check/${TOKEN}/holders`);
+    expect(spent.status).toBe(200);
+    const body = (await spent.json()) as Record<string, any>;
+    expect(body.holders).toBeNull();
+    expect(body.holdersMissing).toBe("Hyvo's API has read Blockscout's index as often as it may today; ask again after 00:00 UTC");
+    expect(asked).toHaveLength(0);
+    // A check still answers, with the holders skipped and why.
+    const check = (await (await get(`/v1/check/${TOKEN}`)).json()) as Record<string, any>;
+    expect(finding(check, "holders")).toMatchObject({ status: "skipped", evidence: body.holdersMissing });
+    expect(asked).toHaveLength(0);
   });
 
   it("refuses what is not an address, and is off without a key", async () => {

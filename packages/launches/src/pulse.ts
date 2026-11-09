@@ -11,6 +11,7 @@
  */
 import { NATIVE } from "./pons";
 import { ETH, type Asset, type GraduationEvent, type Launch, type LaunchEvent } from "./read";
+import { NAME_MAX, SYMBOL_MAX, wasCut } from "./text";
 
 /** Where a launch trades at the block read. */
 export type Venue = "curve" | "pool" | "between" | "unknown";
@@ -120,10 +121,17 @@ function inRange(block: bigint | null, from: bigint, to: bigint): boolean {
   return block === null || (block >= from && block <= to);
 }
 
-function groups(launches: readonly Launch[], pick: (launch: Launch) => string | null, limit: number): { shown: TwinGroup[]; members: Set<string> } {
+function groups(
+  launches: readonly Launch[],
+  pick: (launch: Launch) => string | null,
+  max: number,
+  limit: number,
+): { shown: TwinGroup[]; members: Set<string> } {
   const byKey = new Map<string, Launch[]>();
   for (const launch of launches) {
-    const key = twinKey(pick(launch));
+    // Text cut short to fit (cleanText) may go on differently on the chain, so it is no ground to call two alike.
+    const text = pick(launch);
+    const key = wasCut(text, max) ? null : twinKey(text);
     if (!key) continue;
     const list = byKey.get(key);
     if (list) list.push(launch);
@@ -213,8 +221,8 @@ export function computePulse(input: PulseInput): Pulse {
     const common = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0]);
     const kept = common.slice(0, maxRates);
     const rest = common.slice(maxRates);
-    const symbols = groups(launches, (launch) => launch.symbol, maxGroups);
-    const names = groups(launches, (launch) => launch.name, maxGroups);
+    const symbols = groups(launches, (launch) => launch.symbol, SYMBOL_MAX, maxGroups);
+    const names = groups(launches, (launch) => launch.name, NAME_MAX, maxGroups);
     detail = {
       venues,
       rates: kept.map(([bps, n]) => ({ bps, launches: n })).sort((a, b) => a.bps - b.bps),

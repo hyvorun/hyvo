@@ -19,7 +19,7 @@ import {
   type LaunchDetail,
 } from "@hyvo/launches";
 import type { Palette } from "../color.js";
-import { listedPhase, type LastHour, type OneLaunch, type RecentLaunches } from "../launches.js";
+import { listedPhase, MAX_LIMIT, WINDOW_HOURS, type LastHour, type OneLaunch, type RecentLaunches } from "../launches.js";
 import { checkDisclaimer } from "./check.js";
 import { factLines, headingLine, paragraph, tableLines, tableWidth, titleLines, type Fact } from "./facts.js";
 import { oneLine, wrap } from "./text.js";
@@ -49,9 +49,14 @@ function age(at: number | null, now: number): string {
   return at === null ? "unknown" : formatDuration(now - at);
 }
 
-/** What a listed curve holds, towards its threshold: "0.05994 of 4.2 ETH, 1.4%". */
-export function curveHolds(launch: Launch): string {
-  if (launch.graduated) return "moved to its pool";
+/**
+ * What a listed curve holds, towards its threshold: "0.05994 of 4.2 ETH, 1.4%". `pooled`: the factory's
+ * PoolGraduated for the token is among the window's events. graduated() turns true when the curve is swept, before
+ * the pool exists, so it alone does not say the launch trades in its pool.
+ */
+export function curveHolds(launch: Launch, pooled: boolean): string {
+  if (pooled) return "moved to its pool";
+  if (launch.graduated) return "off its curve, no pool yet";
   if (launch.liquidity === null) return "not read";
   const share = progress(launch.liquidity, launch.graduationThreshold);
   const unit = pairSymbol(launch.pair);
@@ -65,6 +70,38 @@ function span(hours: number): string {
   return hours === 1 ? "the last hour" : `the last ${hours} hours`;
 }
 
+/**
+ * The window's graduations, apart from its launches: a curve that launched before the window can graduate in it,
+ * so the count is not a share of the window's launches.
+ */
+export function graduationsLine(graduations: RecentLaunches["graduations"]): string {
+  const here = graduations.filter((event) => event.launchedInWindow).length;
+  if (graduations.length === 0) return "No curve graduated to its pool in these blocks.";
+  if (graduations.length === 1) return `1 curve graduated to its pool in these blocks (it launched ${here === 1 ? "in" : "before"} the window).`;
+  return `${graduations.length} curves graduated to their pools in these blocks (${here} of them launched in the window).`;
+}
+
+/**
+ * What the window holds beyond the rows shown, and how to see it: a larger --limit only while one would list more
+ * (up to MAX_LIMIT), else a shorter window; and the launches left out because their pair asset could not be read.
+ */
+function moreNotes(result: RecentLaunches): string[] {
+  const notes: string[] = [];
+  const asked = Math.min(result.total, result.limit);
+  const beyond = result.total - asked;
+  const unread = asked - result.launches.length;
+  const listable = Math.min(result.total, MAX_LIMIT);
+  if (beyond > 0 && result.limit < listable) {
+    notes.push(`${beyond} more in the window: hyvo launches --hours ${result.hours} --limit ${listable}`);
+  } else if (beyond > 0) {
+    const shorter = [...WINDOW_HOURS].reverse().find((hours) => hours < result.hours);
+    const tip = shorter === undefined ? "" : `; a shorter window has fewer: hyvo launches --hours ${shorter}`;
+    notes.push(`${beyond} more in the window: at most the newest ${MAX_LIMIT} are listed${tip}`);
+  }
+  if (unread > 0) notes.push(`${unread} more could not be listed: their pair assets' decimals could not be read.`);
+  return notes;
+}
+
 export function renderRecentLaunches(result: RecentLaunches, o: LaunchesRenderOptions): string {
   const c = o.palette;
   const now = result.read.timestamp || result.head.timestamp;
@@ -75,21 +112,23 @@ export function renderRecentLaunches(result: RecentLaunches, o: LaunchesRenderOp
     c,
     o.width,
   );
-  const count = `${result.total} ${result.total === 1 ? "launch" : "launches"} in ${span(result.hours)}, ${result.graduations.length} graduated.`;
+  const count = `${result.total} ${result.total === 1 ? "launch" : "launches"} in ${span(result.hours)}.`;
   const pairs = result.byPair.map((row) => `${row.pair ? pairSymbol(row.pair) : shortAddress(row.address)} ${row.launches}`);
-  lines.push("", ...paragraph(pairs.length > 0 ? `${count} Paired with: ${pairs.join(", ")}.` : count, o.width), "");
+  const summary = pairs.length > 0 ? `${count} Paired with: ${pairs.join(", ")}.` : count;
+  lines.push("", ...paragraph(`${summary} ${graduationsLine(result.graduations)}`, o.width), "");
 
   if (result.launches.length === 0) {
     lines.push(...paragraph(result.total === 0 ? `No Pons launch in ${span(result.hours)}.` : "No launch could be listed: their pair assets' decimals could not be read.", o.width, c.gray));
   } else {
     const head = ["age", "token", "pair", "phase", "on its curve", "creator tax", "address"];
+    const pooled = new Set(result.graduations.map((event) => event.token.toLowerCase()));
     const rows = (short: boolean) =>
       result.launches.map((launch) => [
         age(launch.launchedAt, now),
         symbolOf(launch),
         pairSymbol(launch.pair),
         lowerFirst(listedPhase(launch)),
-        curveHolds(launch),
+        curveHolds(launch, pooled.has(launch.token.toLowerCase())),
         launch.creatorTaxBps === null ? "not read" : formatBps(launch.creatorTaxBps),
         short ? shortAddress(launch.token) : launch.token,
       ]);
@@ -97,8 +136,7 @@ export function renderRecentLaunches(result: RecentLaunches, o: LaunchesRenderOp
     const shorten = o.width !== null && tableWidth(head, full) > o.width;
     lines.push(...tableLines(head, shorten ? rows(true) : full, c));
     const notes: string[] = [];
-    const rest = result.total - result.launches.length;
-    if (rest > 0) notes.push(`${rest} more in the window: hyvo launches --hours ${result.hours} --limit ${Math.min(100, result.total)}`);
+    notes.push(...moreNotes(result));
     notes.push("One launch's facts: hyvo launches <token>");
     if (shorten) notes.push("Addresses are shortened to fit this terminal; --json has them in full.");
     lines.push("", ...notes.flatMap((note) => paragraph(note, o.width, c.gray)));

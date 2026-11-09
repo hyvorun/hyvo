@@ -9,10 +9,12 @@ import {
   failureText,
   launchesReader,
   MAX_LIMIT,
+  MISTYPED_CHECKSUM,
   oneLaunch,
   oneLaunchJson,
   recentLaunches,
   recentLaunchesJson,
+  typedToken,
   WINDOW_HOURS,
 } from "../launches.js";
 import { countRequests, readLine } from "../requests.js";
@@ -27,7 +29,9 @@ USAGE
 OPTIONS
   --hours <h>     The window: 1, 6 or 24 hours (default ${DEFAULT_HOURS})
   --limit <n>     How many of the newest launches to list, 1 to ${MAX_LIMIT} (default ${DEFAULT_LIMIT})
-  --json          Print the facts as JSON (amounts as decimal strings, in the pair asset's smallest unit)
+  --json          Print the facts as JSON, amounts as decimal strings: in the pair asset's smallest unit
+                  for liquidity, graduationThreshold, volume, tax and pairTokenAmount, and in the token's
+                  (18 decimals) for supply, reserved, sellable and tokenAmount
   --rpc <url>     A Robinhood Chain JSON-RPC endpoint that answers eth_getLogs (default: the public endpoints
                   robinhood.drpc.org, robinhood.api.pocket.network, rpc.mainnet.chain.robinhood.com and
                   rpc.degenprotocol.io, each asked for what it serves)
@@ -72,9 +76,12 @@ export async function runLaunches(argv: readonly string[], ctx: Context): Promis
   }
   noExtra(positional, 1);
   const json = options.json === true;
-  const token = positional[0]?.trim();
-  if (token !== undefined && !isAddress(token)) throw new UsageError(`not an address: ${token} (expected 0x and 40 hex characters)`);
-  if (token !== undefined && /^0x0{40}$/i.test(token)) throw new UsageError("the zero address is not a token");
+  const typed = positional[0]?.trim();
+  if (typed !== undefined && !isAddress(typed)) throw new UsageError(`not an address: ${typed} (expected 0x and 40 hex characters)`);
+  if (typed !== undefined && /^0x0{40}$/i.test(typed)) throw new UsageError("the zero address is not a token");
+  // Read in its checksummed form, whatever case it was typed in; mixed case must match its checksum.
+  const token = typed === undefined ? undefined : typedToken(typed);
+  if (token === null) throw new UsageError(`${typed}: ${MISTYPED_CHECKSUM}`);
   if (token !== undefined && (options.hours !== undefined || options.limit !== undefined)) throw new UsageError("--hours and --limit apply to the list, not to one token");
   const hours = hoursOption(options.hours);
   const limit = intOption(options.limit, "limit", 1, MAX_LIMIT, DEFAULT_LIMIT);
@@ -90,7 +97,7 @@ export async function runLaunches(argv: readonly string[], ctx: Context): Promis
       const line = readLine(requests.byHost(), ctx.now() - started);
       ctx.out(json ? `${JSON.stringify(recentLaunchesJson(result), null, 2)}\n` : `${renderRecentLaunches(result, { ...render, readLine: line })}\n`);
     } else {
-      const result = await oneLaunch(reader, token as `0x${string}`);
+      const result = await oneLaunch(reader, token);
       const line = readLine(requests.byHost(), ctx.now() - started);
       ctx.out(json ? `${JSON.stringify(oneLaunchJson(result), null, 2)}\n` : `${renderOneLaunch(result, { ...render, readLine: line })}\n`);
     }

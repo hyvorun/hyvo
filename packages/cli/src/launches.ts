@@ -6,9 +6,12 @@ import {
   CALL_ENDPOINTS,
   ChainReader,
   ETH,
+  FACTORY_ABI,
   LOG_ENDPOINTS,
   NATIVE,
+  PONS_V2_FACTORY,
   measurePace,
+  multicall,
   phaseLabel,
   progress,
   readAssets,
@@ -26,6 +29,8 @@ import {
   type Lookup,
   type Snapshot,
 } from "@hyvo/launches";
+import { toChecksumAddress } from "@hyvo/check";
+import type { Address } from "viem";
 import type { Resolved } from "./config.js";
 import { checkDisclaimer } from "./format/check.js";
 import { toJson } from "./requests.js";
@@ -42,6 +47,19 @@ export const MAX_LIMIT = 100;
 const TRADE_HOURS = 1;
 
 const lower = (value: string) => value.toLowerCase();
+
+/** Why an address is refused when its letters' case fails its checksum. */
+export const MISTYPED_CHECKSUM = "its capital letters do not match its checksum: a character may be mistyped";
+
+/**
+ * A token address as typed (0x and 40 hex characters), checksummed for reading, or null when it is in mixed case
+ * that fails its EIP-55 checksum. All small or all capital letters carry no checksum and are read as they are.
+ */
+export function typedToken(address: string): `0x${string}` | null {
+  const hex = address.slice(2);
+  const checksummed = toChecksumAddress(address);
+  return hex !== hex.toLowerCase() && hex !== hex.toUpperCase() && checksummed !== address ? null : checksummed;
+}
 
 /** Every URL the default reader may ask, for the help text and the README. */
 export function publicEndpoints(): string[] {
@@ -68,14 +86,28 @@ export interface PairCount {
   launches: number;
 }
 
+/** A curve whose pool the factory created in the window (`PoolGraduated`). */
+export interface WindowGraduation extends GraduationEvent {
+  /** Whether the token launched in the window too, or before it. */
+  launchedInWindow: boolean;
+  /**
+   * The asset `pairTokenAmount` is in: from the token's launch event in the window, else from the factory's record.
+   * Null when neither could be read, or its decimals could not be.
+   */
+  pair: Asset | null;
+}
+
 export interface RecentLaunches {
   hours: number;
+  /** How many of the newest launches were asked for (`--limit`). */
+  limit: number;
   /** The block the window ends at. */
   head: Snapshot;
   fromBlock: bigint;
   /** Launches the factory announced in the window. */
   total: number;
-  graduations: GraduationEvent[];
+  /** Every graduation in the window's blocks, whenever its curve launched. */
+  graduations: WindowGraduation[];
   /** The newest of them, with their curves' state. */
   launches: Launch[];
   /** Where the curves' state was read. */
@@ -93,18 +125,35 @@ export async function recentLaunches(reader: ChainReader, hours: number, limit: 
   const fromBlock = head.block - span + 1n;
   const scan = await scanFactory(reader, fromBlock, head.block);
   const { launches, read } = await readLaunches(reader, scan.launches.slice(0, limit), cache);
-  // The pair assets of launches not listed, for the count by pair asset: one more call at most.
-  await readAssets(
-    reader,
-    scan.launches.map((event) => event.pairToken),
-    cache,
-  );
+  // Each graduation's pair asset: from its launch event when the token launched in the window, else from the
+  // factory's record, read in one call for those graduations only.
+  const pairOf = new Map(scan.launches.map((event) => [lower(event.token), event.pairToken]));
+  const older = scan.graduations.filter((event) => !pairOf.has(lower(event.token)));
+  if (older.length > 0) {
+    const records = await multicall(
+      reader,
+      older.map((event) => ({ address: PONS_V2_FACTORY, abi: FACTORY_ABI, functionName: "getLaunchedToken", args: [event.token] })),
+    );
+    older.forEach((event, i) => {
+      const result = records.results[i];
+      const record = result?.ok ? (result.value as { token: string; pairToken: Address; exists: boolean }) : null;
+      if (record?.exists && lower(record.token) === lower(event.token)) pairOf.set(lower(event.token), record.pairToken);
+    });
+  }
+  // The pair assets of launches not listed and of graduations, for the count by pair asset: one more call at most.
+  await readAssets(reader, [...scan.launches.map((event) => event.pairToken), ...older.flatMap((event) => pairOf.get(lower(event.token)) ?? [])], cache);
+  const assetOf = (address: string): Asset | null => (address === lower(NATIVE) ? ETH : (cache.get(address) ?? null));
   const counts = new Map<string, number>();
   for (const event of scan.launches) counts.set(lower(event.pairToken), (counts.get(lower(event.pairToken)) ?? 0) + 1);
   const byPair = [...counts]
-    .map(([address, launches]): PairCount => ({ address, pair: address === lower(NATIVE) ? ETH : (cache.get(address) ?? null), launches }))
+    .map(([address, launches]): PairCount => ({ address, pair: assetOf(address), launches }))
     .sort((a, b) => b.launches - a.launches || (a.address < b.address ? -1 : 1));
-  return { hours, head, fromBlock: fromBlock < 0n ? 0n : fromBlock, total: scan.launches.length, graduations: scan.graduations, launches, read, byPair };
+  const launched = new Set(scan.launches.map((event) => lower(event.token)));
+  const graduations = scan.graduations.map((event): WindowGraduation => {
+    const pairToken = pairOf.get(lower(event.token));
+    return { ...event, launchedInWindow: launched.has(lower(event.token)), pair: pairToken === undefined ? null : assetOf(lower(pairToken)) };
+  });
+  return { hours, limit, head, fromBlock: fromBlock < 0n ? 0n : fromBlock, total: scan.launches.length, graduations, launches, read, byPair };
 }
 
 export type LastHour =
@@ -191,7 +240,7 @@ export function recentLaunchesJson(result: RecentLaunches) {
     timestamp: result.read.timestamp,
     launches: result.launches.map(launchJson),
     notListed: result.total - result.launches.length,
-    graduations: result.graduations.map((graduation) => toJson(graduation)),
+    graduations: result.graduations.map(({ pair, ...graduation }) => ({ ...toJson(graduation), pair: assetJson(pair) })),
     disclaimer: checkDisclaimer(result.read.block),
   };
 }

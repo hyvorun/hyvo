@@ -1,4 +1,5 @@
 import { sameAddress, shortenAddress } from "../chain/abi.js";
+import { NO_HOLDERS_LISTED } from "../chain/blockscout.js";
 import { formatPct } from "../chain/units.js";
 import { makeFinding } from "../output/finding.js";
 import type { Address, Finding } from "../types.js";
@@ -13,7 +14,10 @@ export type HoldersInput = {
   holders: { address: Address; value: bigint }[] | null;
   /** Who created or launched the token, when known; its share is read from the same holder list. */
   deployer: Address | null;
-  /** Addresses that hold tokens for others or for nobody: burn addresses, the PoolManager, the venue's pool. */
+  /**
+   * Addresses that hold tokens for others or for nobody: burn addresses, the V4 PoolManager, the Pons curve and the
+   * token's pools with WETH (chooseVenue).
+   */
   excluded: { address: Address; label: string }[];
   /**
    * Where the holders were read when they did not come from Blockscout with the caller's own key, such as
@@ -35,7 +39,8 @@ function pct(part: bigint, whole: bigint): number {
 
 /**
  * How much of the supply the ten largest holders hold. Burn addresses, the Uniswap V4 PoolManager (which holds
- * pool liquidity, not a holder's tokens) and the venue's own pool are left out, and the evidence says so.
+ * pool liquidity, not a holder's tokens), the token's Pons curve and its Uniswap V2 pair and V3 pools with WETH are
+ * left out, and the evidence names them. A pool with another asset, which this check does not look for, stays in.
  */
 export function holdersCheck(input: HoldersInput): Finding {
   const title = CHECKS.holders.title;
@@ -49,10 +54,13 @@ export function holdersCheck(input: HoldersInput): Finding {
     });
   }
   const { totalSupply, holders } = input;
-  if (!holders || totalSupply === null || totalSupply === 0n) {
+  // A page that lists no holder is the index not having them, not ten holders who hold 0%.
+  if (!holders || holders.length === 0 || totalSupply === null || totalSupply === 0n) {
     const why = !holders
       ? (input.missing ?? "Blockscout did not return the token's holders")
-      : "the token's total supply is unknown or zero, so no share of it can be given";
+      : holders.length === 0
+        ? NO_HOLDERS_LISTED
+        : "the token's total supply is unknown or zero, so no share of it can be given";
     return makeFinding({ id: "holders", title, status: "skipped", evidence: input.source && holders ? `${why} (${input.source})` : why });
   }
 

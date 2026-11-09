@@ -1,8 +1,9 @@
-﻿import { CALL_ENDPOINTS, LOG_ENDPOINTS } from "@hyvo/launches";
-import { DEMO_HEAD, DEMO_LAUNCHES, DEMO_V1, demoChain, fakeAddress } from "@hyvo/launches/testing";
+﻿import { CALL_ENDPOINTS, LOG_ENDPOINTS, NATIVE } from "@hyvo/launches";
+import { DEMO_HEAD, DEMO_LAUNCHES, DEMO_PACE, DEMO_TIME, DEMO_V1, demoChain, FakeChain, fakeAddress } from "@hyvo/launches/testing";
 import { describe, expect, it } from "vitest";
 import { hasBannedWords } from "../../check/src/output/copy";
-import { run, testContext, type Route } from "./helpers";
+import { TOOLS } from "../src/commands/mcp";
+import { mistype, run, testContext, type Route } from "./helpers";
 
 const RPC = "https://rpc.test";
 const PUBLIC = [...CALL_ENDPOINTS, ...LOG_ENDPOINTS.map((option) => (typeof option === "string" ? option : option.url))].map((url) => new URL(url).origin);
@@ -29,7 +30,7 @@ describe("hyvo launches", () => {
     expect(err).toBe("");
     expect(out).toContain("HYVO LAUNCHES   Pons V2, the last 6 hours");
     expect(out).toContain(`curves read at block ${DEMO_HEAD}`);
-    expect(out).toContain("10 launches in the last 6 hours, 1 graduated. Paired with: ETH 6, USDG 2,");
+    expect(out).toContain("10 launches in the last 6 hours. Paired with: ETH 6, USDG 2,");
     expect(out).toMatch(/^ {2}age +token +pair +phase +on its curve +creator tax +address$/m);
     expect(out).toMatch(new RegExp(`^ {2}3 min +FIZZ +ETH +on its curve +0\\.05994 of 4\\.2 ETH, 1\\.4% +0% +${fizz.token}$`, "m"));
     expect(out).toMatch(new RegExp(`^ {2}1 h 10 min +BRISK +ETH +graduated +moved to its pool +10% +${brisk.token}$`, "m"));
@@ -43,12 +44,77 @@ describe("hyvo launches", () => {
 
   it("narrows the window with --hours and the rows with --limit", async () => {
     const hour = await launches(["--rpc", RPC, "--hours", "1"]);
-    expect(hour.out).toContain("5 launches in the last hour, 1 graduated. Paired with: ETH 2, USDG 2, NVDA 1.");
+    expect(hour.out).toContain("5 launches in the last hour. Paired with: ETH 2, USDG 2, NVDA 1.");
     expect(hour.out).not.toContain("BRISK");
     const three = await launches(["--rpc", RPC, "--limit", "3"]);
     expect(three.out).toContain("7 more in the window: hyvo launches --hours 6 --limit 10");
     expect(three.out).toContain("GLINT");
     expect(three.out).not.toContain("MOTE");
+  });
+
+  it("counts the curves that graduated in the window apart from the window's launches, and says when each launched", async () => {
+    // BRISK launched 70 minutes ago and graduated about 35 minutes ago: inside the 6-hour window both times, and
+    // inside the last hour only for its graduation, which is not one of that hour's five launches.
+    const six = await launches(["--rpc", RPC]);
+    expect(six.out).toContain("1 curve graduated to its pool in these blocks (it launched in the window).");
+    const hour = await launches(["--rpc", RPC, "--hours", "1"]);
+    expect(hour.out).not.toMatch(/5 launches in the last hour, 1 graduated/);
+    expect(hour.out).toContain("1 curve graduated to its pool in these blocks (it launched before the window).");
+    const json = JSON.parse((await launches(["--rpc", RPC, "--hours", "1", "--json"])).out);
+    expect(json.graduations).toEqual([expect.objectContaining({ token: brisk.token, launchedInWindow: false })]);
+  });
+
+  it("says a curve moved to its pool only when the factory's PoolGraduated is in the window", async () => {
+    // FIZZ's curve has been swept (graduated() is true), but the factory has not created its pool yet.
+    const chain = demoChain();
+    chain.launches[0] = { ...chain.launches[0]!, phase: 1 };
+    const { out } = await launches(["--rpc", RPC], [chainRoute([RPC], chain)]);
+    expect(out).toMatch(new RegExp(`^ {2}3 min +FIZZ +ETH +graduated +off its curve, no pool yet +0% +${fizz.token}$`, "m"));
+    expect(out).toMatch(new RegExp(`^ {2}1 h 10 min +BRISK +ETH +graduated +moved to its pool +10% +${brisk.token}$`, "m"));
+  });
+
+  it("suggests a larger --limit only while one would list more, and a shorter window past the newest 100", async () => {
+    // 105 launches in the last 6 hours, one a minute.
+    const crowded = new FakeChain({
+      head: DEMO_HEAD,
+      headTime: DEMO_TIME,
+      blocksPerSecond: DEMO_PACE,
+      launches: Array.from({ length: 105 }, (_, i) => ({
+        token: fakeAddress(`crowd:token:${i}`),
+        curve: fakeAddress(`crowd:curve:${i}`),
+        creator: fakeAddress(`crowd:creator:${i}`),
+        pairToken: NATIVE,
+        symbol: `C${i}`,
+        name: `Crowd ${i}`,
+        block: DEMO_HEAD - BigInt(Math.round((i + 1) * 60 * DEMO_PACE)),
+        launchedAt: DEMO_TIME - (i + 1) * 60,
+        graduationThreshold: 4_200_000_000_000_000_000n,
+        liquidity: 10n ** 16n,
+      })),
+    });
+    const route = [chainRoute([RPC], crowded)];
+    const most = await launches(["--rpc", RPC, "--limit", "100"], route);
+    expect(most.code).toBe(0);
+    expect(most.out).not.toContain("--limit 100");
+    expect(most.out).toContain("5 more in the window: at most the newest 100 are listed; a shorter window has fewer: hyvo launches --hours 1");
+    const few = await launches(["--rpc", RPC, "--limit", "20"], route);
+    expect(few.out).toContain("85 more in the window: hyvo launches --hours 6 --limit 100");
+  });
+
+  it("gives each graduation its pair asset, and says which unit each amount is in", async () => {
+    const eth = { address: NATIVE, symbol: "ETH", decimals: 18 };
+    const six = JSON.parse((await launches(["--rpc", RPC, "--json"])).out);
+    expect(six.graduations).toEqual([expect.objectContaining({ token: brisk.token, pair: expect.objectContaining(eth), pairTokenAmount: "4200000000000000000" })]);
+    // In the last hour BRISK's launch is outside the window: its pair asset comes from the factory's record.
+    const hour = JSON.parse((await launches(["--rpc", RPC, "--hours", "1", "--json"])).out);
+    expect(hour.graduations).toEqual([expect.objectContaining({ token: brisk.token, launchedInWindow: false, pair: expect.objectContaining(eth) })]);
+
+    const help = (await launches(["--help"])).out;
+    expect(help).toContain("for liquidity, graduationThreshold, volume, tax and pairTokenAmount, and in the token's");
+    expect(help).toContain("(18 decimals) for supply, reserved, sellable and tokenAmount");
+    const described = (name: string) => TOOLS.find((tool) => tool.name === name)!.description;
+    expect(described("recent_launches")).toContain("each graduation's tokenAmount in the token's smallest unit (18 decimals)");
+    expect(described("launch_facts")).toContain("supply, reserved and sellable in the token's smallest unit (18 decimals for a Pons V2 token)");
   });
 
   it("prints JSON with every amount and block as a decimal string", async () => {
@@ -126,6 +192,24 @@ describe("hyvo launches", () => {
     const json = await launches(["--rpc", RPC, "--json"], []);
     expect(json.code).toBe(2);
     expect(JSON.parse(json.out).error.code).toBe("chain_unavailable");
+  });
+
+  it("reads an address typed in capitals or small letters, and refuses mixed case that fails its checksum", async () => {
+    for (const typed of [`0x${fizz.token.slice(2).toUpperCase()}`, fizz.token.toLowerCase()]) {
+      const { code, out, err } = await launches([typed, "--rpc", RPC]);
+      expect(err, typed).toBe("");
+      expect(code, typed).toBe(0);
+      expect(out).toContain(`Pons V2 launch · ${fizz.token} · block ${DEMO_HEAD}`);
+    }
+    const stranger = fakeAddress("not a launch");
+    const none = await launches([stranger.toLowerCase(), "--rpc", RPC]);
+    expect(none.out).toContain(`The Pons V2 launch factory has no record of ${stranger}`);
+
+    const mistyped = mistype(fizz.token);
+    const refused = await launches([mistyped, "--rpc", RPC]);
+    expect(refused.code).toBe(64);
+    expect(refused.err).toContain("capital letters do not match its checksum");
+    expect(refused.requests).toEqual([]);
   });
 
   it("refuses bad options before any request", async () => {

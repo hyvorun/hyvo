@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
+import { CALL_ENDPOINTS } from "@hyvo/launches";
 import { FEED_DIRECTORY_URL, SNAPSHOT } from "@hyvo/stocks";
 import { describe, expect, it } from "vitest";
 import { hasBannedWords } from "../../check/src/output/copy";
+import { stockFacts, stocksClient } from "../src/stocks";
 import { run, testContext, type Route } from "./helpers";
 
 const RPC = "https://rpc.test";
@@ -127,11 +129,55 @@ describe("hyvo stocks <ticker|address>", () => {
     }
   });
 
+  it("reports a chain that refuses the token's reads with exit 2, not as a contract that is no stock token", async () => {
+    const { route } = replay("rpc-nvda.json");
+    // Every eth_call is answered HTTP 429, as a busy public endpoint answers; everything else as recorded.
+    const busy: Route = (url, body) =>
+      url.origin === RPC && body && (JSON.parse(body) as { method: string }).method === "eth_call" ? { status: 429, body: { error: "too many requests" } } : undefined;
+    for (const argv of [["NVDA", "--rpc", RPC], ["NVDA", "--rpc", RPC, "--json"]]) {
+      const { code, out, err } = await stocks(argv, [busy, route, directory]);
+      expect(code, argv.join(" ")).toBe(2);
+      expect(out + err).not.toContain("not a stock token");
+      expect(out + err).not.toContain("not-a-stock-token");
+      if (argv.includes("--json")) expect(JSON.parse(out).error.code).toBe("chain_unavailable");
+      else expect(err).toMatch(/^hyvo: the token could not be read: /);
+    }
+  });
+
+  it("asks each public endpoint twice at most for a read that fails, not eight times", async () => {
+    const origins = CALL_ENDPOINTS.map((endpoint) => new URL(endpoint).origin);
+    const busy: Route = (url) => (origins.includes(url.origin) ? { status: 503, body: { error: "busy" } } : undefined);
+    const { code, requests } = await stocks(["NVDA"], [busy, directory]);
+    expect(code).toBe(2);
+    const asked = requests.filter((request) => origins.includes(new URL(request.url).origin));
+    // The list once, then once more.
+    expect(asked.map((request) => new URL(request.url).origin)).toEqual([...origins, ...origins]);
+  });
+
   it("reports a chain that does not answer with exit 2", async () => {
     const { code, err } = await stocks(["NVDA", "--rpc", RPC], [directory]);
     expect(code).toBe(2);
     expect(err).toMatch(/^hyvo: the token could not be read: /);
     expect(err.split("\n").filter(Boolean)).toHaveLength(1);
+  });
+});
+
+describe("stockFacts", () => {
+  it("gives up on Chainlink's feed directory after its time limit, and keeps what the chain said", async () => {
+    const { route } = replay("rpc-nvda.json");
+    // The directory never answers: only the request's signal can end it.
+    const fetchFn = (async (input: string | URL | Request, init?: RequestInit) => {
+      const url = new URL(typeof input === "string" ? input : input instanceof URL ? input.href : input.url);
+      if (url.href === FEED_DIRECTORY_URL) {
+        return new Promise<Response>((_resolve, reject) => init?.signal?.addEventListener("abort", () => reject(init.signal!.reason)));
+      }
+      const answer = route(url, typeof init?.body === "string" ? init.body : undefined)!;
+      return new Response(JSON.stringify(answer.body), { status: 200, headers: { "content-type": "application/json" } });
+    }) as typeof fetch;
+    const client = stocksClient({ url: RPC, from: "option" }, fetchFn);
+    const facts = await stockFacts(client, { address: NVDA.address, ticker: "NVDA" }, fetchFn, 50);
+    expect(facts.report.verdict.kind).toBe("registered");
+    expect(facts.report.feed).toMatchObject({ kind: "directory-failed" });
   });
 });
 

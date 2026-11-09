@@ -51,6 +51,14 @@ export function cleanText(input: unknown, max: number): string | null {
   return chars.length > max ? `${chars.slice(0, max - 1).join("").trimEnd()}…` : text;
 }
 
+/**
+ * Whether `text` is what cleanText(…, max) makes of a longer input: cut to fit and ending in "…", so the input may
+ * go on differently past the cut. Text that only happens to end that way counts as cut too.
+ */
+export function wasCut(text: string | null, max: number): boolean {
+  return text !== null && text.endsWith("…") && Array.from(text).length >= max - 1;
+}
+
 export function cleanSymbol(input: unknown): string | null {
   return cleanText(input, SYMBOL_MAX);
 }

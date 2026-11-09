@@ -60,6 +60,7 @@ describe("readHolderFacts", () => {
       creatorMissing: null,
       requests: 3,
       settled: true,
+      limited: false,
     });
     expect(urls.map((u) => new URL(u).pathname).sort()).toEqual([
       `/4663/api/v2/addresses/${TOKEN}`,
@@ -78,6 +79,7 @@ describe("readHolderFacts", () => {
     expect(facts.creatorMissing).toBe("Blockscout's API could not be reached for the token's creator");
     expect(facts.totalSupply).toBe(1000n);
     expect(facts.settled).toBe(false);
+    expect(facts.limited).toBe(true);
     expect(limited.urls).toHaveLength(3);
     // The key, which a failing fetch can put in its message, reaches no reason.
     expect(JSON.stringify(serializeHolderFacts(facts))).not.toContain(KEY);
@@ -87,6 +89,21 @@ describe("readHolderFacts", () => {
     expect(none.holdersMissing).toBe("Blockscout's API refused the request for the token's holders");
     expect(none.creatorMissing).toBe("Blockscout's index names no creator for the token");
     expect(none.holderCount).toBeNull();
+  });
+
+  it("takes an empty page of holders, or one with no row it can read, for holders not read yet, and keeps neither", async () => {
+    const empty = fakeBlockscout({ holders: { status: 200, body: { items: [], next_page_params: null } } });
+    const none = await readHolderFacts(TOKEN, { blockscoutKey: KEY, fetch: empty.fetch, source: SOURCE });
+    expect(none.holders).toBeNull();
+    expect(none.holdersMissing).toBe("Blockscout's index lists no holders for the token yet");
+    expect(none.totalSupply).toBe(1000n);
+    expect(none.creator).not.toBeNull();
+    expect(none.settled).toBe(false);
+
+    const unreadable = fakeBlockscout({ holders: { status: 200, body: { items: [{ address: { hash: "nope" }, value: "1" }] } } });
+    const broken = await readHolderFacts(TOKEN, { blockscoutKey: KEY, fetch: unreadable.fetch, source: SOURCE });
+    expect(broken.holders).toBeNull();
+    expect(broken.holdersMissing).toBe("Blockscout's API gave no list of holders");
   });
 
   it("gives up on a request that takes too long", async () => {

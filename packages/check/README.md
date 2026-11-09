@@ -39,6 +39,7 @@ pnpm --filter @hyvo/check check 0x8eee67a8aad993f15b4506975b38c52f6d3ce758 [--et
 | Option | Default | Meaning |
 |---|---|---|
 | `rpcUrls` | `["https://robinhood.drpc.org"]` | JSON-RPC endpoints, tried in order; the list is tried twice. |
+| `rpcAttempts` | every URL twice | Requests one JSON-RPC call may send at most, across `rpcUrls`. Hyvo's API sets 3 to stay inside a Cloudflare Worker's subrequest limit. |
 | `fetch` | `globalThis.fetch` | Any fetch with the shape of `FetchLike`. |
 | `signal` | none | Aborts every request; the promise rejects with `CheckError("aborted")`. |
 | `sourcifyUrl` | `https://sourcify.dev/server` | Sourcify server for verified source, ABIs and deployments. |
@@ -76,7 +77,7 @@ or `skipped` (it could not look, and the evidence says why). `CHECKS[id].looksFo
 | `pause` | Pause or trading switch | `pause`, `setTradingEnabled`, `enableTrading` and similar | same |
 | `venue` | Trading venue | Where the token trades against ETH | Pons factories, Uniswap factories, the V4 PoolManager |
 | `sell-simulation` | Sell or transfer shortfall | After the buy: a transfer or sell that reverts, or any step short of the venue's own math (a buy that reverts is `skipped`) | the probe, in one `eth_call` |
-| `holders` | Top holders | The share of the 10 largest holders, burn addresses and pools left out | Blockscout (needs a key) |
+| `holders` | Top holders | The share of the 10 largest holders, leaving out burn addresses, the V4 PoolManager, the token's Pons curve and its Uniswap V2 pair and V3 pools with WETH (a pool with another asset stays in) | Blockscout (needs a key) |
 | `deployer` | Deployer | Who created or launched the token | the Pons factories' records, Sourcify, Blockscout |
 
 For the function checks, a verified ABI is authoritative. Without one, the selectors of a fixed list of

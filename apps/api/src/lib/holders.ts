@@ -7,12 +7,14 @@
  *   API answers is parsed fields (addresses, digits, a transaction hash) and fixed phrases, never Blockscout's text,
  *   and the logs carry counts and statuses. `redact` takes it out of anything logged all the same.
  * - Cache. The facts, not Blockscout's whole answers, are kept per token for the rest of a ten-minute window in the
- *   Cache API, and both routes read the same entry. Facts with a part Blockscout did not answer (a 429, a timeout) are
- *   not kept, so the next request asks again.
- * - Limits. A read is three requests to Blockscout, whose free tier allows 5 requests a second (item 24). Each IP may
- *   start HOLDER_READS_PER_MINUTE reads a minute through the holders route, and the Worker as a whole
- *   BLOCKSCOUT_READS_PER_MINUTE; past that the facts say so and nothing is asked. Inside a check the three requests
- *   join its own: at most 46 + 3 = 49 of the 50 subrequests a free-plan request may make (check.ts).
+ *   Cache API, and both routes read the same entry. Facts with a part Blockscout did not answer (a 429, a timeout), or
+ *   with a page that lists no holder, are not kept, so the next request asks again.
+ * - Limits. A read is three requests to Blockscout, whose free tier allows 5 requests a second and 100,000 credits a
+ *   day (item 24). Each IP may start HOLDER_READS_PER_MINUTE reads a minute through the holders route, and the Worker
+ *   as a whole BLOCKSCOUT_READS_PER_MINUTE and BLOCKSCOUT_READS_PER_DAY; past that, or for BLOCKSCOUT_PAUSE_S after
+ *   Blockscout answers 429, the facts say so and nothing is asked. Inside a check the three requests and the cache
+ *   entry's match and put join its own: at most 37 + 3 + 2 = 42 of the 50 subrequests a free-plan request may make,
+ *   the Cache API's calls included (check.ts).
  * - CPU. One JSON.parse per answer (the holders page is Blockscout's first page, 50 rows), and only the fields
  *   above are kept.
  */
@@ -37,6 +39,16 @@ export const HOLDERS_WINDOW_S = 600;
 export const HOLDER_READS_PER_MINUTE = 10;
 /** Reads the whole Worker may start a minute: 3 requests each, 3 a second on average, under Blockscout's 5. */
 export const BLOCKSCOUT_READS_PER_MINUTE = 60;
+/**
+ * Reads the whole Worker may start in a UTC day: 90,000 requests, under the free tier's 100,000 daily credits if a
+ * request costs one (item 30: not measured yet), leaving the rest of the key's day to the engine's Wallet Clone,
+ * which uses the same key. Without it, the minute's limit alone allows 259,200 requests a day.
+ */
+export const BLOCKSCOUT_READS_PER_DAY = 30_000;
+/** The rate-limit scope of the day's count. The cron keeps its rows for the whole day (scheduled.ts). */
+export const BLOCKSCOUT_DAY_SCOPE = "blockscout-day";
+/** After Blockscout answers 429, this isolate asks it nothing for this long, rather than at once again. */
+export const BLOCKSCOUT_PAUSE_S = 30;
 /** Blockscout's own keyed API for chain 4663 (item 24). */
 const BLOCKSCOUT_API_URL = "https://api.blockscout.com/4663/api";
 /** A request to Blockscout that has not answered by then counts as no answer. */
@@ -62,10 +74,13 @@ export interface HoldersAnswer {
 }
 
 let fetchOverride: FetchLike | null = null;
+/** Until when (Unix seconds) this isolate asks Blockscout nothing: set by a 429. */
+let pausedUntil = 0;
 
-/** Tests only: answer Blockscout's requests with `fetch`; `null` restores the Worker's own fetch. */
+/** Tests only: answer Blockscout's requests with `fetch`, and forget any 429; `null` restores the Worker's own fetch. */
 export function setHoldersFetch(next: FetchLike | null): void {
   fetchOverride = next;
+  pausedUntil = 0;
 }
 
 /** The Worker's Blockscout key, or null: without one, top holders are not read. */
@@ -120,31 +135,31 @@ export async function holderFacts(
 
   if (options.perIp) await rateLimit(env.DB, "holders", client.ip, HOLDER_READS_PER_MINUTE, 60, now);
   const started = Date.now();
-  let facts: HolderFacts;
+  let facts: HolderFacts | null = null;
+  let why: string | null = null;
   let settled = false;
+  let limited = false;
   let requests = 0;
   try {
-    await rateLimit(env.DB, "blockscout", "worker", BLOCKSCOUT_READS_PER_MINUTE, 60, now);
-    const read = await readHolderFacts(token, {
-      blockscoutKey: key,
-      blockscoutUrl: BLOCKSCOUT_API_URL,
-      source: holdersSource(now),
-      timeoutMs: REQUEST_TIMEOUT_MS,
-      retry429: false,
-      signal: options.signal,
-      ...(fetchOverride ? { fetch: fetchOverride } : {}),
-    });
-    ({ settled, requests, ...facts } = read);
-  } catch (error) {
-    const why =
-      error instanceof ApiError && error.status === 429
-        ? `Hyvo's API has read Blockscout's index as often as it may this minute; ask again in ${error.retryAfterS ?? 60} s`
-        : "Hyvo's API could not read Blockscout's index just now";
-    if (!(error instanceof ApiError)) {
-      console.warn(redact(JSON.stringify({ level: "warn", event: "holders_failed", token, error: String(error).slice(0, 200) }), key));
+    why = await mayNotRead(env, now);
+    if (why === null) {
+      const read = await readHolderFacts(token, {
+        blockscoutKey: key,
+        blockscoutUrl: BLOCKSCOUT_API_URL,
+        source: holdersSource(now),
+        timeoutMs: REQUEST_TIMEOUT_MS,
+        retry429: false,
+        signal: options.signal,
+        ...(fetchOverride ? { fetch: fetchOverride } : {}),
+      });
+      ({ settled, requests, limited, ...facts } = read);
+      if (limited) pausedUntil = Math.max(pausedUntil, now + BLOCKSCOUT_PAUSE_S);
     }
-    facts = { source: holdersSource(now), totalSupply: null, holderCount: null, holders: null, holdersMissing: why, creator: null, creatorMissing: why };
+  } catch (error) {
+    why = "Hyvo's API could not read Blockscout's index just now";
+    console.warn(redact(JSON.stringify({ level: "warn", event: "holders_failed", token, error: String(error).slice(0, 200) }), key));
   }
+  facts ??= { source: holdersSource(now), totalSupply: null, holderCount: null, holders: null, holdersMissing: why, creator: null, creatorMissing: why };
 
   const body: HoldersResponse = {
     token,
@@ -162,6 +177,7 @@ export async function holderFacts(
         ms: Date.now() - started,
         requests,
         settled,
+        limited,
         holders: facts.holders?.length ?? null,
         creator: facts.creator !== null,
       }),
@@ -171,6 +187,31 @@ export async function holderFacts(
   if (!settled) return { text, facts, hit: false, maxAgeS: 0 };
   client.defer(toCache(cacheKey, text, maxAgeS));
   return { text, facts, hit: false, maxAgeS };
+}
+
+/**
+ * Null when the Worker may read Blockscout now, or why not, in the facts' words: a 429 in the last
+ * BLOCKSCOUT_PAUSE_S in this isolate, then the Worker's reads this minute, then its reads this UTC day. The day's
+ * count is taken last, so reads the minute's limit turns away do not use it up.
+ */
+async function mayNotRead(env: Env, now: number): Promise<string | null> {
+  if (pausedUntil > now) {
+    return `Blockscout's API answered 429 to Hyvo's API in the last ${BLOCKSCOUT_PAUSE_S} s; ask again in ${pausedUntil - now} s`;
+  }
+  const spent = (error: unknown): error is ApiError => error instanceof ApiError && error.status === 429;
+  try {
+    await rateLimit(env.DB, "blockscout", "worker", BLOCKSCOUT_READS_PER_MINUTE, 60, now);
+  } catch (error) {
+    if (spent(error)) return `Hyvo's API has read Blockscout's index as often as it may this minute; ask again in ${error.retryAfterS ?? 60} s`;
+    throw error;
+  }
+  try {
+    await rateLimit(env.DB, BLOCKSCOUT_DAY_SCOPE, "worker", BLOCKSCOUT_READS_PER_DAY, 86_400, now);
+  } catch (error) {
+    if (spent(error)) return "Hyvo's API has read Blockscout's index as often as it may today; ask again after 00:00 UTC";
+    throw error;
+  }
+  return null;
 }
 
 function safeJson(text: string): unknown {

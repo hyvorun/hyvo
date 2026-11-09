@@ -97,6 +97,12 @@ export async function readStock(client: PublicClient, address: Address, options:
     }) as Promise<({ status: "success"; result: unknown } | { status: "failure"; error: Error })[]>,
   ]);
 
+  // The registry's paused() and implementation() answer whenever the eth_call goes through, so a batch in which
+  // every read failed is a call that did not (an endpoint's 429, a timeout): a failed read, not a contract that does
+  // not answer like a stock token.
+  const refused = results.length > 0 && results.every((result) => result.status === "failure") ? results[0] : undefined;
+  if (refused?.status === "failure") throw refused.error;
+
   const value = <T>(index: number) => ok<T>(results[index]!);
   const hasCode = code !== undefined && code !== "0x";
   const beaconHex = beaconWord && beaconWord !== "0x" ? (`0x${beaconWord.slice(-40)}` as Address) : null;

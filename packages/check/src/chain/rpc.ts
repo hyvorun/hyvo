@@ -2,8 +2,9 @@
 // below, none of which signs or sends anything.
 //
 // Endpoints are tried in order. A transport failure (timeout, network error, HTTP error, an RPC error such as a
-// node that lacks the state) moves on to the next endpoint, and the whole list is tried twice. A revert is an
-// answer, not a failure, so it is thrown at once as an RpcError of kind "revert".
+// node that lacks the state) moves on to the next endpoint, and the whole list is tried twice, or until `attempts`
+// requests were sent for the call. A revert is an answer, not a failure, so it is thrown at once as an RpcError of
+// kind "revert".
 
 import { HttpError, hostOf, type Net, sleep } from "../net.js";
 
@@ -48,16 +49,22 @@ export class JsonRpcClient {
   constructor(
     private readonly net: Net,
     private readonly urls: readonly string[],
+    /** Requests sent for one call at most, across the URLs; default every URL twice. */
+    private readonly attempts = urls.length * 2,
   ) {
     if (urls.length === 0) throw new Error("at least one RPC URL is needed");
+    if (!Number.isInteger(attempts) || attempts < 1) throw new Error("attempts must be a whole number of at least 1");
   }
 
   async call<T>(method: string, params: unknown[]): Promise<T> {
     if (!READ_ONLY_METHODS.has(method)) throw new Error(`not a read-only method: ${method}`);
     let last: RpcError | undefined;
-    for (let round = 0; round < 2; round++) {
+    let sent = 0;
+    for (let round = 0; round < 2 && sent < this.attempts; round++) {
       if (round > 0) await sleep(300);
       for (const url of this.urls) {
+        if (sent >= this.attempts) break;
+        sent++;
         try {
           return (await this.once(url, method, params)) as T;
         } catch (error) {

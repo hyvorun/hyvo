@@ -18,6 +18,7 @@ import {
   type StockReport,
 } from "@hyvo/stocks";
 import { createPublicClient, fallback, http, type Address, type PublicClient } from "viem";
+import { timedFetch } from "./commands/common.js";
 import type { Resolved } from "./config.js";
 import { checkDisclaimer } from "./format/check.js";
 import { toJson } from "./requests.js";
@@ -26,13 +27,17 @@ export const CHAIN_ID = 4663;
 const TIMEOUT_MS = 12_000;
 
 /**
- * A viem client over Robinhood Chain's public endpoints, tried in order, or over the one RPC the user chose.
- * CCIP-Read is off: a contract's revert could otherwise name a URL for the client to fetch.
+ * A viem client over Robinhood Chain's public endpoints, tried in order, or over the one RPC the user chose. A read
+ * that fails is sent once more: to the one RPC, or down the list of public endpoints again, never more, since each
+ * endpoint's own retries would multiply with the list's. CCIP-Read is off: a contract's revert could otherwise name
+ * a URL for the client to fetch.
  */
 export function stocksClient(rpc: Resolved, fetchFn: typeof fetch): PublicClient {
-  const urls = rpc.from === "default" ? [...CALL_ENDPOINTS] : [rpc.url];
-  const transports = urls.map((url) => http(url, { fetchFn, timeout: TIMEOUT_MS, retryCount: 1 }));
-  return createPublicClient({ transport: transports.length === 1 ? transports[0]! : fallback(transports), ccipRead: false }) as PublicClient;
+  if (rpc.from !== "default") {
+    return createPublicClient({ transport: http(rpc.url, { fetchFn, timeout: TIMEOUT_MS, retryCount: 1 }), ccipRead: false }) as PublicClient;
+  }
+  const transports = CALL_ENDPOINTS.map((url) => http(url, { fetchFn, timeout: TIMEOUT_MS, retryCount: 0 }));
+  return createPublicClient({ transport: fallback(transports, { retryCount: 1 }), ccipRead: false }) as PublicClient;
 }
 
 export interface StockList {
@@ -83,9 +88,17 @@ export interface StockFacts {
   session: SessionNow;
 }
 
-/** One contract read as a stock token, with its Chainlink feed found through Chainlink's directory. */
-export async function stockFacts(client: PublicClient, target: { address: Address; ticker: string | null }, fetchFn: typeof fetch): Promise<StockFacts> {
-  const report = await stockReport(client, target.address, { directory: () => fetchFeedDirectory(fetchFn) });
+/**
+ * One contract read as a stock token, with its Chainlink feed found through Chainlink's directory. The directory
+ * gets the same time limit as every other read, so a host that never answers cannot hold the command.
+ */
+export async function stockFacts(
+  client: PublicClient,
+  target: { address: Address; ticker: string | null },
+  fetchFn: typeof fetch,
+  timeoutMs = TIMEOUT_MS,
+): Promise<StockFacts> {
+  const report = await stockReport(client, target.address, { directory: () => fetchFeedDirectory(timedFetch(fetchFn, timeoutMs)) });
   return { report, ticker: target.ticker, session: usEquitySession(new Date(report.reading.blockTime * 1000)) };
 }
 

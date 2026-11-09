@@ -4,14 +4,16 @@
  * needs no key, and nothing is signed, approved or sent.
  *
  * Fitted to the Workers Free plan (docs/OPEN_ITEMS.md item 21):
- * - Subrequests. A check makes at most 11 JSON-RPC calls (chain id, head, code, two proxy slots, three multicalls,
- *   an implementation's code, the probe, and a state-override test when the probe returns nothing), and the
- *   client tries each call on every URL twice. With two URLs that is at most 44 requests, plus 2 to Sourcify:
- *   46 of the 50 a request may make. A third URL could pass the limit, so a check uses the first two.
+ * - Subrequests: 50 a request, and calls to the Cache API (match, put) share that quota (Cloudflare's Workers limits
+ *   page, "Cache API limits", read 2026-11-09). A check makes at most 11 JSON-RPC calls (chain id, head, code, two
+ *   proxy slots, three multicalls, an implementation's code, the probe, and a state-override test when the probe
+ *   returns nothing), and sends each at most RPC_ATTEMPTS times across the first two URLs of RPC_URLS: at most 33
+ *   requests, plus 2 to Sourcify, plus a match and a put for the answer in the Cache API: 37.
  *   Measured on 2026-11-09 against dRPC: 7 to 10 JSON-RPC requests and 1 or 2 to Sourcify per token.
  * - Blockscout, with the Worker's key (BLOCKSCOUT_API_KEY), answers for the top holders and the creator: three
- *   requests beside the chain reads, or none when the token's facts are in the cache (lib/holders.ts). That makes
- *   at most 49 of the 50. Without the key, the holder check is left out and the answer says so (`skippedByApi`).
+ *   requests beside the chain reads and a match and a put for the facts' own cache entry, or the match alone when
+ *   the token's facts are in the cache (lib/holders.ts). That makes at most 42 of the 50. Without the key, the holder
+ *   check is left out and the answer says so (`skippedByApi`).
  * - CPU. Measured in Node 24 with recorded answers replayed: 2 to 4 ms for a check on a warm isolate. The first
  *   check on a cold isolate costs more, as the first request of every route does (item 21).
  */
@@ -39,6 +41,8 @@ export const CHECK_WINDOW_S = 60;
 export const CHECKS_PER_MINUTE = 10;
 /** See the subrequest count above. */
 const MAX_RPC_URLS = 2;
+/** Requests one JSON-RPC call may send: the first URL, the second, then the first again after a pause. */
+export const RPC_ATTEMPTS = 3;
 /** dRPC answers or gives up within 2 s (item 3); a request that hangs moves on to the next URL after this. */
 const REQUEST_TIMEOUT_MS = 5_000;
 const ROBINHOOD_CHAIN_ID = 4663;
@@ -170,6 +174,7 @@ async function read(token: string, rpcUrls: string[], holders: HoldersFrom | nul
   try {
     return await checkToken(token, {
       rpcUrls,
+      rpcAttempts: RPC_ATTEMPTS,
       timeoutMs: REQUEST_TIMEOUT_MS,
       signal: deadline.signal,
       ...(runtime.fetch ? { fetch: runtime.fetch } : {}),

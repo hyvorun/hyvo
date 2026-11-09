@@ -67,6 +67,13 @@ export async function run(argv: string[], captured: Captured): Promise<number> {
   return main(argv, captured.ctx);
 }
 
+/** A checksummed address with one letter's case turned, as a mistyped character would leave it. */
+export function mistype(address: string): string {
+  const at = address.slice(2).search(/[a-fA-F]/) + 2;
+  const letter = address[at]!;
+  return address.slice(0, at) + (letter === letter.toUpperCase() ? letter.toLowerCase() : letter.toUpperCase()) + address.slice(at + 1);
+}
+
 export const TOKEN = "0x8EEe67a8aaD993F15b4506975b38c52f6D3ce758";
 export const OWNER = "0x6C1A66A1E887c3C0D0246557Dc6bC289F4365d2E";
 export const PAIR = "0x1111111111111111111111111111111111111111";

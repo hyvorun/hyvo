@@ -161,7 +161,7 @@ A real list, read on 2026-11-09 (three rows left out at the `…`):
   HYVO LAUNCHES   Pons V2, the last hour                                      Robinhood Chain · 4663
   blocks 109980889 to 110015560 · curves read at block 110015583
 
-  17 launches in the last hour, 0 graduated. Paired with: ETH 15, NVDA 2.
+  17 launches in the last hour. Paired with: ETH 15, NVDA 2. No curve graduated to its pool in these blocks.
 
   age      token     pair   phase          on its curve                  creator tax   address
   6 min    BELL      ETH    on its curve   0.06026 of 4.2 ETH, 1.4%      0%            0x603fB6713014Fa7E936763ABafD244B8Eb7cE0a7
@@ -187,8 +187,12 @@ its curve. A Pons V1 token, or an address Pons has no record of, is said to be o
 
 `--json` prints the list as `{ chainId, window, block, timestamp, launches, notListed, graduations, disclaimer }`:
 each launch with its `pair` asset, `graduated`, `creatorTaxBps`, `liquidity` and `graduationThreshold` (decimal
-strings in the pair asset's smallest unit) and `progress` (their ratio). One launch prints `kind` (`v2`, `v1` or
-`none`), the record and curve as read, `lastHour`, `block` and the disclaimer.
+strings in the pair asset's smallest unit) and `progress` (their ratio). `graduations` holds every `PoolGraduated` of
+the window's blocks, with `launchedInWindow` false for a curve that launched before the window, so it is not a count
+of the window's launches, and its `pair` asset: `pairTokenAmount` is in that asset's smallest unit, `tokenAmount` in
+the token's (18 decimals). One launch prints `kind` (`v2`, `v1` or `none`), the record and curve as read, `lastHour`,
+`block` and the disclaimer: `liquidity`, `graduationThreshold` and `lastHour`'s `volume` and `tax` are in the pair
+asset's smallest unit, and `supply`, `reserved` and `sellable` in the token's.
 
 ### `hyvo stocks [<ticker|address>]`
 

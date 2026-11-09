@@ -5,6 +5,7 @@
  */
 import type { Env } from "./env";
 import { config } from "./lib/config";
+import { BLOCKSCOUT_DAY_SCOPE } from "./lib/holders";
 import { sweepStale } from "./lib/jobs";
 import { processCommits } from "./lib/oracle";
 import { scanPayments } from "./lib/payments";
@@ -34,7 +35,9 @@ export async function runScheduled(env: Env, now: number): Promise<Record<string
     db.batch([
       db.prepare("DELETE FROM siwe_nonces WHERE expires_at < ?").bind(now),
       db.prepare("DELETE FROM sessions WHERE expires_at < ?").bind(now),
-      db.prepare("DELETE FROM rate_limits WHERE window_start < ?").bind(now - 3600),
+      // Windows of an hour at most go an hour after they start; the Worker's day of Blockscout reads after its day.
+      db.prepare("DELETE FROM rate_limits WHERE window_start < ? AND key NOT LIKE ?").bind(now - 3600, `${BLOCKSCOUT_DAY_SCOPE}:%`),
+      db.prepare("DELETE FROM rate_limits WHERE window_start < ?").bind(now - 86_400),
     ]).then(() => "ok"),
   );
   return report;
