@@ -1,0 +1,23 @@
+{
+  "name": "@hyvo/launches",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pons launches on Robinhood Chain, read from the chain itself: launch events, curve facts and recent trades",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./testing": "./testing/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "viem": "2.57.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "typescript": "^7.0.2",
+    "vitest": "~5.0.5"
+  }
+}

@@ -15,6 +15,7 @@ export const GROUPS = [
   { id: "simulate", name: "Simulate", line: "Try something on a private copy of the chain before it is real." },
   { id: "verify", name: "Verify", line: "Check what a run did, and that nobody changed it since." },
   { id: "build", name: "Build", line: "Use Hyvo from programs, bots and AI agents." },
+  { id: "explore", name: "Explore", line: "See what is launching on Robinhood Chain, read from the chain itself." },
   { id: "lookup", name: "Look up", line: "Read-only facts from Robinhood Chain, each with the block it was read at." },
   { id: "learn", name: "Learn", line: "Free tools for the arithmetic and the words around a launch." },
 ] as const;
@@ -113,6 +114,15 @@ export const PRODUCTS: Product[] = [
     to: "/docs",
     group: "build",
     gate: "read",
+  },
+  {
+    id: "launches",
+    name: "Launches",
+    line: "Every new Pons launch on Robinhood Chain as it lands: its pair asset, phase, creator tax and liquidity, and what is trading most. Read from the chain in your browser.",
+    who: "Traders, researchers",
+    to: "/launches",
+    group: "explore",
+    gate: "always",
   },
   {
     id: "stocks",

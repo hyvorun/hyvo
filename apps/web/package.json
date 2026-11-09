@@ -13,6 +13,7 @@
   "dependencies": {
     "@fontsource-variable/geist": "5.3.0",
     "@fontsource-variable/geist-mono": "5.3.0",
+    "@hyvo/launches": "workspace:*",
     "@hyvo/schema": "workspace:*",
     "@hyvo/stocks": "workspace:*",
     "@tanstack/react-query": "5.104.3",

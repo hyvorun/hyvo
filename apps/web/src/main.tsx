@@ -41,6 +41,8 @@ const router = createBrowserRouter([
       { path: "/admin", lazy: () => import("./pages/AdminPage").then((m) => ({ Component: m.AdminPage })) },
       { path: "/trust", lazy: () => import("./pages/TrustPage").then((m) => ({ Component: m.TrustPage })) },
       { path: "/token", lazy: () => import("./pages/TokenPage").then((m) => ({ Component: m.TokenPage })) },
+      { path: "/launches", lazy: () => import("./pages/launches/LaunchesPage").then((m) => ({ Component: m.LaunchesPage })) },
+      { path: "/launches/:token", lazy: () => import("./pages/launches/LaunchPage").then((m) => ({ Component: m.LaunchPage })) },
       { path: "/tools", lazy: () => import("./pages/tools/ToolsPage").then((m) => ({ Component: m.ToolsPage })) },
       { path: "/tools/swap", lazy: () => import("./pages/tools/SwapTool").then((m) => ({ Component: m.SwapTool })) },
       { path: "/tools/impermanent-loss", lazy: () => import("./pages/tools/ImpermanentLossTool").then((m) => ({ Component: m.ImpermanentLossTool })) },
