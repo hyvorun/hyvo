@@ -25,7 +25,7 @@ COMMANDS
   watchlist           The tokens watch follows, kept in a local file
   runs                Recent published runs of Hyvo's crowd simulation
   verify <runId>      Recompute a run's hash and compare it with its commit on Robinhood Chain
-  mcp                 A Model Context Protocol server on stdio, with a tool for each of the above
+  mcp                 A Model Context Protocol server on stdio: check, launches, stocks and verify as tools
   config              Where hyvo reads from: the RPC and the API
 
 OPTIONS
