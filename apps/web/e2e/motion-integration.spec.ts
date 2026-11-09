@@ -37,6 +37,66 @@ test("keyboard focus never lands on a block that is still on its way in", async 
   expect(hidden).toEqual([]);
 });
 
+/*
+ * An IntersectionObserver whose callback runs late brings every entry queued since the last one,
+ * oldest first. This one brings a stale "out of view" entry before the current ones, the first time.
+ */
+function lateObserver() {
+  const Native = window.IntersectionObserver;
+  window.IntersectionObserver = class extends Native {
+    constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+      let first = true;
+      super((entries, observer) => {
+        if (first) {
+          first = false;
+          const stale = entries.map(
+            (entry) =>
+              ({
+                target: entry.target,
+                time: entry.time - 16,
+                isIntersecting: false,
+                intersectionRatio: 0,
+                intersectionRect: new DOMRectReadOnly(),
+                boundingClientRect: entry.boundingClientRect,
+                rootBounds: entry.rootBounds,
+              }) as IntersectionObserverEntry,
+          );
+          entries = [...stale, ...entries];
+        }
+        callback(entries, observer);
+      }, options);
+    }
+  };
+}
+
+test("a late observer callback, with a stale entry before the current one, still brings the crowd and the blocks in", async ({ page }) => {
+  await page.addInitScript(lateObserver);
+  // Tall enough that a crowd and a block are on screen at once: no scroll calls the observers again.
+  await page.setViewportSize({ width: page.viewportSize()!.width, height: 2400 });
+  await page.goto("/");
+  const crowd = page.locator("canvas").first();
+  await expect(crowd).toBeInViewport();
+  const drawn = () =>
+    crowd.evaluate((canvas: HTMLCanvasElement) => {
+      const pixels = canvas.getContext("2d")!.getImageData(0, 0, canvas.width, canvas.height).data;
+      let count = 0;
+      for (let i = 3; i < pixels.length; i += 4) if (pixels[i]! > 0) count++;
+      return count;
+    });
+  await expect.poll(drawn, { message: "the crowd's dots are drawn" }).toBeGreaterThan(0);
+  const blocks = () =>
+    page.evaluate(() =>
+      [...document.querySelectorAll(".reveal")]
+        .filter((block) => {
+          const box = block.getBoundingClientRect();
+          return box.top < innerHeight && box.bottom > 0;
+        })
+        .map((block) => block.getAttribute("data-in")),
+    );
+  expect((await blocks()).length).toBeGreaterThan(0);
+  await expect.poll(blocks, { message: "every block on screen has come in" }).not.toContain("false");
+});
+
 test("under reduced motion nothing on the main pages is still moving once they have loaded", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const path of ["/", `/run/${golden.runId}`, "/tools", "/trust"]) {

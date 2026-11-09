@@ -147,6 +147,8 @@ export function useLaunchWindow(hours: number, attempt: number): WindowState {
         }));
       }
       update({ status: "ready", served: [...reader.served] });
+      // Once the effect is cleaned up (another page, another window), no read of the pulse starts.
+      if (!live) return;
 
       // 4. The pulse of the last 24 hours: the launches above, and the hours before them.
       const pulse = (async () => {
@@ -155,6 +157,7 @@ export function useLaunchWindow(hours: number, attempt: number): WindowState {
         const known = read.launches.filter((launch) => launch.block === null || launch.block >= pulseFrom);
         const knownGraduations = read.graduations.filter((graduation) => graduation.block >= pulseFrom);
         const before = pulseFrom < read.from ? await scanFactory(reader, pulseFrom, read.from - 1n) : { launches: [], graduations: [] };
+        if (!live) return;
         const graduations = [...knownGraduations, ...before.graduations];
         if (before.launches.length > 0) {
           // The counts first: they need only the events and the names of their pair assets.
@@ -163,6 +166,7 @@ export function useLaunchWindow(hours: number, attempt: number): WindowState {
             before.launches.map((event) => event.pairToken),
             assetCache,
           );
+          if (!live) return;
           update({
             pulse: {
               status: "counted",

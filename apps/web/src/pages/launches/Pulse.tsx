@@ -63,7 +63,7 @@ export function Pulse({ state }: { state: WindowState }) {
             <TaxPanel state={state} />
             <TwinPanel state={state} />
           </div>
-          <div className={styles.status} aria-live="polite">
+          <div className={`${styles.status} ${styles.pulseStatus}`} aria-live="polite">
             {pulse.status === "ready" && data ? (
               <Provenance reads={pulse.reads} served={state.served} />
             ) : (
@@ -81,7 +81,8 @@ export function Pulse({ state }: { state: WindowState }) {
 function Stat({ value, format, label }: { value: number | null; format: (n: number) => string; label: string }) {
   return (
     <li>
-      {value === null ? <span className={`${styles.statWait} skeleton`} aria-hidden="true" /> : <b className="num"><CountUp value={value} format={format} /></b>}
+      {/* The placeholder sits in the <b> its number will take, so it is one line of that number tall. */}
+      <b className="num">{value === null ? <span className={`${styles.statWait} skeleton`} aria-hidden="true" /> : <CountUp value={value} format={format} />}</b>
       <span>{label}</span>
     </li>
   );
@@ -91,10 +92,15 @@ function Waiting({ rows, label }: { rows: number; label: string }) {
   return (
     <div className={styles.pulseWait} role="status" aria-label={label}>
       {Array.from({ length: rows }, (_, i) => (
-        <span key={i} className="skeleton" style={{ width: `${88 - i * 9}%` }} />
+        <span key={i} className="skeleton" style={{ width: `${88 - (i % 6) * 9}%` }} />
       ))}
     </div>
   );
+}
+
+/** A number still being read, inside a sentence that is already there. */
+function NumberWait() {
+  return <span className={`${styles.numberWait} skeleton`} aria-hidden="true" />;
 }
 
 const width = (part: number, whole: number) => ({ "--w": whole > 0 ? part / whole : 0 }) as CSSProperties;
@@ -134,15 +140,20 @@ function PairPanel({ pairs, other, venues }: { pairs: PulsePair[] | null; other:
           {count(other.launches)} more {other.launches === 1 ? "launch pairs" : "launches pair"} with {other.pairs} other {other.pairs === 1 ? "asset" : "assets"}.
         </p>
       )}
-      {venues && (
-        <ul className={styles.pulseLegend} aria-label="Where they trade now">
-          {shown.map((venue) => (
+      {/* There from the start, a line of placeholder until each curve is read, so nothing moves then. */}
+      <ul className={styles.pulseLegend} aria-label="Where they trade now">
+        {venues ? (
+          shown.map((venue) => (
             <li key={venue}>
               <i data-venue={venue} aria-hidden="true" /> {VENUE_LABELS[venue]}: <span className="num">{count(venues[venue])}</span>
             </li>
-          ))}
-        </ul>
-      )}
+          ))
+        ) : (
+          <li className={styles.legendWait} aria-hidden="true">
+            <span className="skeleton" />
+          </li>
+        )}
+      </ul>
     </div>
   );
 }
@@ -151,10 +162,10 @@ function TaxPanel({ state }: { state: WindowState }) {
   const detail = state.pulse.data?.detail ?? null;
   const most = detail ? Math.max(...detail.rates.map((rate) => rate.launches), detail.otherRates.launches, 1) : 1;
   return (
-    <div className={styles.pulsePanel}>
+    <div className={`${styles.pulsePanel} ${styles.taxPanel}`}>
       <h3>Creator tax, as set at launch</h3>
       {!detail ? (
-        <Waiting rows={6} label="Reading each curve's creator tax…" />
+        <Waiting rows={8} label="Reading each curve's creator tax…" />
       ) : detail.rateKnown === 0 ? (
         <p className={styles.note}>No creator tax could be read in these hours.</p>
       ) : (
@@ -181,15 +192,13 @@ function TaxPanel({ state }: { state: WindowState }) {
           )}
         </Reveal>
       )}
-      {detail && (
-        <p className={styles.fine}>
-          Each curve&apos;s creatorTaxBps(), taken on its trades and paid to the creator&apos;s fee recipient.
-          {detail.otherRates.rates > 0
-            ? ` Others: ${count(detail.otherRates.launches)} ${detail.otherRates.launches === 1 ? "launch" : "launches"} at ${detail.otherRates.rates} other ${detail.otherRates.rates === 1 ? "rate" : "rates"}.`
-            : ""}
-          {detail.rateUnknown > 0 ? ` ${count(detail.rateUnknown)} could not be read.` : ""}
-        </p>
-      )}
+      <p className={styles.fine}>
+        Each curve&apos;s creatorTaxBps(), taken on its trades and paid to the creator&apos;s fee recipient.
+        {detail && detail.otherRates.rates > 0
+          ? ` Others: ${count(detail.otherRates.launches)} ${detail.otherRates.launches === 1 ? "launch" : "launches"} at ${detail.otherRates.rates} other ${detail.otherRates.rates === 1 ? "rate" : "rates"}.`
+          : ""}
+        {detail && detail.rateUnknown > 0 ? ` ${count(detail.rateUnknown)} could not be read.` : ""}
+      </p>
     </div>
   );
 }
@@ -207,10 +216,10 @@ function TwinPanel({ state }: { state: WindowState }) {
     ...names.map((group) => ({ kind: "name" as const, group })),
   ];
   return (
-    <div className={styles.pulsePanel}>
+    <div className={`${styles.pulsePanel} ${styles.twinPanel}`}>
       <h3>Same symbol or name</h3>
       {!detail || !data ? (
-        <Waiting rows={6} label="Comparing symbols and names…" />
+        <Waiting rows={12} label="Comparing symbols and names…" />
       ) : groups.length === 0 ? (
         <p className={styles.note}>Every launch of these hours has a symbol and a name of its own.</p>
       ) : (
@@ -235,12 +244,11 @@ function TwinPanel({ state }: { state: WindowState }) {
           ))}
         </Reveal>
       )}
-      {detail && data && (
-        <p className={styles.fine}>
-          {count(detail.twinned)} of {count(data.launches)} launches share a symbol or a name with another launch of these hours, ignoring case, spaces and a
-          leading $. Anyone can launch any name, so a shared one says nothing about either token.
-        </p>
-      )}
+      {/* The sentence is there from the start, so it wraps now as it will; its numbers wait. */}
+      <p className={styles.fine} aria-hidden={detail ? undefined : true}>
+        {detail ? count(detail.twinned) : <NumberWait />} of {data ? count(data.launches) : <NumberWait />} launches share a symbol or a name with another
+        launch of these hours, ignoring case, spaces and a leading $. Anyone can launch any name, so a shared one says nothing about either token.
+      </p>
     </div>
   );
 }

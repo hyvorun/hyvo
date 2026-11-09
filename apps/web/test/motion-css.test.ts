@@ -81,3 +81,29 @@ describe("global stylesheets", () => {
     expect(animationNames(globalCss).filter((name) => !defined.has(name))).toEqual([]);
   });
 });
+
+/** Every innermost rule of a stylesheet: its selector and its declarations. */
+function rules(css: string): { selector: string; body: string }[] {
+  const plain = css.replace(/\/\*[\s\S]*?\*\//g, "");
+  return [...plain.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((match) => ({ selector: match[1]!.trim(), body: match[2]! }));
+}
+
+/*
+ * Keyboard focus never waits on an entrance, but it must not take the entrance away either: with
+ * `animation: none` the finished animation is cancelled while focus is inside, and when focus leaves
+ * the animation is added again and the whole entrance plays once more. Cutting its duration and delay
+ * to nothing finishes one under way at once and leaves a finished one finished.
+ */
+describe("entrances under keyboard focus", () => {
+  it.each(["styles/ui.css", "pages/CheckPage.module.css"])("%s cuts them short without taking them away", (name) => {
+    const focused = rules(readFileSync(join(SRC, name), "utf8")).filter(
+      (rule) => /:focus-within/.test(rule.selector) && /animation/.test(rule.body),
+    );
+    expect(focused.length).toBeGreaterThan(0);
+    for (const rule of focused) {
+      expect(rule.body, rule.selector).not.toMatch(/animation(?:-name)?\s*:\s*none/);
+      expect(rule.body, rule.selector).toMatch(/animation-duration\s*:\s*0s\s*;/);
+      expect(rule.body, rule.selector).toMatch(/animation-delay\s*:\s*0s\s*;/);
+    }
+  });
+});

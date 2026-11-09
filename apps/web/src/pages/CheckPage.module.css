@@ -871,10 +871,12 @@
     animation-delay: calc(var(--n, 0) * var(--stagger) + 220ms);
   }
 
+  /* Finished at once, not taken away: focus leaving would otherwise play them again (as in ui.css). */
   .steps:focus-within .step > *,
   .findings:focus-within .status {
     opacity: 1;
-    animation: none;
+    animation-duration: 0s;
+    animation-delay: 0s;
   }
 }
 
