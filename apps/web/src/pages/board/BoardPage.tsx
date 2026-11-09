@@ -27,9 +27,10 @@ import {
 import { useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Link } from "react-router";
 import { Failure } from "../../components/States";
+import { boardRefreshMs, useHolderStatus, type HolderState } from "../../lib/holder-status";
 import { useDescription, useTitle } from "../../lib/use-title";
 import { Age, BlockLink, pairLabel, Towards } from "../launches/parts";
-import { BOARD_REFRESH_MS, useBoard, type BoardState } from "./use-board";
+import { useBoard, type BoardState } from "./use-board";
 import styles from "./BoardPage.module.css";
 
 const COLUMN_TEXT: Record<ColumnId, { title: string; rule: string; empty: string }> = {
@@ -51,10 +52,13 @@ const COLUMN_TEXT: Record<ColumnId, { title: string; rule: string; empty: string
 };
 
 /** Hyvo Board: every Pons launch on Robinhood Chain as it happens, read in the visitor's browser. */
-export function BoardPage({ refreshMs = BOARD_REFRESH_MS }: { refreshMs?: number }) {
+export function BoardPage({ refreshMs: fixedMs }: { refreshMs?: number }) {
   useTitle("Board");
   useDescription("Every Pons launch on Robinhood Chain, live: new, close to graduating, graduated. Read from the chain in your browser. Not a trading signal.");
   const [attempt, setAttempt] = useState(0);
+  const holder = useHolderStatus();
+  // HYVO holders see the board every 10 s, everyone else every 60 s (lib/holder-status.ts).
+  const refreshMs = fixedMs ?? boardRefreshMs(holder.status);
   const state = useBoard(refreshMs, attempt);
   const [tab, setTab] = useState<ColumnId>("new");
   const columns = useMemo(() => boardColumns(state.launches, state.now), [state.launches, state.now]);
@@ -64,7 +68,7 @@ export function BoardPage({ refreshMs = BOARD_REFRESH_MS }: { refreshMs?: number
       <header className={styles.head}>
         <h1>Board</h1>
         <p className={styles.lead}>Every Pons launch on Robinhood Chain, live: new, close to graduating, graduated.</p>
-        <Status state={state} refreshMs={refreshMs} />
+        <Status state={state} refreshMs={refreshMs} holder={holder.status} />
       </header>
 
       {state.status === "error" && <Failure message={state.error ?? "The chain could not be read just now."} onRetry={() => setAttempt((n) => n + 1)} />}
@@ -96,7 +100,7 @@ export function BoardPage({ refreshMs = BOARD_REFRESH_MS }: { refreshMs?: number
   );
 }
 
-function Status({ state, refreshMs }: { state: BoardState; refreshMs: number }) {
+function Status({ state, refreshMs, holder }: { state: BoardState; refreshMs: number; holder: HolderState }) {
   if (state.status === "error") return null;
   return (
     <div className={styles.status}>
@@ -105,7 +109,14 @@ function Status({ state, refreshMs }: { state: BoardState; refreshMs: number }) 
         {state.read && state.read.block > 0n ? (
           <span>
             Read at block <BlockLink block={state.read.block} />, {formatClock(state.read.timestamp)}.{" "}
-            {state.refreshing ? "Reading the newest blocks…" : `Reads again every ${Math.round(refreshMs / 1000)} s while this tab is open.`}
+            {state.refreshing ? "Reading the newest blocks…" : `Reads again every ${Math.round(refreshMs / 1000)} s while this tab is open.`}{" "}
+            {holder === "holder" ? (
+              "Every 10 s as a HYVO holder."
+            ) : (
+              <>
+                <Link to="/token">HYVO holders</Link> see it every 10 s.
+              </>
+            )}
           </span>
         ) : (
           <span role="status">Reading Robinhood Chain…</span>

@@ -43,7 +43,7 @@ import {
   type Trade,
   type TradeWindow,
 } from "@hyvo/launches";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Address } from "viem";
 import { assetCache, launchesReader } from "../../lib/launches";
 import { failureText } from "../launches/use-launches";
@@ -393,6 +393,15 @@ async function tick(model: Model, publish: () => void, live: () => boolean): Pro
  */
 export function useBoard(refreshMs: number = BOARD_REFRESH_MS, attempt = 0): BoardState {
   const [state, setState] = useState<BoardState>(START);
+  // The interval can change while the board is open (a holder's status arrives after the first read). It is read
+  // through a ref, so a change re-times the next read instead of starting the board over.
+  const refreshRef = useRef(refreshMs);
+  const rescheduleRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    refreshRef.current = refreshMs;
+    rescheduleRef.current?.();
+  }, [refreshMs]);
 
   useEffect(() => {
     let live = true;
@@ -427,7 +436,7 @@ export function useBoard(refreshMs: number = BOARD_REFRESH_MS, attempt = 0): Boa
     const schedule = () => {
       if (!live || status === "error") return;
       window.clearTimeout(timer);
-      timer = window.setTimeout(run, nextDelay(refreshMs, failures));
+      timer = window.setTimeout(run, nextDelay(refreshRef.current, failures));
     };
 
     const run = async () => {
@@ -466,19 +475,23 @@ export function useBoard(refreshMs: number = BOARD_REFRESH_MS, attempt = 0): Boa
 
     const onVisibility = () => {
       if (document.visibilityState !== "visible" || running || status === "error") return;
-      if (Date.now() - lastRun >= refreshMs) {
+      if (Date.now() - lastRun >= refreshRef.current) {
         window.clearTimeout(timer);
         void run();
       }
     };
     document.addEventListener("visibilitychange", onVisibility);
+    rescheduleRef.current = () => {
+      if (!running) schedule();
+    };
     void run();
     return () => {
       live = false;
+      rescheduleRef.current = null;
       window.clearTimeout(timer);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [refreshMs, attempt]);
+  }, [attempt]);
 
   return state;
 }
