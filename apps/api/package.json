@@ -10,7 +10,8 @@
     "db:migrate:local": "wrangler d1 migrations apply hyvo --local",
     "e2e": "tsx scripts/e2e-local.ts",
     "deploy:cloudflare": "tsx scripts/deploy-cloudflare.ts",
-    "token:go-live": "tsx scripts/token-go-live.ts"
+    "token:go-live": "tsx scripts/token-go-live.ts",
+    "move-ownership": "tsx scripts/move-ownership.ts"
   },
   "dependencies": {
     "@hyvo/check": "workspace:*",
