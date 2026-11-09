@@ -1,9 +1,9 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect as baseExpect, test, type Page } from "@playwright/test";
 import { stubApi } from "./stub-api";
 import { LOOKALIKE, NVDA, stockChain, stubStocks } from "./stub-stocks";
 
-/** A page that reads the chain loads viem first; under a cold dev server that can take a while. */
-const READ = { timeout: 15_000 };
+/** The stock pages load viem and read the chain first; under a cold dev server and a full run that takes a while. */
+const expect = baseExpect.configure({ timeout: 15_000 });
 
 async function noHorizontalScroll(page: Page) {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -21,7 +21,7 @@ test("the list finds a token by ticker, and its page answers from the chain", as
   await expect(page).toHaveURL(/\/stocks$/);
   await expect(page.getByRole("heading", { name: "Stocks", level: 1 })).toBeVisible();
   await expect(page.getByRole("heading", { name: "212 stock tokens" })).toBeVisible();
-  await expect(page.getByText(/Read live at block 109,900,000: the factory has deployed nothing since\./)).toBeVisible(READ);
+  await expect(page.getByText(/Read live at block 109,900,000: the factory has deployed nothing since\./)).toBeVisible();
   const list = page.getByRole("region", { name: "212 stock tokens" }).getByRole("list");
   await expect(list.getByRole("listitem")).toHaveCount(24);
   await noHorizontalScroll(page);
@@ -35,7 +35,7 @@ test("the list finds a token by ticker, and its page answers from the chain", as
 
   await expect(page.getByRole("heading", { name: "NVDA", level: 1 })).toBeVisible();
   const verdict = page.getByRole("region", { name: "Is this the NVDA stock token?" });
-  await expect(verdict.getByRole("heading", { name: "Yes. The Stock Token factory records this contract as NVDA." })).toBeVisible(READ);
+  await expect(verdict.getByRole("heading", { name: "Yes. The Stock Token factory records this contract as NVDA." })).toBeVisible();
   const price = page.getByRole("region", { name: "What its price is" });
   await expect(price.getByText("176.37")).toBeVisible();
   await expect(price.getByText("176.23 USD")).toBeVisible();
@@ -55,7 +55,7 @@ test("a contract that copies a token's uid is not the token, and gets no price",
   await stubStocks(page, stockChain());
   await page.goto(`/stocks/${LOOKALIKE}`);
   await expect(page.getByRole("heading", { name: /^Contract 0x0000/, level: 1 })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "No. The factory records a different contract for this uid." })).toBeVisible(READ);
+  await expect(page.getByRole("heading", { name: "No. The factory records a different contract for this uid." })).toBeVisible();
   await expect(page.getByText("It is not a judgment of what the contract does.", { exact: false })).toBeVisible();
   await expect(page.getByRole("region", { name: "What its price is" })).toHaveCount(0);
   await page.getByRole("link", { name: /^0xd060/ }).click();
@@ -68,7 +68,7 @@ test("an empty address, an unknown ticker and a mistyped address each say what t
   await page.goto("/stocks/0x000000000000000000000000000000000000dead");
   // A lowercase address gets its checksum in the address bar.
   await expect(page).toHaveURL(/\/stocks\/0x000000000000000000000000000000000000dEaD$/);
-  await expect(page.getByRole("heading", { name: "No contract is deployed at this address." })).toBeVisible(READ);
+  await expect(page.getByRole("heading", { name: "No contract is deployed at this address." })).toBeVisible();
 
   await page.goto("/stocks/zzzz");
   await expect(page).toHaveURL(/\/stocks\/ZZZZ$/);
@@ -98,7 +98,7 @@ test("a paused token and a held feed say so, and the price is not divided", asyn
   );
   await page.goto("/stocks/NVDA");
   const movement = page.getByRole("region", { name: "Can it move right now?" });
-  await expect(movement.getByText("Paused", { exact: true }).first()).toBeVisible(READ);
+  await expect(movement.getByText("Paused", { exact: true }).first()).toBeVisible();
   await expect(movement.getByText(/transfers, approvals, mints and burns revert/)).toBeVisible();
   await expect(movement.getByText(/Chainlink's feed holds its last value/)).toBeVisible();
   const multiplier = page.getByRole("region", { name: "Multiplier", exact: true });
