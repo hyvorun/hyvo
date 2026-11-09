@@ -114,7 +114,7 @@ test("the trust page says what Hyvo never does, and the token page what the toke
   await expect(page.getByText(/^Hyvo has not launched a token yet, so no token named HYVO is Hyvo.s today\./)).toBeVisible();
   await expect(page.getByRole("button", { name: "Copy the address" })).toHaveCount(0);
   await expect(page.getByText("2 free runs")).toBeVisible();
-  await expect(page.getByText("Draft numbers, set at the launch.")).toBeVisible();
+  await expect(page.getByText("For a wallet that holds at least 1,000,000 HYVO, now and 24 hours earlier.")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Planned for holders" })).toBeVisible();
   // Only what the token is for: nothing about fees, payouts or where money goes.
   await expect(page.locator("main")).not.toContainText(/yield|revenue|creator|Pons/i);

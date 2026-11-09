@@ -5,7 +5,7 @@ import { CountUp } from "../components/motion-data/CountUp";
 import { Copied } from "../components/motion-data/Copied";
 import { Decode } from "../components/motion-data/Decode";
 import { Reveal } from "../components/Reveal";
-import { HOLDER_BENEFITS as BENEFITS, HOLDER_RULE_UNSET, fetchHolderTerms, holderRule } from "../lib/holder";
+import { HOLDER_BENEFITS as BENEFITS, HOLDER_RULE_UNSET, PLANNED_RULE, fetchHolderTerms, holderRule } from "../lib/holder";
 import { HYVO_TOKEN, ONLY_TOKEN, type OfficialToken } from "../lib/official";
 import { useAsync } from "../lib/use-async";
 import { useDescription, useTitle } from "../lib/use-title";
@@ -72,7 +72,7 @@ export function TokenPage() {
             <span>Your runs start before runs that are waiting without it.</span>
           </li>
         </Reveal>
-        {token ? <HolderRule /> : <p className={styles.muted}>Draft numbers, set at the launch.</p>}
+        {token ? <HolderRule /> : <p className={styles.muted}>{PLANNED_RULE}</p>}
       </section>
 
       <section className={styles.section} aria-labelledby="token-planned">

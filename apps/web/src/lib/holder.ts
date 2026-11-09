@@ -9,6 +9,16 @@ import { API_URL } from "./api";
  */
 export const HOLDER_BENEFITS = { freeRuns: 2, freeAgents: 50, freeRounds: 10, discountPct: 20 } as const;
 
+/**
+ * Who will count as a holder, the founder's decision of 2026-11-09: at least 1,000,000 HYVO in one wallet,
+ * now and 24 hours earlier. `token:go-live` sets HOLDER_MIN to it at the launch; from then on the pages read
+ * the rule from GET /v1/health instead.
+ */
+export const HOLDER_RULE = { min: "1000000", heldForSeconds: 86_400 } as const;
+
+/** HOLDER_RULE in one sentence, before the launch. */
+export const PLANNED_RULE = "For a wallet that holds at least 1,000,000 HYVO, now and 24 hours earlier.";
+
 /** The earlier name of HOLDER_BENEFITS, kept so code written against it still builds. */
 export const HOLDER_DRAFT = HOLDER_BENEFITS;
 

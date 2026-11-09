@@ -400,12 +400,12 @@ test("a clone's run says its price, with a holder's discount once the wallet is 
   await stubApi(page);
   await withWallet(page);
   await stubClone(page, { clone: view("ready") });
-  // 50 x 10 x 0.004 + 0.008 = 2.008; x 2.5 = 5.02, up to $6, and $5 with 20% off (4.016).
+  // 50 x 10 x 0.004 + 0.008 = 2.008; x 2.5 = 5.02, up to $6; 20% off the listed price is $4.80.
   await healthWith(page, { ...PRODUCTION_TERMS, costPerAgentRoundUsd: 0.004 });
   await eligibleHolder(page, 2000);
   await signedIn(page, "/clone");
   const price = page.getByRole("status").filter({ hasText: "Price" });
-  await expect(price).toContainText("$5.00");
+  await expect(price).toContainText("$4.80");
   await expect(price).toContainText("with your 20% holder discount");
   const button = page.getByRole("button", { name: "Start the run" });
   expect((await price.boundingBox())!.y).toBeLessThan((await button.boundingBox())!.y);

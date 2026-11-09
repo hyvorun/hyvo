@@ -3,7 +3,7 @@ import { Arrow } from "../../components/Icons";
 import { CountUp } from "../../components/motion-data/CountUp";
 import { Decode } from "../../components/motion-data/Decode";
 import { Reveal } from "../../components/Reveal";
-import { HOLDER_BENEFITS } from "../../lib/holder";
+import { HOLDER_BENEFITS, PLANNED_RULE } from "../../lib/holder";
 import { HYVO_TOKEN, ONLY_TOKEN } from "../../lib/official";
 import styles from "./Briefs.module.css";
 import shared from "./Section.module.css";
@@ -58,7 +58,7 @@ export function TokenBrief() {
 
       <div className={styles.tokenFoot}>
         <p className={styles.fine}>
-          {token ? "Held in your own wallet: Hyvo only reads the balance." : "Draft numbers, set at the launch."}
+          {token ? "Held in your own wallet: Hyvo only reads the balance." : PLANNED_RULE}
         </p>
         <Link to="/token" className="arrow-link" viewTransition>
           What the token is for <Arrow />
