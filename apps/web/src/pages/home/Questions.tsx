@@ -91,21 +91,22 @@ export function Questions({ run, features }: { run: RunV1 | null; features: Heal
           More in the <Link to="/docs">docs</Link> and on the <Link to="/trust">trust page</Link>.
         </p>
       </Reveal>
-      <div className={styles.answers}>
-        {items.map((item, index) => (
-          <Reveal key={item.q} index={index % 3}>
+      <Reveal className={`${styles.answers} stagger`}>
+        {items.map((item) => (
+          <div key={item.q}>
             <details className={styles.question}>
               <summary>
                 <span>{item.q}</span>
                 <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-                  <path d="M8 3v10M3 8h10" />
+                  <path d="M8 3v10" pathLength={1} />
+                  <path d="M3 8h10" pathLength={1} />
                 </svg>
               </summary>
               <div className={styles.answer}>{item.a}</div>
             </details>
-          </Reveal>
+          </div>
         ))}
-      </div>
+      </Reveal>
     </section>
   );
 }

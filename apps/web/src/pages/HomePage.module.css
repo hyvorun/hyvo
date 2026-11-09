@@ -15,7 +15,34 @@
   font-weight: 500;
   letter-spacing: -0.042em;
   line-height: 1.02;
-  animation: rise 800ms var(--ease-out) both;
+}
+
+/*
+ * The headline rises word by word from under its own line, at once and in under 600 ms, so the
+ * largest paint on the page is never late. The mask is padded so no ascender or descender is cut.
+ */
+.mask {
+  display: inline-block;
+  margin: -0.12em 0 -0.16em;
+  padding: 0.12em 0 0.16em;
+  overflow: clip;
+  vertical-align: bottom;
+}
+
+.word {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .word {
+    animation: word-rise 460ms var(--ease-out) calc(var(--w, 0) * 32ms) both;
+  }
+}
+
+@keyframes word-rise {
+  from {
+    transform: translateY(118%);
+  }
 }
 
 .intro {
@@ -23,7 +50,7 @@
   flex: 1 1 320px;
   gap: 20px;
   min-width: 0;
-  animation: rise 800ms var(--ease-out) 80ms both;
+  animation: rise 640ms var(--ease-out) 200ms both;
 }
 
 .lede {
@@ -59,7 +86,7 @@
 
 .stage {
   display: grid;
-  animation: rise 900ms var(--ease-out) 160ms both;
+  animation: rise 800ms var(--ease-out) 300ms both;
 }
 
 .placeholder.placeholder {
@@ -131,7 +158,10 @@
   padding: 18px 20px 20px;
   background: var(--surface);
   text-decoration: none;
-  transition: background-color 160ms var(--ease);
+  /* With .press: the card sinks under a press and springs back. */
+  transition:
+    background-color 160ms var(--ease),
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .toolGrid a:hover {
@@ -150,6 +180,24 @@
   color: var(--ink-2);
   font-size: var(--t-sm);
   line-height: 1.5;
+}
+
+/* The arrow waits beside the line and steps forward with the pointer. */
+.toolGrid span :global(.arrow) {
+  display: inline-block;
+  margin-left: 2px;
+  vertical-align: -1px;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 180ms var(--ease),
+    transform 220ms var(--ease-out);
+}
+
+.toolGrid a:hover span :global(.arrow),
+.toolGrid a:focus-visible span :global(.arrow) {
+  opacity: 1;
+  transform: none;
 }
 
 /* --- the way in ---------------------------------------------------------------------------------- */
