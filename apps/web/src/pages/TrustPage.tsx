@@ -77,11 +77,11 @@ export function TrustPage() {
         <div className={styles.prose}>
           <p>
             Hyvo is at{" "}
-            <a href={OFFICIAL.site.url} rel="noreferrer">
+            <a className="u-link" href={OFFICIAL.site.url} rel="noreferrer">
               {OFFICIAL.site.label}
             </a>{" "}
             and on X as{" "}
-            <a href={OFFICIAL.x.url} target="_blank" rel="noreferrer">
+            <a className="u-link" href={OFFICIAL.x.url} target="_blank" rel="noreferrer">
               {OFFICIAL.x.handle}
             </a>
             . A site or an account that uses the name anywhere else is not Hyvo&apos;s. Hyvo never sends the first direct message, and never asks for
@@ -129,7 +129,7 @@ export function TrustPage() {
             {SOURCE_URL && (
               <>
                 {" "}
-                <a href={SOURCE_URL} target="_blank" rel="noreferrer">
+                <a className="u-link" href={SOURCE_URL} target="_blank" rel="noreferrer">
                   Read the source
                 </a>
                 .

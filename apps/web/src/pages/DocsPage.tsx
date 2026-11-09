@@ -85,7 +85,7 @@ curl ${API_URL}/v1/runs/<runId>/artifact   # a link to the exact run.json`}</Cod
           <section id="keys" aria-labelledby="keys-title">
             <h2 id="keys-title">Keys and balance</h2>
             <p>
-              <Link to="/account">Sign in with your wallet</Link> to make an API key. It is shown once, and it spends that wallet's balance, so
+              <Link className="u-link" to="/account">Sign in with your wallet</Link> to make an API key. It is shown once, and it spends that wallet's balance, so
               keep it out of anything public. Send it as <code className="mono">Authorization: Bearer hyvo_…</code>.
             </p>
             <p>
@@ -163,7 +163,7 @@ curl -X POST ${API_URL}/v1/balance/topups/<orderId>/payment \\
               this site about that. Remove the top-level <code className="mono">hash</code> field from <code className="mono">run.json</code>, canonicalize the
               rest with RFC 8785 (JCS), and take its keccak-256. The result must equal <code className="mono">hash</code>, and the{" "}
               <code className="mono">reportHash</code> that <code className="mono">getCommit(bytes32 runId)</code> returns. The{" "}
-              <Link to="/oracle">oracle page</Link> does this in your browser.
+              <Link className="u-link" to="/oracle">oracle page</Link> does this in your browser.
             </p>
             <Code label="With the TypeScript SDK (packages/sdk)">{`import { Hyvo } from "@hyvo/sdk";
 
@@ -223,7 +223,7 @@ if (!event) return new Response("bad signature", { status: 400 });`}</Code>
             <p>
               A crowd of synthetic users tries your contract before mainnet: newcomers, power users, an adversary and a whale. Give a deployed address, which plays on a
               fork of the chain, or creation bytecode with its ABI, which plays on a plain one. Name the view functions that must stay true as invariants. You can also{" "}
-              <Link to="/dryrun">start one from the site</Link>.
+              <Link className="u-link" to="/dryrun">start one from the site</Link>.
             </p>
             <Code label="Start one from the balance">{`curl -X POST ${API_URL}/v1/dryruns \\
   -H "Authorization: Bearer $HYVO_KEY" -H "Content-Type: application/json" \\
