@@ -254,8 +254,8 @@ Nothing here runs without the founder's approval (docs/OPEN_ITEMS.md items 12, 1
 
 ### 1. Cloudflare, on the free plans
 
-Done on 2026-11-04 (docs/OPEN_ITEMS.md item 13): web <https://hyvo.pages.dev>, API <https://hyvo-api.artallm.workers.dev>. Run
-the same command to deploy new code.
+Done on 2026-11-04 (docs/OPEN_ITEMS.md item 13), on Hyvo's own domain since 2026-11-09: web <https://hyvo.run>, API
+<https://api.hyvo.run>, with `apps/api/domains.json` naming the domains (item 9). Run the same command to deploy new code.
 
 ```
 pnpm --filter @hyvo/api deploy:cloudflare          # names the account, builds the bundle, changes nothing

@@ -16,7 +16,7 @@ Status: **verified** (checked against an official source or on-chain) · **likel
 | 6 | Zep Cloud free tier | verified | `ZEP_API_KEY=` (not needed in Stage 1) |
 | 7 | LLM free tiers and prices | verified / likely | `LLM_*=` empty → offline model |
 | 8 | Farcaster data API | verified | Stage 3 only |
-| 9 | `hyvo.run`, X handle | decision taken / unknown | chosen, not bought yet: `*.pages.dev`, `*.workers.dev` until then |
+| 9 | `hyvo.run`, X handle | attached / unknown | site at `hyvo.run`, API at `api.hyvo.run` (`apps/api/domains.json`) |
 | 10 | Report agent vs spec §6.7 | decision | Hyvo report agent modeled on ReportAgent |
 | 11 | LLM for real-model runs | resolved | Workers AI through the Worker; no key |
 | 12 | Mainnet deploy: owner, attester, treasury | deployed | `chain/deployments/4663.json`; owner and treasury still to move to the founder's wallet |
@@ -132,9 +132,13 @@ laptop job). Source: <https://docs.neynar.com/reference/what-are-the-rate-limits
 
 - The domain is `hyvo.run`, chosen on 2026-11-06. `hyvo.com`, `.xyz`, `.app`, `.ai` and `.fi` were taken, and `.trade`,
   `.finance` and `.market` were ruled out because they clash with "not a trading signal".
-- Until it is attached, the web app is on `*.pages.dev` and the API on `*.workers.dev`, both free. Attaching it: add it to
-  the Pages project `hyvo` as a custom domain, set `WEB_ORIGIN` and `SIWE_DOMAIN` to it (the API answers one web origin and
-  sign-in names one domain), send `*.pages.dev` there, and deploy again.
+- Bought on 2026-11-09 at Dynadot, with Cloudflare's nameservers, in the same Cloudflare account as the rest of Hyvo.
+- `apps/api/domains.json` names the domains and the deploy attaches them with `wrangler deploy --domain`: the site at
+  `hyvo.run` (and `www.hyvo.run`, which sends visitors on) from the Worker `hyvo-web`, which serves the built site as
+  static assets only, free and unlimited on the Workers Free plan; the API at `api.hyvo.run`. Wrangler cannot attach a
+  domain to a Pages project, hence the Worker. The Pages project `hyvo` still serves `hyvo.pages.dev`, whose page sends
+  visitors to `hyvo.run` with the path kept, and the API's `*.workers.dev` address keeps answering. `WEB_ORIGIN` and
+  `SIWE_DOMAIN` list both addresses of the site, the domain first.
 - The X handle is not settled yet.
 
 ## 10. Report agent vs spec §6.7 — decision
@@ -198,9 +202,9 @@ no `PAYMENT_ROUTER_ADDRESS`.
 
 ## 13. Cloudflare — resolved
 
-Live since 2026-11-04 on Cloudflare's free plans: web <https://hyvo.pages.dev>, API
-<https://hyvo-api.artallm.workers.dev>. Hyvo's resources: Worker `hyvo-api`, Pages project `hyvo`, D1 database `hyvo`, KV
-namespace `hyvo-artifacts`. In a non-interactive shell, `wrangler pages project create` can deploy the current folder as a
+Live since 2026-11-04 on Cloudflare's free plans, and on its own domain since 2026-11-09 (item 9): web
+<https://hyvo.run>, API <https://api.hyvo.run>. Hyvo's resources: Workers `hyvo-api` and `hyvo-web`, Pages project `hyvo`
+(for `hyvo.pages.dev`), D1 database `hyvo`, KV namespace `hyvo-artifacts`. In a non-interactive shell, `wrangler pages project create` can deploy the current folder as a
 Worker named after the project instead of creating a Pages project, so the deploy script passes `--force`.
 
 ## 14. ISP blocks of `*.robinhood.com` — verified

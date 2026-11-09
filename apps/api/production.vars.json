@@ -4,6 +4,6 @@
   "REPORT_COST_USD": "0.008",
   "DAILY_SPEND_CAP_USD": "0.10",
   "ORACLE_ADDRESS": "0x2FEDc123c38B069cf78e5915852A61022E347642",
-  "PUBLIC_API_URL": "https://hyvo-api.artallm.workers.dev",
+  "PUBLIC_API_URL": "https://api.hyvo.run",
   "RPC_URLS": "https://robinhood.drpc.org,https://rpc.mainnet.chain.robinhood.com"
 }

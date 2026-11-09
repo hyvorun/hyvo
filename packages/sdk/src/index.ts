@@ -39,7 +39,7 @@ import {
 export type { DryRunReport, DryRunView, RunV1 } from "@hyvo/schema";
 
 export interface HyvoOptions {
-  /** The API's base URL, such as https://hyvo-api.artallm.workers.dev. */
+  /** The API's base URL, such as https://api.hyvo.run. */
   baseUrl: string;
   /** `hyvo_…`, for what spends a balance. Reading runs needs none. */
   apiKey?: string;

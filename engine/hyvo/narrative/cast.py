@@ -16,7 +16,7 @@ from hyvo.report.guard import REMOVED_TEXT, find_violations
 from hyvo.runfile import DISCLAIMER
 
 MAX_CHARS = 280
-DEFAULT_SITE = "https://hyvo.pages.dev"
+DEFAULT_SITE = "https://hyvo.run"
 
 
 def _shorten(text: str, limit: int) -> str:

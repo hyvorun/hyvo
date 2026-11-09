@@ -4,8 +4,8 @@ Cloudflare Worker (`apps/api`, Hono, D1, KV, Workers AI). This document is the c
 (`apps/web`), the runner (`engine/hyvo/runner`) and third parties. Request and response shapes are zod schemas in
 `packages/schema/src/api.ts` and `packages/schema/src/jobs.ts`; the API's tests parse its answers with them.
 
-- Base URL: `https://hyvo-api.artallm.workers.dev` (no domain yet, `docs/OPEN_ITEMS.md` item 9). Local:
-  `http://127.0.0.1:8787` (`pnpm --filter @hyvo/api dev`).
+- Base URL: `https://api.hyvo.run` (the Worker's `*.workers.dev` address answers too). Local: `http://127.0.0.1:8787`
+  (`pnpm --filter @hyvo/api dev`).
 - All responses are JSON (`application/json; charset=utf-8`) unless stated. Errors:
   `{ "error": { "code": "<machine_code>", "message": "<human text>" } }` with a matching HTTP status. A `429` carries
   `Retry-After` (seconds).

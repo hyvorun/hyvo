@@ -9,8 +9,8 @@ check.
 real people, and the tokens in the example scenarios are fictional. Nothing a run does reaches the public chain, apart
 from its hash.
 
-- Web: <https://hyvo.pages.dev>
-- API: <https://hyvo-api.artallm.workers.dev/v1/health>
+- Web: <https://hyvo.run>
+- API: <https://api.hyvo.run/v1/health>
 - [HyvoOracle](https://robinhoodchain.blockscout.com/address/0x2FEDc123c38B069cf78e5915852A61022E347642) and
   [PaymentRouter](https://robinhoodchain.blockscout.com/address/0x9ca245cA96dE8BFC13Df4a233ba6E2EcEc9AC6d1) on Robinhood
   Chain, with verified sources. Paid runs are not open yet.

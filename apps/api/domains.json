@@ -1,0 +1,6 @@
+{
+  "//": "Hyvo's own domains, attached by scripts/deploy-cloudflare.ts with `wrangler deploy --domain`: the site at `web` (the hyvo-web Worker, apps/web/wrangler.jsonc), `webAlso` sending visitors to it, and the API at `api`. *.pages.dev and *.workers.dev keep answering. Bought 2026-11-09 (docs/OPEN_ITEMS.md item 9).",
+  "web": "hyvo.run",
+  "webAlso": ["www.hyvo.run"],
+  "api": "api.hyvo.run"
+}
