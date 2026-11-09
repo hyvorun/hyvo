@@ -140,10 +140,8 @@ async function get(url: string): Promise<{ ok: boolean; status: number; text: st
     const response = await fetch(url);
     return { ok: response.ok, status: response.status, text: await response.text() };
   } catch (error) {
-    const result = run("curl", ["-s", "-m", "30", "-w", "
-%{http_code}", "--doh-url", "https://cloudflare-dns.com/dns-query", url]);
-    const cut = result.stdout.lastIndexOf("
-");
+    const result = run("curl", ["-s", "-m", "30", "-w", "\n%{http_code}", "--doh-url", "https://cloudflare-dns.com/dns-query", url]);
+    const cut = result.stdout.lastIndexOf("\n");
     const status = Number(result.stdout.slice(cut + 1));
     if (result.status !== 0 || !status) throw error;
     return { ok: status >= 200 && status < 300, status, text: result.stdout.slice(0, cut) };
