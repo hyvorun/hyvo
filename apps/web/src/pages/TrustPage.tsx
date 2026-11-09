@@ -87,6 +87,11 @@ export function TrustPage() {
             . A site or an account that uses the name anywhere else is not Hyvo&apos;s. Hyvo never sends the first direct message, and never asks for
             a seed phrase or a private key.
           </p>
+          {!ADDRESSES.hyvoToken && (
+            <p>
+              Hyvo has not launched a token yet: until <Link to="/token">/token</Link> shows an address, no token is Hyvo&apos;s, whatever its name.
+            </p>
+          )}
         </div>
       </section>
 

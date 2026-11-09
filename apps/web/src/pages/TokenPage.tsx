@@ -34,7 +34,10 @@ export function TokenPage() {
             {address}
           </a>
         ) : (
-          <p>Its address will appear here on the day it launches.</p>
+          <p>
+            Hyvo has not launched a token yet, so no token named HYVO is Hyvo&apos;s today. Its address will appear here on the day it
+            launches.
+          </p>
         )}
       </section>
 
