@@ -35,7 +35,9 @@ Status: **verified** (checked against an official source or on-chain) · **likel
 | 25 | How far back Rewind can fork | verified | a few days dependably on dRPC's free tier, further on and off; an archive RPC for more |
 | 26 | Unused prepaid balance | decision | no self-serve refund; by hand from `/admin` |
 | 27 | Publishing `@hyvo/sdk` to npm | decision | not published yet |
-| 28 | Hyvo Check: addresses and limits | verified | factories, hook and PoolManager read on-chain on every check; Blockscout optional (`blockscoutKey`) |
+| 28 | Hyvo Stocks: where each fact comes from | verified / decision | on-chain StockFactory record + Chainlink feeds; Robinhood's API and docs not used |
+| 29 | Pons launches for Hyvo Launches: sources and limits | verified / decision | read in the visitor's browser; endpoints in `packages/launches/src/endpoints.ts` |
+| 30 | Hyvo Check: addresses and limits | verified | factories, hook and PoolManager read on-chain on every check; Blockscout optional (`blockscoutKey`) |
 
 ---
 
@@ -91,7 +93,8 @@ and evidence: [`MIROFISH_NOTES.md`](MIROFISH_NOTES.md) §9 and the appendices in
 - **v2:** constant-product bonding curve with a virtual quote reserve, then graduation to a Uniswap **V4** full-range
   position (locked) with the Pons "Meme hook" charging a 1% fee; protocol takes 30%; optional creator tax up to 10%;
   a snipe tax decays from 99% to 0 over 5 s on buys. Factory `0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e`, hook
-  `0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044`.
+  `0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044`. On 2026-11-09 the factory's `snipeTaxSeconds()` read 3: the owner sets it,
+  and each curve keeps the value it launched with (item 28).
 - Spec §12.5 ("creator gets 0.7% of volume") holds for v1, and for v2 with buybacks off and no creator tax.
 - **Impact:** Stage 1 keeps the V2-style test pair (`feeBps` can be set to 100 to mimic a 1% fee). Simulating real Pons
   tokens later needs V3 and V4-plus-hook execution on the fork.
@@ -360,7 +363,161 @@ whether to offer withdrawals, and say so where people top up. Nothing changes un
 
 `packages/sdk` is built and tested in the repo. Publishing needs an npm account for the project; the package is `AGPL-3.0-or-later` like the rest of the repo unless item 1 is revisited.
 
-## 28. Hyvo Check: addresses and limits — verified
+## 28. Hyvo Stocks: where each fact comes from — verified / decision
+
+Hyvo Stocks (`/stocks`, `packages/stocks`) brings the founder's StockSync project into Hyvo. StockSync read Robinhood's Stock Token API
+(`api.robinhood.com/rhj`); Hyvo Stocks reads the chain instead, and Chainlink's feed directory for the feeds' addresses. Everything below was read
+or measured on 2026-11-09 through `https://robinhood.drpc.org`, unless it says otherwise.
+
+**The contracts (verified on-chain and on Sourcify).**
+
+- **AccessControlsRegistry** `0xe10b6f6B275de231345c20D14Ab812db62151b00`, block 7662: the beacon of every stock token (`implementation()`), and the
+  holder of every role, the pause switch and the blocklist. Source verified on Sourcify, exact match (`src/AccessControlsRegistry.sol`).
+- **Stock implementation** `0xb35490d6f9163DE4F80d88dc75c3516eb64C5aE2`, block 7784: `src/Stock.sol`, MIT, Sourcify exact match. What the pages rely
+  on, read in that source: `uid()`; `terms()` returns `https://robinhood.com/stocktoken/rhj`; `paused()` is the token's own pause or the registry's,
+  and transfers, approvals, mints and burns revert while it is true; `oraclePaused()` is a flag the token itself does not use; `uiMultiplier()` switches
+  to `newUIMultiplier()` once the block time reaches `effectiveAt()`; `updateMultiplier` refuses an effective time in the past. Its storage namespaces
+  are named `robinhood.storage.*`.
+- **StockFactory** `0x4783C67b63dE2B358Ac5951a7D41F47A38F3C046` (an ERC-1967 proxy; implementation `0xEe351E53BCe6AAF106428358838197C91e36EE0E`), block 7791.
+  **Its source is not verified anywhere Hyvo looked.** Its functions were identified from its bytecode with the openchain signature database:
+  `tokenAddress(bytes32)`, `deploy(bytes32,string,string)`, `beacon()`, `ACCESS_CONTROLLED_REGISTRY()`; its bytecode holds the revert string
+  "StockFactory: stock already exists" and the role ids `TOKEN_DEPLOYER_ROLE` and `FACTORY_UPGRADER_ROLE` of `src/Roles.sol`; its event matches
+  `keccak256("Deployed(bytes32,address,string,string)")`, with the uid indexed. Checked behavior: `beacon()` and `ACCESS_CONTROLLED_REGISTRY()` return the
+  registry, `tokenAddress(uid)` returns each token for its own uid, and its 212 `Deployed` events match its nonce (213: one for its creation).
+- **The deployer** `0x074377a78A9710A1D47244f89797718b4f491279` is an account with nonce 20; its first four CREATE addresses are the registry, the
+  implementation, the factory's implementation and the factory.
+- **How the factory was found:** from the NVDA address `0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC`, as StockSync recorded it from Robinhood's Stock Token
+  API on 2026-09-14, through its EIP-1967 beacon slot (the registry), the registry's deployer on Sourcify, and that deployer's CREATE addresses. That one
+  address was the starting point; Hyvo does not call the API.
+- **Multicall3** `0xcA11bde05977b3631167028862bE2a173976CA11`: code hash `0xd5c15df6…0891`, the same 3,808 bytes as on Ethereum mainnet; present since block 1.
+
+**The verdict.** A contract is "recorded" when the factory's `tokenAddress(uid())` returns that contract. A copy can take a token's ticker, name and
+even its uid, but not the factory's record; the pages say so, and call anything else "not recorded", never a judgment of the contract. **Robinhood's
+own docs do not name this factory:** their Token Contracts page loads its table from elsewhere, and none of the three addresses above appears on it
+(checked 2026-11-09). So the pages say "the Stock Token factory" and show the evidence; they never claim to speak for Robinhood.
+
+**The list and the history (`packages/stocks/src/snapshot.json`).** Built by `pnpm --filter @hyvo/stocks scan` from the chain alone, up to block
+109,864,570 (2026-11-09 06:56 UTC): 212 tokens, 71 multiplier updates on 53 of them, 6 name changes, 3,985 RPC calls on dRPC's free tier in about ten
+minutes. dRPC's free tier refuses `eth_getLogs` over long ranges (it refused 1,472 blocks here, "ranges over 10000 blocks are not supported on free
+plan"), so the scan bisects instead: over the factory's nonce at past blocks to find each deployment, then over each token's `effectiveAt()`,
+`newUIMultiplier()`, `name()` and `symbol()`, and reads the events only in the blocks found. That needs old state, which the free tier serves on and
+off (item 25); the scan retries until a node has it. Check: every update's old multiplier equals the value in effect when it was sent (a unit test).
+The list page reads the factory's nonce live and says how many tokens were deployed since; a newer token can still be looked up by address.
+
+**Prices (Chainlink).** Feed addresses come from Chainlink's reference data directory,
+`https://reference-data-directory.vercel.app/feeds-robinhood-mainnet.json` (the data behind docs.chain.link's feed tables; it answers with
+`Access-Control-Allow-Origin: *`, so the browser fetches it, at most once per ten minutes). Hyvo uses only the 33 entries labeled
+`productTypeCode: "primaryTokenizedPrice"`, all of which match a token in the list by ticker; it leaves out the Robinhood entries without that label
+(`Robinhood SGOV-USD`, `Robinhood USAR-USD`, the "24/7" feeds and `GLD / USD`), because the directory does not say what they report. What the price
+means, from <https://docs.chain.link/data-feeds/tokenized-equity-feeds/robinhood> (read 2026-11-09): the feed reports the token's Total Return Value,
+the underlying equity's 24/5 market price × the token's `uiMultiplier()`; while `oraclePaused()` is true the feed holds its last value; off-hours it may
+hold its last price with no heartbeat. The session table (pre-market, regular, post-market, overnight, weekend, in New York time) is from
+<https://docs.chain.link/data-feeds/tokenized-equity-feeds>; holidays are not in it, and the page says so. The answer is shown as a reading at a block,
+with its update time, never as a quote or a forecast. 179 of the 212 tokens have no such feed, and their pages show no price.
+
+**What a page costs.** A token page makes six JSON-RPC requests from the visitor's browser (the block, the code, the beacon slot, two Multicall3 calls,
+the feed) and one directory fetch per ten minutes; nothing reaches Hyvo's Worker. The package takes any viem client, so a CLI command or the Worker can
+reuse it; in the Worker one report would be about six subrequests of the 50 allowed (not measured there yet). No cron trigger is used.
+
+**Left out of StockSync, and why.** The bar above every page that showed StockSync's own community token and its contract address: Hyvo does not
+promote another project's token. Its launch posts and captions (`marketing/`): outreach. Everything that came from Robinhood's Stock Token API: session
+tradability per token (market, extended, overnight), bid and ask quotes, corporate actions by type (dividend, split, merger, with their rates), ISIN and
+the API's other fields; the chain has none of these, and the API's terms are unclear (below). The playground and agent pages that ran StockSync's CLI and
+MCP server inside the site, its `/status` and `/system` pages and its rendered docs: `@hyvo/stocks` keeps the same questions for a later CLI command or
+MCP tool. StockSync takes no payments, holds no funds and gates nothing, so nothing else had to go.
+
+**Founder: decide.**
+
+- **Is the on-chain evidence enough** to present the factory's record as the check of a genuine Robinhood stock token? Today the pages name the factory
+  and show the evidence above, without saying "official".
+- **Robinhood's Stock Token API** would add session tradability and the type of each corporate action. Its terms of use are unclear here, the ISP
+  block keeps it out of reach from this laptop (item 14), and Robinhood Chain's terms limit reuse of docs.robinhood.com's content. Hyvo does not call
+  it until you decide; a Worker could, since Workers resolve `*.robinhood.com`.
+- **Chainlink's directory and docs**: Chainlink's Terms of Service (<https://chain.link/terms>) cover them; Hyvo reads feeds on-chain, which is their
+  documented use, links Chainlink's page, and repeats no table from it. Confirm this is acceptable.
+- **The `terms()` link** each token returns (`https://robinhood.com/stocktoken/rhj`) is shown as the contract returns it.
+- **Refreshing the list** is by hand: `pnpm --filter @hyvo/stocks scan`, then commit `snapshot.json`. Say if it should run on a schedule; the
+  account's cron triggers are shared, so it would need a free slot or a machine.
+
+## 29. Pons launches for Hyvo Launches — verified / decision
+
+Hyvo Launches (`/launches`, `/launches/:token`, `packages/launches`) rebuilds the founder's launch index (Cloesius) and Pons Atlas inside Hyvo.
+Everything below was read or measured on 2026-11-09.
+
+**The data path.** The visitor's browser reads Robinhood Chain itself, through keyless public endpoints: no Worker route, no cron trigger,
+no storage and no third-party API. Measured on the production build from this machine against the real chain: the newest launches show in
+about 3 s, a 6-hour window (about 170 launches, the most traded curves and the map) in 5 to 9 s, with 33 requests and about 620 KB; one
+launch's page takes 16 requests and about 50 KB. Each fact is read at one block, and the page names it: "Measured on-chain at block N. Not a
+trading signal."
+
+**Contracts.**
+
+- The Pons V2 launch factory `0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e` is verified on Sourcify (exact match, verified 2026-08-04, solc 0.8.35,
+  deployed in block 26,841,846), and its sources include `PonsV2BondingCurve.sol`, `PonsV2LauncherToken.sol` and `interfaces/ILaunchpadV2.sol`.
+  Every event and function Hyvo Launches uses is copied from them (`packages/launches/src/pons.ts`): `TokenLaunched`, `PoolGraduated`,
+  `getLaunchedToken(token)` (the launch record: curve, deployer, creator fee recipient, pair token, graduation threshold, tick spacing,
+  creator tax, buyback, phase, exists) and, on each curve, `realQuoteReserve()`, `launchedAt()`, `creatorTaxBps()`, `feeBps()`, `graduated()`,
+  `launchSupply()`, `reservedTokens()`, `sellableTokens()`, `snipeTaxStartBps()`, `snipeTaxSeconds()`, `CurveBuy` and `CurveSell`. Source:
+  `https://sourcify.dev/server/v2/contract/4663/<address>`.
+- The active Pons V1 factory `0xA5aAb3F0c6EeadF30Ef1D3Eb997108E976351feB` is verified there too, with `getLaunchedToken(address)`; the legacy one
+  (`0x0c37a24F5D23A486FA692d1500881d698B1F77a4`) is not. A V1 token's page says it is a V1 launch and shows its record.
+- Pons's docs answered this machine with a country block (`docs.ponsfamily.com/blocked?country=GB`), and the repository an earlier project cited
+  for the events (`github.com/ponsdotdev/ponsfamily`) answers 404. The verified source is the reference.
+- `CurveBuy.quoteIn` is what the buyer spent, fee and tax included, and `CurveSell.quoteOut` what the seller received after them
+  (`PonsV2BondingCurve.buy` and `sell`). "Traded" adds `quoteOut + fee + tax` for a sell, so both sides count before fee and tax.
+- Anyone can deploy a contract that emits an event named `CurveBuy`. A trade counts only when the factory's record of the emitter's token names
+  the emitter as that token's curve; a stand-in impostor in the tests is left out.
+- Read on chain: `feeBps()` 100 on the curves read; the factory's `maxCreatorTaxBps()` 1000, `snipeTaxStartBps()` 9900, `snipeTaxSeconds()` 3 and
+  `launchEnabled()` true. The ETH launches read graduate at 4.2 ETH with a 1.68 ETH virtual reserve, the USDG ones at 8,090 USDG with 3,236. A
+  graduated launch's phase reads 2 (`PoolCreated`), and its record's swept amounts read 0.
+- Multicall3 `0xcA11bde05977b3631167028862bE2a173976CA11` has code on chain 4663 (3,808 bytes). Inside a contract `block.number` is Ethereum's
+  block (26,375,626 while the chain was at block 109.86M), so every Multicall3 call also asks ArbSys `arbBlockNumber()` (`0x…0064`) for the
+  Robinhood Chain block it read. It answered on dRPC, Pocket and Robinhood's endpoint.
+- Pace and volume: 848 V2 launches and 6 graduations between 2026-11-08 04:28 and 2026-11-09 06:25 UTC; 749 paired with ETH, then TSLA 34,
+  USDG 20, NVDA 18 and eight other assets with 1 to 8 each. 9.62 blocks a second over 500,000 blocks.
+
+**Endpoints**, from chainlist.org (`rpcs.json`) and ethereum-lists (`eip155-4663.json`), each called with an `Origin: https://hyvo.run`; all
+of them answer with CORS headers:
+
+| Endpoint | `eth_getLogs` | Used for |
+|---|---|---|
+| `robinhood.drpc.org` | about 100 blocks (101 answered, 500 refused: "ranges over 10000 blocks are not supported on free plan") | calls and headers, first |
+| `robinhood.api.pocket.network` | often refuses a query without an address ("missing required field 'address'"), and takes ten addresses at most; 10,001 blocks on 8 of 10 tries and 50,000 on 2; adds `blockTimestamp` | logs first, calls second |
+| `rpc.mainnet.chain.robinhood.com` | 250,000 blocks with an address, 30,000 without one; JSON bodies only (HTTP 415 otherwise) | logs without an address; logs and calls after the others |
+| `rpc.degenprotocol.io/robinhood` | varies by node: 50,000 or 250,000 blocks, sometimes without an address | logs, last |
+| `rpc-robinhood.blockmachine.io` | keyless: the last 5,000 blocks only | not used |
+| `robinhood-rpc.publicnode.com` | refused: "Archive requests require a personal token" | not used |
+| `api.blockvectra.com/v1/robinhood_mainnet/public` | 100 blocks | not used |
+| `robinhood.daybreak-rpc.network` | 2,000 blocks | not used |
+| `robinhood-mainnet-rpc.blockreq.com/v1/rpc/public` | the last 1,024 blocks only | not used |
+| `rpc.nodeflare.app/robinhood/public` | HTTP 403 | not used |
+| `lb.routeme.sh/rpc/evm/4663` | HTTP 429 at the first call | not used |
+| `rpc.ordofi.network` | no connection | not used |
+
+Pocket's docs say "Free public RPC endpoints for dozens of blockchains, with no API key required" and give no number (`docs.pocket.network`).
+dRPC, Pocket and degenprotocol accept a JSON-RPC body sent as `text/plain`, which a browser sends without a CORS preflight; that and opening
+the log endpoint's connection early took the first facts from 5 to 6 s down to about 3. The reader learns each endpoint's limits from its
+refusals, so a change on their side costs a refused request, not an outage.
+
+**GeckoTerminal** answers browsers too (`access-control-allow-origin: *` on `networks/robinhood/new_pools`, `trending_pools` and `dexes`) and
+lists Pons as `pons-v2`, `pons-v2-dex` and `pons-dot-family` ("Pons V1"). CoinGecko's docs ("Errors & Rate Limits", docs.coingecko.com): keyless
+use has "IP-based rate limiting — shared across all users on the same IP", and the Demo plan, with a key, allows 100 calls a minute. Hyvo
+Launches does not use it: the chain gives the same launches with a block number, and no third party sits in between.
+
+**Left out of the source projects:** Cloesius's creator claims and its Pro pages with their payments in its own token, the leads and outreach
+dashboard, the creator-edited pages and images, its D1 index and the every-minute cron trigger that fed it; Pons Atlas's stock price API
+(unreachable from here) and its decorative orbit motion. Creator-written token fields (logo URL, description, social links) are not shown.
+
+**Founder:**
+
+1. "Most traded" asks for every curve's trades in one log query without an address. Pocket answers that on some tries and refuses it on
+   others, and then it goes to Robinhood's own endpoint, whose terms say it is rate limited and not for production (item 3), and which some
+   ISPs block (item 14). When no endpoint answers it, the page counts the newest launches' curves only, and says so. A keyed endpoint that
+   serves such queries (Alchemy, item 3) would remove the dependence; decide whether to get one.
+2. Real token names and symbols appear, because visitors look them up. Only on-chain facts are shown and nothing rates a token. Confirm.
+3. Launches is in the footer and the product list (a new Explore group), not in the header. Decide whether the header gets it.
+
+## 30. Hyvo Check: addresses and limits — verified
 
 `packages/check` (`@hyvo/check`) reads a token at one block and runs an exit simulation in one `eth_call`
 (`chain/src/probes/SellCheck.sol`, never deployed). Every address it uses, where it comes from, and how it was

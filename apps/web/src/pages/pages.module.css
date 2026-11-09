@@ -221,6 +221,38 @@
   padding-top: var(--space-9);
 }
 
+/* The seal, looking for the page: it wobbles once, like a stamp that missed. */
+.lostSeal {
+  display: grid;
+  color: var(--ink-3);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lostSeal svg {
+    animation: seal-wobble 1100ms var(--ease-out) 200ms both;
+  }
+}
+
+@keyframes seal-wobble {
+  from {
+    opacity: 0;
+    transform: rotate(-24deg) scale(0.86);
+  }
+  30% {
+    opacity: 1;
+    transform: rotate(12deg);
+  }
+  55% {
+    transform: rotate(-6deg);
+  }
+  78% {
+    transform: rotate(2.5deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
 /* --- a run's question ------------------------------------------------------------------ */
 
 .question {

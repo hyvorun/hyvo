@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { Link } from "react-router";
 import { previewLayout } from "../lib/crowd";
 import { Crowd } from "./Crowd";
-import { Arrow } from "./Icons";
+import { Arrow, CheckMark } from "./Icons";
 import styles from "./JobStatus.module.css";
 
 /** A paid run that is not published yet: where it is in the queue, and what happens next. The crowd
@@ -17,7 +17,10 @@ export function JobStatus({ runId, job }: { runId: string; job: JobView }) {
     <section className={styles.panel} aria-live="polite">
       <div className={styles.copy}>
         <p className={styles.runId}>
-          Run <span className="mono">{runId}</span>
+          {(job.status === "queued" || job.status === "running") && <span className="live-dot" aria-hidden="true" />}
+          <span>
+            Run <span className="mono">{runId}</span>
+          </span>
         </p>
         {job.status === "queued" && (
           <>
@@ -35,7 +38,7 @@ export function JobStatus({ runId, job }: { runId: string; job: JobView }) {
             {rounds && (
               <div className={styles.track} role="progressbar" aria-valuemin={0} aria-valuemax={rounds} aria-valuenow={round}>
                 {Array.from({ length: rounds }, (_, i) => (
-                  <span key={i} className={i < round ? styles.done : undefined} />
+                  <span key={i} className={i < round ? styles.done : i === round ? styles.now : undefined} />
                 ))}
               </div>
             )}
@@ -60,7 +63,12 @@ export function JobStatus({ runId, job }: { runId: string; job: JobView }) {
         )}
         {job.status === "complete" && (
           <>
-            <h1>Published</h1>
+            <div className={styles.title}>
+              <span className={`${styles.badge} pop`} aria-hidden="true">
+                <CheckMark size={15} />
+              </span>
+              <h1>Published</h1>
+            </div>
             <p>Loading the replay…</p>
           </>
         )}

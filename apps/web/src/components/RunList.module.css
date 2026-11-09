@@ -65,15 +65,39 @@
   }
 }
 
-/* The line draws itself from the left when its row comes into view. */
+/* The line draws itself from the left when its row comes into view, then its end dot pops in. */
 .spark :global(.spark) {
   display: block;
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 1400ms var(--ease-out) 200ms;
+  overflow: visible;
 }
 
-:global(.reveal[data-in="true"]) .spark :global(.spark) {
-  clip-path: inset(0 0 0 0);
+@media screen and (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .spark :global(.spark-line) {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1200ms var(--ease-out) 200ms;
+  }
+
+  .spark :global(.spark-end) {
+    opacity: 0;
+    transform: scale(0);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      opacity 200ms var(--ease) 1150ms,
+      transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 1150ms;
+  }
+
+  :global(.reveal[data-in="true"]) .spark :global(.spark-line),
+  :global(.reveal:focus-within) .spark :global(.spark-line) {
+    stroke-dashoffset: 0;
+  }
+
+  :global(.reveal[data-in="true"]) .spark :global(.spark-end),
+  :global(.reveal:focus-within) .spark :global(.spark-end) {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .change {
@@ -104,4 +128,40 @@
   padding: var(--space-7) 0;
   border-block: 1px solid var(--rule);
   color: var(--ink-3);
+}
+
+/* --- the hover highlight, one for the list, sliding to the row under the mouse ------------------ */
+
+.wrap {
+  position: relative;
+}
+
+.highlight {
+  display: none;
+}
+
+@media (hover: hover) {
+  .highlight {
+    position: absolute;
+    top: 0;
+    left: -12px;
+    right: -12px;
+    display: block;
+    border-radius: var(--radius);
+    background: var(--accent-soft);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(var(--top, 0));
+    transition:
+      opacity 180ms var(--ease),
+      transform 260ms var(--ease-out);
+  }
+
+  .highlight[data-on="true"] {
+    opacity: 1;
+  }
+
+  .row {
+    position: relative;
+  }
 }

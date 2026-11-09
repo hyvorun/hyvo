@@ -2,6 +2,7 @@ import { PERSONAS } from "@hyvo/schema";
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { Arrow, PersonaIcon } from "../../components/Icons";
+import { Copied } from "../../components/motion-data/Copied";
 import { isArchetype, PROFILES, type Archetype } from "../../lib/archetypes";
 import { QUESTIONS, scoreQuiz, type QuizResult } from "../../lib/quiz";
 import { ToolPage, useDescription } from "./shared";
@@ -85,7 +86,7 @@ function QuestionCard({ index, onAnswer, onBack }: { index: number; onAnswer: (o
         <ul className={quiz.options}>
           {question.options.map((option, choice) => (
             <li key={option.text}>
-              <button type="button" onClick={() => onAnswer(choice)}>
+              <button type="button" className="press" onClick={() => onAnswer(choice)}>
                 <span className={quiz.letter} aria-hidden="true">
                   {String.fromCharCode(65 + choice)}
                 </span>
@@ -224,7 +225,7 @@ function ShareRow({ text }: { text: string }) {
   return (
     <div className={quiz.share}>
       <button type="button" className="btn btn-primary btn-sm" onClick={() => void copy()}>
-        {copied ? "Link copied" : "Copy the link to this result"}
+        {copied ? <Copied>Link copied</Copied> : "Copy the link to this result"}
       </button>
       {canShare && (
         <button

@@ -1,5 +1,6 @@
 import { DISCLAIMER } from "@hyvo/schema";
 import { expect, test, type Page } from "@playwright/test";
+import { PRODUCTS } from "../src/lib/products";
 import { ADDRESSES, golden, stubApi, summary } from "./stub-api";
 
 test.beforeEach(async ({ page }) => {
@@ -118,7 +119,8 @@ test("the archetype guide follows the arrow keys", async ({ page }) => {
 test("what is open comes from the API's switches", async ({ page }) => {
   await page.goto("/");
   const rows = page.getByRole("region", { name: "What you can do with Hyvo" }).getByRole("listitem");
-  await expect(rows).toHaveCount(11);
+  // One row per product in the shared list (src/lib/products.ts).
+  await expect(rows).toHaveCount(PRODUCTS.length);
   // The stub has payments and clones on.
   await expect(rows.filter({ hasText: "Simulations" })).toContainText("Live");
   await expect(rows.filter({ hasText: "Wallet Clone" })).toContainText("Live");

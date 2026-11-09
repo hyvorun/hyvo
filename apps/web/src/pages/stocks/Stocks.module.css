@@ -1,0 +1,712 @@
+/*
+ * The stock pages: facts read from the chain, each with where it came from. Panels on the card's
+ * hairline, figures in tabular digits, exact values in mono, silver for the price. No color says
+ * good or bad: a verdict reads in words, with a mark beside it.
+ */
+
+.page {
+  display: grid;
+  gap: var(--space-7);
+  padding-top: var(--space-8);
+  min-width: 0;
+}
+
+.detail {
+  padding-top: var(--space-6);
+}
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.crumbs a {
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color 160ms var(--ease);
+}
+
+.crumbs a:hover {
+  color: var(--ink);
+}
+
+.crumbs span:last-child {
+  overflow-wrap: anywhere;
+}
+
+.head {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 66ch;
+  animation: rise 700ms var(--ease-out) both;
+}
+
+.head h1 {
+  font-size: var(--t-3xl);
+  letter-spacing: -0.03em;
+}
+
+.head > p {
+  color: var(--ink-2);
+  font-size: var(--t-lg);
+  line-height: 1.5;
+}
+
+/* --- search ----------------------------------------------------------------------------------- */
+
+.search {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 720px;
+  animation: rise 800ms var(--ease-out) 80ms both;
+}
+
+.search label {
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.bar {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.bar input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--sunken);
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  color: var(--ink);
+  font-size: var(--t-md);
+  transition: box-shadow 160ms var(--ease);
+}
+
+.bar input::placeholder {
+  color: var(--ink-3);
+}
+
+.bar input:hover {
+  box-shadow: inset 0 0 0 1px var(--ink-3);
+}
+
+.bar input:focus-visible {
+  outline: 0;
+  box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 3px var(--accent-soft);
+}
+
+.bar input[aria-invalid="true"] {
+  box-shadow: inset 0 0 0 1px var(--sell), 0 0 0 3px var(--sell-soft);
+}
+
+.bar :global(.btn) {
+  height: 46px;
+}
+
+.hint {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+}
+
+.error {
+  color: var(--sell-text);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  animation: rise 300ms var(--ease-out);
+}
+
+/* --- the list ------------------------------------------------------------------------------------ */
+
+.listSection {
+  display: grid;
+  gap: var(--space-4);
+  animation: rise 800ms var(--ease-out) 140ms both;
+}
+
+.listHead {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.listHead h2 {
+  font-size: var(--t-xl);
+}
+
+.listHead p {
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+}
+
+.columns {
+  display: none;
+}
+
+.list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule-strong);
+  list-style: none;
+}
+
+.list li {
+  border-bottom: 1px solid var(--rule);
+}
+
+.list a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "ticker changes"
+    "name name"
+    "address address";
+  gap: 2px var(--space-4);
+  margin-inline: -10px;
+  padding: 12px 10px;
+  border-radius: var(--radius-xs);
+  text-decoration: none;
+  transition: background-color 160ms var(--ease);
+}
+
+.list a:hover {
+  background: var(--raised);
+}
+
+.list a:focus-visible {
+  outline-offset: -2px;
+}
+
+.ticker {
+  grid-area: ticker;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  overflow-wrap: anywhere;
+}
+
+.name {
+  grid-area: name;
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  overflow-wrap: anywhere;
+}
+
+.short {
+  grid-area: address;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.changes {
+  grid-area: changes;
+  align-self: center;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  white-space: nowrap;
+}
+
+@media (min-width: 820px) {
+  .columns,
+  .list a {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr) 150px 120px;
+    grid-template-areas: "ticker name address changes";
+    align-items: baseline;
+    gap: var(--space-4);
+  }
+
+  .columns {
+    padding: 0 0 8px;
+    color: var(--ink-3);
+    font-size: var(--t-xs);
+  }
+
+  .columns span:last-child,
+  .changes {
+    text-align: right;
+  }
+
+  .list a {
+    min-height: 48px;
+    padding-block: 12px;
+  }
+
+  .short {
+    font-size: var(--t-sm);
+  }
+}
+
+.more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  padding-top: var(--space-4);
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.empty {
+  padding: var(--space-5) 0;
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+}
+
+.live {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+}
+
+.live a {
+  color: var(--ink-2);
+}
+
+/* --- sources ------------------------------------------------------------------------------------ */
+
+.how {
+  display: grid;
+  gap: var(--space-4);
+  animation: rise 800ms var(--ease-out) 200ms both;
+}
+
+.how h2 {
+  font-size: var(--t-xl);
+}
+
+.sourceList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius-lg);
+  background: var(--rule);
+  box-shadow: 0 0 0 1px var(--rule);
+  list-style: none;
+  overflow: hidden;
+}
+
+.sourceList li {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: 20px 22px;
+  background: var(--surface);
+}
+
+.sourceList b {
+  font-weight: 500;
+}
+
+.sourceList p {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.6;
+}
+
+.sourceList a,
+.prose a,
+.panel a,
+.fine a {
+  color: var(--ink);
+  text-underline-offset: 2px;
+}
+
+.fine {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: 1.6;
+}
+
+/* --- one token ---------------------------------------------------------------------------------- */
+
+.tokenHead {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  animation: rise 700ms var(--ease-out) both;
+}
+
+.tokenHead h1 {
+  font-size: var(--t-3xl);
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+.tokenHead h1.contractTitle,
+.smallHead h1 {
+  font-size: var(--t-2xl);
+  letter-spacing: -0.02em;
+}
+
+.tokenName {
+  color: var(--ink-2);
+  font-size: var(--t-lg);
+}
+
+.addressRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--t-sm);
+}
+
+.addressRow code {
+  color: var(--accent-text);
+  overflow-wrap: anywhere;
+}
+
+.addressRow a {
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+}
+
+.copy {
+  height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--ease),
+    color 160ms var(--ease);
+}
+
+.copy:hover {
+  background: var(--raised);
+  color: var(--ink);
+}
+
+.panels {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+@media (min-width: 960px) {
+  .panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.panel {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: 22px 24px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  animation: rise 800ms var(--ease-out) calc(80ms + var(--i, 0) * 70ms) both;
+}
+
+.panel > h2 {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* Low specificity, so the figures and notes below keep their own sizes. */
+:where(.panel) p {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.6;
+}
+
+/* The verdict: the answer in words, a mark beside it, and the evidence under it. */
+.verdict {
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+}
+
+.answer {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+
+/* A contract's name and ticker can be any length: they wrap rather than widen the page. */
+.answer > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.answer h3 {
+  font-size: var(--t-xl);
+  line-height: 1.25;
+}
+
+.answer h3 + p {
+  margin-top: var(--space-1);
+}
+
+.seal {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--ink-3);
+  color: var(--ink-2);
+  font-size: var(--t-md);
+  line-height: 1;
+}
+
+.seal[data-yes="true"] {
+  background: var(--primary);
+  box-shadow: none;
+  color: var(--on-primary);
+}
+
+.seal :global(.draw) {
+  stroke-dasharray: 1;
+  animation: stocks-draw 520ms var(--ease-out) 260ms both;
+}
+
+@keyframes stocks-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Label and value rows. */
+.facts {
+  display: grid;
+  margin: 0;
+}
+
+.facts > div {
+  display: grid;
+  gap: 2px var(--space-5);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .facts > div {
+    grid-template-columns: 170px minmax(0, 1fr);
+  }
+}
+
+.facts dt {
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+}
+
+.facts dd {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  min-width: 0;
+  font-size: var(--t-sm);
+  overflow-wrap: anywhere;
+}
+
+.facts dd small {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+}
+
+.facts code {
+  font-size: var(--t-xs);
+}
+
+.figure {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.big {
+  font-size: var(--t-2xl);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.big small {
+  margin-left: 6px;
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.price {
+  color: var(--accent-text);
+}
+
+.exact {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  overflow-wrap: anywhere;
+}
+
+.note {
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--rule-strong);
+}
+
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--ink-3);
+}
+
+.dot[data-on="true"] {
+  background: var(--ink);
+  box-shadow: none;
+}
+
+/* The multiplier history: newest first. */
+.history {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+  list-style: none;
+}
+
+.history li {
+  display: grid;
+  gap: 4px var(--space-5);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: var(--t-sm);
+}
+
+@media (min-width: 760px) {
+  .history li {
+    grid-template-columns: 200px minmax(0, 1fr) auto;
+    align-items: baseline;
+  }
+}
+
+.history time {
+  color: var(--ink-2);
+}
+
+.move {
+  overflow-wrap: anywhere;
+}
+
+.move b {
+  font-weight: 500;
+}
+
+.sent {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.tag {
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 0 7px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--rule-strong);
+  color: var(--ink-3);
+  font-size: var(--t-2xs);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.footer {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  animation: rise 800ms var(--ease-out) 300ms both;
+}
+
+.measured {
+  color: var(--ink);
+  font-size: var(--t-sm);
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  font-size: var(--t-sm);
+}
+
+.links a {
+  color: var(--ink-2);
+  text-underline-offset: 3px;
+}
+
+.links a:hover {
+  color: var(--ink);
+}
+
+.skeleton {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 960px) {
+  .skeleton {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.skeleton > div {
+  display: grid;
+  gap: var(--space-3);
+  padding: 22px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+.choices {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

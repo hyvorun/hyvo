@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { Link, NavLink, Outlet, useLocation } from "react-router";
 import { OFFICIAL } from "../lib/official";
 import { Logomark } from "./Icons";
 import styles from "./Layout.module.css";
+import { useNavIndicator } from "./motion/use-nav-indicator";
+import { useScrolled } from "./motion/use-scrolled";
+import { prefersReducedMotion } from "./use-playback";
 
 type Theme = "light" | "dark";
 const THEME_KEY = "hyvo.theme";
@@ -18,37 +22,70 @@ function readTheme(): Theme {
   }
 }
 
+function applyTheme(theme: Theme) {
+  const root = document.documentElement;
+  if (theme === "dark") root.removeAttribute("data-theme");
+  else root.setAttribute("data-theme", theme);
+  try {
+    if (theme === "dark") localStorage.removeItem(THEME_KEY);
+    else localStorage.setItem(THEME_KEY, theme);
+  } catch {
+    // Storage can be blocked; the choice then lasts for this page view.
+  }
+}
+
+type TransitionDocument = Document & { startViewTransition?: (update: () => void) => { finished: Promise<void> } };
+
 export function Layout() {
   const [theme, setTheme] = useState<Theme>(readTheme);
+  // The icon animates only when the theme is switched, not on the first paint.
+  const [switched, setSwitched] = useState(false);
   const location = useLocation();
-  const navRef = useRef<HTMLElement>(null);
+  const scrolled = useScrolled();
+  const nav = useRef<HTMLElement>(null);
+  const line = useRef<HTMLSpanElement>(null);
+  useNavIndicator(nav, line, location.pathname);
 
   // On a phone too narrow for every link, the nav scrolls sideways: bring the current page's link into it.
   useEffect(() => {
-    const nav = navRef.current;
-    const active = nav?.querySelector<HTMLElement>("a.active");
-    if (!nav || !active || nav.scrollWidth <= nav.clientWidth) return;
-    const room = nav.getBoundingClientRect();
+    const bar = nav.current;
+    const active = bar?.querySelector<HTMLElement>("a.active");
+    if (!bar || !active || bar.scrollWidth <= bar.clientWidth) return;
+    const room = bar.getBoundingClientRect();
     const link = active.getBoundingClientRect();
-    if (link.left < room.left) nav.scrollLeft -= room.left - link.left;
-    else if (link.right > room.right) nav.scrollLeft += link.right - room.right;
+    if (link.left < room.left) bar.scrollLeft -= room.left - link.left;
+    else if (link.right > room.right) bar.scrollLeft += link.right - room.right;
   }, [location.pathname]);
 
-  useEffect(() => {
+  useEffect(() => applyTheme(theme), [theme]);
+
+  /** Where the browser can, the whole page cross-fades into the other theme. */
+  const switchTheme = () => {
+    const next: Theme = theme === "dark" ? "light" : "dark";
+    const doc = document as TransitionDocument;
+    const update = () => {
+      setSwitched(true);
+      setTheme(next);
+    };
+    if (typeof doc.startViewTransition !== "function" || prefersReducedMotion()) return update();
     const root = document.documentElement;
-    if (theme === "dark") root.removeAttribute("data-theme");
-    else root.setAttribute("data-theme", theme);
-    try {
-      if (theme === "dark") localStorage.removeItem(THEME_KEY);
-      else localStorage.setItem(THEME_KEY, theme);
-    } catch {
-      // Storage can be blocked; the choice then lasts for this page view.
-    }
-  }, [theme]);
+    root.dataset.switching = "theme";
+    const done = () => delete root.dataset.switching;
+    doc
+      .startViewTransition(() => {
+        flushSync(update);
+        applyTheme(next);
+      })
+      .finished.then(done, done);
+  };
 
   // A new page starts at the top, or at the section its #link names once that section has rendered
-  // (a lazy page needs a moment to load).
+  // (a lazy page needs a moment to load). A #link within the same page glides there (base.css makes
+  // scrolling smooth unless the viewer prefers reduced motion); a new page lands on it at once.
+  const lastPath = useRef<string | null>(null);
   useEffect(() => {
+    const samePage = lastPath.current === location.pathname;
+    lastPath.current = location.pathname;
     const id = decodeURIComponent(location.hash.slice(1));
     if (!id) {
       window.scrollTo({ top: 0, behavior: "instant" });
@@ -58,7 +95,7 @@ export function Layout() {
     let tries = 0;
     const seek = () => {
       const target = document.getElementById(id);
-      if (target) target.scrollIntoView({ block: "start" });
+      if (target) target.scrollIntoView(samePage ? { block: "start" } : { block: "start", behavior: "instant" });
       else if (++tries < 180) frame = requestAnimationFrame(seek);
       else window.scrollTo({ top: 0, behavior: "instant" });
     };
@@ -71,13 +108,14 @@ export function Layout() {
       <a className={styles.skip} href="#main">
         Skip to content
       </a>
-      <header className={styles.header}>
+      <header className={styles.header} data-scrolled={scrolled}>
         <div className={styles.bar}>
           <Link to="/" className={styles.mark} aria-label="Hyvo home" viewTransition>
             <Logomark />
             <span className={styles.word}>Hyvo</span>
           </Link>
-          <nav ref={navRef} className={styles.nav} aria-label="Main">
+          <nav ref={nav} className={styles.nav} aria-label="Main">
+            <span ref={line} className={styles.indicator} aria-hidden="true" />
             <NavLink to="/runs" className={styles.link} viewTransition>
               Runs
             </NavLink>
@@ -102,18 +140,18 @@ export function Layout() {
             <button
               type="button"
               className={styles.theme}
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              onClick={switchTheme}
               aria-label={`Switch to the ${theme === "dark" ? "light" : "dark"} theme`}
             >
-              <span key={theme} className={styles.themeIcon}>
+              <span key={theme} className={`${styles.themeIcon} ${switched ? styles.swap : ""}`}>
                 {theme === "dark" ? (
-                  <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" className={styles.moon} aria-hidden="true">
                     <path d="M13.500 9.800A5.600 5.600 0 0 1 6.200 2.500a5.600 5.600 0 1 0 7.300 7.300Z" />
                   </svg>
                 ) : (
-                  <svg viewBox="0 0 16 16" aria-hidden="true">
-                    <circle cx="8" cy="8" r="3.200" />
-                    <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.400 1.400M11.600 11.600 13 13M3 13l1.400-1.400M11.600 4.400 13 3" />
+                  <svg viewBox="0 0 16 16" className={styles.sun} aria-hidden="true">
+                    <circle className={styles.core} cx="8" cy="8" r="3.200" />
+                    <path className={styles.rays} d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.400 1.400M11.600 11.600 13 13M3 13l1.400-1.400M11.600 4.400 13 3" />
                   </svg>
                 )}
               </span>
@@ -124,6 +162,7 @@ export function Layout() {
             </NavLink>
           </div>
         </div>
+        <span className={styles.read} aria-hidden="true" />
       </header>
 
       <main id="main" className={styles.main}>
@@ -163,6 +202,12 @@ export function Layout() {
           </Link>
           <Link to="/tools" viewTransition>
             Free tools
+          </Link>
+          <Link to="/launches" viewTransition>
+            Launches
+          </Link>
+          <Link to="/stocks" viewTransition>
+            Stocks
           </Link>
           <Link to="/new" viewTransition>
             Run a simulation

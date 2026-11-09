@@ -4,6 +4,7 @@ import { Link, useSearchParams } from "react-router";
 import type { Address } from "viem";
 import { Disclaimer } from "../components/Disclaimer";
 import { CheckMark } from "../components/Icons";
+import { Decode } from "../components/motion-data/Decode";
 import { Failure, Loading } from "../components/States";
 import { ApiError, fetchOracleLedger } from "../lib/api";
 import { PINNED_ORACLE } from "../lib/chain";
@@ -92,7 +93,7 @@ export function OraclePage() {
           <p className={styles.contract}>
             HyvoOracle{" "}
             <a className="mono" href={addressUrl(oracle)} target="_blank" rel="noreferrer">
-              {oracle}
+              <Decode text={oracle} duration={900} />
             </a>{" "}
             · chain {meta?.chainId} ·{" "}
             {source.pinned ? "the address this app was built with" : "as reported by the Hyvo API"}
@@ -140,8 +141,8 @@ export function OraclePage() {
         {ledger.status === "ready" && entries.length === 0 && <p className={styles.empty}>No run has been committed yet.</p>}
         {entries.length > 0 && (
           <ol className={styles.entries}>
-            {entries.map((entry) => (
-              <Entry key={entry.runId} entry={entry} onVerify={() => verify(entry.runId)} canVerify={Boolean(oracle)} />
+            {entries.map((entry, index) => (
+              <Entry key={entry.runId} entry={entry} index={index} onVerify={() => verify(entry.runId)} canVerify={Boolean(oracle)} />
             ))}
           </ol>
         )}
@@ -177,9 +178,9 @@ export function OraclePage() {
   );
 }
 
-function Entry({ entry, onVerify, canVerify }: { entry: OracleEntry; onVerify: () => void; canVerify: boolean }) {
+function Entry({ entry, index, onVerify, canVerify }: { entry: OracleEntry; index: number; onVerify: () => void; canVerify: boolean }) {
   return (
-    <li className={styles.entry}>
+    <li className={styles.entry} style={{ "--i": index % 12 } as React.CSSProperties}>
       <div className={styles.entryMain}>
         <Link to={`/run/${entry.runId}`} className={styles.title}>
           {entry.title ?? "Unlisted run"}
@@ -190,7 +191,7 @@ function Entry({ entry, onVerify, canVerify }: { entry: OracleEntry; onVerify: (
         <div>
           <dt>Run hash</dt>
           <dd className="mono" title={entry.reportHash}>
-            {shortHash(entry.reportHash, 8, 6)}
+            <Decode text={shortHash(entry.reportHash, 8, 6)} />
           </dd>
         </div>
         <div>
@@ -198,7 +199,7 @@ function Entry({ entry, onVerify, canVerify }: { entry: OracleEntry; onVerify: (
           <dd className="mono">
             {entry.txHash ? (
               <a href={txUrl(entry.txHash)} target="_blank" rel="noreferrer" title={entry.txHash}>
-                {shortHash(entry.txHash, 6, 4)}
+                <Decode text={shortHash(entry.txHash, 6, 4)} />
               </a>
             ) : (
               "–"
@@ -223,7 +224,7 @@ function Result({ check }: { check: Check }) {
   const { result } = check;
   return (
     <section className={`${styles.result} ${result.ok ? styles.ok : styles.bad}`} aria-live="polite">
-      <h2>{result.ok ? "Verified: the published run matches its on-chain commit" : "Not verified"}</h2>
+      <h2 className={result.ok ? undefined : "shake"}>{result.ok ? "Verified: the published run matches its on-chain commit" : "Not verified"}</h2>
       <p className={`${styles.id} mono`}>{check.runId}</p>
       <ol className={styles.steps}>
         {result.steps.map((step, i) => (
@@ -233,7 +234,7 @@ function Result({ check }: { check: Check }) {
             </span>
             <span>
               {step.label}
-              <span className={`${styles.detail} mono`}>{step.detail}</span>
+              <span className={`${styles.detail} mono`}>{/^0x[0-9a-f]+$/i.test(step.detail) ? <Decode text={step.detail} duration={900} /> : step.detail}</span>
             </span>
             <span className="visually-hidden">{step.ok ? "passed" : "failed"}</span>
           </li>

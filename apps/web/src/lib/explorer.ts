@@ -14,3 +14,7 @@ export function blockUrl(block: number): string {
 export function addressUrl(address: string): string {
   return `${EXPLORER_URL}/address/${address}`;
 }
+
+export function tokenUrl(address: string): string {
+  return `${EXPLORER_URL}/token/${address}`;
+}
