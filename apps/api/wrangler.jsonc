@@ -1,6 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "hyvo-api",
+  // Keep the free *.workers.dev address answering when a custom domain is added (scripts/deploy-cloudflare.ts).
+  "workers_dev": true,
   "main": "src/index.ts",
   "compatibility_date": "2026-10-01",
   // Built for the Workers Free plan (docs/OPEN_ITEMS.md item 21). `pnpm --filter @hyvo/api deploy:cloudflare`

@@ -11,6 +11,10 @@
  * touches only the resources named below.
  *
  * Options: --pages-project NAME (default hyvo).
+ *
+ * Custom domains come from apps/api/domains.json: the site moves to `web` once that domain is
+ * attached to the Pages project and serving it, and the API gets `api` as a custom domain. Without
+ * the file the site stays on *.pages.dev and the API on *.workers.dev.
  */
 import { hashRun, RunV1 } from "@hyvo/schema";
 import { spawnSync, type SpawnSyncReturns } from "node:child_process";
@@ -29,6 +33,7 @@ const CONFIG = join(API_DIR, "wrangler.jsonc");
 const WRANGLER = join(API_DIR, "node_modules", "wrangler", "bin", "wrangler.js");
 const SHOWCASE = join(REPO, "fixtures", "showcase-run.json");
 const DEPLOYMENT = join(REPO, "chain", "deployments", "4663.json");
+const DOMAINS = join(API_DIR, "domains.json");
 
 const DATABASE = "hyvo";
 const NAMESPACE = "hyvo-artifacts";
@@ -99,6 +104,18 @@ function writeEnv(updates: Record<string, string>): void {
   writeFileSync(ENV_FILE, `${next.join("\n").replace(/\n+$/, "")}\n`);
 }
 
+/**
+ * The custom domains (docs/OPEN_ITEMS.md item 9). `web` is attached to the Pages project in the
+ * dashboard, since Wrangler cannot; `api` is attached by `wrangler deploy --domain`. A key that is
+ * missing or not a hostname keeps the free *.pages.dev or *.workers.dev address.
+ */
+function readDomains(): { web?: string; api?: string } {
+  if (!existsSync(DOMAINS)) return {};
+  const parsed = JSON.parse(readFileSync(DOMAINS, "utf8")) as Record<string, unknown>;
+  const host = (value: unknown) => (typeof value === "string" && /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(value) ? value : undefined);
+  return { web: host(parsed.web), api: host(parsed.api) };
+}
+
 function secret(existing: string | undefined): string {
   return existing?.trim() || randomBytes(32).toString("hex");
 }
@@ -166,7 +183,7 @@ async function main(): Promise<void> {
       `create D1 database "${DATABASE}" and KV namespace "${NAMESPACE}" if missing, and write their ids to apps/api/wrangler.jsonc`,
       "apply the D1 migrations to the remote database",
       `set the secrets RUNNER_TOKEN, LLM_TOKEN and ARTIFACT_SIGNING_KEY on Worker "${WORKER}" (generated once, kept in the repo's .env)`,
-      `deploy Worker "${WORKER}" and Pages project "${PAGES}" (free plans, *.workers.dev and *.pages.dev)`,
+      `deploy Worker "${WORKER}" and Pages project "${PAGES}" (free plans, *.workers.dev and *.pages.dev, or the domains in apps/api/domains.json)`,
       "write the runner's settings to .env, publish the showcase run if nothing is featured yet, and check it all from outside",
     ]) {
       console.log(`  - ${step}`);
@@ -206,7 +223,20 @@ async function main(): Promise<void> {
   const project = named(projectsOf());
   if (!project) throw new Error(`Pages project "${PAGES}" is not on the account after creating it`);
   const domains = String(project["Project Domains"] ?? project.domains ?? `${PAGES}.pages.dev`);
-  const webHost = /[a-z0-9-]+\.pages\.dev/.exec(domains)?.[0] ?? `${PAGES}.pages.dev`;
+  const pagesHost = /[a-z0-9-]+\.pages\.dev/.exec(domains)?.[0] ?? `${PAGES}.pages.dev`;
+  const custom = readDomains();
+  if (custom.web) {
+    const attached = domains.split(",").map((domain) => domain.trim().toLowerCase());
+    if (!attached.includes(custom.web)) {
+      throw new Error(
+        `${custom.web} is not attached to the Pages project "${PAGES}" (it has ${domains}). Attach it in the dashboard ` +
+          `(Workers & Pages > ${PAGES} > Custom domains), or take "web" out of apps/api/domains.json to stay on ${pagesHost}.`,
+      );
+    }
+    // Sign-in and CORS move to this domain, so it has to serve the site already, or everyone would be locked out.
+    await settled(`${custom.web} serves the site`, async () => (await fetch(`https://${custom.web}/`)).ok);
+  }
+  const webHost = custom.web ?? pagesHost;
   const webOrigin = `https://${webHost}`;
 
   // --- the Worker -----------------------------------------------------------------------------------
@@ -217,10 +247,22 @@ async function main(): Promise<void> {
   const production = JSON.parse(readFileSync(join(API_DIR, "production.vars.json"), "utf8")) as Record<string, string>;
   const vars: Record<string, string> = { ...production, WEB_ORIGIN: webOrigin, SIWE_DOMAIN: webHost };
   delete vars["//"];
-  const deployWorker = (settings: Record<string, string>) => wrangler(["deploy", ...Object.entries(settings).flatMap(([key, value]) => ["--var", `${key}:${value}`])]);
+  const deployWorker = (settings: Record<string, string>) =>
+    wrangler(["deploy", ...(custom.api ? ["--domain", custom.api] : []), ...Object.entries(settings).flatMap(([key, value]) => ["--var", `${key}:${value}`])]);
   const deployed = deployWorker(vars);
-  const apiUrl = /https:\/\/[a-z0-9.-]+\.workers\.dev/.exec(deployed)?.[0];
-  if (!apiUrl) throw new Error(`no workers.dev URL in the deploy output:\n${deployed.slice(-800)}`);
+  let apiUrl = /https:\/\/[a-z0-9.-]+\.workers\.dev/.exec(deployed)?.[0];
+  if (custom.api) {
+    // A new custom domain waits for its certificate. Until it answers, everything keeps the workers.dev address.
+    try {
+      await settled(`${custom.api} answers`, async () => (await fetch(`https://${custom.api}/v1/health`)).ok);
+      apiUrl = `https://${custom.api}`;
+    } catch (error) {
+      if (!apiUrl) throw error;
+      say("API stays on workers.dev for now", `${custom.api} does not answer yet (${error instanceof Error ? error.message : String(error)})`);
+    }
+  }
+  if (!apiUrl) throw new Error(`no API address in the deploy output:
+${deployed.slice(-800)}`);
   // The cron needs the Worker's own address for links that go on-chain. A new account only learns it here.
   if (vars.PUBLIC_API_URL !== apiUrl) deployWorker({ ...vars, PUBLIC_API_URL: apiUrl });
   say("Worker deployed", apiUrl);
