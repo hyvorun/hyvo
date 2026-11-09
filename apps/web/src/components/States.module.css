@@ -92,6 +92,7 @@
   border-top: 1px solid var(--rule);
 }
 
+/* The placeholder rows fade in one after another. */
 .skeletonRow {
   display: flex;
   align-items: center;
@@ -99,4 +100,23 @@
   gap: var(--space-5);
   padding: var(--space-4) 0;
   border-bottom: 1px solid var(--rule);
+  animation: row-in 480ms var(--ease-out) backwards;
+}
+
+.skeletonRow:nth-child(2) {
+  animation-delay: var(--stagger);
+}
+
+.skeletonRow:nth-child(3) {
+  animation-delay: calc(2 * var(--stagger));
+}
+
+.skeletonRow:nth-child(n + 4) {
+  animation-delay: calc(3 * var(--stagger));
+}
+
+@keyframes row-in {
+  from {
+    opacity: 0;
+  }
 }

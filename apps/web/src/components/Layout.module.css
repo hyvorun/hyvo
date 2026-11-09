@@ -157,12 +157,21 @@
   color: var(--ink-2);
   font-size: var(--t-sm);
   text-decoration: none;
-  transition: color var(--dur-hover) var(--ease);
+  transition:
+    color var(--dur-hover) var(--ease),
+    transform var(--dur-spring) var(--ease-spring);
 }
 
 .link:hover,
 .link:global(.active) {
   color: var(--ink);
+}
+
+/* A press: down quickly, back on a spring. */
+.link:active {
+  transform: scale(0.96);
+  transition-duration: var(--dur-hover), var(--dur-press);
+  transition-timing-function: var(--ease);
 }
 
 /* The page's link is underlined. With motion and once measured, the sliding line takes over. */
@@ -268,6 +277,14 @@
 
 .social:hover {
   color: var(--ink);
+}
+
+/* The small header controls get a faint ground under the pointer. */
+@media (hover: hover) {
+  .social:hover,
+  .theme:hover {
+    background-color: var(--accent-soft);
+  }
 }
 
 .social:hover svg,
