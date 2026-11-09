@@ -4,8 +4,8 @@
  * reader only reads: no endpoint here is ever sent a transaction.
  *
  * - dRPC: eth_call and headers; log queries over about 100 blocks only, so not used for logs.
- * - Pocket: log queries need an address (ten at most) and span 10,001 blocks on most of its nodes
- *   and 50,000 on some.
+ * - Pocket: often refuses a log query without an address, takes ten addresses at most, and spans
+ *   10,001 blocks on most of its nodes and 50,000 on some.
  * - Robinhood's own endpoint: log queries over 250,000 blocks with an address and 30,000 without
  *   one. Its terms say it is rate limited and not for production, and some ISPs block its domain
  *   (docs/OPEN_ITEMS.md items 3 and 14), so it comes after Pocket, and is the one that answers a
