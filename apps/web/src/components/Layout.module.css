@@ -182,9 +182,14 @@
 }
 
 @media (min-width: 720px) {
+  /* The links wrap inside their own column, so a new link never squeezes the text beside them. */
   .footer {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(16rem, 2fr) minmax(0, 3fr);
     align-items: start;
+  }
+
+  .footNav {
+    justify-content: flex-end;
   }
 }
 

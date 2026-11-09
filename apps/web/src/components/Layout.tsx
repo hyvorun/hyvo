@@ -146,6 +146,9 @@ export function Layout() {
           <Link to="/tools" viewTransition>
             Free tools
           </Link>
+          <Link to="/stocks" viewTransition>
+            Stocks
+          </Link>
           <Link to="/new" viewTransition>
             Run a simulation
           </Link>

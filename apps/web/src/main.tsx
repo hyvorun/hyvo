@@ -49,6 +49,8 @@ const router = createBrowserRouter([
       { path: "/tools/quiz", lazy: () => import("./pages/tools/QuizTool").then((m) => ({ Component: m.QuizTool })) },
       { path: "/tools/checklist", lazy: () => import("./pages/tools/ChecklistTool").then((m) => ({ Component: m.ChecklistTool })) },
       { path: "/tools/glossary", lazy: () => import("./pages/tools/GlossaryTool").then((m) => ({ Component: m.GlossaryTool })) },
+      { path: "/stocks", lazy: () => import("./pages/stocks/StocksPage").then((m) => ({ Component: m.StocksPage })) },
+      { path: "/stocks/:id", lazy: () => import("./pages/stocks/StockPage").then((m) => ({ Component: m.StockPage })) },
       { path: "*", element: <NotFoundPage /> },
         ],
       },

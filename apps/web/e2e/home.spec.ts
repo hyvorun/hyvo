@@ -118,7 +118,7 @@ test("the archetype guide follows the arrow keys", async ({ page }) => {
 test("what is open comes from the API's switches", async ({ page }) => {
   await page.goto("/");
   const rows = page.getByRole("region", { name: "What you can do with Hyvo" }).getByRole("listitem");
-  await expect(rows).toHaveCount(10);
+  await expect(rows).toHaveCount(11);
   // The stub has payments and clones on.
   await expect(rows.filter({ hasText: "Simulations" })).toContainText("Live");
   await expect(rows.filter({ hasText: "Wallet Clone" })).toContainText("Live");

@@ -15,6 +15,7 @@ export const GROUPS = [
   { id: "simulate", name: "Simulate", line: "Try something on a private copy of the chain before it is real." },
   { id: "verify", name: "Verify", line: "Check what a run did, and that nobody changed it since." },
   { id: "build", name: "Build", line: "Use Hyvo from programs, bots and AI agents." },
+  { id: "lookup", name: "Look up", line: "Read-only facts from Robinhood Chain, each with the block it was read at." },
   { id: "learn", name: "Learn", line: "Free tools for the arithmetic and the words around a launch." },
 ] as const;
 
@@ -112,6 +113,15 @@ export const PRODUCTS: Product[] = [
     to: "/docs",
     group: "build",
     gate: "read",
+  },
+  {
+    id: "stocks",
+    name: "Stocks",
+    line: "Look up a Robinhood stock token by ticker or address: whether the Stock Token factory records it, its multiplier, its Chainlink price and what it means, and whether it can move right now.",
+    who: "Developers, traders",
+    to: "/stocks",
+    group: "lookup",
+    gate: "always",
   },
   {
     id: "tools",
