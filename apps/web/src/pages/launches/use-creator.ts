@@ -220,7 +220,12 @@ export function useHolderScan(detail: LaunchDetail | null, event: LaunchEvent | 
         listSource: facts.holders ? facts.source : null,
         listMissing: facts.holders ? null : facts.holdersMissing,
         second: buys ? { fromBlock: buys.fromBlock, toBlock: buys.toBlock } : null,
-        secondMissing: buys ? null : event ? "The buys of the launch second could not be read just now." : "The launch transaction was not found, so the launch second's buys were not read.",
+        // `event` is null both when the search found no launch transaction and when it failed.
+        secondMissing: buys
+          ? null
+          : event
+            ? "The buys of the launch second could not be read just now."
+            : "The launch transaction was not found or could not be read just now, so the launch second's buys were not read.",
         read: read.read,
       });
     })().catch((error: unknown) => live && setState({ ...SCAN_START, status: "error", error: failureText(error) }));

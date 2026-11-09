@@ -71,7 +71,7 @@ export function HolderScanSection({ detail, event, attempt }: { detail: LaunchDe
               <b className="num">{scan.firstSecond ? percent(scan.firstSecond.share) : "Not read"}</b>
               <span>
                 {scan.firstSecond
-                  ? `Held now by the ${scan.firstSecond.wallets} ${scan.firstSecond.wallets === 1 ? "wallet" : "wallets"} that bought in the launch second${scan.firstSecond.includesCreator ? ", the creator among them" : ""}`
+                  ? `Held now by the ${scan.firstSecond.wallets} ${scan.firstSecond.wallets === 1 ? "wallet" : "wallets"} that bought in the launch second${scan.firstSecond.includesCreator ? ", the creator among them" : ""}${scan.firstSecond.unread > 0 ? `; ${scan.firstSecond.unread} of their balances not read` : ""}`
                   : "Held now by the wallets that bought in the launch second"}
               </span>
             </li>
