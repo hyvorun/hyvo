@@ -23,6 +23,7 @@ import { randomBytes } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { effectiveVars, GUARDED_VARS, paymentsWithoutAdmin } from "./go-live/guard";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const API_DIR = resolve(HERE, "..");
@@ -190,6 +191,11 @@ async function checkLive(apiUrl: string, webOrigin: string): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  // Before anything else, in a dry run too: open payments with no admin could be neither refunded nor paused.
+  const productionVars = JSON.parse(readFileSync(join(API_DIR, "production.vars.json"), "utf8")) as Record<string, string>;
+  const refusal = paymentsWithoutAdmin(effectiveVars(readFileSync(CONFIG, "utf8"), productionVars, GUARDED_VARS));
+  if (refusal) throw new Error(refusal);
+
   const whoami = wrangler(["whoami"]);
   const account = /associated with the email ([^\s.]+@[^\s]+?)\.?\s/.exec(whoami)?.[1] ?? "unknown";
   say("Cloudflare account", account);
