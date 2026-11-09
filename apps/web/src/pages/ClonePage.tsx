@@ -94,7 +94,7 @@ function Clone({ token, address }: { token: string; address: string }) {
   };
 
   if (!loaded && error) return <Failure message={error} onRetry={() => void load()} />;
-  if (!loaded) return <Loading label="Looking for your clone…" />;
+  if (!loaded) return <Loading label="Looking for your clone…" page />;
 
   return (
     <article className={styles.page}>

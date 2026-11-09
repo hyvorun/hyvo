@@ -428,6 +428,9 @@
 
 .main {
   width: min(calc(100% - 2 * var(--gutter)), var(--page));
+  /* At least a screen tall: the footer starts below the fold, so content that arrives late never pushes it
+     across the screen. */
+  min-height: 100dvh;
   margin: 0 auto;
   padding-bottom: var(--space-9);
   min-width: 0;

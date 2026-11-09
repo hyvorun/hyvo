@@ -7,6 +7,12 @@
   font-size: var(--t-sm);
 }
 
+/* A whole page loading: a screen tall, so the footer never moves into view and back. */
+.page {
+  align-items: flex-start;
+  min-height: 100dvh;
+}
+
 .dots {
   display: inline-flex;
   gap: 4px;

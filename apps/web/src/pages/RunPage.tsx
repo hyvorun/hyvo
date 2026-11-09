@@ -69,7 +69,7 @@ export function RunPage() {
   const { runId = "" } = useParams();
   const state = useRunStatus(runId);
 
-  if (state.status === "loading") return <Loading label="Loading the run…" />;
+  if (state.status === "loading") return <Loading label="Loading the run…" page />;
   if (state.status === "error") {
     const missing = state.error instanceof ApiError && state.error.status === 404;
     return (
@@ -85,7 +85,7 @@ export function RunPage() {
     );
   }
   const { run, job, oracle, outcome } = state.data;
-  if (!run) return job ? <JobStatus runId={runId} job={job} /> : <Loading label="Loading the run…" />;
+  if (!run) return job ? <JobStatus runId={runId} job={job} /> : <Loading label="Loading the run…" page />;
   return <PublishedRun runId={runId} oracle={oracle} summary={run} outcome={outcome ?? null} />;
 }
 
@@ -127,7 +127,7 @@ function PublishedRun({
   const state = useAsync(() => fetchRunDocument(runId), runId);
   useTitle(state.status === "ready" ? state.data.scenario.title : null);
 
-  if (state.status === "loading") return <Loading label="Loading the run…" />;
+  if (state.status === "loading") return <Loading label="Loading the run…" page />;
   if (state.status === "error") {
     return (
       <div className={styles.narrow}>

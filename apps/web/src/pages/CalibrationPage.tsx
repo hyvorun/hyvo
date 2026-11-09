@@ -42,7 +42,7 @@ function Votes({ yes, no, unsure }: { yes: number; no: number; unsure: number })
 export function CalibrationPage() {
   useTitle("Calibration");
   const state = useAsync(fetchCalibration, "calibration");
-  if (state.status === "loading") return <Loading label="Loading the record…" />;
+  if (state.status === "loading") return <Loading label="Loading the record…" page />;
   if (state.status === "error") return <Failure message={state.error.message} onRetry={state.reload} />;
   return <Record data={state.data} />;
 }

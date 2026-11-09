@@ -19,7 +19,7 @@ const router = createBrowserRouter([
   {
     element: <Layout />,
     // Shown while a lazy page loads on a direct visit (before the layout can render).
-    hydrateFallbackElement: <Loading label="Loading…" />,
+    hydrateFallbackElement: <Loading label="Loading…" page />,
     errorElement: <PageError />,
     children: [
       {

@@ -1,8 +1,12 @@
 import styles from "./States.module.css";
 
-export function Loading({ label }: { label: string }) {
+/**
+ * `page` holds a whole page's place while it loads: at least a screen tall, so the footer starts below
+ * the fold and does not jump when the content arrives.
+ */
+export function Loading({ label, page = false }: { label: string; page?: boolean }) {
   return (
-    <div className={styles.loading} role="status">
+    <div className={page ? `${styles.loading} ${styles.page}` : styles.loading} role="status">
       <span className={styles.dots} aria-hidden="true">
         <i />
         <i />

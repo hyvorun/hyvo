@@ -76,7 +76,7 @@ function Loader({ runId, token }: { runId: string; token: string }) {
   }, [runId, token, attempt]);
 
   if (error) return <Failure message={error} onRetry={() => setAttempt((n) => n + 1)} />;
-  if (!view) return <Loading label="Loading the Dry Run…" />;
+  if (!view) return <Loading label="Loading the Dry Run…" page />;
   if (view.status === "failed") {
     return (
       <section className={styles.page}>
@@ -102,7 +102,7 @@ function Loader({ runId, token }: { runId: string; token: string }) {
       </section>
     );
   }
-  if (!report) return <Loading label="Loading the report…" />;
+  if (!report) return <Loading label="Loading the report…" page />;
   return <Report report={report} />;
 }
 
