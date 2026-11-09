@@ -104,11 +104,17 @@ test("the trust page says what Hyvo never does, and the token page what the toke
   // The test build pins no contract addresses, so nothing is read from the chain.
   await expect(page.getByText("This build of the site does not list the contract addresses")).toBeVisible();
   await expect(page.getByText("Synthetic crowd reaction. Not a trading signal.")).toBeVisible();
+  // It has no HYVO address either: before the launch, no token is Hyvo's (e2e/token-live.spec.ts has the after).
+  await expect(page.getByRole("main").getByText(/^Hyvo has not launched a token yet: until \/token shows an address/)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/^Token:/)).toHaveCount(0);
   await noHorizontalScroll(page);
 
   await page.goto("/token");
   await expect(page.getByRole("heading", { name: "Coming soon" })).toBeVisible();
+  await expect(page.getByText(/^Hyvo has not launched a token yet, so no token named HYVO is Hyvo.s today\./)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Copy the address" })).toHaveCount(0);
   await expect(page.getByText("2 free runs")).toBeVisible();
+  await expect(page.getByText("Draft numbers, set at the launch.")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Planned for holders" })).toBeVisible();
   // Only what the token is for: nothing about fees, payouts or where money goes.
   await expect(page.locator("main")).not.toContainText(/yield|revenue|creator|Pons/i);
