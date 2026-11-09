@@ -10,6 +10,12 @@ async function noHorizontalScroll(page: Page) {
   expect(overflow).toBeLessThanOrEqual(0);
 }
 
+/** On a phone the columns are tabs: open the column's tab first. On a wide screen every column shows. */
+async function show(page: Page, column: "New" | "Final stretch" | "Graduated") {
+  const tabs = page.getByRole("tablist", { name: "Columns" });
+  if (await tabs.isVisible()) await tabs.getByRole("tab", { name: new RegExp(`^${column}`) }).click();
+}
+
 test("the board shows its three columns, read at one named block", async ({ page }) => {
   await stubBoardChain(page);
   await page.goto("/board");
@@ -26,17 +32,20 @@ test("the board shows its three columns, read at one named block", async ({ page
   await expect(cards(fresh).nth(1)).toContainText("GLINT");
   await expect(cards(fresh).nth(2)).toContainText("PLUME");
   // On the curve and past half way, furthest first: DRIP's curve holds its threshold, OSPREY 73.8%, MOTE 60%.
+  await show(page, "Final stretch");
   await expect(cards(stretch)).toHaveCount(3);
   await expect(cards(stretch).nth(0)).toContainText("DRIP");
   await expect(cards(stretch).nth(1)).toContainText("OSPREY");
   await expect(cards(stretch).nth(2)).toContainText("MOTE");
   await expect(cards(stretch).nth(2)).toContainText("60%");
   // Its pool created in the last 24 hours.
+  await show(page, "Graduated");
   await expect(cards(graduated)).toHaveCount(1);
   await expect(cards(graduated).first()).toContainText("BRISK");
   await expect(cards(graduated).first()).toContainText("Creator tax 10%");
 
   // FIZZ: the creator's wallet, the curve and the two wallets of the launch second, as shares of the supply.
+  await show(page, "New");
   const fizz = cards(fresh).first();
   await expect(fizz.getByRole("list", { name: "Flags for FIZZ" })).toContainText("Creator holds 62%");
   await expect(fizz.getByRole("list", { name: "Flags for FIZZ" })).toContainText("First-second buyers hold 18%");

@@ -174,7 +174,7 @@ test("the header shows HYVO's address beside the X link, and one press copies it
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
 });
 
-for (const width of [1440, 1180, 1024, 860, 720, 700, 641, 390]) {
+for (const width of [1440, 1180, 1024, 1000, 999, 860, 720, 700, 641, 390]) {
   test(`the header with HYVO's address fits at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await stubApi(page);

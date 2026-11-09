@@ -164,7 +164,8 @@ test("one launch shows its facts, its last hour of trades and a link to Hyvo Che
   await expect(page.getByText("Fizz", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("list", { name: "Summary" })).toContainText("Paired with ETH");
   await expect(page.getByRole("list", { name: "Summary" })).toContainText("Creator tax 0%");
-  await expect(page.getByText(/^Measured on-chain at block 109,867,700/)).toContainText("Not a trading signal.");
+  // The page and its holder scan each name the block they were read at.
+  await expect(page.getByText(/^Measured on-chain at block 109,867,700/).first()).toContainText("Not a trading signal.");
   await expect(page.getByText(/of the way to graduation/)).toContainText("1.4%");
 
   const facts = page.getByRole("region", { name: "On-chain facts" });
