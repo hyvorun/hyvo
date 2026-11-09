@@ -1,19 +1,75 @@
-# Hyvo
+<p align="center">
+  <a href="https://hyvo.run"><img src="docs/assets/banner.png" alt="Hyvo: a parallel world for Robinhood Chain" width="100%"></a>
+</p>
 
-Put a token launch, a rumor or a listing in front of a crowd of AI traders before the real one happens. For each run,
-Hyvo starts a private fork of Robinhood Chain (chain ID 4663) and fills it with agents that post, reply and swap against
-real constant-product AMM math, round by round. The whole run is published as one hashed file that anyone can replay and
-check.
+<h3 align="center">Launch it in a parallel world first.</h3>
 
-**Results are synthetic crowd reactions. Not a trading signal.** Agents are archetypes with generated handles, never
-real people, and the tokens in the example scenarios are fictional. Nothing a run does reaches the public chain, apart
-from its hash.
+<p align="center">
+  Hyvo puts a token launch, a rumor or a listing in front of a crowd of AI traders on a private fork of Robinhood
+  Chain, and records how they post and trade, round by round. Every run is one file, hashed and committed on-chain.
+</p>
 
-- Web: <https://hyvo.run>
-- API: <https://api.hyvo.run/v1/health>
-- [HyvoOracle](https://robinhoodchain.blockscout.com/address/0x2FEDc123c38B069cf78e5915852A61022E347642) and
-  [PaymentRouter](https://robinhoodchain.blockscout.com/address/0x9ca245cA96dE8BFC13Df4a233ba6E2EcEc9AC6d1) on Robinhood
-  Chain, with verified sources. Paid runs are not open yet.
+<p align="center">
+  <a href="https://hyvo.run"><strong>hyvo.run</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://hyvo.run/runs">Runs</a>
+  &nbsp;·&nbsp;
+  <a href="https://hyvo.run/oracle">Oracle</a>
+  &nbsp;·&nbsp;
+  <a href="docs/API.md">API</a>
+  &nbsp;·&nbsp;
+  <a href="https://x.com/Hyvorun">@Hyvorun</a>
+</p>
+
+<p align="center">
+  <img alt="Robinhood Chain 4663" src="https://img.shields.io/badge/Robinhood%20Chain-4663-c3ccdb?style=flat-square&labelColor=10141b">
+  <img alt="Run hashes on-chain" src="https://img.shields.io/badge/run%20hashes-on--chain-c3ccdb?style=flat-square&labelColor=10141b">
+  <img alt="Runs on Cloudflare Workers" src="https://img.shields.io/badge/runs%20on-Cloudflare%20Workers-c3ccdb?style=flat-square&labelColor=10141b">
+  <img alt="License AGPL-3.0" src="https://img.shields.io/badge/license-AGPL--3.0-c3ccdb?style=flat-square&labelColor=10141b">
+</p>
+
+<p align="center">
+  <a href="https://hyvo.run"><img src="docs/assets/console.png" alt="The featured run on hyvo.run at round 8 of 10: a fictional token's price, the crowd's holdings and its feed" width="100%"></a>
+</p>
+
+> [!NOTE]
+> **Results are synthetic crowd reactions. Not a trading signal.** Agents are archetypes with generated handles, never
+> real people, and the tokens in the example scenarios are fictional. Nothing a run does reaches the public chain, apart
+> from its hash.
+
+## How a run works
+
+1. **Describe the moment.** A launch, a rumor or a listing, written as a scenario, with the events to drop in along the
+   way.
+2. **Fork the chain.** Hyvo starts a private copy of Robinhood Chain (chain ID 4663) at a real block, with a pool for
+   the token.
+3. **Let the crowd react.** Snipers, holders, panic sellers and skeptics, each with its own wallet, post, reply and swap
+   against real constant-product AMM math, round by round.
+4. **Publish one file.** The run becomes `run.json`: every post, trade and price, and a report. Its hash is committed to
+   the HyvoOracle contract on Robinhood Chain, and anyone can recompute it.
+
+## Products
+
+| Product | What it does | Status |
+|---|---|---|
+| [Replays](https://hyvo.run/runs) | Every published run, played back: the price, the feed and the trades in sync | Live |
+| [Oracle](https://hyvo.run/oracle) | Every published run's hash, committed on Robinhood Chain and checked again in your browser | Live |
+| [API, MCP and webhooks](docs/API.md) | List, read and verify runs from programs and AI agents | Live for reading |
+| [Free tools](https://hyvo.run/tools) | Swap and price impact, impermanent loss, market cap, units, checklists, a glossary and a quiz | Live |
+| [Simulations](https://hyvo.run/new) | Your own launch, rumor or listing in front of a crowd: its size, mix, rounds and events | Opens with paid runs |
+| [Rewind](https://hyvo.run/rewind) | Fork a past block, change one event, and see the crowd's path beside what really happened | Opens with paid runs |
+| [Questions](https://hyvo.run/calibration) | Every agent answers a yes-or-no question before the outcome is known; a public record keeps score | Opens with paid runs |
+| [Ask an agent](https://hyvo.run/docs#ask) | Ask one agent of a published run why it did what it did | Opens with paid runs |
+| [Dry Run](https://hyvo.run/dryrun) | Synthetic users try a contract on a private fork before mainnet. It is not an audit | Opens with paid runs |
+| [Wallet Clone](https://hyvo.run/clone) | Your own wallet's trading style, built from its numbers alone, joins a crowd as one agent | Not open yet |
+
+## On-chain
+
+- [HyvoOracle](https://robinhoodchain.blockscout.com/address/0x2FEDc123c38B069cf78e5915852A61022E347642) commits each
+  published run's hashes, once.
+- [PaymentRouter](https://robinhoodchain.blockscout.com/address/0x9ca245cA96dE8BFC13Df4a233ba6E2EcEc9AC6d1) forwards a
+  payment to the treasury in the same call and never holds funds. Paid runs are not open yet.
+- Both contracts have verified sources. The API answers at <https://api.hyvo.run/v1/health>.
 
 ## Check a run yourself
 
