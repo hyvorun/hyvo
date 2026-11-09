@@ -205,10 +205,12 @@
   font-size: var(--t-sm);
 }
 
+/* Capped, so that a longer list of links wraps instead of squeezing the text beside it. */
 .footNav {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-5);
+  max-width: 600px;
   font-size: var(--t-sm);
 }
 
