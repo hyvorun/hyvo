@@ -40,6 +40,26 @@
   height: 180px;
 }
 
+/* The lines draw in from the start the first time the chart is in view; the chart keeps its room. */
+@media screen and (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .figure[data-in="false"] svg {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .figure[data-in="true"] svg {
+    animation: draw-across 1100ms var(--ease-out) both;
+  }
+}
+
+@keyframes draw-across {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 .zero {
   stroke: var(--rule-strong);
   stroke-width: 1;

@@ -2,6 +2,7 @@ import { DRYRUN_LIMITS, DryRunRequest, type DryRunView } from "@hyvo/schema";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { PaymentsNote } from "../components/PaymentsNote";
+import { Reveal } from "../components/Reveal";
 import { useWalletSession, Web3 } from "../components/Web3";
 import { ApiError, createDryRun, fetchDryRuns } from "../lib/api";
 import { formatUsd } from "../lib/draft";
@@ -120,7 +121,7 @@ function Submit() {
         </p>
       </header>
 
-      <form className={styles.form} onSubmit={(event) => void submit(event)} noValidate>
+      <Reveal as="form" index={1} className={`${styles.form} stagger`} onSubmit={(event: FormEvent) => void submit(event)} noValidate>
         <fieldset className={styles.choice}>
           <legend>The contract</legend>
           <label>
@@ -169,17 +170,18 @@ function Submit() {
             Paid from your <Link to="/account">prepaid balance</Link>. If it fails, the money goes back.
           </p>
         </div>
-        {(failure || wallet.error) && (
-          <p className={styles.error} role="alert">
-            {failure?.message ?? wallet.error} {failure?.short && <Link to="/account">Top up</Link>}
-          </p>
-        )}
-      </form>
+      </Reveal>
+      {/* After the form rather than in it, so it shows at once instead of waiting its turn in the entrance. */}
+      {(failure || wallet.error) && (
+        <p className={styles.error} role="alert">
+          {failure?.message ?? wallet.error} {failure?.short && <Link to="/account">Top up</Link>}
+        </p>
+      )}
 
       {earlier.length > 0 && (
         <section className={styles.section} aria-labelledby="earlier">
           <h2 id="earlier">Your Dry Runs</h2>
-          <ul className={styles.list}>
+          <Reveal as="ul" className={`${styles.list} stagger`}>
             {earlier.map((item) => (
               <li key={item.runId}>
                 <Link to={`/dryrun/${item.runId}`} viewTransition>
@@ -191,7 +193,7 @@ function Submit() {
                 </span>
               </li>
             ))}
-          </ul>
+          </Reveal>
         </section>
       )}
     </article>

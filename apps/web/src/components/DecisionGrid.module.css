@@ -16,7 +16,6 @@
 }
 
 .number {
-  display: inline-block;
   color: var(--ink);
   font-size: var(--t-xl);
   font-weight: 500;

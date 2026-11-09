@@ -33,9 +33,11 @@
   color: var(--ink-2);
 }
 
+/* An error rises into place as it appears. */
 .error {
   color: var(--sell);
   font-size: var(--t-sm);
+  animation: rise 300ms var(--ease-out);
 }
 
 .error a {
@@ -172,6 +174,17 @@
 }
 
 /* --- the report ------------------------------------------------------------------------ */
+
+/* While the crowd plays, a live dot beside the round. */
+.waiting {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.waiting :global(.live-dot) {
+  align-self: center;
+}
 
 .meta {
   display: flex;
