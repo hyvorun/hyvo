@@ -17,6 +17,8 @@ from hyvo.narrative.seedpack import (
     candidates,
     eth_price,
     market_for,
+    not_a_story,
+    passes_for_hyvo,
 )
 from hyvo.narrative.signals import Signal
 from hyvo.report.guard import find_violations
@@ -123,6 +125,34 @@ def test_a_thin_day_gives_nothing(settings: NarrativeSettings) -> None:
 )
 def test_what_cannot_carry_the_day(bad: Signal) -> None:
     assert candidates([bad], set(), NOW) == []
+
+
+@pytest.mark.parametrize("symbol", ["HYVO", "HYV0", "HYYVO", "HYVOO", "WHYVO", "HYVOAI", "BABYHYVO", "HYVO2"])
+def test_hyvos_own_token_and_its_lookalikes_never_carry_the_day(symbol: str) -> None:
+    # The busiest Pons launch of the day, and still not a subject: a public run of Hyvo's about it would be Hyvo's word on it.
+    assert candidates([pool_signal(symbol, volume=5_000_000)], set(), NOW) == []
+    assert not_a_story(symbol)
+
+
+@pytest.mark.parametrize("symbol", ["FIZZ", "HIVE", "HYPE", "VOLT", "SHY", "OVHY"])
+def test_a_symbol_that_only_shares_letters_with_hyvo_is_fine(symbol: str) -> None:
+    assert not not_a_story(symbol)
+    assert [signal.refs["symbol"] for signal in candidates([pool_signal(symbol)], set(), NOW)] == [symbol]
+
+
+def test_hyvo_is_not_in_the_pack_even_as_a_move_elsewhere_a_topic_or_a_headline(settings: NarrativeSettings) -> None:
+    signals = [
+        *day_signals(),
+        pool_signal("HYVO", volume=9_000_000, change=300.0),
+        pool_signal("HYV0", volume=8_000_000, change=-80.0),
+        news_signal("$HYVO lists on Robinhood Chain", "Robinhood", "HYVO", at=NOW - timedelta(minutes=5)),
+        news_signal("Hyvo token draws a crowd on Robinhood", "Robinhood", at=NOW - timedelta(minutes=4)),
+    ]
+    pack = build(settings, signals=signals)
+    assert pack is not None and pack.symbol == "FIZZ"
+    text = pack.path.read_text(encoding="utf-8")
+    assert not passes_for_hyvo(text), text
+    assert "Robinhood volume doubled" in text, "the other headlines still go in"
 
 
 def test_a_recently_used_token_is_passed_over() -> None:

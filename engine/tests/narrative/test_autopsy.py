@@ -102,6 +102,23 @@ def test_the_largest_move_wins(tmp_path: Path) -> None:
         assert move is not None and move.refs["symbol"] == "BBB"
 
 
+@pytest.mark.parametrize("symbol", ["HYVO", "HYV0", "WHYVO", "HYVOAI"])
+def test_hyvos_own_token_and_its_lookalikes_are_never_autopsied(settings: NarrativeSettings, symbol: str) -> None:
+    signals = [
+        pool_signal(symbol, kind="launch", at=NOW - timedelta(hours=40)),
+        pool_signal(symbol, at=NOW - timedelta(hours=20), change=5.0, volume=9_000),
+        pool_signal(symbol, at=NOW, change=400.0, volume=900_000),
+    ]
+    assert build(settings, signals) is None
+
+
+def test_a_headline_naming_hyvo_stays_out_of_another_tokens_autopsy(settings: NarrativeSettings) -> None:
+    path = build(settings, [*history(), news_signal("FIZZ and HYVO both rally", "FIZZ", at=NOW - timedelta(hours=10))])
+    assert path is not None
+    text = path.read_text(encoding="utf-8")
+    assert "HYVO" not in text and "FIZZ talk grows" in text
+
+
 def test_a_token_is_not_autopsied_again_within_a_week(settings: NarrativeSettings) -> None:
     assert build(settings) is not None
     with NarrativeGraph(settings.graph_path) as graph:

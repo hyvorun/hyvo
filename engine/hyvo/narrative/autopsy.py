@@ -19,12 +19,13 @@ from hyvo.scenarios import parse_scenario_markdown
 from .graph import NarrativeGraph
 from .seedpack import (
     MIN_RESERVE_USD,
-    NOT_A_STORY,
     SYMBOL_RE,
     VULGAR_RE,
     NarrativeSettings,
     eth_price,
     market_for,
+    not_a_story,
+    passes_for_hyvo,
     pct,
     reader,
     refresh,
@@ -51,7 +52,7 @@ def find_move(graph: NarrativeGraph, threshold_pct: float, now: datetime) -> Sig
         change = signal.numbers.get("changeH24")
         if change is None or abs(change) < threshold_pct or signal.numbers.get("reserveUsd", 0.0) < MIN_RESERVE_USD:
             continue
-        if not SYMBOL_RE.match(symbol) or symbol in NOT_A_STORY or symbol in used or VULGAR_RE.search(symbol):
+        if not SYMBOL_RE.match(symbol) or not_a_story(symbol) or symbol in used or VULGAR_RE.search(symbol):
             continue
         first = graph.first_seen(symbol)
         if first is None or now - first < timedelta(hours=TRACKED_AFTER_HOURS):
@@ -105,7 +106,8 @@ def build_autopsy(
             return None
         earlier = _before_the_move(graph, move, moment)
         symbol = move.refs["symbol"]
-        lines = [line for signal in earlier if (line := _timeline_line(signal)) and not find_violations(line)]
+        # A headline that names Hyvo's own token stays out too: the run would be Hyvo's word on it.
+        lines = [line for signal in earlier if (line := _timeline_line(signal)) and not find_violations(line) and not passes_for_hyvo(line)]
         if not lines:
             log(f"autopsy: nothing is known about {symbol} from before its move")
             return None

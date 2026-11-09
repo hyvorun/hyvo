@@ -57,8 +57,24 @@ PURPOSE = "seedpack"
 
 # The sim's token symbol is the real one or nothing: uppercase letters and digits, as the world requires.
 SYMBOL_RE = re.compile(r"^[A-Z][A-Z0-9]{1,10}$")
-# Quote assets and majors are the water, not the story.
-NOT_A_STORY = frozenset({"WETH", "ETH", "USDG", "USDC", "USDT", "DAI", "WBTC", "BTC", "PONS"})
+# Quote assets and majors are the water, not the story. HYVO is Hyvo's own token: an unattended public run about it would
+# read as Hyvo talking about its own token, so neither it nor anything that could pass for it is ever a run's subject.
+NOT_A_STORY = frozenset({"WETH", "ETH", "USDG", "USDC", "USDT", "DAI", "WBTC", "BTC", "PONS", "HYVO"})
+OWN_TOKEN = "HYVO"
+# A zero for the O, and doubled letters, are the usual ways to make a symbol look like another one.
+_ZERO_AS_O = str.maketrans("0", "O")
+_DOUBLED = re.compile(r"(.)\1+")
+
+
+def passes_for_hyvo(text: str) -> bool:
+    """Whether a symbol, a topic or a headline names Hyvo's token or something that could pass for it: HYVO, HYV0, HYYVO,
+    WHYVO, HYVOAI, $HYVO, "Hyvo"."""
+    return OWN_TOKEN in _DOUBLED.sub(r"\1", text.upper().translate(_ZERO_AS_O))
+
+
+def not_a_story(symbol: str) -> bool:
+    """A quote asset, a major, or Hyvo's own token or a lookalike: never the subject of a run, nor one of its context lines."""
+    return symbol in NOT_A_STORY or passes_for_hyvo(symbol)
 # A headline built on what someone said or did is about a person, and a run's text goes on-chain for good. The report model
 # reads every line as well; this does not depend on it.
 _ABOUT_SOMEONE = re.compile(r"\b(?:says?|said|warns?|warned|claims?|claimed|accus\w+|sues?|sued|charged|arrested|convicted|alleg\w+|lawsuit)\b", re.IGNORECASE)
@@ -125,7 +141,7 @@ def _qualifies(signal: Signal, used: set[str], now: datetime) -> bool:
     created = numbers.get("createdAt")
     return (
         bool(SYMBOL_RE.match(symbol))
-        and symbol not in NOT_A_STORY
+        and not not_a_story(symbol)
         and symbol not in used
         and not VULGAR_RE.search(symbol)
         and numbers.get("reserveUsd", 0.0) >= MIN_RESERVE_USD
@@ -227,7 +243,7 @@ def context_moves(signals: Sequence[Signal], focus: Signal) -> list[Signal]:
     busy = sorted(latest.values(), key=lambda s: s.numbers.get("volumeH24", 0.0), reverse=True)[:40]
     for signal in sorted(busy, key=lambda s: abs(s.numbers.get("changeH24", 0.0)), reverse=True):
         symbol = signal.refs.get("symbol", "")
-        if symbol in seen or not SYMBOL_RE.match(symbol) or VULGAR_RE.search(symbol) or "changeH24" not in signal.numbers or "volumeH24" not in signal.numbers:
+        if symbol in seen or not_a_story(symbol) or not SYMBOL_RE.match(symbol) or VULGAR_RE.search(symbol) or "changeH24" not in signal.numbers or "volumeH24" not in signal.numbers:
             continue
         seen.add(symbol)
         moves.append(signal)
@@ -242,7 +258,7 @@ def pick_headlines(graph: NarrativeGraph, narratives: Sequence[tuple[str, int]],
     names = ["Robinhood", "Pons", "Tokenized stocks", "Memecoins", *[name for name, _ in narratives]]
     for name in dict.fromkeys(names):
         for signal in reversed(graph.about(name, since=since)):
-            if signal.kind == "news" and signal.key not in picked and not _ABOUT_SOMEONE.search(signal.title):
+            if signal.kind == "news" and signal.key not in picked and not _ABOUT_SOMEONE.search(signal.title) and not passes_for_hyvo(signal.title):
                 picked[signal.key] = signal
                 break
         if len(picked) == MAX_HEADLINES:
@@ -274,7 +290,7 @@ def build_scenario(
     """The scenario file's text and the pack's data, or ``None`` when the token itself did not pass the read."""
     symbol = focus.refs["symbol"]
     since = now - timedelta(hours=LOOKBACK_HOURS)
-    narratives = graph.top_entities(since=since)
+    narratives = [(name, count) for name, count in graph.top_entities(since=since) if not passes_for_hyvo(name)]
     headlines = pick_headlines(graph, narratives, since)
     moves = context_moves(signals, focus)
     title = f"How a synthetic crowd reacts to {symbol} on Robinhood Chain, {day}"
