@@ -12,9 +12,10 @@
  *
  * Options: --pages-project NAME (default hyvo).
  *
- * Custom domains come from apps/api/domains.json: the site moves to `web` once that domain is
- * attached to the Pages project and serving it, and the API gets `api` as a custom domain. Without
- * the file the site stays on *.pages.dev and the API on *.workers.dev.
+ * Custom domains come from apps/api/domains.json: the site is served at `web` (and `webAlso`, which
+ * send visitors to `web`) by the assets-only Worker in apps/web/wrangler.jsonc, and the API gets `api`.
+ * Wrangler attaches both. Without the file the site stays on *.pages.dev and the API on *.workers.dev;
+ * with it, *.pages.dev keeps working and sends visitors to `web`.
  */
 import { hashRun, RunV1 } from "@hyvo/schema";
 import { spawnSync, type SpawnSyncReturns } from "node:child_process";
@@ -34,6 +35,7 @@ const WRANGLER = join(API_DIR, "node_modules", "wrangler", "bin", "wrangler.js")
 const SHOWCASE = join(REPO, "fixtures", "showcase-run.json");
 const DEPLOYMENT = join(REPO, "chain", "deployments", "4663.json");
 const DOMAINS = join(API_DIR, "domains.json");
+const WEB_WORKER_CONFIG = join(WEB_DIR, "wrangler.jsonc");
 
 const DATABASE = "hyvo";
 const NAMESPACE = "hyvo-artifacts";
@@ -105,15 +107,17 @@ function writeEnv(updates: Record<string, string>): void {
 }
 
 /**
- * The custom domains (docs/OPEN_ITEMS.md item 9). `web` is attached to the Pages project in the
- * dashboard, since Wrangler cannot; `api` is attached by `wrangler deploy --domain`. A key that is
- * missing or not a hostname keeps the free *.pages.dev or *.workers.dev address.
+ * The custom domains (docs/OPEN_ITEMS.md item 9), all attached by `wrangler deploy --domain`: `web` and
+ * `webAlso` to the web Worker, `api` to the API Worker. A key that is missing or not a hostname keeps the
+ * free *.pages.dev or *.workers.dev address.
  */
-function readDomains(): { web?: string; api?: string } {
-  if (!existsSync(DOMAINS)) return {};
+function readDomains(): { web?: string; webAlso: string[]; api?: string } {
+  if (!existsSync(DOMAINS)) return { webAlso: [] };
   const parsed = JSON.parse(readFileSync(DOMAINS, "utf8")) as Record<string, unknown>;
   const host = (value: unknown) => (typeof value === "string" && /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(value) ? value : undefined);
-  return { web: host(parsed.web), api: host(parsed.api) };
+  const web = host(parsed.web);
+  const webAlso = web && Array.isArray(parsed.webAlso) ? parsed.webAlso.map(host).filter((name): name is string => Boolean(name)) : [];
+  return { web, webAlso, api: host(parsed.api) };
 }
 
 function secret(existing: string | undefined): string {
@@ -225,19 +229,10 @@ async function main(): Promise<void> {
   const domains = String(project["Project Domains"] ?? project.domains ?? `${PAGES}.pages.dev`);
   const pagesHost = /[a-z0-9-]+\.pages\.dev/.exec(domains)?.[0] ?? `${PAGES}.pages.dev`;
   const custom = readDomains();
-  if (custom.web) {
-    const attached = domains.split(",").map((domain) => domain.trim().toLowerCase());
-    if (!attached.includes(custom.web)) {
-      throw new Error(
-        `${custom.web} is not attached to the Pages project "${PAGES}" (it has ${domains}). Attach it in the dashboard ` +
-          `(Workers & Pages > ${PAGES} > Custom domains), or take "web" out of apps/api/domains.json to stay on ${pagesHost}.`,
-      );
-    }
-    // Sign-in and CORS move to this domain, so it has to serve the site already, or everyone would be locked out.
-    await settled(`${custom.web} serves the site`, async () => (await fetch(`https://${custom.web}/`)).ok);
-  }
   const webHost = custom.web ?? pagesHost;
   const webOrigin = `https://${webHost}`;
+  // While the site has its own domain, *.pages.dev still serves it (and sends visitors on), so the API accepts both.
+  const siteHosts = custom.web ? [custom.web, pagesHost] : [pagesHost];
 
   // --- the Worker -----------------------------------------------------------------------------------
   const env = readEnv();
@@ -245,7 +240,11 @@ async function main(): Promise<void> {
   const llmToken = secret(env.get("LLM_TOKEN"));
   const signingKey = secret(env.get("ARTIFACT_SIGNING_KEY"));
   const production = JSON.parse(readFileSync(join(API_DIR, "production.vars.json"), "utf8")) as Record<string, string>;
-  const vars: Record<string, string> = { ...production, WEB_ORIGIN: webOrigin, SIWE_DOMAIN: webHost };
+  const vars: Record<string, string> = {
+    ...production,
+    WEB_ORIGIN: siteHosts.map((host) => `https://${host}`).join(","),
+    SIWE_DOMAIN: siteHosts.join(","),
+  };
   delete vars["//"];
   const deployWorker = (settings: Record<string, string>) =>
     wrangler(["deploy", ...(custom.api ? ["--domain", custom.api] : []), ...Object.entries(settings).flatMap(([key, value]) => ["--var", `${key}:${value}`])]);
@@ -295,11 +294,21 @@ ${deployed.slice(-800)}`);
     VITE_USDG_ADDRESS: process.env.VITE_USDG_ADDRESS ?? deployment?.usdg,
     VITE_HYVO_TOKEN_ADDRESS: process.env.VITE_HYVO_TOKEN_ADDRESS ?? deployment?.hyvoToken,
   };
-  const webEnv = { VITE_API_URL: apiUrl, ...Object.fromEntries(Object.entries(pinned).filter(([, value]) => Boolean(value))) };
+  const site = custom.web
+    ? { VITE_SITE_URL: webOrigin, VITE_SITE_HOST: custom.web, VITE_SITE_REDIRECT_HOSTS: [pagesHost, ...custom.webAlso].join(",") }
+    : {};
+  const webEnv = { VITE_API_URL: apiUrl, ...site, ...Object.fromEntries(Object.entries(pinned).filter(([, value]) => Boolean(value))) };
   const built = run(process.execPath, [join(WEB_DIR, "node_modules", "vite", "bin", "vite.js"), "build"], { cwd: WEB_DIR, env: webEnv });
   if (built.status !== 0) throw new Error(`the web build failed:\n${`${built.stdout}${built.stderr}`.slice(-1500)}`);
+  if (custom.web) {
+    // The domain first, and only then *.pages.dev, which from this build on sends visitors to it.
+    wrangler(["deploy", "--config", WEB_WORKER_CONFIG, ...[custom.web, ...custom.webAlso].flatMap((name) => ["--domain", name])]);
+    const entry = /src="(\/assets\/[^"]+\.js)"/.exec(readFileSync(join(WEB_DIR, "dist", "index.html"), "utf8"))?.[1] ?? "";
+    await settled(`${custom.web} serves this build`, async () => (await (await fetch(`${webOrigin}/`)).text()).includes(entry));
+    say("web app deployed", webOrigin);
+  }
   wrangler(["pages", "deploy", join(WEB_DIR, "dist"), "--project-name", PAGES, "--branch", "main", "--commit-dirty=true"]);
-  say("web app deployed", webOrigin);
+  say("web app deployed", `https://${pagesHost}`);
 
   // --- the showcase run and the check ---------------------------------------------------------------
   // A new account starts with the showcase run. After that a deploy of new code publishes nothing:
