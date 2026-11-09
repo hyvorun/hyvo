@@ -6,18 +6,24 @@ Hyvo in your terminal, for Robinhood Chain (chain 4663).
   source, owner, proxy, mint, fee, blocklist and pause functions, where it trades, the top holders and the deployer.
   Then it simulates an exit inside one read-only `eth_call`: it buys the token with made-up ETH, sends a tenth to a
   fresh address, sells the rest, and compares each step with what the venue's own math promised.
+- **`hyvo launches`** lists the newest Pons launches with the facts their contracts hold: the pair asset, the phase,
+  the creator tax and what each bonding curve holds. `hyvo launches <token>` reads one launch in full.
+- **`hyvo stocks <ticker>`** reads a Robinhood stock token: whether the StockFactory records that contract for its
+  ticker, its multiplier, its Chainlink price and what it means, and whether it can move right now.
 - **`hyvo verify <runId>`** proves that a published Hyvo run is the one committed on-chain: it recomputes the run's
   hash from its `run.json` and compares it with the commit in HyvoOracle, read from Robinhood Chain.
-- **`hyvo mcp`** gives both to an AI agent as an MCP server.
+- **`hyvo mcp`** gives all of them to an AI agent as an MCP server.
 
 ```sh
 npx @hyvo/cli check 0x54cf6d6c466cb0cd72d113462746c674e546b274
+npx @hyvo/cli launches --hours 1
+npx @hyvo/cli stocks NVDA
 ```
 
 hyvo only reads. It never asks for a key, never signs, never sends a transaction, has no account or login, and sends
 no telemetry. A check states facts and gives no verdict: it never says what to do with a token and never predicts a
-price. Every check result ends with **"Measured on-chain at block N. Not a trading signal."** Every run result carries
-**"Synthetic crowd reaction. Not a trading signal."**
+price. Every check, launches and stocks result ends with **"Measured on-chain at block N. Not a trading signal."**
+Every run result carries **"Synthetic crowd reaction. Not a trading signal."**
 
 ## Install
 
@@ -33,11 +39,13 @@ npm install -g @hyvo/cli    # or install the `hyvo` command
 | Command | What it does |
 |---|---|
 | `hyvo check <token>` | Facts about a token, each with its evidence, and an exit simulation. Also `hyvo scan`. |
+| `hyvo launches [<token>]` | The newest Pons launches with their curves' state, or one launch in full. |
+| `hyvo stocks [<ticker\|address>]` | Robinhood's stock tokens from Hyvo's scan, or one token read live. |
 | `hyvo watch [<token>...]` | Re-checks tokens on an interval and prints what changed. |
 | `hyvo watchlist` | The tokens `hyvo watch` follows, kept in a local file. |
 | `hyvo runs` | Recent published runs of Hyvo's crowd simulation. |
 | `hyvo verify <runId>` | Recomputes a run's hash and compares it with its commit on Robinhood Chain. |
-| `hyvo mcp` | A Model Context Protocol server on stdio, with `check_token` and `verify_run`. |
+| `hyvo mcp` | A Model Context Protocol server on stdio, with a tool for `check`, `launches`, `stocks` and `verify`. |
 | `hyvo config` | Where hyvo reads from: the RPC and the API. |
 
 `hyvo <command> --help` shows each command's options. Every command but `mcp` takes `--json`.
@@ -132,6 +140,106 @@ Finding ids are stable: `source`, `owner`, `proxy`, `mint`, `fee-setter`, `block
 
 Exit codes: `0` a report was made, whatever it found; `2` no report could be made (not a contract, not a token, the
 RPC did not answer); `64` usage error. The exit code never depends on the findings.
+
+### `hyvo launches [<token>]`
+
+```
+hyvo launches [--hours <1|6|24>] [--limit <n>] [--rpc <url>] [--json]
+hyvo launches <token> [--rpc <url>] [--json]
+```
+
+Reads Pons launches from Robinhood Chain with [`@hyvo/launches`](../launches), the reader the
+[Launches page](https://hyvo.run/launches) uses: the `TokenLaunched` and `PoolGraduated` events of the Pons V2 launch
+factory over the window, then each listed launch's bonding curve in one Multicall3 call at one block. `--hours` takes
+1, 6 or 24 (default 6); `--limit` lists 1 to 100 of the newest (default 20). Without `--rpc`, it reads through the
+public endpoints `@hyvo/launches` measured (dRPC, Pocket, Robinhood's own and degenprotocol), each asked for what it
+serves; an endpoint you choose must answer `eth_getLogs`.
+
+A real list, read on 2026-11-09 (three rows left out at the `…`):
+
+```
+  HYVO LAUNCHES   Pons V2, the last hour                                      Robinhood Chain · 4663
+  blocks 109980889 to 110015560 · curves read at block 110015583
+
+  17 launches in the last hour, 0 graduated. Paired with: ETH 15, NVDA 2.
+
+  age      token     pair   phase          on its curve                  creator tax   address
+  6 min    BELL      ETH    on its curve   0.06026 of 4.2 ETH, 1.4%      0%            0x603fB6713014Fa7E936763ABafD244B8Eb7cE0a7
+  11 min   NASU      ETH    on its curve   <0.000001 of 4.2 ETH, 0%      1.5%          0xC89E27CdD395C265905Aa728751E258aD204549C
+  12 min   CHROM     ETH    on its curve   0.01018 of 4.2 ETH, 0.2%      2%            0x3899754a0Ee5117368f1b5180883eFE5Bc2CB507
+  …
+  46 min   LORIS     ETH    on its curve   <0.000001 of 4.2 ETH, 0%      1%            0x08087371b71Db6CebFBf8C0ffD0BcAe33F30FB2f
+
+  9 more in the window: hyvo launches --hours 1 --limit 17
+  One launch's facts: hyvo launches <token>
+
+  The phase is the curve's own graduated(); what a curve holds is its realQuoteReserve() of the pair asset,
+  towards the threshold it graduates at. Ages run to the block the curves were read at.
+  Read in 3.9 s: 4 requests to robinhood.drpc.org and 4 to robinhood.api.pocket.network. Nothing was signed or sent.
+  Measured on-chain at block 110015583. Not a trading signal.
+```
+
+A terminal too narrow for full addresses gets them shortened, and `--json` always has them. `hyvo launches <token>`
+reads the factory's record and the curve in full: the phase, how far the curve is towards graduation, the pair
+asset, the creator tax, the trading fee, the buyback, the launch-second tax, the supply, what is kept for the pool and
+left to buy, when it launched, the creator and the curve, and the last hour of `CurveBuy` and `CurveSell` events on
+its curve. A Pons V1 token, or an address Pons has no record of, is said to be one.
+
+`--json` prints the list as `{ chainId, window, block, timestamp, launches, notListed, graduations, disclaimer }`:
+each launch with its `pair` asset, `graduated`, `creatorTaxBps`, `liquidity` and `graduationThreshold` (decimal
+strings in the pair asset's smallest unit) and `progress` (their ratio). One launch prints `kind` (`v2`, `v1` or
+`none`), the record and curve as read, `lastHour`, `block` and the disclaimer.
+
+### `hyvo stocks [<ticker|address>]`
+
+```
+hyvo stocks [--search <text>] [--rpc <url>] [--json]
+hyvo stocks <ticker|address> [--rpc <url>] [--json]
+```
+
+Reads Robinhood's stock tokens with [`@hyvo/stocks`](../stocks), as the [Stocks pages](https://hyvo.run/stocks) do.
+The list is Hyvo's scan of the chain that ships with this version (every token the StockFactory deployed, and every
+multiplier and name change each one recorded), and the factory's nonce is read live to say whether it has deployed
+more since. One token is read at one block: its uid, name, multiplier and pause flags, and the factory's
+`tokenAddress(uid)`; its price is its Chainlink feed's answer at that block, at the address Chainlink's feed directory
+lists. Without `--rpc`, it reads through dRPC, then Pocket, then Robinhood's own endpoint.
+
+A real report, read on 2026-11-09 (the multiplier and history sections left out at the `…`):
+
+```
+  HYVO STOCKS   NVDA · NVIDIA                                                 Robinhood Chain · 4663
+  0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC · block 110015727 · 9 Nov 2026, 11:17 UTC
+
+  Is this the NVDA stock token?
+  Yes. The Stock Token factory records this contract as NVDA.
+  The factory deployed it and keeps it under its uid: asked for that uid, the factory answers with this address. A
+  copy can take a ticker, a name and a uid, but not this record.
+
+  What its price is
+  per token           177.15 USD
+                      The feed's answer: 177.15496693 (8 decimals).
+  updated             3 min ago, 9 Nov 2026, 11:14 UTC
+                      Within the feed's 24 h heartbeat. It also updates when the price moves 0.5%.
+  per share           177.02 USD
+                      The answer ÷ the multiplier: Chainlink's formula worked backwards, to 8 decimals: 177.01775.
+  …
+  Can it move right now?
+  transfers           open
+                      paused() is false: transfers and approvals go through, except for accounts on the
+                      registry's blocklist.
+  oracle pause        not paused
+                      oraclePaused() is false, so Chainlink's feed for it keeps updating.
+  US equity session   Mon 06:17 in New York: Pre-market (04:00 to 09:30 ET)
+  …
+  Read in 3.1 s: 1 request to reference-data-directory.vercel.app and 6 to robinhood.drpc.org. Nothing was signed or sent.
+  Measured on-chain at block 110015727. Not a trading signal.
+```
+
+A contract the factory does not record, under any name, is said not to be the token, and no price is shown for it.
+A ticker the list does not hold exits 2 and names the tickers and names that contain it. `--json` prints the report
+as read (`verdict`, `reading`, `multiplier`, `movement`, `session`, `feed`, `listed`), every bigint as a decimal
+string, with the block and the disclaimer; the list prints `{ chainId, factory, snapshot, live, search, tokens,
+disclaimer }`.
 
 ### `hyvo watch [<token>...]`
 
@@ -230,9 +338,12 @@ stdout, protocol versions 2025-11-25, 2025-06-18, 2025-03-26 and 2024-11-05. Add
 | Tool | Input | Returns |
 |---|---|---|
 | `check_token` | `address` (the token's), `ethIn` (optional, ETH as a string, default `"0.001"`) | the same JSON as `hyvo check --json` |
+| `recent_launches` | `hours` (optional: 1, 6 or 24), `limit` (optional, 1 to 100) | the same JSON as `hyvo launches --json` |
+| `launch_facts` | `address` (the token's) | the same JSON as `hyvo launches <token> --json` |
+| `stock_token` | `query`: a ticker such as `NVDA`, or a contract address | the same JSON as `hyvo stocks <ticker> --json` |
 | `verify_run` | `runId` | the same JSON as `hyvo verify --json` |
 
-Both are read-only (`readOnlyHint`). A result is returned as text and as `structuredContent`; a failure as
+All are read-only (`readOnlyHint`). A result is returned as text and as `structuredContent`; a failure as
 `isError` with the reason. `--rpc` and `--api`, the environment and the settings file apply as they do to the
 commands. The server writes nothing but protocol messages to stdout.
 
@@ -269,6 +380,9 @@ not wrapped.
 | `check`, `watch`, MCP `check_token` | the JSON-RPC endpoint (default `robinhood.drpc.org`) | The token address, in `eth_chainId`, `eth_blockNumber`, `eth_getCode`, `eth_getStorageAt` and `eth_call` requests. One `eth_call` carries the simulation with a state override: the probe's code at a throwaway address and made-up ETH. |
 | | Sourcify (`sourcify.dev`) | The token address, and its implementation's for a proxy, to look up verified source and the deployment record. |
 | | Blockscout (`api.blockscout.com`) | Only with `HYVO_BLOCKSCOUT_KEY` set: the token address and your key. |
+| `launches`, MCP `recent_launches` and `launch_facts` | the JSON-RPC endpoint you chose, or else the public endpoints `robinhood.drpc.org`, `robinhood.api.pocket.network`, `rpc.mainnet.chain.robinhood.com` and `rpc.degenprotocol.io` | `eth_getBlockByNumber`, `eth_getLogs` for the Pons factory's and a curve's events, and `eth_call` through Multicall3 with the launches' and curves' addresses. |
+| `stocks`, MCP `stock_token` | the JSON-RPC endpoint you chose, or else `robinhood.drpc.org`, then `robinhood.api.pocket.network`, then `rpc.mainnet.chain.robinhood.com` | `eth_blockNumber` and `eth_getTransactionCount` for the factory (the list); `eth_getBlockByNumber`, `eth_getCode`, `eth_getStorageAt` and `eth_call` with the token's address (one token). |
+| | Chainlink's feed directory (`reference-data-directory.vercel.app`) | One download of the directory, for one token's feed address. No token address is sent. |
 | `runs` | the Hyvo API (default `api.hyvo.run`) | A request for the list of runs. |
 | `verify`, MCP `verify_run` | the Hyvo API | The run id: `GET /v1/runs/:runId/artifact` for a short-lived download link to the `run.json` (on the API's host), that link, and `GET /v1/runs/:runId` for the API's record of the commit. Not asked when you give a file. |
 | | the JSON-RPC endpoint | `eth_chainId`, and one `eth_call` of `getCommit` on HyvoOracle with the run id. |
@@ -285,6 +399,11 @@ sends a transaction. On disk it writes only the two files in the settings folder
 - Venues the simulation does not cover yet are named in the `venue` finding: Uniswap V4 pools outside Pons, Pons
   launches quoted in USDG, and Pons launches between their curve and their V4 pool.
 - Without a Blockscout key, the top holders are skipped, and the deployer is read from Pons records and Sourcify only.
+- `launches` counts what the factory announced in the window and reads the curves of the newest `--limit` only. Its
+  phase for a listed launch is the curve's own `graduated()`; one launch's page reads the factory's record, which also
+  tells a curve emptied and waiting for its pool. A busy public endpoint can refuse; `--rpc` takes your own.
+- `stocks` lists the tokens up to the scan's block. A token deployed since is read by its address, and a multiplier
+  change since the scan shows in the live values but not in the history.
 - `runs` and `verify` read the API with the run formats of this version of hyvo. When the API answers in a shape this
   version does not know, they say so; a newer hyvo reads it.
 
@@ -299,15 +418,15 @@ pnpm --filter ./packages/cli build       # typecheck, then esbuild to dist/
 node packages/cli/dist/index.js check 0x…
 ```
 
-`@hyvo/check`, `@hyvo/sdk` and `@hyvo/schema` are private workspace packages that export TypeScript source, so the
-build compiles them into `dist/` with esbuild, and the published package installs nothing else. The commands that
-use the API load their code only when they run.
+`@hyvo/check`, `@hyvo/launches`, `@hyvo/sdk`, `@hyvo/schema` and `@hyvo/stocks` are private workspace packages that
+export TypeScript source, so the build compiles them into `dist/` with esbuild, and the published package installs
+nothing else. The commands that use the API, and `launches` and `stocks`, load their code only when they run.
 
 ## License
 
 hyvo is free software under the GNU Affero General Public License, version 3 or later ([`LICENSE`](LICENSE)).
-`dist/` includes code from Aleph (MIT), zod (MIT), @noble/hashes (MIT) and canonicalize (Apache-2.0); their licenses
-are in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+`dist/` includes code from Aleph (MIT), zod (MIT), @noble/hashes (MIT), canonicalize (Apache-2.0), viem (MIT), ox
+(MIT), abitype (MIT) and @noble/curves (MIT); their licenses are in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
-Check results: Measured on-chain at block N. Not a trading signal.
+Check, launches and stocks results: Measured on-chain at block N. Not a trading signal.
 Run results: Synthetic crowd reaction. Not a trading signal.

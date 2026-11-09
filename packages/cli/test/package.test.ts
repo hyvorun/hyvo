@@ -63,6 +63,7 @@ describe("the npm package", () => {
 
   it("is @hyvo/cli, AGPL-3.0-or-later, with one binary named hyvo", () => {
     expect(pkg.name).toBe("@hyvo/cli");
+    expect(pkg.version).toBe("0.2.0");
     expect(pkg.license).toBe("AGPL-3.0-or-later");
     expect(pkg.bin).toEqual({ hyvo: "dist/index.js" });
     expect(pkg.files).toEqual(["dist", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.md"]);
@@ -79,13 +80,17 @@ describe("the npm package", () => {
 
   it("documents every command", () => {
     const readme = read("README.md");
-    for (const command of ["check", "watch", "watchlist", "runs", "verify", "mcp", "config"]) expect(readme, command).toContain(`hyvo ${command}`);
+    for (const command of ["check", "launches", "stocks", "watch", "watchlist", "runs", "verify", "mcp", "config"]) expect(readme, command).toContain(`hyvo ${command}`);
     expect(readme).toContain("npx @hyvo/cli check 0x");
+    expect(readme).toContain("npx @hyvo/cli launches");
+    expect(readme).toContain("npx @hyvo/cli stocks NVDA");
+    for (const tool of ["check_token", "recent_launches", "launch_facts", "stock_token", "verify_run"]) expect(readme, tool).toContain(`\`${tool}\``);
   });
 
   it("names Aleph's MIT notice and every bundled package in its third-party notices", () => {
     const notices = read("THIRD_PARTY_NOTICES.md");
     expect(notices).toContain("Copyright (c) 2026 Aleph");
-    for (const name of ["zod", "@noble/hashes", "canonicalize"]) expect(notices, name).toContain(name);
+    for (const name of ["zod", "@noble/hashes", "canonicalize", "viem", "ox", "abitype", "@noble/curves"]) expect(notices, name).toContain(`| ${name} |`);
+    expect(notices).toContain("Copyright (c) 2023-present weth, LLC");
   });
 });
