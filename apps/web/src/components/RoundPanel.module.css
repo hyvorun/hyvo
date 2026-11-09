@@ -346,3 +346,10 @@
 .reverted {
   color: var(--ink-3);
 }
+
+/* CSS modules scope keyframe names, so this module keeps its own copy of the shared fade. */
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}

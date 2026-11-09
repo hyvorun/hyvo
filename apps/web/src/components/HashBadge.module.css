@@ -160,3 +160,10 @@
   transform: scale(0.95);
   transition-duration: 160ms, 160ms, 100ms;
 }
+
+/* CSS modules scope keyframe names, so this module keeps its own copy of the shared fade. */
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}

@@ -372,3 +372,11 @@
     padding: var(--space-3);
   }
 }
+
+/* CSS modules scope keyframe names, so this module keeps its own copy of the shared rise. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
