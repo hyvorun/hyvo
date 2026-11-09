@@ -131,6 +131,25 @@ function patchConfig(databaseId: string, namespaceId: string): void {
   writeFileSync(CONFIG, text);
 }
 
+/**
+ * GET a URL. A brand-new domain can be live for the world while this machine's resolver still caches "no such
+ * name" (up to the zone's negative TTL), so when the name does not resolve here, curl asks over DNS-over-HTTPS.
+ */
+async function get(url: string): Promise<{ ok: boolean; status: number; text: string }> {
+  try {
+    const response = await fetch(url);
+    return { ok: response.ok, status: response.status, text: await response.text() };
+  } catch (error) {
+    const result = run("curl", ["-s", "-m", "30", "-w", "
+%{http_code}", "--doh-url", "https://cloudflare-dns.com/dns-query", url]);
+    const cut = result.stdout.lastIndexOf("
+");
+    const status = Number(result.stdout.slice(cut + 1));
+    if (result.status !== 0 || !status) throw error;
+    return { ok: status >= 200 && status < 300, status, text: result.stdout.slice(0, cut) };
+  }
+}
+
 /** Keep asking: a new hostname, a Pages deployment and a KV write all take a moment to be everywhere. */
 async function settled(what: string, check: () => Promise<boolean>): Promise<void> {
   const deadline = Date.now() + 180_000;
@@ -157,19 +176,19 @@ async function settled(what: string, check: () => Promise<boolean>): Promise<voi
  */
 async function checkLive(apiUrl: string, webOrigin: string): Promise<void> {
   const json = async (url: string) => {
-    const response = await fetch(url);
+    const response = await get(url);
     if (!response.ok) throw new Error(`${url} answered ${response.status}`);
-    return (await response.json()) as Record<string, any>;
+    return JSON.parse(response.text) as Record<string, any>;
   };
   await settled("the API answers", async () => (await json(`${apiUrl}/v1/health`)).ok === true);
   await settled("the featured run is intact", async () => {
     const { run } = await json(`${apiUrl}/v1/runs/featured`);
     if (!run) return false;
     const { url } = await json(`${apiUrl}/v1/runs/${run.runId}/artifact`);
-    const response = await fetch(url as string);
-    return response.ok && hashRun(RunV1.parse(await response.json())) === run.hash;
+    const response = await get(url as string);
+    return response.ok && hashRun(RunV1.parse(JSON.parse(response.text))) === run.hash;
   });
-  await settled("the web app answers", async () => (await fetch(webOrigin)).ok);
+  await settled("the web app answers", async () => (await get(webOrigin)).ok);
 }
 
 async function main(): Promise<void> {
@@ -253,7 +272,7 @@ async function main(): Promise<void> {
   if (custom.api) {
     // A new custom domain waits for its certificate. Until it answers, everything keeps the workers.dev address.
     try {
-      await settled(`${custom.api} answers`, async () => (await fetch(`https://${custom.api}/v1/health`)).ok);
+      await settled(`${custom.api} answers`, async () => (await get(`https://${custom.api}/v1/health`)).ok);
       apiUrl = `https://${custom.api}`;
     } catch (error) {
       if (!apiUrl) throw error;
@@ -304,7 +323,7 @@ ${deployed.slice(-800)}`);
     // The domain first, and only then *.pages.dev, which from this build on sends visitors to it.
     wrangler(["deploy", "--config", WEB_WORKER_CONFIG, ...[custom.web, ...custom.webAlso].flatMap((name) => ["--domain", name])]);
     const entry = /src="(\/assets\/[^"]+\.js)"/.exec(readFileSync(join(WEB_DIR, "dist", "index.html"), "utf8"))?.[1] ?? "";
-    await settled(`${custom.web} serves this build`, async () => (await (await fetch(`${webOrigin}/`)).text()).includes(entry));
+    await settled(`${custom.web} serves this build`, async () => (await get(`${webOrigin}/`)).text.includes(entry));
     say("web app deployed", webOrigin);
   }
   wrangler(["pages", "deploy", join(WEB_DIR, "dist"), "--project-name", PAGES, "--branch", "main", "--commit-dirty=true"]);
@@ -316,7 +335,7 @@ ${deployed.slice(-800)}`);
   // cannot be undone. A version with new secrets takes a moment to reach every location.
   let nothingFeatured = false;
   await settled("the API answers", async () => {
-    const response = await fetch(`${apiUrl}/v1/runs/featured`);
+    const response = await get(`${apiUrl}/v1/runs/featured`);
     nothingFeatured = response.status === 404;
     return response.ok || nothingFeatured;
   });
