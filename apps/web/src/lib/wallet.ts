@@ -9,6 +9,7 @@ import { createSiweMessage } from "viem/siwe";
 import type { Address, Hex } from "viem";
 import { requestNonce, verifySignIn } from "./api";
 import { CHAIN_ID, robinhoodChain, transports } from "./chain";
+import { SESSION_EVENT, SESSION_KEY } from "./session";
 
 export const wagmiConfig = createConfig({
   chains: [robinhoodChain],
@@ -29,7 +30,6 @@ export interface Session {
   admin: boolean;
 }
 
-const SESSION_KEY = "hyvo.session";
 export const SIGN_IN_STATEMENT =
   "Sign in to Hyvo. This is a signature, not a transaction: it costs nothing and moves no funds.";
 
@@ -51,6 +51,8 @@ function saveSession(session: Session): void {
   } catch {
     // Storage can be blocked; the session then lasts for this page view.
   }
+  // Pages that read the session without the wallet libraries (lib/holder-status.ts) look again.
+  window.dispatchEvent(new Event(SESSION_EVENT));
 }
 
 export function clearSession(): void {
@@ -59,6 +61,7 @@ export function clearSession(): void {
   } catch {
     // nothing stored
   }
+  window.dispatchEvent(new Event(SESSION_EVENT));
 }
 
 /** Ask the API for a nonce, have the wallet sign an EIP-4361 message, and trade it for a session. */
