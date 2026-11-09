@@ -285,6 +285,9 @@ ${deployed.slice(-800)}`);
   wrangler(["secret", "put", "RUNNER_TOKEN"], { input: runnerToken });
   wrangler(["secret", "put", "LLM_TOKEN"], { input: llmToken });
   wrangler(["secret", "put", "ARTIFACT_SIGNING_KEY"], { input: signingKey });
+  // The founder's Blockscout key (docs/OPEN_ITEMS.md item 24), when the repo's .env has one: the Worker reads token holders with it.
+  const blockscoutKey = env.get("BLOCKSCOUT_API_KEY")?.trim();
+  if (blockscoutKey) wrangler(["secret", "put", "BLOCKSCOUT_API_KEY"], { input: blockscoutKey });
   say("secrets set");
 
   writeEnv({

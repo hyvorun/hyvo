@@ -334,7 +334,11 @@ A clone needs one wallet's swaps, with times and amounts. What was tried on 2026
   (`api.zerion.io/v1/wallets/<address>/transactions/`: free tier of 2K requests a day, chain slug not stated), Bitquery (history needs a paid add-on), Moralis (trial on request).
   A blog says Alchemy's Transfers API is live on the chain; Alchemy's own docs could not be read from here.
 
-**Founder:** make a free key at dev.blockscout.com and put it in the runner's `.env` as `BLOCKSCOUT_API_KEY`. It costs nothing. Until then `/clone` says clones are not open yet.
+**Verified with the founder's key, 2026-11-09:** `tokens/<address>`, `tokens/<address>/holders`, `smart-contracts/<address>`,
+`addresses/<address>/token-transfers?type=ERC-20` and `addresses/<address>/transactions` on `https://api.blockscout.com/4663/api/v2` all answer
+`200` with the fields the code reads. The key is in the repo's `.env` (gitignored) as `BLOCKSCOUT_API_KEY` and, set by the deploy from there, a
+secret of the API Worker. `CLONES_ENABLED` stays `0`: building a clone queues a job for a runner, which today is the founder's laptop, and a
+clone only plays in paid runs, which open with the token (item 22).
 
 ## 25. How far back Rewind can fork — verified
 
@@ -436,7 +440,7 @@ MCP tool. StockSync takes no payments, holds no funds and gates nothing, so noth
   block keeps it out of reach from this laptop (item 14), and Robinhood Chain's terms limit reuse of docs.robinhood.com's content. Hyvo does not call
   it until you decide; a Worker could, since Workers resolve `*.robinhood.com`.
 - **Chainlink's directory and docs**: Chainlink's Terms of Service (<https://chain.link/terms>) cover them; Hyvo reads feeds on-chain, which is their
-  documented use, links Chainlink's page, and repeats no table from it. Confirm this is acceptable.
+  documented use, links Chainlink's page, and repeats no table from it. **Confirmed by the founder on 2026-11-09.**
 - **The `terms()` link** each token returns (`https://robinhood.com/stocktoken/rhj`) is shown as the contract returns it.
 - **Refreshing the list** is by hand: `pnpm --filter @hyvo/stocks scan`, then commit `snapshot.json`. Say if it should run on a schedule; the
   account's cron triggers are shared, so it would need a free slot or a machine.
