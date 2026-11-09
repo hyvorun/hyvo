@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { computePulse, twinKey, venueOf } from "../src/pulse";
 import { ETH, type Asset, type GraduationEvent, type Launch, type LaunchEvent } from "../src/read";
+import { cleanName, cleanSymbol } from "../src/text";
 
 const USDG: Asset = { address: "0x00000000000000000000000000000000000000bb", symbol: "USDG", name: "Global Dollar", decimals: 6 };
 const TSLA: Asset = { address: "0x00000000000000000000000000000000000000cc", symbol: "TSLA", name: "Tesla", decimals: 18 };
@@ -110,6 +111,22 @@ describe("the pulse", () => {
     expect(detail.twinned).toBe(3);
     expect(twinKey("  ")).toBeNull();
     expect(twinKey("$ABC")).toBe(twinKey("abc"));
+  });
+
+  it("does not count as shared a symbol or a name cut short to fit, which may differ past the cut", () => {
+    const longSymbol = (end: string) => `ABCDEFGHIJKLMNOPQRSTUVWXYZ${end}`;
+    const longName = (end: string) => `${"A name that goes on and on ".repeat(3)}${end}`;
+    const cut = [
+      launch(1, { symbol: cleanSymbol(longSymbol("1")), name: cleanName(longName("one")) }),
+      launch(2, { symbol: cleanSymbol(longSymbol("2")), name: cleanName(longName("two")) }),
+    ];
+    // What the page holds is the same for both, though the chain's symbols and names differ.
+    expect(cut[0]!.symbol).toBe(cut[1]!.symbol);
+    expect(cut[0]!.name).toBe(cut[1]!.name);
+    const detail = computePulse({ fromBlock: 100n, toBlock: 200n, launches: cut, graduations: [] }).detail!;
+    expect(detail.sameSymbol).toEqual([]);
+    expect(detail.sameName).toEqual([]);
+    expect(detail.twinned).toBe(0);
   });
 
   it("counts pending launches by pair asset and holds the detail until every curve is read", () => {
