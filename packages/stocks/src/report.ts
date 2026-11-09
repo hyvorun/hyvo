@@ -44,7 +44,7 @@ export interface ReportOptions {
   /** Chainlink's directory: fetchFeedDirectory, or a cached copy. Left out, no price is read. */
   directory?: () => Promise<{ listings: FeedListing[]; fetchedAt: string }>;
   snapshot?: Snapshot;
-  /** The time "now" is, for the price's age (Unix seconds). Defaults to the clock. */
+  /** The time the price's age is measured to (Unix seconds). Defaults to the block's time, so a report agrees with itself. */
   now?: number;
 }
 
@@ -77,7 +77,7 @@ export async function stockReport(client: PublicClient, address: Address, option
       else {
         try {
           const feedReading = await readFeed(client, match.listing.proxy, reading.blockNumber);
-          const now = options.now ?? Math.floor(Date.now() / 1000);
+          const now = options.now ?? reading.blockTime;
           feed = { kind: "read", listing: match.listing, reading: feedReading, price: priceFacts(match.listing, feedReading, token, multiplier, now) };
         } catch (error) {
           feed = { kind: "read-failed", listing: match.listing, message: error instanceof Error ? error.message : String(error) };

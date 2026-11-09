@@ -8,6 +8,7 @@ export * from "./contracts";
 export * from "./decimal";
 export * from "./facts";
 export * from "./feeds";
+export * from "./format";
 export * from "./query";
 export * from "./read";
 export * from "./report";

@@ -6,7 +6,8 @@
  * that the free RPC cannot search on demand.
  */
 import type { Address, Hex } from "viem";
-import data from "./snapshot.json";
+// The attribute lets plain Node (a CLI, the Playwright tests) load the list as well as bundlers.
+import data from "./snapshot.json" with { type: "json" };
 
 /** One `UIMultiplierUpdated` event. Multipliers are raw uint256 values with 18 decimals. */
 export interface MultiplierUpdate {
