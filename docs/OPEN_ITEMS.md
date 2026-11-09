@@ -37,7 +37,7 @@ Status: **verified** (checked against an official source or on-chain) · **likel
 | 27 | Publishing `@hyvo/sdk` to npm | decision | not published yet |
 | 28 | Hyvo Stocks: where each fact comes from | verified / decision | on-chain StockFactory record + Chainlink feeds; Robinhood's API and docs not used |
 | 29 | Pons launches for Hyvo Launches: sources and limits | verified / decision | read in the visitor's browser; endpoints in `packages/launches/src/endpoints.ts` |
-| 30 | Hyvo Check: addresses and limits | verified | factories, hook and PoolManager read on-chain on every check; Blockscout optional (`blockscoutKey`) |
+| 30 | Hyvo Check: addresses and limits | verified | factories, hook and PoolManager read on-chain on every check; top holders from Blockscout through Hyvo's API (its own key); credit cost per request open |
 
 ---
 
@@ -584,9 +584,19 @@ Check does not use them.
   when the contract is not verified. It answers browsers (`access-control-allow-origin: *`) and sends `Cache-Control: public,max-age=3600`.
   Its rate limits were not checked.
 - **Blockscout** stays optional (item 24): `api.blockscout.com/4663/api/v2/...` answered `402 {"error":"Proceed with API key or make a X402
-  payment to continue"}` without a key on 2026-11-09. Hyvo Check calls it only with `blockscoutKey`, for holders, and as a second source
-  for verification and the deployer. The routes (`smart-contracts`, `tokens`, `tokens/<address>/holders`, `addresses/<address>`) are
-  Blockscout's standard v2 routes, which Aleph used on the explorer host in July 2026; **likely**, not tried with a key yet.
+  payment to continue"}` without a key on 2026-11-09. `@hyvo/check` calls it only with `blockscoutKey`, for holders, and as a second source
+  for verification and the deployer. `tokens/<address>`, `tokens/<address>/holders` and `smart-contracts/<address>` are **verified** with the
+  founder's key (item 24, 2026-11-09). `addresses/<address>`, read for `creator_address_hash` and `creation_transaction_hash`, is the same
+  API's standard route but **likely**, not tried with a key yet: if it answers otherwise, the deployer falls back to "unknown", never to a
+  wrong address (every field is checked before use).
+- **Hyvo's API reads the holders with its own key** (decision, 2026-11-09). The Worker secret `BLOCKSCOUT_API_KEY` (set by the deploy from the
+  repo's `.env`) lets `GET /v1/check/:token`, `check_token` and `GET /v1/check/:token/holders` fill the top holders, and the deployer when
+  neither a launch record nor Sourcify names one; the /check page asks the holders route while the browser reads the chain. The key goes to
+  Blockscout only; a test with a fake key checks every answer, header and log for it (`apps/api/test/holders.test.ts`). Three requests per
+  token, each once (a `429` is reported, not retried), kept ten minutes in the Cache API; 10 reads a minute per IP on the holders route and 60
+  a minute for the Worker, under the free tier's 5 requests a second. Inside a check they bring the worst case to 49 of the 50 subrequests a
+  free-plan request may make. Without the key, or when Blockscout fails, the two findings say `skipped` and why. **Open:** what one request
+  costs of the free tier's 100,000 daily credits, and the CPU of parsing a real holders page in the Worker; both to measure once deployed.
 - **dRPC** honors state overrides in `eth_call` (as does PublicNode), and answered the probe's 30M-gas call; its CORS preflight allows
   `https://hyvo.run`.
 
@@ -614,4 +624,5 @@ sell reverted with `Error("TransferHelper: TRANSFER_FROM_FAILED")`.
 - One block, one fresh sender, one amount: a token can behave differently for later blocks, other senders or larger amounts.
 - Proxies are followed through EIP-1967 and EIP-1167. USDG's implementation routes some calls through facets (`setFacet(bytes4,address)`), so
   functions that live in a facet are not in its ABI.
-- Holders need a Blockscout key (item 24).
+- Holders come from Blockscout's index (a key: item 24; through Hyvo's API, above), not from the block the rest is read at, and an index can
+  trail the chain. Only Blockscout's first page (50 holders) is read, so the deployer outside it is named as not listed.

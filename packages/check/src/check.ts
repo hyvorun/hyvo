@@ -52,6 +52,7 @@ import {
   type FetchLike,
   type Finding,
   type Hex,
+  type HolderFacts,
 } from "./types.js";
 
 /** The line every surface that shows a report should carry with it. */
@@ -89,8 +90,21 @@ export async function checkToken(address: string, options: CheckOptions = {}): P
     ? new BlockscoutClient(net, options.blockscoutUrl ?? ROBINHOOD_CHAIN.blockscoutApiUrl, options.blockscoutKey)
     : null;
 
+  const holders = options.holders
+    ? (token: Address): Promise<HolderFacts | null> => {
+        try {
+          return options.holders!(token, options.signal).then(
+            (facts) => facts ?? null,
+            () => null,
+          );
+        } catch {
+          return Promise.resolve(null);
+        }
+      }
+    : null;
+
   try {
-    const report = await run(toChecksumAddress(trimmed), { net, rpc, sourcify, blockscout, ethIn, started, block: options.block });
+    const report = await run(toChecksumAddress(trimmed), { net, rpc, sourcify, blockscout, holders, ethIn, started, block: options.block });
     if (net.aborted) throw new CheckError("aborted", "the check was aborted");
     return report;
   } catch (error) {
@@ -110,6 +124,8 @@ interface RunContext {
   rpc: JsonRpcClient;
   sourcify: SourcifyClient;
   blockscout: BlockscoutClient | null;
+  /** `options.holders`, made never to reject; null without it. */
+  holders: ((token: Address) => Promise<HolderFacts | null>) | null;
   ethIn: bigint;
   started: number;
   block: bigint | undefined;
@@ -130,8 +146,15 @@ async function run(token: Address, c: RunContext): Promise<CheckReport> {
   const sourcesStarted = Date.now();
   const sourcifyToken = c.sourcify.contract(token);
   const bs = c.blockscout;
+  // Holder facts from elsewhere take the place of Blockscout's holder and creator reads.
+  const holderFacts = c.holders ? c.holders(token) : null;
   const blockscoutToken = bs
-    ? Promise.all([bs.getContract(token), bs.getTokenInfo(token), bs.getTokenHolders(token), bs.getCreator(token)])
+    ? Promise.all([
+        bs.getContract(token),
+        holderFacts ? null : bs.getTokenInfo(token),
+        holderFacts ? null : bs.getTokenHolders(token),
+        holderFacts ? null : bs.getCreator(token),
+      ])
     : null;
 
   // 1. Code, proxy slots, and the first batch.
@@ -204,9 +227,10 @@ async function run(token: Address, c: RunContext): Promise<CheckReport> {
   }
 
   // Sources.
-  const [sourcifyTokenResult, blockscoutResult] = await Promise.all([sourcifyToken, blockscoutToken]);
+  const [sourcifyTokenResult, blockscoutResult, facts] = await Promise.all([sourcifyToken, blockscoutToken, holderFacts]);
   const sourcesDone = Date.now();
   const [bsContract, bsTokenInfo, bsHolders, bsCreator] = blockscoutResult ?? [undefined, undefined, undefined, undefined];
+  const viaFacts = holderFacts !== null;
 
   // Where the token's logic lives, for the function checks.
   let codeTarget: CodeTarget | null = null;
@@ -235,7 +259,9 @@ async function run(token: Address, c: RunContext): Promise<CheckReport> {
       ? { launchpad: PONS_V1, launcher: discA.ponsV1.launcher }
       : null;
   const sourcifyDeployment = sourcifyTokenResult === null ? undefined : sourcifyTokenResult.deployment;
-  const deployer = launch?.launcher ?? sourcifyDeployment?.deployer ?? bsCreator?.deployer ?? null;
+  const creator = viaFacts ? (facts?.creator ? { deployer: facts.creator.address, creationTxHash: facts.creator.creationTxHash } : null) : bsCreator;
+  const deployer = launch?.launcher ?? sourcifyDeployment?.deployer ?? creator?.deployer ?? null;
+  const unread = "the holder facts could not be read";
 
   const findings: Finding[] = [
     verifiedCheck(
@@ -252,15 +278,35 @@ async function run(token: Address, c: RunContext): Promise<CheckReport> {
     pausableCheck(ctx),
     venue.finding,
     sellSimulationFinding(exit, tokenInfo.decimals, block, skip),
-    holdersCheck({
-      asked: bs !== null,
-      totalSupply: tokenInfo.totalSupply ?? bsTokenInfo?.totalSupply ?? null,
-      holderCount: bsTokenInfo?.holders ?? null,
-      holders: bsHolders ?? null,
-      deployer,
-      excluded: venue.excluded,
-    }),
-    originCheck({ launch, sourcify: sourcifyDeployment, blockscout: bs ? (bsCreator ?? null) : undefined }),
+    viaFacts
+      ? holdersCheck({
+          asked: true,
+          totalSupply: tokenInfo.totalSupply ?? facts?.totalSupply ?? null,
+          holderCount: facts?.holderCount ?? null,
+          holders: facts?.holders ?? null,
+          deployer,
+          excluded: venue.excluded,
+          source: facts?.source,
+          missing: facts ? facts.holdersMissing : unread,
+          block,
+        })
+      : holdersCheck({
+          asked: bs !== null,
+          totalSupply: tokenInfo.totalSupply ?? bsTokenInfo?.totalSupply ?? null,
+          holderCount: bsTokenInfo?.holders ?? null,
+          holders: bsHolders ?? null,
+          deployer,
+          excluded: venue.excluded,
+        }),
+    viaFacts
+      ? originCheck({
+          launch,
+          sourcify: sourcifyDeployment,
+          blockscout: creator ?? null,
+          blockscoutSource: facts?.source,
+          blockscoutMissing: facts ? facts.creatorMissing : unread,
+        })
+      : originCheck({ launch, sourcify: sourcifyDeployment, blockscout: bs ? (bsCreator ?? null) : undefined }),
   ];
   validateFindings(findings);
 

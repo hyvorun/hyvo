@@ -11,12 +11,14 @@ import {
   formatAmount,
   formatPct,
   isAddress,
+  parseHolderFacts,
   toChecksumAddress,
   type Address,
   type CheckReport,
   type ExitSimulation,
   type Finding,
   type FindingStatus,
+  type HolderFacts,
   type Step,
   type TokenInfo,
   type Venue,
@@ -300,6 +302,58 @@ export function findingSummary(findings: readonly Finding[]): string {
 /** What a finding's check looks for, so "found" and "not found" read as facts. */
 export function looksFor(item: Finding): string {
   return CHECKS[item.id]?.looksFor ?? "";
+}
+
+// --- top holders through Hyvo's API --------------------------------------------------------------
+
+/** No facts, and why, in plain words: the holder and deployer findings then say skipped with these reasons. */
+export function holdersUnavailable(holdersMissing: string, creatorMissing: string): HolderFacts {
+  return { source: "Hyvo's API", totalSupply: null, holderCount: null, holders: null, holdersMissing, creator: null, creatorMissing };
+}
+
+/**
+ * The facts in an answer of `GET /v1/check/:token/holders` (docs/API.md), or why there are none: Hyvo's API reads
+ * Blockscout's index with its own key, which never reaches the browser. `status` null: no answer at all.
+ */
+export function holdersFromApi(status: number | null, body: unknown): HolderFacts {
+  if (status === 200) {
+    const facts = parseHolderFacts(body);
+    if (facts) return facts;
+  }
+  const code = (body as { error?: { code?: unknown } } | null)?.error?.code;
+  if (status === 503 && code === "holders_disabled") {
+    return holdersUnavailable(
+      "Hyvo's API does not read Blockscout's index at the moment, so the holders could not be read",
+      "Hyvo's API does not read Blockscout's index at the moment",
+    );
+  }
+  if (status === 429) {
+    return holdersUnavailable(
+      "Hyvo's API has had many requests from this connection; the holders come from Blockscout's index through it, so check again in a minute",
+      "Hyvo's API had too many requests from this connection to ask Blockscout's index",
+    );
+  }
+  return holdersUnavailable(
+    "Hyvo's API did not answer with the token's holders from Blockscout's index",
+    "Hyvo's API did not answer with the token's creator from Blockscout's index",
+  );
+}
+
+/**
+ * The line that says which findings come from Blockscout's index through Hyvo's API rather than from the chain
+ * at the report's block; null when none does.
+ */
+export function holdersNote(facts: HolderFacts | null, report: CheckReport): string | null {
+  if (!facts || (facts.holders === null && facts.creator === null)) return null;
+  const from = (id: Finding["id"]) => {
+    const item = report.findings.find((f) => f.id === id);
+    return item !== undefined && item.status === "found" && item.evidence.includes(facts.source);
+  };
+  const holders = from("holders");
+  const deployer = from("deployer");
+  if (!holders && !deployer) return null;
+  const subject = holders && deployer ? "Top holders and the deployer come" : holders ? "Top holders come" : "The deployer comes";
+  return `${subject} from ${facts.source}, not from the chain at block ${formatBlock(report.block)}.`;
 }
 
 // --- errors --------------------------------------------------------------------------------------

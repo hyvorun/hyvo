@@ -44,6 +44,7 @@ pnpm --filter @hyvo/check check 0x8eee67a8aad993f15b4506975b38c52f6d3ce758 [--et
 | `sourcifyUrl` | `https://sourcify.dev/server` | Sourcify server for verified source, ABIs and deployments. |
 | `blockscoutKey` | none | A Blockscout API key. Without one, Blockscout is never called. |
 | `blockscoutUrl` | `https://api.blockscout.com/4663/api` | Blockscout's keyed API. |
+| `holders` | none | `(token, signal) => Promise<HolderFacts \| null>`: holders and the creator read elsewhere, such as through Hyvo's API (`GET /v1/check/:token/holders`, whose answer `parseHolderFacts` reads). It takes the place of Blockscout's holder and creator reads; the evidence names its `source`, not read at the block. `readHolderFacts` reads them from Blockscout with a key. |
 | `ethIn` | `10n ** 15n` (0.001 ETH) | What the exit simulation buys with, in wei (1 wei to 1000 ETH). |
 | `block` | head − 2 | The block to read at. Two below the head, so every node behind a load balancer has it. |
 | `timeoutMs` | `10000` | Limit per request. |

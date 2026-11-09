@@ -14,6 +14,8 @@ export { ROBINHOOD_CHAIN, DEFAULT_ETH_IN } from "./chain/config.js";
 export { formatAmount, formatEth, formatUnits, formatPct, parseEth } from "./chain/units.js";
 export { isAddress, toChecksumAddress, shortenAddress } from "./chain/abi.js";
 export { serializeReport, type JsonCheckReport, type Jsonified } from "./output/serialize.js";
+export { parseHolderFacts, serializeHolderFacts, type JsonHolderFacts } from "./output/holder-facts.js";
+export { MAX_HOLDERS, readHolderFacts, type HolderReadOptions } from "./chain/blockscout.js";
 export { PROBE_RUNTIME, PROBE_SOURCE_SHA256 } from "./probe/index.js";
 export {
   CheckError,
@@ -28,6 +30,7 @@ export {
   type Finding,
   type FindingStatus,
   type Hex,
+  type HolderFacts,
   type Step,
   type Timings,
   type TokenInfo,

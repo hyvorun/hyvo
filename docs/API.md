@@ -406,8 +406,9 @@ goes back to the balance.
 
 Facts about a token on Robinhood Chain, read at one block, each with its evidence: verified source, owner, proxy, owner-style functions, where it
 trades, and an exit simulation that buys the token, sends a tenth of it to a fresh address and sells the rest, inside one read-only `eth_call`
-(`packages/check/README.md`). Nothing is signed, approved or sent. A report is not a verdict about the token, not an audit and not a trading signal.
-MCP's `check_token` gives the same answer.
+(`packages/check/README.md`). Its top holders, and its creator when no launch record or Sourcify names one, come from Blockscout's index, read with
+the API's own key ([`GET /v1/check/:token/holders`](#get-v1checktokenholders)). Nothing is signed, approved or sent. A report is not a verdict
+about the token, not an audit and not a trading signal. MCP's `check_token` gives the same answer.
 
 ### `GET /v1/check/:token`
 
@@ -437,21 +438,29 @@ then three fields of this API. The type is `CheckResponse` in `apps/api/src/lib/
   } | null,
   "code": { "bytes": 2560, "proxyImplementation": "0x…" | null, "owner": "0x…" | null, "ownerRenounced": false, "sourcify": "none" },
   "timings": { "totalMs": 1370, "chainMs": 900, "simulationMs": 350, "sourcesMs": 400, "requests": { "rpc": 8, "sourcify": 1, "blockscout": 0 } },
+                                   // the check's own requests; Blockscout's three for the holders are read apart and not counted here
   "notice": "Facts read from Robinhood Chain at one block, each with its evidence. Not a trading signal, and not an audit.",
   "checkedAt": "2026-11-09T07:12:00Z",                               // when the check ran
-  "skippedByApi": [{ "id": "holders", "reason": "Top holders come from Blockscout, …" }],
+  "skippedByApi": [],              // without BLOCKSCOUT_API_KEY: [{ "id": "holders", "reason": "Top holders come from Blockscout, …" }]
   "disclaimer": "Measured on-chain at block 109871808. Not a trading signal."
 }
 ```
+
+With the key, the `holders` finding reads, for example: "the 2 largest holders hold 30% of the supply, leaving out burn addresses, the Uniswap V4
+PoolManager, the Uniswap V2 pair; 3 holders in all (Blockscout); the deployer 0xAbc9…0f21 holds 10%; balances from Blockscout's index, read through
+Hyvo's API at 07:12 UTC on 2026-11-09, not read at block 109,871,808". The share is of the supply read at the block, of the balances in the index.
 
 A finding's `status` is `found` (the check found what it looks for), `not_found` (it looked, and the evidence says where) or `skipped` (it could
 not look, and the evidence says why). `CHECKS[id].looksFor` in `@hyvo/check`, and its README, say what each check looks for. A step's
 `shortfallPct` compares what arrived with what the venue's own math promised after its published fees and taxes.
 
-- **What this API leaves out.** It never asks Blockscout, which needs an API key and allows 5 requests a second on its free tier
-  (`docs/OPEN_ITEMS.md` item 24). So `holders` is always `skipped` and `skippedByApi` says why; verified source comes from Sourcify alone, and
-  the deployer from the Pons factories' records and Sourcify. `@hyvo/check` asks Blockscout too with a key of your own (`blockscoutKey`). The
-  simulation always buys with 0.001 ETH.
+- **Top holders and Blockscout.** With the Worker secret `BLOCKSCOUT_API_KEY` set, a check reads the token's holders and creator from
+  Blockscout's index beside the chain reads, through the same cache as the holders route below: the `holders` finding gives the ten largest
+  holders' share of the supply with burn addresses, the Uniswap V4 PoolManager and the token's pools left out, and the `deployer` finding falls
+  back to Blockscout's creator after the Pons factories' records and Sourcify. Both name Blockscout's index as their source, with the time it
+  was read; it is not read at `block`. When Blockscout answers `429`, fails or takes more than 5 s, the finding is `skipped` and its evidence
+  says why. Without the key, `holders` is `skipped`, `skippedByApi` says why, and Blockscout is never asked. Verified source comes from
+  Sourcify alone either way. The simulation always buys with 0.001 ETH.
 - **Cache.** One check per token per UTC minute, about 600 blocks: every request in the minute gets the first one's answer, with
   `X-Hyvo-Cache: hit` and `Cache-Control: public, max-age=<seconds left in the minute>`. `block` and `checkedAt` say when it was read. The Cache
   API keeps an answer in the Cloudflare data center that made it, and Cloudflare documents it as working for Workers on custom domains such as
@@ -462,11 +471,48 @@ not look, and the evidence says why). `CHECKS[id].looksFor` in `@hyvo/check`, an
   check_timeout` after 25 s. `503 check_disabled` without `RPC_URLS`, or with a `CHAIN_ID` other than 4663.
 - **Rate limit:** 10 checks a minute per IP, shared with `check_token`. An answer from the cache does not count.
 - **Inside the Workers Free plan** (50 subrequests and 10 ms of CPU a request, item 21). A check makes at most 11 JSON-RPC calls, and the
-  client tries each one on every URL twice, so a check uses the first two URLs of `RPC_URLS`: at most 44 requests, plus 1 or 2 to Sourcify.
+  client tries each one on every URL twice, so a check uses the first two URLs of `RPC_URLS`: at most 44 requests, plus 1 or 2 to Sourcify,
+  plus 3 to Blockscout when the token's holders are not in the cache: at most 49. A test holds the Worker to that worst case.
   Measured on 2026-11-09 against dRPC, with the Worker's own bundle in local workerd, for tokens on a Uniswap V2 pair, a Pons curve and a Pons
   V4 pool, USDG (a proxy) and a token on a V4 pool outside Pons: 7 to 10 JSON-RPC requests and 1 or 2 Sourcify requests, 1 to 3.2 s, and an
   answer from the cache in 8 to 20 ms. CPU, measured in Node 24 on recorded answers: 2 to 4 ms a check once the code is warm, more for the
-  first check in a fresh isolate.
+  first check in a fresh isolate. Blockscout's answers are parsed for the few fields below and nothing else is kept; their CPU cost with the
+  real key is not measured yet (`docs/OPEN_ITEMS.md` item 30).
+
+### `GET /v1/check/:token/holders`
+
+No key and no session; CORS as every `/v1/*` route. A token's top holders and creator from Blockscout's index, read by this API with its own
+key, which never leaves the Worker: no answer, header, error or log carries it. The /check page asks this route while the browser reads the
+chain, and the check in the browser leaves out burn addresses and pools as it does everywhere. The type is `HoldersResponse` in
+`apps/api/src/lib/holders.ts`; `parseHolderFacts` in `@hyvo/check` reads it back.
+
+```jsonc
+{
+  "token": "0x…",                                   // checksummed
+  "source": "Blockscout's index, read through Hyvo's API at 07:12 UTC on 2026-11-09",   // what the evidence names
+  "totalSupply": "…" | null,                        // Blockscout's; a check prefers the supply it reads at its block
+  "holderCount": 1234 | null,
+  "holders": [{ "address": "0x…", "value": "…" }, …] | null,   // Blockscout's first page, largest first, at most 50, nothing left out
+  "holdersMissing": null | "Blockscout's API answered 429 for the token's holders: its free tier allows 5 requests a second",
+  "creator": { "address": "0x…", "creationTxHash": "0x…" | null } | null,
+  "creatorMissing": null | "Blockscout's index names no creator for the token",
+  "readAt": "2026-11-09T07:12:00Z",                 // when this API read Blockscout
+  "disclaimer": "Read from Blockscout's index through Hyvo's API at 2026-11-09T07:12:00Z, not at one block. Not a trading signal."
+}
+```
+
+- **Where it comes from.** Three requests to `https://api.blockscout.com/4663/api/v2`, made at once and each tried once: `tokens/<address>`
+  (total supply and holder count), `tokens/<address>/holders` (the first page) and `addresses/<address>` (`creator_address_hash` and
+  `creation_transaction_hash`). Only those fields are kept, each checked: addresses, decimal digits, a 32-byte hash. A part Blockscout did not
+  answer is `null`, and `holdersMissing` or `creatorMissing` says why in plain words.
+- **Cache.** Per token for the rest of a ten-minute UTC window, in the Cache API, shared with the checks above: `X-Hyvo-Cache: hit` and
+  `Cache-Control: public, max-age=<seconds left in the window>`. Facts with a part Blockscout did not answer (a `429`, a timeout, a `5xx`) are
+  not kept and carry `Cache-Control: no-store`, so the next request asks again.
+- **Limits.** 10 reads a minute per IP on this route (an answer from the cache does not count), then `429 rate_limited` with `Retry-After`. The
+  Worker as a whole starts at most 60 reads a minute, 3 requests each, under Blockscout's free tier of 5 requests a second; past that the
+  facts say so (`holdersMissing`, `creatorMissing`) and Blockscout is not asked. Blockscout's free tier also allows 100,000 credits a day; what
+  one request costs in credits is not known yet (item 30).
+- **Errors.** `400 bad_request` for anything that is not an address. `503 holders_disabled` when the Worker has no `BLOCKSCOUT_API_KEY`.
 
 ---
 
@@ -816,7 +862,8 @@ take the day past `DAILY_SPEND_CAP_USD`.
 Write endpoints are limited in D1 per IP or wallet (numbers above). Reads are cacheable; limiting them takes a
 Cloudflare zone rule, which needs a domain on Cloudflare. On `*.workers.dev` only the plan's daily request limit
 applies (`docs/RUNBOOK.md`). The reads that start work on the chain are limited in D1 as well: `GET /v1/oracle/:runId`,
-and every check that `GET /v1/check/:token` or `check_token` runs (an answer from the cache is not counted).
+every check that `GET /v1/check/:token` or `check_token` runs, and every read of Blockscout that `GET /v1/check/:token/holders` starts
+(an answer from the cache is not counted).
 
 ---
 

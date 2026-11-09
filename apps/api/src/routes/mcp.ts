@@ -146,7 +146,7 @@ export const TOOLS = [
     name: "check_token",
     title: "Check a token",
     description:
-      "Facts about a token on Robinhood Chain, read at one block, each with its evidence: verified source, owner, proxy, owner-style functions (mint, fee or tax setter, blocklist, pause), where it trades, and an exit simulation that buys it, sends a tenth on and sells the rest inside one read-only eth_call. The same report as GET /v1/check/:token, kept for up to a minute. Facts, not a verdict: never present a finding as advice about the token or as a price prediction.",
+      "Facts about a token on Robinhood Chain, read at one block, each with its evidence: verified source, owner, proxy, owner-style functions (mint, fee or tax setter, blocklist, pause), where it trades, an exit simulation that buys it, sends a tenth on and sells the rest inside one read-only eth_call, and the top holders and the deployer from Blockscout's index (not read at the block; the evidence says when). The same report as GET /v1/check/:token, kept for up to a minute. Facts, not a verdict: never present a finding as advice about the token or as a price prediction.",
     inputSchema: {
       type: "object",
       required: ["address"],

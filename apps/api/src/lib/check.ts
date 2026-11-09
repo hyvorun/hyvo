@@ -9,18 +9,28 @@
  *   client tries each call on every URL twice. With two URLs that is at most 44 requests, plus 2 to Sourcify:
  *   46 of the 50 a request may make. A third URL could pass the limit, so a check uses the first two.
  *   Measured on 2026-11-09 against dRPC: 7 to 10 JSON-RPC requests and 1 or 2 to Sourcify per token.
- * - Blockscout is never asked: it needs a key, and its free tier allows 5 requests a second (item 24), which one
- *   public endpoint would use up. The holder check is left out and the answer says so (`skippedByApi`).
+ * - Blockscout, with the Worker's key (BLOCKSCOUT_API_KEY), answers for the top holders and the creator: three
+ *   requests beside the chain reads, or none when the token's facts are in the cache (lib/holders.ts). That makes
+ *   at most 49 of the 50. Without the key, the holder check is left out and the answer says so (`skippedByApi`).
  * - CPU. Measured in Node 24 with recorded answers replayed: 2 to 4 ms for a check on a warm isolate. The first
  *   check on a cold isolate costs more, as the first request of every route does (item 21).
  */
-import { CheckError, checkToken, serializeReport, type CheckReport, type FetchLike, type JsonCheckReport } from "@hyvo/check";
+import {
+  CheckError,
+  checkToken,
+  serializeReport,
+  type CheckOptions,
+  type CheckReport,
+  type FetchLike,
+  type JsonCheckReport,
+} from "@hyvo/check";
 import type { Context } from "hono";
 import type { Env } from "../env";
 import { inBackground } from "./background";
 import { iso } from "./clock";
 import { config } from "./config";
 import { ApiError } from "./errors";
+import { blockscoutKey, holderFacts } from "./holders";
 import { clientIp, rateLimit } from "./ratelimit";
 
 /** One check per token per minute (about 600 blocks at 0.1 s); every request in the minute gets its answer. */
@@ -35,12 +45,16 @@ const ROBINHOOD_CHAIN_ID = 4663;
 const ADDRESS = /^0x[0-9a-fA-F]{40}$/;
 const JSON_TYPE = "application/json; charset=utf-8";
 
-/** What this API leaves out of every report on purpose, and why. The findings themselves say `skipped`. */
+/**
+ * What this API leaves out of every report when it has no Blockscout key, and why. The findings themselves say
+ * `skipped`. With the key nothing is left out on purpose: a part Blockscout did not answer is `skipped` in its
+ * finding, with the reason.
+ */
 export const SKIPPED_BY_API: { id: "holders"; reason: string }[] = [
   {
     id: "holders",
     reason:
-      "Top holders come from Blockscout, which needs an API key and allows 5 requests a second on its free tier, so this API does not ask it. @hyvo/check reads them with a key of your own (blockscoutKey).",
+      "Top holders come from Blockscout, which needs an API key, and this API has none set. @hyvo/check reads them with a key of your own (blockscoutKey).",
   },
 ];
 
@@ -48,6 +62,7 @@ export const SKIPPED_BY_API: { id: "holders"; reason: string }[] = [
 export type CheckResponse = JsonCheckReport & {
   /** When the check ran: an answer from the cache is up to a minute old. */
   checkedAt: string;
+  /** Empty when the API has a Blockscout key. */
   skippedByApi: { id: "holders"; reason: string }[];
   /** "Measured on-chain at block N. Not a trading signal." */
   disclaimer: string;
@@ -109,11 +124,16 @@ export async function tokenCheck(env: Env, address: string, client: CheckClient,
   if (cached !== null) return { text: cached, hit: true, maxAgeS };
 
   await rateLimit(env.DB, "check", client.ip, CHECKS_PER_MINUTE, 60, now);
-  const report = await read(token, cfg.rpcUrls.slice(0, MAX_RPC_URLS));
+  const bsKey = blockscoutKey(env);
+  // The token's holders and creator from Blockscout's index, from the cache or read beside the chain reads.
+  const holders: HoldersFrom | null = bsKey
+    ? async (checksummed, signal) => (await holderFacts(env, bsKey, checksummed, client, now, { perIp: false, signal })).facts
+    : null;
+  const report = await read(token, cfg.rpcUrls.slice(0, MAX_RPC_URLS), holders);
   const body: CheckResponse = {
     ...serializeReport(report),
     checkedAt: iso(now),
-    skippedByApi: SKIPPED_BY_API,
+    skippedByApi: bsKey ? [] : SKIPPED_BY_API,
     disclaimer: `Measured on-chain at block ${report.block}. Not a trading signal.`,
   };
   const text = JSON.stringify(body);
@@ -142,7 +162,9 @@ async function toCache(key: Request, text: string, maxAgeS: number): Promise<voi
   await caches.default.put(key, new Response(text, { headers: { "Content-Type": JSON_TYPE, "Cache-Control": `public, max-age=${maxAgeS}` } }));
 }
 
-async function read(token: string, rpcUrls: string[]): Promise<CheckReport> {
+type HoldersFrom = NonNullable<CheckOptions["holders"]>;
+
+async function read(token: string, rpcUrls: string[], holders: HoldersFrom | null): Promise<CheckReport> {
   const deadline = new AbortController();
   const timer = setTimeout(() => deadline.abort(), runtime.deadlineMs);
   try {
@@ -151,6 +173,7 @@ async function read(token: string, rpcUrls: string[]): Promise<CheckReport> {
       timeoutMs: REQUEST_TIMEOUT_MS,
       signal: deadline.signal,
       ...(runtime.fetch ? { fetch: runtime.fetch } : {}),
+      ...(holders ? { holders } : {}),
     });
   } catch (error) {
     throw error instanceof CheckError ? apiError(error) : error;

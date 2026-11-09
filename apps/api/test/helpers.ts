@@ -51,6 +51,8 @@ export function chainEnv(overrides: Partial<Env> = {}): Env {
     PAYMENT_CONFIRMATIONS: "2",
     LOG_RANGE_BLOCKS: "10",
     LOG_RANGES_PER_RUN: "5",
+    // No Blockscout key unless a test gives one (a fake one: tests never see the real key).
+    BLOCKSCOUT_API_KEY: "",
     ...overrides,
   } as Env;
 }
