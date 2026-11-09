@@ -50,8 +50,18 @@ const HELD_WIDTH = 72;
 /** Below this radius a fill line cannot be read, so a dot brightens with what it holds. */
 const SMALL_DOT = 4.5;
 const APPEAR_MS = 460;
+/** A dot that waits for the crowd to come into view before it appears. */
+const PENDING = Number.POSITIVE_INFINITY;
+/** How far apart the rows, and the dots along a row, start to appear. */
+const ROW_MS = 55;
+const DOT_MS = 8;
 
-function makeAnim(n: number, previous: Anim | null, now: number, entrance: boolean): Anim {
+/** When a dot starts to appear, after the entrance begins: row by row, and along each row. */
+function entranceDelay(cell: { row: number; col: number }): number {
+  return Math.min(cell.row, 12) * ROW_MS + Math.min(cell.col, 30) * DOT_MS;
+}
+
+function makeAnim(n: number, previous: Anim | null, entrance: boolean): Anim {
   const anim: Anim = {
     level: new Float32Array(n),
     target: new Float32Array(n),
@@ -66,8 +76,8 @@ function makeAnim(n: number, previous: Anim | null, now: number, entrance: boole
   for (let i = 0; i < n; i++) {
     const kept = previous !== null && i < previous.level.length;
     anim.level[i] = kept ? previous.level[i]! : 0;
-    // Dots already on screen stay; new ones appear in reading order.
-    anim.born[i] = kept ? previous.born[i]! : entrance ? now + Math.min(i, 120) * 9 : -1e9;
+    // Dots already on screen stay; new ones wait for their turn (see `enter` in Crowd).
+    anim.born[i] = kept ? previous.born[i]! : entrance ? PENDING : -1e9;
   }
   return anim;
 }
@@ -85,6 +95,21 @@ function readPalette(): Palette {
     ink: get("--ink-2"),
     ink3: get("--ink-3"),
   };
+}
+
+/** How far a dot (or a row's name) has appeared, `age` ms after it started to: 0 to 1, easing out. */
+function appearAt(age: number): number {
+  if (age <= 0) return 0;
+  return age >= APPEAR_MS ? 1 : 1 - (1 - age / APPEAR_MS) ** 3;
+}
+
+/** The entrance: every dot still waiting starts to appear, row by row and along each row. */
+function enter(anim: Anim | null, cells: CrowdLayout["cells"], now: number) {
+  if (!anim) return;
+  for (let i = 0; i < anim.born.length; i++) {
+    const cell = cells[i];
+    if (anim.born[i] === PENDING && cell) anim.born[i] = now + entranceDelay(cell);
+  }
 }
 
 /** The same pseudo-random value for the same dot. */
@@ -122,6 +147,8 @@ export function Crowd({ layout, timeline, position = 0, fill = 0.5, ariaLabel, m
     last: 0,
     raf: 0,
     visible: true,
+    /** Whether the crowd has come into view, which starts its entrance. */
+    seen: false,
     hover: -1,
     nextIdle: 0,
     position: 0,
@@ -137,7 +164,9 @@ export function Crowd({ layout, timeline, position = 0, fill = 0.5, ariaLabel, m
     const state = live.current;
     state.layout = layout;
     state.measure();
-    state.anim = makeAnim(layout.cells.length, state.anim, performance.now(), !reduced);
+    state.anim = makeAnim(layout.cells.length, state.anim, !reduced);
+    // A crowd already in view brings its new dots in at once; otherwise they wait until it is seen.
+    if (state.seen) enter(state.anim, layout.cells, performance.now());
     state.position = position;
     if (timeline) {
       state.anim.held = holdingsAt(timeline, position);
@@ -260,11 +289,17 @@ export function Crowd({ layout, timeline, position = 0, fill = 0.5, ariaLabel, m
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, width, height);
 
-      // The names of the rows, and what each kind of trader holds.
+      // The names of the rows, and what each kind of trader holds. A name appears with its row's first dot.
       if (state.labels) {
         ctx.textBaseline = "middle";
         ctx.font = `450 12px ${state.family}`;
+        let first = 0;
         groups.forEach((group, g) => {
+          const shown = appearAt(now - anim.born[first]!);
+          first += group.count;
+          if (shown === 0) return;
+          if (shown < 1) active = true;
+          ctx.globalAlpha = shown;
           const y = group.firstRow * state.pitch + g * state.groupGap + g * state.labelLine;
           const middle = state.labelLine ? y + state.labelLine / 2 - 2 : y + state.pitch / 2;
           const name = personaLabel(group.persona, group.count);
@@ -282,6 +317,7 @@ export function Crowd({ layout, timeline, position = 0, fill = 0.5, ariaLabel, m
             ctx.textAlign = "left";
           }
         });
+        ctx.globalAlpha = 1;
       }
 
       ctx.lineWidth = 1;
@@ -289,10 +325,11 @@ export function Crowd({ layout, timeline, position = 0, fill = 0.5, ariaLabel, m
       for (let i = 0; i < cells.length; i++) {
         const age = now - anim.born[i]!;
         if (age < 0) {
-          active = true;
+          // Its turn is coming; a dot still waiting for the crowd to be seen keeps no frames running.
+          if (anim.born[i] !== PENDING) active = true;
           continue;
         }
-        const appear = age >= APPEAR_MS ? 1 : 1 - (1 - age / APPEAR_MS) ** 3;
+        const appear = appearAt(age);
         if (age < APPEAR_MS) active = true;
 
         const level = anim.level[i]! + (anim.target[i]! - anim.level[i]!) * Math.min(1, dt * 6);
@@ -399,10 +436,20 @@ export function Crowd({ layout, timeline, position = 0, fill = 0.5, ariaLabel, m
       }
     });
     sized.observe(box);
-    const seen = new IntersectionObserver(([entry]) => {
-      state.visible = entry!.isIntersecting;
-      if (state.visible) state.invalidate();
-    });
+    // Frames run only while the crowd is on screen. The first time enough of it is (a fifth, or a
+    // quarter of the screen for a tall one), its dots come in, row by row.
+    const seen = new IntersectionObserver(
+      ([entry]) => {
+        state.visible = entry!.isIntersecting;
+        const screen = entry!.rootBounds?.height ?? window.innerHeight;
+        if (!state.seen && state.visible && (entry!.intersectionRatio >= 0.2 || entry!.intersectionRect.height >= screen * 0.25)) {
+          state.seen = true;
+          enter(state.anim, state.layout.cells, performance.now());
+        }
+        if (state.visible) state.invalidate();
+      },
+      { threshold: [0, 0.05, 0.2] },
+    );
     seen.observe(box);
     const themed = new MutationObserver(applyTheme);
     themed.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });

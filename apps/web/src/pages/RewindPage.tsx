@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { Disclaimer } from "../components/Disclaimer";
 import { PaymentsNote } from "../components/PaymentsNote";
+import { Reveal } from "../components/Reveal";
 import { useWalletSession, Web3 } from "../components/Web3";
 import { ApiError, startRunFromBalance } from "../lib/api";
 import { useTitle } from "../lib/use-title";
@@ -91,7 +92,7 @@ function Rewind() {
         <p className={styles.small}>It compares one run with one past. It does not forecast anything, and the run stays out of the gallery.</p>
       </header>
 
-      <form className={styles.form} onSubmit={(event) => void submit(event)} noValidate>
+      <Reveal as="form" index={1} className={`${styles.form} stagger`} onSubmit={(event: FormEvent) => void submit(event)} noValidate>
         <Field label="Pool address" error={errors.pool} id="pool">
           <input id="pool" className="mono" value={fields.pool} onChange={(event) => set({ pool: event.target.value })} aria-invalid={Boolean(errors.pool)} placeholder="0x…" spellCheck={false} />
         </Field>
@@ -123,12 +124,13 @@ function Rewind() {
             {busy ? "Starting…" : wallet.busy === "signing" ? "Sign the message in your wallet…" : "Start the rewind"}
           </button>
         </div>
-        {(failure || wallet.error) && (
-          <p className={styles.error} role="alert">
-            {failure?.message ?? wallet.error} {failure?.short && <Link to="/account">Top up</Link>}
-          </p>
-        )}
-      </form>
+      </Reveal>
+      {/* After the form rather than in it, so it shows at once instead of waiting its turn in the entrance. */}
+      {(failure || wallet.error) && (
+        <p className={styles.error} role="alert">
+          {failure?.message ?? wallet.error} {failure?.short && <Link to="/account">Top up</Link>}
+        </p>
+      )}
       <Disclaimer />
     </article>
   );

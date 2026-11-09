@@ -1,5 +1,7 @@
 .shell {
   display: grid;
+  /* One column as wide as the screen: a row of links that scrolls sideways never widens the page. */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr auto;
   min-height: 100dvh;
 }
@@ -296,9 +298,25 @@
   display: none;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1000px) {
   .handle {
     display: inline;
+  }
+}
+
+/*
+ * Where the bar runs short of room and does not scroll yet, the links that are not essential give
+ * way (Layout's NAV says which); the footer still has them.
+ */
+@media (max-width: 899px) {
+  .wideOnly {
+    display: none;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 799px) {
+  .roomy {
+    display: none;
   }
 }
 
@@ -400,8 +418,7 @@
     width: 30px;
   }
 
-  .long,
-  .wideOnly {
+  .long {
     display: none;
   }
 
@@ -447,11 +464,15 @@
   font-size: var(--t-xs);
 }
 
-/* The links wrap in their own column, so the text beside them keeps its width as the list grows. */
-@media (min-width: 720px) {
-  /* The links wrap inside their own column, so a new link never squeezes the text beside them. */
+/*
+ * Side by side once both fit: the text keeps a column at least as wide as its lines (28rem), and the
+ * links wrap inside their own, at most 600px and flush with the page's right edge, so a new link
+ * adds a row rather than squeezing the text. Narrower, the links sit under the text.
+ */
+@media (min-width: 900px) {
   .footer {
-    grid-template-columns: minmax(16rem, 2fr) minmax(0, 3fr);
+    grid-template-columns: minmax(28rem, 1fr) minmax(0, 600px);
+    column-gap: var(--space-7);
     align-items: start;
   }
 
@@ -477,7 +498,6 @@
   font-size: var(--t-sm);
 }
 
-/* Capped, so that a longer list of links wraps instead of squeezing the text beside it. */
 .footNav {
   display: flex;
   flex-wrap: wrap;

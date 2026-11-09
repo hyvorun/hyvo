@@ -1,9 +1,10 @@
 import { MAX_EVENT_CHARS, MAX_SEED_CHARS, PERSONAS } from "@hyvo/schema";
-import { useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 import { Link } from "react-router";
 import { Checkout } from "../components/Checkout";
 import { DecisionGrid } from "../components/DecisionGrid";
 import { Arrow } from "../components/Icons";
+import { Reveal } from "../components/Reveal";
 import { Web3 } from "../components/Web3";
 import { fetchHealth } from "../lib/api";
 import { assignedAgents, BOUNDS, codePoints, EMPTY_DRAFT, SIZES, toRequest, type Draft, type FieldErrors } from "../lib/draft";
@@ -14,6 +15,83 @@ import { useTitle } from "../lib/use-title";
 import styles from "./NewRunPage.module.css";
 
 const MAX_EVENTS = 50;
+
+/** The form's steps, by the id of each step's heading. */
+const STEPS = [
+  { id: "step-scenario", label: "The scenario" },
+  { id: "step-crowd", label: "The crowd" },
+  { id: "step-pay", label: "Price and payment" },
+] as const;
+
+/**
+ * Which step the person is on: the one holding keyboard focus, or else the last one whose top has
+ * passed a line a third of the way down the screen (the last one, too, at the bottom of the page).
+ */
+function useCurrentStep(form: RefObject<HTMLFormElement | null>): number {
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const root = form.current;
+    if (!root) return;
+    const sections = STEPS.map((item) => document.getElementById(item.id)?.closest("section") ?? null);
+    let focused = -1;
+    let frame = 0;
+    const read = () => {
+      frame = 0;
+      if (focused >= 0) return setStep(focused);
+      const line = window.innerHeight / 3;
+      let current = 0;
+      sections.forEach((section, index) => {
+        if (section && section.getBoundingClientRect().top <= line) current = index;
+      });
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) current = STEPS.length - 1;
+      setStep(current);
+    };
+    const later = () => {
+      if (!frame) frame = requestAnimationFrame(read);
+    };
+    const focusIn = (event: FocusEvent) => {
+      focused = sections.findIndex((section) => section?.contains(event.target as Node));
+      read();
+    };
+    const focusOut = (event: FocusEvent) => {
+      if (root.contains(event.relatedTarget as Node | null)) return;
+      focused = -1;
+      later();
+    };
+    read();
+    window.addEventListener("scroll", later, { passive: true });
+    window.addEventListener("resize", later);
+    root.addEventListener("focusin", focusIn);
+    root.addEventListener("focusout", focusOut);
+    return () => {
+      window.removeEventListener("scroll", later);
+      window.removeEventListener("resize", later);
+      root.removeEventListener("focusin", focusIn);
+      root.removeEventListener("focusout", focusOut);
+      cancelAnimationFrame(frame);
+    };
+  }, [form]);
+  return step;
+}
+
+/** The three steps, with a mark that slides to the current one. Beside the form on a wide screen. */
+function Steps({ current }: { current: number }) {
+  return (
+    <nav className={styles.steps} aria-label="Steps" style={{ "--step": current } as CSSProperties}>
+      <span className={styles.stepMark} aria-hidden="true" />
+      <ol>
+        {STEPS.map((item, index) => (
+          <li key={item.id}>
+            <a href={`#${item.id}`} aria-current={index === current ? "step" : undefined}>
+              <span className={`${styles.stepN} num`}>{index + 1}</span>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
+}
 
 export function NewRunPage() {
   return (
@@ -51,6 +129,7 @@ function NewRun() {
   const agents = Number(draft.agents);
   const rounds = Number(draft.rounds);
   const preset = SIZES.find((size) => size.agents === agents && size.rounds === rounds)?.id ?? "custom";
+  const step = useCurrentStep(formRef);
 
   return (
     <article className={styles.page}>
@@ -65,10 +144,11 @@ function NewRun() {
 
       <div className={styles.layout}>
       <aside className={styles.side}>
+        <Steps current={step} />
         <DecisionGrid agents={agents} rounds={rounds} />
       </aside>
       <form ref={formRef} className={styles.form} onSubmit={(event) => event.preventDefault()} noValidate>
-        <section className={styles.step} aria-labelledby="step-scenario">
+        <Reveal as="section" className={`${styles.step} stagger`} index={1} aria-labelledby="step-scenario">
           <h2 id="step-scenario">
             <span className={styles.n}>1</span> The scenario
           </h2>
@@ -213,9 +293,9 @@ function NewRun() {
               </Field>
             </div>
           </details>
-        </section>
+        </Reveal>
 
-        <section className={styles.step} aria-labelledby="step-crowd">
+        <Reveal as="section" className={`${styles.step} stagger`} aria-labelledby="step-crowd">
           <h2 id="step-crowd">
             <span className={styles.n}>2</span> The crowd
           </h2>
@@ -284,9 +364,9 @@ function NewRun() {
                 </span>
               </label>
           </div>
-        </section>
+        </Reveal>
 
-        <section className={styles.step} aria-labelledby="step-pay">
+        <Reveal as="section" className={`${styles.step} stagger`} aria-labelledby="step-pay">
           <h2 id="step-pay">
             <span className={styles.n}>3</span> Price and payment
           </h2>
@@ -303,7 +383,7 @@ function NewRun() {
           ) : (
             <Checkout request={request} onInvalid={showErrors} draftKey={JSON.stringify(draft)} />
           )}
-        </section>
+        </Reveal>
       </form>
       </div>
     </article>

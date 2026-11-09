@@ -1,6 +1,8 @@
 import type { RunV1 } from "@hyvo/schema";
 import { addressUrl, blockUrl } from "../lib/explorer";
 import { formatDate, formatPct } from "../lib/format";
+import { CountUp } from "./motion-data/CountUp";
+import { useInView } from "./Reveal";
 import styles from "./RewindPanel.module.css";
 
 const WIDTH = 640;
@@ -17,8 +19,12 @@ export function fromStart(prices: readonly string[]): number[] {
   return prices.map((price) => (first > 0 ? (Number(price) / first - 1) * 100 : 0));
 }
 
-/** The run next to what the real pool did, on one scale. It compares one run with one past, and says so. */
+/**
+ * The run next to what the real pool did, on one scale. It compares one run with one past, and says
+ * so. The first time the chart is in view, both lines draw in from the start and the two changes count.
+ */
 export function RewindPanel({ run }: { run: RunV1 }) {
+  const [figure, seen] = useInView<HTMLElement>(0.3);
   const rewind = run.rewind;
   if (!rewind) return null;
   const played = fromStart([run.world.initialMarket.price, ...run.rounds.map((round) => round.market.price)]);
@@ -48,7 +54,7 @@ export function RewindPanel({ run }: { run: RunV1 }) {
         </a>{" "}
         on {formatDate(rewind.at)}, and changed one thing: <em>{rewind.change}</em>
       </p>
-      <figure className={styles.figure}>
+      <figure ref={figure} className={styles.figure} data-in={seen}>
         {/* Stretched to the panel's width, so the labels are text beside it rather than in it. */}
         <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} preserveAspectRatio="none" role="img" aria-label={`Price from the start: this run ${formatPct(lastPlayed)}, the real pool ${formatPct(lastActual)}, over ${spanOf(rewind.hours)}`}>
           <line className={styles.zero} x1={0} x2={WIDTH} y1={y(0)} y2={y(0)} />
@@ -61,10 +67,16 @@ export function RewindPanel({ run }: { run: RunV1 }) {
         </div>
         <figcaption className={styles.legend}>
           <span>
-            <i className={styles.keyPlayed} /> This run <b className="num">{formatPct(lastPlayed)}</b>
+            <i className={styles.keyPlayed} /> This run{" "}
+            <b className="num">
+              <CountUp value={lastPlayed} format={formatPct} />
+            </b>
           </span>
           <span>
-            <i className={styles.keyActual} /> The real pool <b className="num">{formatPct(lastActual)}</b>
+            <i className={styles.keyActual} /> The real pool{" "}
+            <b className="num">
+              <CountUp value={lastActual} format={formatPct} />
+            </b>
           </span>
         </figcaption>
       </figure>

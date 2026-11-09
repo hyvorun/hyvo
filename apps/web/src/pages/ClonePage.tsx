@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { Disclaimer } from "../components/Disclaimer";
 import { PaymentsNote } from "../components/PaymentsNote";
+import { Reveal } from "../components/Reveal";
 import { Failure, Loading } from "../components/States";
 import { useWalletSession, Web3 } from "../components/Web3";
 import { ApiError, buildClone, deleteClone, fetchClone, startRunFromBalance } from "../lib/api";
@@ -184,14 +185,14 @@ function Numbers({ profile }: { profile: CloneProfile }) {
   return (
     <section className={styles.section} aria-labelledby="numbers">
       <h2 id="numbers">What the clone trades by</h2>
-      <ul className={`${styles.list} ${styles.pairs}`}>
+      <Reveal as="ul" className={`${styles.list} ${styles.pairs} stagger`}>
         {rows.map(([label, value]) => (
           <li key={label}>
             <span>{label}</span>
             <span className="num">{value}</span>
           </li>
         ))}
-      </ul>
+      </Reveal>
       <p className={styles.small}>These numbers are all Hyvo keeps. They hold no address, no token names and no dates.</p>
     </section>
   );
@@ -235,7 +236,7 @@ function RunIt({ token }: { token: string }) {
     <section className={styles.section} aria-labelledby="run-it">
       <h2 id="run-it">Run it in a crowd</h2>
       <p className={styles.small}>Fifty agents and ten rounds, paid from your balance. One of the agents is your clone, under a generated handle. The run stays out of the gallery.</p>
-      <form className={styles.form} onSubmit={(event) => void submit(event)} noValidate>
+      <Reveal as="form" className={`${styles.form} stagger`} onSubmit={(event: FormEvent) => void submit(event)} noValidate>
         <div className={styles.field}>
           <label htmlFor="clone-title">Title</label>
           <input id="clone-title" value={title} onChange={(event) => setTitle(event.target.value)} aria-invalid={Boolean(errors.title)} placeholder="A fictional token lists with a 5% tax" />
@@ -251,12 +252,13 @@ function RunIt({ token }: { token: string }) {
             {busy ? "Starting…" : "Start the run"}
           </button>
         </div>
-        {failure && (
-          <p className={styles.error} role="alert">
-            {failure.message} {failure.short && <Link to="/account">Top up</Link>}
-          </p>
-        )}
-      </form>
+      </Reveal>
+      {/* After the form rather than in it, so it shows at once instead of waiting its turn in the entrance. */}
+      {failure && (
+        <p className={styles.error} role="alert">
+          {failure.message} {failure.short && <Link to="/account">Top up</Link>}
+        </p>
+      )}
     </section>
   );
 }

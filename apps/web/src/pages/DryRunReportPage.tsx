@@ -1,6 +1,9 @@
 import { verifyRunHash, type DryRunReport, type DryRunView, type Finding } from "@hyvo/schema";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
+import { CountUp } from "../components/motion-data/CountUp";
+import { Decode } from "../components/motion-data/Decode";
+import { Reveal } from "../components/Reveal";
 import { Failure, Loading } from "../components/States";
 import { useWalletSession, Web3 } from "../components/Web3";
 import { ApiError, fetchDryRun, fetchDryRunReport } from "../lib/api";
@@ -95,8 +98,11 @@ function Loader({ runId, token }: { runId: string; token: string }) {
       <section className={styles.page}>
         <header className={styles.head}>
           <h1>{view.status === "queued" ? "Waiting in the queue" : "The crowd is trying it"}</h1>
-          <p role="status">
-            {view.progress ? `Round ${view.progress.round} of ${view.progress.rounds}.` : "It starts when a runner picks it up."} This page updates by itself.
+          <p role="status" className={styles.waiting}>
+            {view.status === "running" && <span className="live-dot" aria-hidden="true" />}
+            <span>
+              {view.progress ? `Round ${view.progress.round} of ${view.progress.rounds}.` : "It starts when a runner picks it up."} This page updates by itself.
+            </span>
           </p>
         </header>
       </section>
@@ -128,30 +134,32 @@ function Report({ report }: { report: DryRunReport }) {
         </p>
       </header>
 
-      <section className={styles.counts} aria-label="What was found">
+      <Reveal as="section" index={1} className={`${styles.counts} stagger`} aria-label="What was found">
         {(["high", "medium", "low", "info"] as const).map((level) => (
           <div key={level}>
-            <b className={`num ${counts[level] > 0 && level === "high" ? styles.bad : ""}`}>{counts[level]}</b>
+            <b className={`num ${counts[level] > 0 && level === "high" ? styles.bad : ""}`}>
+              <CountUp value={counts[level]} format={String} />
+            </b>
             <span>{level === "info" ? "To note" : `${level[0]!.toUpperCase()}${level.slice(1)}`}</span>
           </div>
         ))}
-      </section>
+      </Reveal>
 
       <section className={styles.section} aria-labelledby="findings">
         <h2 id="findings">What the crowd ran into</h2>
         {report.findings.length === 0 ? (
           <p className={styles.small}>Nothing stood out. That says what this crowd happened to try, not that the contract is safe.</p>
         ) : (
-          <ol className={styles.findings}>
+          <Reveal as="ol" className={`${styles.findings} stagger`}>
             {report.findings.map((finding, index) => (
               <FindingItem key={`${finding.kind}-${index}`} finding={finding} />
             ))}
-          </ol>
+          </Reveal>
         )}
       </section>
 
       {report.invariants.length > 0 && (
-        <section className={styles.section} aria-labelledby="invariants">
+        <Reveal as="section" className={styles.section} aria-labelledby="invariants">
           <h2 id="invariants">
             Invariants: {held} of {report.invariants.length} held
           </h2>
@@ -164,10 +172,10 @@ function Report({ report }: { report: DryRunReport }) {
               </li>
             ))}
           </ul>
-        </section>
+        </Reveal>
       )}
 
-      <section className={styles.section} aria-labelledby="functions">
+      <Reveal as="section" className={styles.section} aria-labelledby="functions">
         <h2 id="functions">What the crowd called</h2>
         <div className={styles.tableWrap}>
           <table className={styles.table}>
@@ -198,12 +206,12 @@ function Report({ report }: { report: DryRunReport }) {
             Kept out of the crowd's hands, and tried once from a stranger's wallet: {report.actionSpace.keptForTheOwner.join(", ")}.
           </p>
         )}
-      </section>
+      </Reveal>
 
       {report.feedback.length > 0 && (
         <section className={styles.section} aria-labelledby="feedback">
           <h2 id="feedback">What the users said</h2>
-          <ul className={styles.quotes}>
+          <Reveal as="ul" className={`${styles.quotes} stagger`}>
             {report.feedback.map((line) => (
               <li key={`${line.agentId}-${line.round}-${line.text}`}>
                 <span>{line.text}</span>
@@ -212,12 +220,12 @@ function Report({ report }: { report: DryRunReport }) {
                 </span>
               </li>
             ))}
-          </ul>
+          </Reveal>
         </section>
       )}
 
       <p className={styles.small}>
-        <span className="mono">{shortHash(report.hash, 10, 8)}</span> {check.ok ? "This file matches its hash, checked in your browser." : "This file does not match its hash."}
+        <Decode text={shortHash(report.hash, 10, 8)} className="mono" /> {check.ok ? "This file matches its hash, checked in your browser." : "This file does not match its hash."}
       </p>
       <p className={styles.small}>{report.disclaimer}</p>
     </article>

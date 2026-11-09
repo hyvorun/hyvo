@@ -36,6 +36,22 @@ function applyTheme(theme: Theme) {
 
 type TransitionDocument = Document & { startViewTransition?: (update: () => void) => { finished: Promise<void> } };
 
+/**
+ * The header's links, in order. Runs, Check, Launches and Stocks show at every width. Where the bar
+ * runs short of room the others give way (the footer has them all): `wide` links show from 900px,
+ * `roomy` ones wherever the bar has room for them, which on a phone is its sideways scroll.
+ */
+const NAV: { to: string; label: string; show?: "wide" | "roomy" }[] = [
+  { to: "/runs", label: "Runs" },
+  { to: "/check", label: "Check" },
+  { to: "/launches", label: "Launches" },
+  { to: "/stocks", label: "Stocks" },
+  { to: "/tools", label: "Tools", show: "roomy" },
+  { to: "/oracle", label: "Oracle", show: "wide" },
+  { to: "/docs", label: "Docs", show: "roomy" },
+];
+const SHOW = { wide: styles.wideOnly, roomy: styles.roomy };
+
 export function Layout() {
   const [theme, setTheme] = useState<Theme>(readTheme);
   // The icon animates only when the theme is switched, not on the first paint.
@@ -46,15 +62,23 @@ export function Layout() {
   const line = useRef<HTMLSpanElement>(null);
   useNavIndicator(nav, line, location.pathname);
 
-  // On a phone too narrow for every link, the nav scrolls sideways: bring the current page's link into it.
+  // On a phone too narrow for every link, the nav scrolls sideways: bring the current page's link into
+  // it, with a little of its neighbor showing so the row still reads as one that scrolls. The first
+  // page lands there at once; after that the row glides, unless the viewer prefers reduced motion.
+  const navPath = useRef<string | null>(null);
   useEffect(() => {
     const bar = nav.current;
     const active = bar?.querySelector<HTMLElement>("a.active");
+    const glide = navPath.current !== null && navPath.current !== location.pathname && !prefersReducedMotion();
+    navPath.current = location.pathname;
     if (!bar || !active || bar.scrollWidth <= bar.clientWidth) return;
     const room = bar.getBoundingClientRect();
     const link = active.getBoundingClientRect();
-    if (link.left < room.left) bar.scrollLeft -= room.left - link.left;
-    else if (link.right > room.right) bar.scrollLeft += link.right - room.right;
+    const margin = Math.min(28, Math.max(0, (room.width - link.width) / 2));
+    let left = bar.scrollLeft;
+    if (link.left < room.left + margin) left -= room.left + margin - link.left;
+    else if (link.right > room.right - margin) left += link.right - (room.right - margin);
+    if (left !== bar.scrollLeft) bar.scrollTo({ left, behavior: glide ? "smooth" : "instant" });
   }, [location.pathname]);
 
   useEffect(() => applyTheme(theme), [theme]);
@@ -116,21 +140,11 @@ export function Layout() {
           </Link>
           <nav ref={nav} className={styles.nav} aria-label="Main">
             <span ref={line} className={styles.indicator} aria-hidden="true" />
-            <NavLink to="/runs" className={styles.link} viewTransition>
-              Runs
-            </NavLink>
-            <NavLink to="/check" className={styles.link} viewTransition>
-              Check
-            </NavLink>
-            <NavLink to="/tools" className={styles.link} viewTransition>
-              Tools
-            </NavLink>
-            <NavLink to="/oracle" className={`${styles.link} ${styles.wideOnly}`} viewTransition>
-              Oracle
-            </NavLink>
-            <NavLink to="/docs" className={styles.link} viewTransition>
-              Docs
-            </NavLink>
+            {NAV.map((item) => (
+              <NavLink key={item.to} to={item.to} className={item.show ? `${styles.link} ${SHOW[item.show]}` : styles.link} viewTransition>
+                {item.label}
+              </NavLink>
+            ))}
           </nav>
           <div className={styles.end}>
             <a className={styles.social} href={OFFICIAL.x.url} target="_blank" rel="noreferrer" aria-label={`Hyvo on X, ${OFFICIAL.x.handle}`}>
@@ -185,29 +199,20 @@ export function Layout() {
           <Link to="/runs" viewTransition>
             Runs
           </Link>
-          <Link to="/oracle" viewTransition>
-            Oracle
-          </Link>
           <Link to="/check" viewTransition>
             Hyvo Check
-          </Link>
-          <Link to="/calibration" viewTransition>
-            Calibration
-          </Link>
-          <Link to="/trust" viewTransition>
-            Trust
-          </Link>
-          <Link to="/token" viewTransition>
-            Token
-          </Link>
-          <Link to="/tools" viewTransition>
-            Free tools
           </Link>
           <Link to="/launches" viewTransition>
             Launches
           </Link>
           <Link to="/stocks" viewTransition>
             Stocks
+          </Link>
+          <Link to="/tools" viewTransition>
+            Free tools
+          </Link>
+          <Link to="/oracle" viewTransition>
+            Oracle
           </Link>
           <Link to="/new" viewTransition>
             Run a simulation
@@ -221,11 +226,20 @@ export function Layout() {
           <Link to="/rewind" viewTransition>
             Rewind
           </Link>
+          <Link to="/calibration" viewTransition>
+            Calibration
+          </Link>
           <Link to="/docs" viewTransition>
             Docs
           </Link>
           <Link to="/account" viewTransition>
             API keys
+          </Link>
+          <Link to="/trust" viewTransition>
+            Trust
+          </Link>
+          <Link to="/token" viewTransition>
+            Token
           </Link>
           <a href={OFFICIAL.x.url} target="_blank" rel="noreferrer">
             X ({OFFICIAL.x.handle})
