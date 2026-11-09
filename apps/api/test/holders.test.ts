@@ -172,6 +172,15 @@ describe("GET /v1/check/:token with a Blockscout key", () => {
     expect(finding(slow, "holders").evidence).toBe("Blockscout's API did not answer in time for the token's holders");
   }, 20_000);
 
+  it("leaves the holders skipped when Blockscout's page lists none, and does not keep that answer", async () => {
+    const { asked } = install({}, { holders: { status: 200, body: { items: [], next_page_params: null } } });
+    const body = (await (await get(`/v1/check/${TOKEN}`)).json()) as Record<string, any>;
+    expect(finding(body, "holders")).toMatchObject({ status: "skipped", evidence: "Blockscout's index lists no holders for the token yet" });
+    clock.advance(60);
+    await get(`/v1/check/${TOKEN}`);
+    expect(asked).toHaveLength(6); // asked again: an empty page is not kept for the window
+  });
+
   it("answers as today without a key", async () => {
     target = chainEnv();
     const { asked } = install();

@@ -89,6 +89,21 @@ describe("readHolderFacts", () => {
     expect(none.holderCount).toBeNull();
   });
 
+  it("takes an empty page of holders, or one with no row it can read, for holders not read yet, and keeps neither", async () => {
+    const empty = fakeBlockscout({ holders: { status: 200, body: { items: [], next_page_params: null } } });
+    const none = await readHolderFacts(TOKEN, { blockscoutKey: KEY, fetch: empty.fetch, source: SOURCE });
+    expect(none.holders).toBeNull();
+    expect(none.holdersMissing).toBe("Blockscout's index lists no holders for the token yet");
+    expect(none.totalSupply).toBe(1000n);
+    expect(none.creator).not.toBeNull();
+    expect(none.settled).toBe(false);
+
+    const unreadable = fakeBlockscout({ holders: { status: 200, body: { items: [{ address: { hash: "nope" }, value: "1" }] } } });
+    const broken = await readHolderFacts(TOKEN, { blockscoutKey: KEY, fetch: unreadable.fetch, source: SOURCE });
+    expect(broken.holders).toBeNull();
+    expect(broken.holdersMissing).toBe("Blockscout's API gave no list of holders");
+  });
+
   it("gives up on a request that takes too long", async () => {
     const hang: FetchLike = (_url, init) => new Promise((_resolve, reject) => init.signal?.addEventListener("abort", () => reject(new Error("aborted"))));
     const facts = await readHolderFacts(TOKEN, { blockscoutKey: KEY, fetch: hang, source: SOURCE, timeoutMs: 20 });

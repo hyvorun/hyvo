@@ -7,8 +7,8 @@
  *   API answers is parsed fields (addresses, digits, a transaction hash) and fixed phrases, never Blockscout's text,
  *   and the logs carry counts and statuses. `redact` takes it out of anything logged all the same.
  * - Cache. The facts, not Blockscout's whole answers, are kept per token for the rest of a ten-minute window in the
- *   Cache API, and both routes read the same entry. Facts with a part Blockscout did not answer (a 429, a timeout) are
- *   not kept, so the next request asks again.
+ *   Cache API, and both routes read the same entry. Facts with a part Blockscout did not answer (a 429, a timeout), or
+ *   with a page that lists no holder, are not kept, so the next request asks again.
  * - Limits. A read is three requests to Blockscout, whose free tier allows 5 requests a second (item 24). Each IP may
  *   start HOLDER_READS_PER_MINUTE reads a minute through the holders route, and the Worker as a whole
  *   BLOCKSCOUT_READS_PER_MINUTE; past that the facts say so and nothing is asked. Inside a check the three requests

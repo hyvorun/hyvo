@@ -1,4 +1,5 @@
 import { sameAddress, shortenAddress } from "../chain/abi.js";
+import { NO_HOLDERS_LISTED } from "../chain/blockscout.js";
 import { formatPct } from "../chain/units.js";
 import { makeFinding } from "../output/finding.js";
 import type { Address, Finding } from "../types.js";
@@ -49,10 +50,13 @@ export function holdersCheck(input: HoldersInput): Finding {
     });
   }
   const { totalSupply, holders } = input;
-  if (!holders || totalSupply === null || totalSupply === 0n) {
+  // A page that lists no holder is the index not having them, not ten holders who hold 0%.
+  if (!holders || holders.length === 0 || totalSupply === null || totalSupply === 0n) {
     const why = !holders
       ? (input.missing ?? "Blockscout did not return the token's holders")
-      : "the token's total supply is unknown or zero, so no share of it can be given";
+      : holders.length === 0
+        ? NO_HOLDERS_LISTED
+        : "the token's total supply is unknown or zero, so no share of it can be given";
     return makeFinding({ id: "holders", title, status: "skipped", evidence: input.source && holders ? `${why} (${input.source})` : why });
   }
 

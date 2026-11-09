@@ -458,8 +458,8 @@ not look, and the evidence says why). `CHECKS[id].looksFor` in `@hyvo/check`, an
   Blockscout's index beside the chain reads, through the same cache as the holders route below: the `holders` finding gives the ten largest
   holders' share of the supply with burn addresses, the Uniswap V4 PoolManager and the token's pools left out, and the `deployer` finding falls
   back to Blockscout's creator after the Pons factories' records and Sourcify. Both name Blockscout's index as their source, with the time it
-  was read; it is not read at `block`. When Blockscout answers `429`, fails or takes more than 5 s, the finding is `skipped` and its evidence
-  says why. Without the key, `holders` is `skipped`, `skippedByApi` says why, and Blockscout is never asked. Verified source comes from
+  was read; it is not read at `block`. When Blockscout answers `429`, fails, takes more than 5 s or lists no holder, the finding is `skipped`
+  and its evidence says why. Without the key, `holders` is `skipped`, `skippedByApi` says why, and Blockscout is never asked. Verified source comes from
   Sourcify alone either way. The simulation always buys with 0.001 ETH.
 - **Cache.** One check per token per UTC minute, about 600 blocks: every request in the minute gets the first one's answer, with
   `X-Hyvo-Cache: hit` and `Cache-Control: public, max-age=<seconds left in the minute>`. `block` and `checkedAt` say when it was read. The Cache
@@ -504,10 +504,11 @@ chain, and the check in the browser leaves out burn addresses and pools as it do
 - **Where it comes from.** Three requests to `https://api.blockscout.com/4663/api/v2`, made at once and each tried once: `tokens/<address>`
   (total supply and holder count), `tokens/<address>/holders` (the first page) and `addresses/<address>` (`creator_address_hash` and
   `creation_transaction_hash`). Only those fields are kept, each checked: addresses, decimal digits, a 32-byte hash. A part Blockscout did not
-  answer is `null`, and `holdersMissing` or `creatorMissing` says why in plain words.
+  answer is `null`, and `holdersMissing` or `creatorMissing` says why in plain words. A page that lists no holder is `null` too, with
+  "Blockscout's index lists no holders for the token yet", never an empty list that a share of 0% could be read from.
 - **Cache.** Per token for the rest of a ten-minute UTC window, in the Cache API, shared with the checks above: `X-Hyvo-Cache: hit` and
-  `Cache-Control: public, max-age=<seconds left in the window>`. Facts with a part Blockscout did not answer (a `429`, a timeout, a `5xx`) are
-  not kept and carry `Cache-Control: no-store`, so the next request asks again.
+  `Cache-Control: public, max-age=<seconds left in the window>`. Facts with a part Blockscout did not answer (a `429`, a timeout, a `5xx`), or
+  with a page that lists no holder, are not kept and carry `Cache-Control: no-store`, so the next request asks again.
 - **Limits.** 10 reads a minute per IP on this route (an answer from the cache does not count), then `429 rate_limited` with `Retry-After`. The
   Worker as a whole starts at most 60 reads a minute, 3 requests each, under Blockscout's free tier of 5 requests a second; past that the
   facts say so (`holdersMissing`, `creatorMissing`) and Blockscout is not asked. Blockscout's free tier also allows 100,000 credits a day; what

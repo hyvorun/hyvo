@@ -218,6 +218,12 @@ describe("holders", () => {
       "skipped",
     );
   });
+
+  it("is skipped, not a share of 0%, when Blockscout's page lists no holder", () => {
+    const f = holdersCheck({ asked: true, totalSupply: 1000n, holderCount: 0, holders: [], deployer: OWNER, excluded });
+    expect(f.status).toBe("skipped");
+    expect(f.evidence).toBe("Blockscout's index lists no holders for the token yet");
+  });
 });
 
 describe("origin", () => {
