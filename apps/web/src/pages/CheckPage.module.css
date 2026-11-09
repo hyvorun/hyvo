@@ -829,6 +829,62 @@
   text-underline-offset: 3px;
 }
 
+/* Which findings come from Blockscout's index through Hyvo's API, not from the chain at the block. */
+.provenance {
+  max-width: 82ch;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--rule-strong);
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+  line-height: 1.6;
+}
+
+/* --- motion -------------------------------------------------------------------------------------- */
+
+/*
+ * The step cards stay in place (the rules between them are their parent's background) and what is in
+ * each rises, card after card, once the steps come into view. Each finding's status pops in just after
+ * its row arrives (the rows themselves are .reveal.stagger, ui.css, which sets --n per row). Without
+ * scripts or with reduced motion, everything is simply there; keyboard focus never waits on it.
+ */
+@media screen and (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .steps:not([data-in="true"]) .step > * {
+    opacity: 0;
+  }
+
+  .steps[data-in="true"] .step > * {
+    animation: rise var(--dur-enter) var(--ease-out) backwards;
+    animation-delay: calc(var(--row, 0) * 2 * var(--stagger) + 60ms);
+  }
+
+  .steps[data-in="true"] .step > .bar {
+    animation:
+      rise var(--dur-enter) var(--ease-out) backwards,
+      bar 900ms var(--ease-out) both;
+    animation-delay:
+      calc(var(--row, 0) * 2 * var(--stagger) + 60ms),
+      calc(var(--row, 0) * 2 * var(--stagger) + 210ms);
+  }
+
+  .findings[data-in="true"] .status {
+    animation: status-pop var(--dur-spring) var(--ease-spring-pop) backwards;
+    animation-delay: calc(var(--n, 0) * var(--stagger) + 220ms);
+  }
+
+  .steps:focus-within .step > *,
+  .findings:focus-within .status {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+@keyframes status-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
 /* CSS modules scope keyframe names, so this module keeps its own copy of the shared rise. */
 @keyframes rise {
   from {

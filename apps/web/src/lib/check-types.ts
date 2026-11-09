@@ -17,10 +17,12 @@ export type {
   Finding,
   FindingStatus,
   Hex,
+  HolderFacts,
   JsonCheckReport,
+  JsonHolderFacts,
   Step,
   Timings,
   TokenInfo,
   Venue,
 } from "@hyvo/check";
-export { CHECK_NOTICE, CHECKS, CheckError, serializeReport } from "@hyvo/check";
+export { CHECK_NOTICE, CHECKS, CheckError, parseHolderFacts, serializeReport } from "@hyvo/check";

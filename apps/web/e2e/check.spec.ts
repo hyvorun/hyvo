@@ -1,8 +1,14 @@
 import { expect, test, type Page } from "@playwright/test";
 import { stubApi } from "./stub-api";
-import { BLOCK, SELL_REVERTS, TAXED, TOKEN, stubCheck } from "./stub-check";
+import { BLOCK, OWNER, SELL_REVERTS, TAXED, TOKEN, stubCheck } from "./stub-check";
+import { CREATION_TX, FACTS, SOURCE, stubHolders } from "./stub-holders";
 
 const MINUS = "−";
+
+// Hyvo's API, which the page asks for the top holders, answers nothing unless a test says otherwise.
+test.beforeEach(async ({ page }) => {
+  await stubHolders(page, "fail");
+});
 
 /** Nothing wider than the screen: on a phone, a page that overflows widens the layout viewport instead. */
 async function fitsTheScreen(page: Page) {
@@ -67,8 +73,9 @@ test("a taxed token: every step arrives short of its promise, and the page says 
   await expect(finding(page, "Sell or transfer shortfall")).toContainText("Found");
   await expect(finding(page, "Sell or transfer shortfall")).toContainText("5% short of the router's quote");
   await expect(finding(page, "Fee or tax setter")).toContainText("setTaxes(uint256,uint256)");
+  // Hyvo's API did not answer: the holders stay skipped, and say why.
   await expect(finding(page, "Top holders")).toContainText("Skipped");
-  await expect(finding(page, "Top holders")).toContainText("Blockscout");
+  await expect(finding(page, "Top holders")).toContainText("Hyvo's API did not answer with the token's holders from Blockscout's index.");
 
   await expect(page.getByRole("heading", { name: "What this check cannot tell" })).toBeVisible();
   await expect(page.getByText(`Measured on-chain at block ${BLOCK}. Not a trading signal.`)).toBeVisible();
@@ -123,6 +130,52 @@ test("a token with no venue: no simulation, and the reason", async ({ page }) =>
   await expect(finding(page, "Sell or transfer shortfall")).toContainText("Skipped");
   await expect(page.getByText(`Measured on-chain at block ${BLOCK}. Not a trading signal.`)).toBeVisible();
   await fitsTheScreen(page);
+});
+
+test("top holders and the deployer from Blockscout's index, through Hyvo's API and labelled so", async ({ page }) => {
+  await stubCheck(page, { name: "Quiet Token", symbol: "QT" });
+  const holders = await stubHolders(page);
+  await open(page, `/check/${TOKEN}`);
+  await expect(page.getByRole("heading", { name: "QT Quiet Token", level: 2 })).toBeVisible();
+  expect(holders.asked).toEqual([`http://api.test/v1/check/${TOKEN}/holders`]);
+
+  // The pair holds pool liquidity and is left out: the holder and the deployer hold 30% of the supply.
+  const top = finding(page, "Top holders");
+  await expect(top).toContainText("Found");
+  await expect(top).toContainText("The 2 largest holders hold 30% of the supply, leaving out burn addresses, the Uniswap V4 PoolManager, the Uniswap V2 pair");
+  await expect(top).toContainText("3 holders in all");
+  await expect(top).toContainText(`balances from ${SOURCE}, not read at block ${BLOCK}`);
+  // Neither a launch record nor Sourcify names the deployer here, so Blockscout's creator does, with its source.
+  const deployer = finding(page, "Deployer");
+  await expect(deployer).toContainText("Found");
+  await expect(deployer).toContainText(`in transaction ${CREATION_TX.slice(0, 10)}…${CREATION_TX.slice(-4)} (${SOURCE})`);
+  await expect(deployer).toContainText(`${OWNER.slice(0, 6)}…${OWNER.slice(-4)}`);
+
+  const findings = page.getByRole("region", { name: "Every check, with its evidence" });
+  await expect(findings).toContainText(`Top holders and the deployer come from ${SOURCE}, not from the chain at block ${BLOCK}.`);
+  await expect(page.getByRole("region", { name: "QT Quiet Token" })).toContainText("and 1 to Hyvo's API");
+  await expect(page.getByRole("region", { name: "What this check cannot tell" })).toContainText("Holders come from an index.");
+  await expect(page.getByText(`Measured on-chain at block ${BLOCK}. Not a trading signal.`)).toBeVisible();
+  await expect(page.locator("main")).not.toContainText(/\b(safe|scam|rug|honeypot|legit|risky)\b/i);
+  await fitsTheScreen(page);
+});
+
+test("when Hyvo's API has no answer for the holders, they stay skipped and say why", async ({ page }) => {
+  await stubCheck(page);
+  await stubHolders(page, { status: 503, body: { error: { code: "holders_disabled", message: "top holders are not read on this API" } } });
+  await open(page, `/check/${TOKEN}`);
+  const top = finding(page, "Top holders");
+  await expect(top).toContainText("Skipped");
+  await expect(top).toContainText("Hyvo's API does not read Blockscout's index at the moment, so the holders could not be read.");
+  await expect(finding(page, "Deployer")).toContainText("Skipped");
+  await expect(page.getByRole("region", { name: "Every check, with its evidence" })).not.toContainText("come from Blockscout's index");
+
+  // An answer the page cannot read is no answer.
+  await page.unrouteAll({ behavior: "ignoreErrors" });
+  await stubCheck(page);
+  await stubHolders(page, { status: 200, body: { ...FACTS, holders: [{ address: "0x12", value: "1" }] } });
+  await page.getByRole("button", { name: "Check again at the latest block" }).click();
+  await expect(finding(page, "Top holders")).toContainText("Hyvo's API did not answer with the token's holders from Blockscout's index.");
 });
 
 test("an address that is not one is refused, and nothing is read", async ({ page }) => {

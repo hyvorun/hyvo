@@ -10,10 +10,13 @@ import {
   type CheckReport,
   type ExitSimulation,
   type Finding,
+  type HolderFacts,
 } from "@hyvo/check";
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { Arrow } from "../components/Icons";
+import { Decode } from "../components/motion-data/Decode";
+import { Reveal, useInView } from "../components/Reveal";
 import { Failure, Loading } from "../components/States";
 import {
   STATUS_LABEL,
@@ -23,6 +26,7 @@ import {
   exitSteps,
   findingSummary,
   formatBlock,
+  holdersNote,
   looksFor,
   parseAddressInput,
   roundTripView,
@@ -48,6 +52,7 @@ export function CheckPage() {
   const address = isAddress(raw) ? toChecksumAddress(raw) : null;
   const [state, reload] = useCheck(address);
   const report = state.status === "ready" ? state.report : state.status === "loading" ? state.previous : null;
+  const holders = state.status === "ready" ? state.holders : state.status === "loading" ? state.previousHolders : null;
 
   // One link per token: the checksummed form.
   useEffect(() => {
@@ -71,7 +76,8 @@ export function CheckPage() {
         <h1>Hyvo Check</h1>
         <p>
           Read a token on Robinhood Chain at one block: its owner, the functions that could change it, where it trades, and what happens when someone
-          buys it, sends it on and sells it back. Your browser reads the chain itself. Nothing is signed or sent.
+          buys it, sends it on and sells it back. Your browser reads the chain itself; the top holders come from Blockscout&apos;s index through Hyvo&apos;s
+          API. Nothing is signed or sent.
         </p>
       </header>
 
@@ -87,7 +93,7 @@ export function CheckPage() {
       ) : state.status === "loading" && !state.previous ? (
         <Checking address={state.address} />
       ) : report ? (
-        <Report report={report} reading={state.status === "loading"} onReload={reload} />
+        <Report report={report} holders={holders} reading={state.status === "loading"} onReload={reload} />
       ) : null}
     </article>
   );
@@ -263,19 +269,29 @@ function CheckFailed({ error, onRetry }: { error: unknown; onRetry: () => void }
 
 // --- the report ----------------------------------------------------------------------------------
 
-function Report({ report, reading, onReload }: { report: CheckReport; reading: boolean; onReload: () => void }) {
+function Report({
+  report,
+  holders,
+  reading,
+  onReload,
+}: {
+  report: CheckReport;
+  holders: HolderFacts | null;
+  reading: boolean;
+  onReload: () => void;
+}) {
   return (
     <div className={styles.report} aria-busy={reading}>
-      <TokenHead report={report} reading={reading} onReload={onReload} />
+      <TokenHead report={report} asked={holders !== null} reading={reading} onReload={onReload} />
       <ExitSection report={report} state={exitState(report)} />
-      <Findings findings={report.findings} />
+      <Findings findings={report.findings} note={holdersNote(holders, report)} />
       <Limits block={report.block} ethIn={report.exit?.ethIn ?? DEFAULT_ETH_IN} />
       <MoreLinks />
     </div>
   );
 }
 
-function TokenHead({ report, reading, onReload }: { report: CheckReport; reading: boolean; onReload: () => void }) {
+function TokenHead({ report, asked, reading, onReload }: { report: CheckReport; asked: boolean; reading: boolean; onReload: () => void }) {
   const { token, block, timings } = report;
   const label = tokenLabel(token);
   const seconds = (timings.totalMs / 1000).toFixed(1);
@@ -288,7 +304,7 @@ function TokenHead({ report, reading, onReload }: { report: CheckReport; reading
           {token.name && token.symbol && token.name !== token.symbol && <span className={styles.tokenName}>{token.name}</span>}
         </h2>
         <a className={`mono ${styles.fullAddress}`} href={addressUrl(token.address)} target="_blank" rel="noreferrer">
-          {token.address}
+          <Decode text={token.address} duration={900} />
         </a>
         <p className={styles.fine}>The name and the symbol are what the token says about itself. {report.notice}</p>
       </div>
@@ -312,7 +328,9 @@ function TokenHead({ report, reading, onReload }: { report: CheckReport; reading
         <div>
           <dt>Read in</dt>
           <dd className="num">
-            {seconds} s<small>{requests} requests from this browser</small>
+            {seconds} s<small>
+              {requests} requests from this browser{asked ? ", and 1 to Hyvo's API" : ""}
+            </small>
           </dd>
         </div>
       </dl>
@@ -374,11 +392,13 @@ function Simulation({ exit, report }: { exit: ExitSimulation; report: CheckRepor
   const steps = exitSteps(exit, report.token);
   const trip = roundTripView(exit);
   const venue = venueView(exit.venue);
+  // Each step's figures rise inside its card, one card after another, once the steps come into view.
+  const [stepsRef, stepsSeen] = useInView<HTMLOListElement>();
   return (
     <div className={styles.sim}>
-      <ol className={styles.steps}>
-        {steps.map((step) => (
-          <StepCard key={step.key} step={step} />
+      <ol ref={stepsRef} className={styles.steps} data-in={stepsSeen}>
+        {steps.map((step, index) => (
+          <StepCard key={step.key} step={step} index={index} />
         ))}
       </ol>
 
@@ -408,7 +428,7 @@ function Simulation({ exit, report }: { exit: ExitSimulation; report: CheckRepor
             <dt>{venue.addressLabel}</dt>
             <dd>
               <a className="mono" href={addressUrl(venue.address)} target="_blank" rel="noreferrer" title={venue.address}>
-                {shortenAddress(venue.address)}
+                <Decode text={shortenAddress(venue.address)} />
               </a>
             </dd>
           </div>
@@ -429,9 +449,9 @@ function Simulation({ exit, report }: { exit: ExitSimulation; report: CheckRepor
   );
 }
 
-function StepCard({ step }: { step: StepView }) {
+function StepCard({ step, index }: { step: StepView; index: number }) {
   return (
-    <li className={styles.step} data-state={step.state}>
+    <li className={styles.step} data-state={step.state} style={{ "--row": index } as CSSProperties}>
       <div className={styles.stepHead}>
         <span className={styles.stepNo} aria-hidden="true">
           {step.number}
@@ -523,7 +543,7 @@ function NoSimulation({ state }: { state: Exclude<ExitState, { kind: "simulated"
 
 // --- findings and limits -------------------------------------------------------------------------
 
-function Findings({ findings }: { findings: Finding[] }) {
+function Findings({ findings, note }: { findings: Finding[]; note: string | null }) {
   return (
     <section className={styles.section} aria-labelledby="check-findings">
       <div className={styles.sectionHead}>
@@ -531,8 +551,10 @@ function Findings({ findings }: { findings: Finding[] }) {
         <p>
           {findingSummary(findings)}. Found means the check found what it looks for: a fact, not a verdict. Skipped means it could not look, and says why.
         </p>
+        {note && <p className={styles.provenance}>{note}</p>}
       </div>
-      <ul className={styles.findings}>
+      {/* The rows come in one after another and each status pops in after its row (CheckPage.module.css). */}
+      <Reveal as="ul" className={`${styles.findings} stagger`}>
         {findings.map((item) => (
           <li key={item.id} className={styles.finding}>
             <div className={styles.findingHead}>
@@ -549,7 +571,7 @@ function Findings({ findings }: { findings: Finding[] }) {
             </div>
           </li>
         ))}
-      </ul>
+      </Reveal>
     </section>
   );
 }
@@ -577,6 +599,11 @@ function Limits({ block, ethIn }: { block: bigint; ethIn: bigint }) {
         </li>
         <li>
           <b>Not an audit.</b> Functions are found by their names, and who may call them is not worked out. Code can do the same things under other names.
+        </li>
+        <li>
+          <b>Holders come from an index.</b> The top holders, and the deployer when no launch record or Sourcify names one, come from Blockscout&apos;s index
+          through Hyvo&apos;s API, which keeps its answer for up to ten minutes. They are not read at block {formatBlock(block)}, and an index can trail the
+          chain.
         </li>
       </ul>
       <p className={styles.measured}>
