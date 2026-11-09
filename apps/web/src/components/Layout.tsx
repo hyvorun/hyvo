@@ -45,6 +45,7 @@ const NAV: { to: string; label: string; show?: "wide" | "roomy" }[] = [
   { to: "/runs", label: "Runs" },
   { to: "/check", label: "Check" },
   { to: "/launches", label: "Launches" },
+  { to: "/board", label: "Board", show: "wide" },
   { to: "/stocks", label: "Stocks" },
   { to: "/tools", label: "Tools", show: "roomy" },
   { to: "/oracle", label: "Oracle", show: "wide" },
@@ -205,6 +206,9 @@ export function Layout() {
           </Link>
           <Link to="/launches" viewTransition>
             Launches
+          </Link>
+          <Link to="/board" viewTransition>
+            Board
           </Link>
           <Link to="/stocks" viewTransition>
             Stocks

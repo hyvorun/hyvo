@@ -134,6 +134,15 @@ export const PRODUCTS: Product[] = [
     gate: "always",
   },
   {
+    id: "board",
+    name: "Board",
+    line: "Every Pons launch as it happens, in three columns: new, close to graduating and graduated. Each card shows the creator's share of the supply, the first-second buyers' share and the last five minutes of curve trades. Read from the chain in your browser.",
+    who: "Traders, researchers",
+    to: "/board",
+    group: "explore",
+    gate: "always",
+  },
+  {
     id: "stocks",
     name: "Stocks",
     line: "Look up a Robinhood stock token by ticker or address: whether the Stock Token factory records it, its multiplier, its Chainlink price and what it means, and whether it can move right now.",
