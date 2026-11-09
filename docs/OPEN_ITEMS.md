@@ -35,6 +35,7 @@ Status: **verified** (checked against an official source or on-chain) · **likel
 | 25 | How far back Rewind can fork | verified | a few days dependably on dRPC's free tier, further on and off; an archive RPC for more |
 | 26 | Unused prepaid balance | decision | no self-serve refund; by hand from `/admin` |
 | 27 | Publishing `@hyvo/sdk` to npm | decision | not published yet |
+| 28 | Hyvo Stocks: where each fact comes from | verified / decision | on-chain StockFactory record + Chainlink feeds; Robinhood's API and docs not used |
 
 ---
 
@@ -358,4 +359,80 @@ whether to offer withdrawals, and say so where people top up. Nothing changes un
 ## 27. Publishing `@hyvo/sdk` to npm — decision
 
 `packages/sdk` is built and tested in the repo. Publishing needs an npm account for the project; the package is `AGPL-3.0-or-later` like the rest of the repo unless item 1 is revisited.
+
+## 28. Hyvo Stocks: where each fact comes from — verified / decision
+
+Hyvo Stocks (`/stocks`, `packages/stocks`) brings the founder's StockSync project into Hyvo. StockSync read Robinhood's Stock Token API
+(`api.robinhood.com/rhj`); Hyvo Stocks reads the chain instead, and Chainlink's feed directory for the feeds' addresses. Everything below was read
+or measured on 2026-11-09 through `https://robinhood.drpc.org`, unless it says otherwise.
+
+**The contracts (verified on-chain and on Sourcify).**
+
+- **AccessControlsRegistry** `0xe10b6f6B275de231345c20D14Ab812db62151b00`, block 7662: the beacon of every stock token (`implementation()`), and the
+  holder of every role, the pause switch and the blocklist. Source verified on Sourcify, exact match (`src/AccessControlsRegistry.sol`).
+- **Stock implementation** `0xb35490d6f9163DE4F80d88dc75c3516eb64C5aE2`, block 7784: `src/Stock.sol`, MIT, Sourcify exact match. What the pages rely
+  on, read in that source: `uid()`; `terms()` returns `https://robinhood.com/stocktoken/rhj`; `paused()` is the token's own pause or the registry's,
+  and transfers, approvals, mints and burns revert while it is true; `oraclePaused()` is a flag the token itself does not use; `uiMultiplier()` switches
+  to `newUIMultiplier()` once the block time reaches `effectiveAt()`; `updateMultiplier` refuses an effective time in the past. Its storage namespaces
+  are named `robinhood.storage.*`.
+- **StockFactory** `0x4783C67b63dE2B358Ac5951a7D41F47A38F3C046` (an ERC-1967 proxy; implementation `0xEe351E53BCe6AAF106428358838197C91e36EE0E`), block 7791.
+  **Its source is not verified anywhere Hyvo looked.** Its functions were identified from its bytecode with the openchain signature database:
+  `tokenAddress(bytes32)`, `deploy(bytes32,string,string)`, `beacon()`, `ACCESS_CONTROLLED_REGISTRY()`; its bytecode holds the revert string
+  "StockFactory: stock already exists" and the role ids `TOKEN_DEPLOYER_ROLE` and `FACTORY_UPGRADER_ROLE` of `src/Roles.sol`; its event matches
+  `keccak256("Deployed(bytes32,address,string,string)")`, with the uid indexed. Checked behavior: `beacon()` and `ACCESS_CONTROLLED_REGISTRY()` return the
+  registry, `tokenAddress(uid)` returns each token for its own uid, and its 212 `Deployed` events match its nonce (213: one for its creation).
+- **The deployer** `0x074377a78A9710A1D47244f89797718b4f491279` is an account with nonce 20; its first four CREATE addresses are the registry, the
+  implementation, the factory's implementation and the factory.
+- **How the factory was found:** from the NVDA address `0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC`, as StockSync recorded it from Robinhood's Stock Token
+  API on 2026-09-14, through its EIP-1967 beacon slot (the registry), the registry's deployer on Sourcify, and that deployer's CREATE addresses. That one
+  address was the starting point; Hyvo does not call the API.
+- **Multicall3** `0xcA11bde05977b3631167028862bE2a173976CA11`: code hash `0xd5c15df6…0891`, the same 3,808 bytes as on Ethereum mainnet; present since block 1.
+
+**The verdict.** A contract is "recorded" when the factory's `tokenAddress(uid())` returns that contract. A copy can take a token's ticker, name and
+even its uid, but not the factory's record; the pages say so, and call anything else "not recorded", never a judgment of the contract. **Robinhood's
+own docs do not name this factory:** their Token Contracts page loads its table from elsewhere, and none of the three addresses above appears on it
+(checked 2026-11-09). So the pages say "the Stock Token factory" and show the evidence; they never claim to speak for Robinhood.
+
+**The list and the history (`packages/stocks/src/snapshot.json`).** Built by `pnpm --filter @hyvo/stocks scan` from the chain alone, up to block
+109,864,570 (2026-11-09 06:56 UTC): 212 tokens, 71 multiplier updates on 53 of them, 6 name changes, 3,985 RPC calls on dRPC's free tier in about ten
+minutes. dRPC's free tier refuses `eth_getLogs` over long ranges (it refused 1,472 blocks here, "ranges over 10000 blocks are not supported on free
+plan"), so the scan bisects instead: over the factory's nonce at past blocks to find each deployment, then over each token's `effectiveAt()`,
+`newUIMultiplier()`, `name()` and `symbol()`, and reads the events only in the blocks found. That needs old state, which the free tier serves on and
+off (item 25); the scan retries until a node has it. Check: every update's old multiplier equals the value in effect when it was sent (a unit test).
+The list page reads the factory's nonce live and says how many tokens were deployed since; a newer token can still be looked up by address.
+
+**Prices (Chainlink).** Feed addresses come from Chainlink's reference data directory,
+`https://reference-data-directory.vercel.app/feeds-robinhood-mainnet.json` (the data behind docs.chain.link's feed tables; it answers with
+`Access-Control-Allow-Origin: *`, so the browser fetches it, at most once per ten minutes). Hyvo uses only the 33 entries labeled
+`productTypeCode: "primaryTokenizedPrice"`, all of which match a token in the list by ticker; it leaves out the Robinhood entries without that label
+(`Robinhood SGOV-USD`, `Robinhood USAR-USD`, the "24/7" feeds and `GLD / USD`), because the directory does not say what they report. What the price
+means, from <https://docs.chain.link/data-feeds/tokenized-equity-feeds/robinhood> (read 2026-11-09): the feed reports the token's Total Return Value,
+the underlying equity's 24/5 market price × the token's `uiMultiplier()`; while `oraclePaused()` is true the feed holds its last value; off-hours it may
+hold its last price with no heartbeat. The session table (pre-market, regular, post-market, overnight, weekend, in New York time) is from
+<https://docs.chain.link/data-feeds/tokenized-equity-feeds>; holidays are not in it, and the page says so. The answer is shown as a reading at a block,
+with its update time, never as a quote or a forecast. 179 of the 212 tokens have no such feed, and their pages show no price.
+
+**What a page costs.** A token page makes six JSON-RPC requests from the visitor's browser (the block, the code, the beacon slot, two Multicall3 calls,
+the feed) and one directory fetch per ten minutes; nothing reaches Hyvo's Worker. The package takes any viem client, so a CLI command or the Worker can
+reuse it; in the Worker one report would be about six subrequests of the 50 allowed (not measured there yet). No cron trigger is used.
+
+**Left out of StockSync, and why.** The bar above every page that showed StockSync's own community token and its contract address: Hyvo does not
+promote another project's token. Its launch posts and captions (`marketing/`): outreach. Everything that came from Robinhood's Stock Token API: session
+tradability per token (market, extended, overnight), bid and ask quotes, corporate actions by type (dividend, split, merger, with their rates), ISIN and
+the API's other fields; the chain has none of these, and the API's terms are unclear (below). The playground and agent pages that ran StockSync's CLI and
+MCP server inside the site, its `/status` and `/system` pages and its rendered docs: `@hyvo/stocks` keeps the same questions for a later CLI command or
+MCP tool. StockSync takes no payments, holds no funds and gates nothing, so nothing else had to go.
+
+**Founder: decide.**
+
+- **Is the on-chain evidence enough** to present the factory's record as the check of a genuine Robinhood stock token? Today the pages name the factory
+  and show the evidence above, without saying "official".
+- **Robinhood's Stock Token API** would add session tradability and the type of each corporate action. Its terms of use are unclear here, the ISP
+  block keeps it out of reach from this laptop (item 14), and Robinhood Chain's terms limit reuse of docs.robinhood.com's content. Hyvo does not call
+  it until you decide; a Worker could, since Workers resolve `*.robinhood.com`.
+- **Chainlink's directory and docs**: Chainlink's Terms of Service (<https://chain.link/terms>) cover them; Hyvo reads feeds on-chain, which is their
+  documented use, links Chainlink's page, and repeats no table from it. Confirm this is acceptable.
+- **The `terms()` link** each token returns (`https://robinhood.com/stocktoken/rhj`) is shown as the contract returns it.
+- **Refreshing the list** is by hand: `pnpm --filter @hyvo/stocks scan`, then commit `snapshot.json`. Say if it should run on a schedule; the
+  account's cron triggers are shared, so it would need a free slot or a machine.
 

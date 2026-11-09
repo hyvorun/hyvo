@@ -1,0 +1,26 @@
+{
+  "name": "@hyvo/stocks",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Read-only facts about Robinhood Chain stock tokens, from the chain and Chainlink: the factory's record, the multiplier, the feed price, the pause flags and the multiplier history",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./snapshot.json": "./src/snapshot.json"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "scan": "tsx scripts/scan.ts",
+    "record": "tsx scripts/record.ts"
+  },
+  "dependencies": {
+    "viem": "2.57.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "~5.0.5"
+  }
+}
