@@ -24,7 +24,8 @@ import { ADDRESSES } from "../../lib/addresses";
 import { addressUrl, tokenUrl, txUrl } from "../../lib/explorer";
 import { tokenFromPath } from "../../lib/launches";
 import { useDescription, useTitle } from "../../lib/use-title";
-import { Age, Amount, BlockLink, pairLabel, Provenance, Towards } from "./parts";
+import { CreatorLine, HolderScanSection } from "./HolderScan";
+import { Age, Amount, BlockLink, pairLabel, Provenance } from "./parts";
 import { useLaunch, type LaunchState } from "./use-launches";
 import styles from "./Launches.module.css";
 
@@ -72,12 +73,12 @@ export function LaunchPage() {
       )}
       {token && state.status === "ready" && state.lookup?.kind === "none" && <NotPons token={token} symbol={state.lookup.symbol} state={state} />}
       {token && state.status === "ready" && state.lookup?.kind === "v1" && <PonsV1 state={state} />}
-      {detail && <Detail detail={detail} state={state} onAgain={() => setAttempt((n) => n + 1)} />}
+      {detail && <Detail detail={detail} state={state} attempt={attempt} onAgain={() => setAttempt((n) => n + 1)} />}
     </article>
   );
 }
 
-function Detail({ detail, state, onAgain }: { detail: LaunchDetail; state: LaunchState; onAgain: () => void }) {
+function Detail({ detail, state, attempt, onAgain }: { detail: LaunchDetail; state: LaunchState; attempt: number; onAgain: () => void }) {
   const name = distinctName(detail.name, detail.symbol);
   const share = progress(detail.liquidity, detail.graduationThreshold);
   const graduated = detail.phase === "graduated" || detail.graduated === true;
@@ -133,7 +134,15 @@ function Detail({ detail, state, onAgain }: { detail: LaunchDetail; state: Launc
           <h2 id="facts-title">On-chain facts</h2>
           <dl className={styles.ledger}>
             <Fact label="Token" value={<AddressValue address={detail.token} href={tokenUrl(detail.token)} />} />
-            <Fact label="Creator" value={<AddressValue address={detail.creator} href={addressUrl(detail.creator)} />} note="The address Pons records as the launch's deployer." />
+            <Fact
+              label="Creator"
+              value={<AddressValue address={detail.creator} href={addressUrl(detail.creator)} />}
+              note={
+                <>
+                  The address Pons records as the launch&apos;s deployer. <CreatorLine creator={detail.creator} />
+                </>
+              }
+            />
             {detail.feeRecipient.toLowerCase() !== detail.creator.toLowerCase() && (
               <Fact label="Creator fees go to" value={<AddressValue address={detail.feeRecipient} href={addressUrl(detail.feeRecipient)} />} />
             )}
@@ -174,6 +183,8 @@ function Detail({ detail, state, onAgain }: { detail: LaunchDetail; state: Launc
         </section>
         <Trades detail={detail} state={state} />
       </div>
+
+      <HolderScanSection detail={detail} event={state.event.status === "loading" ? undefined : state.event.data} attempt={attempt} />
 
       <div className={styles.actions}>
         <Link to={`/check/${detail.token}`} className="btn btn-primary" viewTransition>

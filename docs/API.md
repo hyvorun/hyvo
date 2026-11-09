@@ -530,6 +530,52 @@ everywhere. The type is `HoldersResponse` in
 
 ---
 
+## Hyvo Launches
+
+Hyvo Launches reads Pons launches in the visitor's browser (docs/OPEN_ITEMS.md item 29). One question the public RPC endpoints cannot
+answer is which tokens one wallet launched over the factory's whole history, so this API answers it from Blockscout's index with its own key
+(item 32). The web app then reads each launch's state now from the chain, and leaves out any token whose factory record names another deployer.
+
+### `GET /v1/launches/creator/:address`
+
+No key and no session; CORS as every `/v1/*` route. Every Pons V2 launch by one wallet, from the V2 factory's `TokenLaunched` logs, which index
+the deployer as topic 3. The type is `CreatorLaunchesResponse` in `@hyvo/schema`.
+
+```jsonc
+{
+  "creator": "0x…",                                 // checksummed
+  "factory": "0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e",
+  "launches": [                                     // newest first; null when Blockscout's index could not be read
+    {
+      "token": "0x…", "curve": "0x…",
+      "pairToken": "0x0000000000000000000000000000000000000000",   // ETH; else the pair asset
+      "launchConfigId": "1",
+      "graduationThreshold": "4200000000000000000", // in the pair asset's smallest unit
+      "block": 110239544, "timestamp": 1794207706 | null,
+      "txHash": "0x…", "logIndex": 2
+    }
+  ] | null,
+  "complete": true,                                 // false when the list stopped at the page limit
+  "missing": null | "Blockscout's API answered 429 to Hyvo's API: …",
+  "source": "Blockscout's index of the Pons V2 factory's TokenLaunched logs, read through Hyvo's API at 07:12 UTC on 2026-11-09",
+  "readAt": "2026-11-09T07:12:00Z",
+  "disclaimer": "Launches from Blockscout's index of the factory's logs, read through Hyvo's API at 2026-11-09T07:12:00Z. Each launch's state is read from the chain. Not a trading signal."
+}
+```
+
+- **Where it comes from.** `https://api.blockscout.com/4663/api?module=logs&action=getLogs&address=<factory>&fromBlock=26841846&toBlock=latest&topic0=<TokenLaunched>&topic3=<the wallet as a topic>&topic0_3_opr=and`,
+  with the key in the query. Each log must come from the factory, decode as `TokenLaunched` (the event in `packages/launches/src/pons.ts`)
+  and name the wallet as its deployer; anything else is dropped. Blockscout answers at most 1,000 logs a query, so a full page is followed by
+  one from its last block, at most 3 requests (3,000 launches); past that `complete` is `false`.
+- **Cache.** Per wallet for the rest of a five-minute UTC window, in the Cache API: `X-Hyvo-Cache: hit` and `Cache-Control: public,
+  max-age=<seconds left>`. An answer without the list (`launches: null`) is not kept and carries `Cache-Control: no-store`.
+- **Limits.** 10 lookups a minute per IP (an answer from the cache does not count), then `429 rate_limited`. Each lookup counts once against
+  the Worker's Blockscout reads a minute and a day, shared with the holders route above, and a `429` from Blockscout pauses both for 30 s;
+  past any of these, `missing` says so and Blockscout is not asked. At most 5 subrequests: the cache's match and put and 3 requests.
+- **Errors.** `400 bad_request` for anything that is not an address. `503 creator_disabled` when the Worker has no `BLOCKSCOUT_API_KEY`.
+
+---
+
 ## Quotes and payments
 
 ### `POST /v1/quotes` (session)

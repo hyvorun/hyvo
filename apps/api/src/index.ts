@@ -1,7 +1,7 @@
 /**
  * The Hyvo API Worker (docs/API.md): published runs from D1 and KV, signed artifact links,
  * Sign-In with Ethereum, quotes and payment detection, the runner job queue, oracle commits,
- * Hyvo Check, and the founder's admin view. Results are synthetic crowd reactions, not trading signals.
+ * Hyvo Check, a creator's Pons launches, and the founder's admin view. Results are synthetic crowd reactions, not trading signals.
  */
 // hono/quick: the default router compiles every route on the first request, and on the Workers Free plan that cost
 // comes out of a cold isolate's 10 ms of CPU (docs/OPEN_ITEMS.md item 21). Sub-apps merge into this router.
@@ -20,6 +20,7 @@ import { check } from "./routes/check";
 import { dryruns } from "./routes/dryruns";
 import { clones } from "./routes/clones";
 import { internal, uploads } from "./routes/internal";
+import { launches } from "./routes/launches";
 import { llm } from "./routes/llm";
 import { mcp } from "./routes/mcp";
 import { calibrationRoute, oracle } from "./routes/oracle";
@@ -68,6 +69,7 @@ app.route("/v1/oracle", oracle);
 app.route("/v1/calibration", calibrationRoute);
 app.route("/v1/clones", clones);
 app.route("/v1/check", check);
+app.route("/v1/launches", launches);
 app.route("/v1/admin", admin);
 app.route("/mcp", mcp);
 app.route("/internal/llm", llm);

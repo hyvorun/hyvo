@@ -13,6 +13,9 @@ importers:
       '@hyvo/check':
         specifier: workspace:*
         version: link:../../packages/check
+      '@hyvo/launches':
+        specifier: workspace:*
+        version: link:../../packages/launches
       '@hyvo/schema':
         specifier: workspace:*
         version: link:../../packages/schema
