@@ -29,7 +29,9 @@ USAGE
 OPTIONS
   --hours <h>     The window: 1, 6 or 24 hours (default ${DEFAULT_HOURS})
   --limit <n>     How many of the newest launches to list, 1 to ${MAX_LIMIT} (default ${DEFAULT_LIMIT})
-  --json          Print the facts as JSON (amounts as decimal strings, in the pair asset's smallest unit)
+  --json          Print the facts as JSON, amounts as decimal strings: in the pair asset's smallest unit
+                  for liquidity, graduationThreshold, volume, tax and pairTokenAmount, and in the token's
+                  (18 decimals) for supply, reserved, sellable and tokenAmount
   --rpc <url>     A Robinhood Chain JSON-RPC endpoint that answers eth_getLogs (default: the public endpoints
                   robinhood.drpc.org, robinhood.api.pocket.network, rpc.mainnet.chain.robinhood.com and
                   rpc.degenprotocol.io, each asked for what it serves)

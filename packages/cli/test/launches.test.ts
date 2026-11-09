@@ -2,6 +2,7 @@
 import { DEMO_HEAD, DEMO_LAUNCHES, DEMO_PACE, DEMO_TIME, DEMO_V1, demoChain, FakeChain, fakeAddress } from "@hyvo/launches/testing";
 import { describe, expect, it } from "vitest";
 import { hasBannedWords } from "../../check/src/output/copy";
+import { TOOLS } from "../src/commands/mcp";
 import { mistype, run, testContext, type Route } from "./helpers";
 
 const RPC = "https://rpc.test";
@@ -98,6 +99,22 @@ describe("hyvo launches", () => {
     expect(most.out).toContain("5 more in the window: at most the newest 100 are listed; a shorter window has fewer: hyvo launches --hours 1");
     const few = await launches(["--rpc", RPC, "--limit", "20"], route);
     expect(few.out).toContain("85 more in the window: hyvo launches --hours 6 --limit 100");
+  });
+
+  it("gives each graduation its pair asset, and says which unit each amount is in", async () => {
+    const eth = { address: NATIVE, symbol: "ETH", decimals: 18 };
+    const six = JSON.parse((await launches(["--rpc", RPC, "--json"])).out);
+    expect(six.graduations).toEqual([expect.objectContaining({ token: brisk.token, pair: expect.objectContaining(eth), pairTokenAmount: "4200000000000000000" })]);
+    // In the last hour BRISK's launch is outside the window: its pair asset comes from the factory's record.
+    const hour = JSON.parse((await launches(["--rpc", RPC, "--hours", "1", "--json"])).out);
+    expect(hour.graduations).toEqual([expect.objectContaining({ token: brisk.token, launchedInWindow: false, pair: expect.objectContaining(eth) })]);
+
+    const help = (await launches(["--help"])).out;
+    expect(help).toContain("for liquidity, graduationThreshold, volume, tax and pairTokenAmount, and in the token's");
+    expect(help).toContain("(18 decimals) for supply, reserved, sellable and tokenAmount");
+    const described = (name: string) => TOOLS.find((tool) => tool.name === name)!.description;
+    expect(described("recent_launches")).toContain("each graduation's tokenAmount in the token's smallest unit (18 decimals)");
+    expect(described("launch_facts")).toContain("supply, reserved and sellable in the token's smallest unit (18 decimals for a Pons V2 token)");
   });
 
   it("prints JSON with every amount and block as a decimal string", async () => {

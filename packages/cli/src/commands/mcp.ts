@@ -61,7 +61,7 @@ export const TOOLS: readonly ToolDefinition[] = [
     name: "recent_launches",
     title: "Newest Pons launches on Robinhood Chain",
     description:
-      "Read the newest Pons V2 launches on Robinhood Chain from the chain itself: the launch factory's TokenLaunched and PoolGraduated events over the last 1, 6 or 24 hours, then each listed launch's bonding curve at one block: its pair asset, whether it has graduated, its creator tax in basis points, what its curve holds of the pair asset (liquidity) and the threshold it graduates at. Amounts are decimal strings in the pair asset's smallest unit; progress is liquidity over the threshold. Facts, not a verdict. The result's disclaimer reads: Measured on-chain at block N. Not a trading signal.",
+      "Read the newest Pons V2 launches on Robinhood Chain from the chain itself: the launch factory's TokenLaunched and PoolGraduated events over the last 1, 6 or 24 hours, then each listed launch's bonding curve at one block: its pair asset, whether it has graduated, its creator tax in basis points, what its curve holds of the pair asset (liquidity) and the threshold it graduates at. graduations lists every PoolGraduated in the window's blocks, each with its pair asset and whether the token launched in the window. Amounts are decimal strings in the smallest unit: liquidity, graduationThreshold and each graduation's pairTokenAmount in the pair asset's (its decimals are in pair), and each graduation's tokenAmount in the token's smallest unit (18 decimals); progress is liquidity over the threshold. Facts, not a verdict. The result's disclaimer reads: Measured on-chain at block N. Not a trading signal.",
     inputSchema: {
       type: "object",
       properties: {
@@ -76,7 +76,7 @@ export const TOOLS: readonly ToolDefinition[] = [
     name: "launch_facts",
     title: "Facts about one Pons launch",
     description:
-      "Read one token's Pons launch on Robinhood Chain at one block: the Pons V2 factory's record (creator, fee recipient, pair asset, phase, creator tax, buyback, graduation threshold) and its bonding curve (trading fee, liquidity, supply, tokens kept for the pool and left to sell, the launch-second tax), with the last hour of CurveBuy and CurveSell events on the curve. kind is v2, v1 (a Pons V1 token, which has no curve) or none (no Pons record). Amounts are decimal strings in the smallest unit. Facts, not a verdict. The result's disclaimer reads: Measured on-chain at block N. Not a trading signal.",
+      "Read one token's Pons launch on Robinhood Chain at one block: the Pons V2 factory's record (creator, fee recipient, pair asset, phase, creator tax, buyback, graduation threshold) and its bonding curve (trading fee, liquidity, supply, tokens kept for the pool and left to sell, the launch-second tax), with the last hour of CurveBuy and CurveSell events on the curve. kind is v2, v1 (a Pons V1 token, which has no curve) or none (no Pons record). Amounts are decimal strings in the smallest unit: liquidity, graduationThreshold and lastHour's volume and tax in the pair asset's (its decimals are in pair), and supply, reserved and sellable in the token's smallest unit (18 decimals for a Pons V2 token). Facts, not a verdict. The result's disclaimer reads: Measured on-chain at block N. Not a trading signal.",
     inputSchema: {
       type: "object",
       required: ["address"],
