@@ -93,10 +93,10 @@ test("the glossary filters, and a link lands on its term", async ({ page }) => {
   await noHorizontalScroll(page);
 });
 
-test("the trust and token pages say what Hyvo never does, and what the token is not", async ({ page }) => {
+test("the trust page says what Hyvo never does, and the token page what the token is for", async ({ page }) => {
   await page.goto("/trust");
   await expect(page.getByRole("heading", { name: "Hyvo never…" })).toBeVisible();
-  for (const never of ["Holds your money", "Moves or approves your tokens", "Changes a published run", "Gives trading advice"]) {
+  for (const never of ["Keeps your money in a contract", "Moves or approves your tokens", "Changes a published run", "Gives trading advice"]) {
     await expect(page.getByRole("heading", { name: never, level: 3 })).toBeVisible();
   }
   // The test build pins no contract addresses, so nothing is read from the chain.
@@ -105,9 +105,11 @@ test("the trust and token pages say what Hyvo never does, and what the token is 
   await noHorizontalScroll(page);
 
   await page.goto("/token");
-  await expect(page.getByRole("heading", { name: "Not launched yet" })).toBeVisible();
-  await expect(page.getByText(/any token called HYVO is not Hyvo's/)).toBeVisible();
-  await expect(page.getByText(/It pays no yield/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Coming soon" })).toBeVisible();
+  await expect(page.getByText("2 free runs")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Planned for holders" })).toBeVisible();
+  // Only what the token is for: nothing about fees, payouts or where money goes.
+  await expect(page.locator("main")).not.toContainText(/yield|revenue|creator|Pons/i);
   await noHorizontalScroll(page);
 });
 

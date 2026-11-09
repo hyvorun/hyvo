@@ -15,8 +15,8 @@ const SOURCE_URL = ((import.meta.env.VITE_SOURCE_URL as string | undefined) ?? "
 
 const NEVER: { never: string; how: ReactNode; check: ReactNode }[] = [
   {
-    never: "Holds your money",
-    how: "A payment goes through the PaymentRouter contract, which sends it to the treasury in the same transaction. The contract has no function that keeps a payment, and none that accepts ETH.",
+    never: "Keeps your money in a contract",
+    how: "A payment goes through the PaymentRouter contract, which sends it to the treasury in the same transaction. The contract has no function that keeps a payment, and none that accepts ETH. A prepaid balance is credit for runs, already paid to the treasury: not a deposit, and it earns nothing.",
     check: (
       <>
         The router's settings and balance, read from the chain <a href="#chain">below</a>, and its verified source on the block explorer.
@@ -41,15 +41,6 @@ const NEVER: { never: string; how: ReactNode; check: ReactNode }[] = [
     never: "Gives trading advice",
     how: "Results are synthetic crowd reactions, not signals. A copy guard takes out posts and report lines that read as advice or as a price prediction, and every run says how many it took out.",
     check: "“How this run was made”, on any run page.",
-  },
-  {
-    never: "Pays you for holding a token",
-    how: "Holding HYVO, once it launches, brings free runs, a discount and a place ahead in the queue. It pays no yield, no share of revenue and no profits.",
-    check: (
-      <>
-        The <Link to="/token">token page</Link>, and the code that reads a holder's balance and nothing else.
-      </>
-    ),
   },
   {
     never: "Imitates real people",
@@ -132,7 +123,7 @@ export function TrustPage() {
           Check a run on the oracle <Arrow />
         </Link>
         <Link to="/token" className="arrow-link" viewTransition>
-          What the token does, and does not <Arrow />
+          What the token is for <Arrow />
         </Link>
       </div>
       <Disclaimer />
