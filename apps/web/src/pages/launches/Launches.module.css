@@ -889,9 +889,39 @@
 
 .pulseGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6) var(--space-7);
   min-width: 0;
+}
+
+/* Two columns: the shared names take the whole second row, in two columns of their own. */
+@media (min-width: 720px) {
+  .pulseGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pulseGrid > :last-child {
+    grid-column: 1 / -1;
+  }
+
+  .twins {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-7);
+  }
+}
+
+@media (min-width: 1100px) {
+  .pulseGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .pulseGrid > :last-child {
+    grid-column: auto;
+  }
+
+  .twins {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .pulsePanel {

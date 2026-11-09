@@ -46,7 +46,15 @@ export function Pulse({ state }: { state: WindowState }) {
           <ul className={`${styles.stats} ${styles.pulseStats}`} aria-label={`The last ${PULSE_HOURS} hours, counted`}>
             <Stat value={data?.launches ?? null} format={count} label="Launches" />
             <Stat value={data?.pairCount ?? null} format={count} label={data?.pairCount === 1 ? "Pair asset" : "Pair assets"} />
-            <Stat value={data?.graduated ?? null} format={count} label={data?.graduated === 1 ? "Curve graduated to its pool" : "Curves graduated to their pools"} />
+            <Stat
+              value={data?.graduated ?? null}
+              format={count}
+              label={
+                data && data.graduated > 0
+                  ? `${data.graduated === 1 ? "Curve graduated to its pool" : "Curves graduated to their pools"}, ${data.graduatedHere === data.graduated ? (data.graduated === 1 ? "launched in these hours" : "all launched in these hours") : `${data.graduatedHere} launched in these hours`}`
+                  : "Curves graduated to their pools"
+              }
+            />
             <Stat value={detail && detail.rateKnown > 0 ? detail.taxed / detail.rateKnown : detail ? 0 : null} format={formatPercent} label="Charge a creator tax" />
             <Stat value={detail?.twinned ?? null} format={count} label="Share a symbol or a name with another launch" />
           </ul>
@@ -164,7 +172,7 @@ function TaxPanel({ state }: { state: WindowState }) {
           ))}
           {detail.otherRates.rates > 0 && (
             <li>
-              <span className={styles.pulseLabel}>{detail.otherRates.rates} other rates</span>
+              <span className={styles.pulseLabel}>Others</span>
               <span className={styles.pulseBar} style={width(detail.otherRates.launches, most)} aria-hidden="true">
                 <i data-venue="rate" style={{ flexGrow: 1 }} />
               </span>
@@ -176,6 +184,9 @@ function TaxPanel({ state }: { state: WindowState }) {
       {detail && (
         <p className={styles.fine}>
           Each curve&apos;s creatorTaxBps(), taken on its trades and paid to the creator&apos;s fee recipient.
+          {detail.otherRates.rates > 0
+            ? ` Others: ${count(detail.otherRates.launches)} ${detail.otherRates.launches === 1 ? "launch" : "launches"} at ${detail.otherRates.rates} other ${detail.otherRates.rates === 1 ? "rate" : "rates"}.`
+            : ""}
           {detail.rateUnknown > 0 ? ` ${count(detail.rateUnknown)} could not be read.` : ""}
         </p>
       )}
@@ -186,9 +197,15 @@ function TaxPanel({ state }: { state: WindowState }) {
 function TwinPanel({ state }: { state: WindowState }) {
   const data = state.pulse.data;
   const detail = data?.detail ?? null;
-  const groups: { kind: "symbol" | "name"; group: TwinGroup }[] = detail
-    ? [...detail.sameSymbol.slice(0, 4).map((group) => ({ kind: "symbol" as const, group })), ...detail.sameName.slice(0, 2).map((group) => ({ kind: "name" as const, group }))]
-    : [];
+  // A name group made of exactly the launches of a symbol group shown above it would repeat that row.
+  const tokens = (group: TwinGroup) => group.launches.map((launch) => launch.token.toLowerCase()).sort().join();
+  const symbols = detail ? detail.sameSymbol.slice(0, 4) : [];
+  const shownSets = new Set(symbols.map(tokens));
+  const names = detail ? detail.sameName.filter((group) => !shownSets.has(tokens(group))).slice(0, 2) : [];
+  const groups: { kind: "symbol" | "name"; group: TwinGroup }[] = [
+    ...symbols.map((group) => ({ kind: "symbol" as const, group })),
+    ...names.map((group) => ({ kind: "name" as const, group })),
+  ];
   return (
     <div className={styles.pulsePanel}>
       <h3>Same symbol or name</h3>
