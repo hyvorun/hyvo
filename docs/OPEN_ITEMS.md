@@ -285,7 +285,9 @@ bites.
 
 ## 22. Phases 4 to 7 before the token launch — decision taken
 
-Founder, 2026-11-06: the revenue gates are lifted and the token launches last, after Phase 7. Free plans stay the rule, and
+Founder, 2026-11-06: the revenue gates are lifted and the token launches last, after Phase 7. Founder, 2026-11-09: paid runs stay off until the HYVO
+token launches, and open with it. The API turns them on only when `PAYMENT_ROUTER_ADDRESS` is set in
+`apps/api/wrangler.jsonc` (it is empty now); until then the paid products show "Opens with paid runs". Free plans stay the rule, and
 spending anything needs the founder's approval. So some definitions of done in SPEC §14 cannot be met by writing code alone:
 
 - **Phase 4, "publishes unattended for 7 days" on a small server.** This takes a machine that stays on for 7 days, and a server
