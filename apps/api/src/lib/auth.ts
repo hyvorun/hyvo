@@ -42,13 +42,15 @@ export async function verifySiwe(
   if (!fields.address || !fields.nonce || !fields.domain || !fields.uri) throw refuse("the message is incomplete");
   if (fields.version !== "1") throw refuse("unsupported message version");
   if (fields.chainId !== cfg.chainId) throw refuse(`sign in on chain ${cfg.chainId}`);
-  if (
-    !validateSiweMessage({ message: fields, domain: cfg.siweDomain, time: new Date(now * 1000) }) ||
-    !cfg.siweDomain
-  ) {
+  const domain = cfg.siweDomains.find((allowed) => allowed === fields.domain);
+  if (!domain || !validateSiweMessage({ message: fields, domain, time: new Date(now * 1000) })) {
     throw refuse("wrong domain, or the message has expired");
   }
-  if (cfg.webOrigin && safeOrigin(fields.uri) !== cfg.webOrigin) throw refuse("wrong URI");
+  // The URI is one of the web app's origins, on the same host as the domain the message names.
+  const origin = safeOrigin(fields.uri);
+  if (cfg.webOrigins.length > 0 && (!origin || !cfg.webOrigins.includes(origin) || new URL(origin).host !== domain)) {
+    throw refuse("wrong URI");
+  }
   if (fields.issuedAt && fields.issuedAt.getTime() / 1000 > now + ISSUED_AT_SKEW_S) {
     throw refuse("issued in the future");
   }

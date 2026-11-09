@@ -248,4 +248,14 @@ describe("CORS", () => {
     const other = await request("/v1/health", { headers: { Origin: "https://evil.example" } });
     expect(other.headers.get("Access-Control-Allow-Origin")).toBeNull();
   });
+
+  it("allows every origin listed while the site moves to its own domain", async () => {
+    const moving = { ...env, WEB_ORIGIN: "https://hyvo.run, https://hyvo.pages.dev" };
+    for (const origin of ["https://hyvo.run", "https://hyvo.pages.dev"]) {
+      const response = await app.request("/v1/health", { headers: { Origin: origin } }, moving);
+      expect(response.headers.get("Access-Control-Allow-Origin")).toBe(origin);
+    }
+    const other = await app.request("/v1/health", { headers: { Origin: "https://hyvo.run.evil.example" } }, moving);
+    expect(other.headers.get("Access-Control-Allow-Origin")).toBeNull();
+  });
 });

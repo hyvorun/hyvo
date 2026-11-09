@@ -14,7 +14,7 @@ import { askRun, REPORT } from "../lib/ask";
 import { API_KEY_PREFIX, bearer, keyAccount } from "../lib/auth";
 import { startPrepaidRun } from "../lib/balance";
 import { iso, nowS } from "../lib/clock";
-import { config, type Config } from "../lib/config";
+import { config, webOrigins, type Config } from "../lib/config";
 import { searchRuns, toSummary } from "../lib/db";
 import { ApiError } from "../lib/errors";
 import { jobView, refundState } from "../lib/jobs";
@@ -151,7 +151,7 @@ mcp.delete("/", methodNotAllowed);
 
 mcp.post("/", async (c) => {
   const origin = c.req.header("Origin");
-  if (origin && origin !== c.env.WEB_ORIGIN) return c.json(rpcError(null, -32000, "this Origin is not allowed"), 403);
+  if (origin && !webOrigins(c.env).includes(origin)) return c.json(rpcError(null, -32000, "this Origin is not allowed"), 403);
   const version = c.req.header("MCP-Protocol-Version");
   if (version && !SUPPORTED_VERSIONS.includes(version)) return c.json(rpcError(null, -32600, `unsupported protocol version ${version}`), 400);
 

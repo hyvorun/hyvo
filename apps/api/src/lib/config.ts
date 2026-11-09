@@ -28,7 +28,11 @@ export interface Config {
   treasury: Address | null;
   attesterKey: Hex | null;
   verifyRuns: boolean;
-  siweDomain: string;
+  /** The domains a sign-in may name, the canonical one first. Several only while the site moves to a new domain. */
+  siweDomains: string[];
+  /** The web app's origins, the canonical one first: CORS, sign-in and the browser MCP check accept each. */
+  webOrigins: string[];
+  /** The canonical web origin, for links. */
   webOrigin: string;
   admins: ReadonlySet<string>;
   pricing: {
@@ -93,8 +97,9 @@ function load(env: Env): Config {
     treasury: address(env.TREASURY_ADDRESS),
     attesterKey,
     verifyRuns: (env.VERIFY_RUNS_IN_WORKER ?? "").trim() === "1",
-    siweDomain: (env.SIWE_DOMAIN ?? "").trim(),
-    webOrigin: env.WEB_ORIGIN,
+    siweDomains: list(env.SIWE_DOMAIN),
+    webOrigins: webOrigins(env),
+    webOrigin: webOrigins(env)[0] ?? "",
     admins: new Set(list(env.ADMIN_ADDRESSES).filter((a) => isAddress(a)).map((a) => a.toLowerCase())),
     pricing: {
       multiplier: num(env.PRICE_MULTIPLIER, 2.5),
@@ -137,6 +142,11 @@ function load(env: Env): Config {
       clone: env.CLONES_ENABLED === "1",
     },
   };
+}
+
+/** WEB_ORIGIN, which may list several origins (comma-separated) while the site moves to a new domain. */
+export function webOrigins(env: Pick<Env, "WEB_ORIGIN">): string[] {
+  return list(env.WEB_ORIGIN);
 }
 
 function list(value: string | undefined): string[] {

@@ -9,7 +9,7 @@ import { Hono } from "hono/quick";
 import { cors } from "hono/cors";
 import type { AppEnv, Env } from "./env";
 import { nowS } from "./lib/clock";
-import { config } from "./lib/config";
+import { config, webOrigins } from "./lib/config";
 import { ApiError, errorResponse } from "./lib/errors";
 import { maxDecisions } from "./lib/pricing";
 import { auth, me } from "./routes/account";
@@ -28,11 +28,11 @@ import { runScheduled } from "./scheduled";
 
 const app = new Hono<AppEnv>();
 
-// Browser routes answer CORS only for the web app's origin.
+// Browser routes answer CORS only for the web app's origins.
 app.use(
   "/v1/*",
   cors({
-    origin: (origin, c) => (origin === c.env.WEB_ORIGIN ? origin : null),
+    origin: (origin, c) => (webOrigins(c.env).includes(origin) ? origin : null),
     allowMethods: ["GET", "POST", "DELETE"],
     allowHeaders: ["Content-Type", "Authorization"],
     maxAge: 600,

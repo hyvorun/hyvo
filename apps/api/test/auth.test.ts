@@ -61,6 +61,21 @@ describe("Sign-In with Ethereum", () => {
     expect(((await response.json()) as { error: { code: string } }).error.code).toBe("invalid_signature");
   });
 
+  it("accepts each of the site's domains while it moves, on its own origin only", async () => {
+    // Moving from *.pages.dev to its own domain: both serve the site for a while.
+    const target = chainEnv({ WEB_ORIGIN: "https://hyvo.run,https://hyvo.pages.dev", SIWE_DOMAIN: "hyvo.run,hyvo.pages.dev" });
+    const user = account(KEYS.user).address;
+    for (const host of ["hyvo.run", "hyvo.pages.dev"]) {
+      const message = siweMessage(user, await nonce(target), NOW, { domain: host, uri: `https://${host}` });
+      expect((await verify(message, KEYS.user, target)).status).toBe(201);
+    }
+    // A domain paired with the other site's origin, or a domain not on the list, is refused.
+    const crossed = siweMessage(user, await nonce(target), NOW, { domain: "hyvo.run", uri: "https://hyvo.pages.dev" });
+    expect((await verify(crossed, KEYS.user, target)).status).toBe(401);
+    const stranger = siweMessage(user, await nonce(target), NOW, { domain: "evil.example", uri: "https://evil.example" });
+    expect((await verify(stranger, KEYS.user, target)).status).toBe(401);
+  });
+
   it("refuses a signature by another key and an unknown nonce", async () => {
     const message = siweMessage(account(KEYS.user).address, await nonce(), NOW);
     expect((await verify(message, KEYS.other)).status).toBe(401);
