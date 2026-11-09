@@ -175,8 +175,8 @@ test("the docs show the terminal commands, and the trust page how the simulation
   await page.goto("/docs#cli");
   const cli = page.getByRole("region", { name: "Hyvo in your terminal" });
   await expect(cli.getByRole("heading", { name: "Hyvo in your terminal" })).toBeInViewport();
-  await expect(cli).toContainText("npx hyvo check 0x…");
-  await expect(cli).toContainText("It will be on npm soon");
+  await expect(cli).toContainText("npx @hyvo/cli check 0x…");
+  await expect(cli).toContainText("It is on npm as @hyvo/cli");
   await fitsTheScreen(page);
 
   await page.goto("/trust#probe");

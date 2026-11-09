@@ -11,7 +11,7 @@ Hyvo in your terminal, for Robinhood Chain (chain 4663).
 - **`hyvo mcp`** gives both to an AI agent as an MCP server.
 
 ```sh
-npx hyvo check 0x54cf6d6c466cb0cd72d113462746c674e546b274
+npx @hyvo/cli check 0x54cf6d6c466cb0cd72d113462746c674e546b274
 ```
 
 hyvo only reads. It never asks for a key, never signs, never sends a transaction, has no account or login, and sends
@@ -24,8 +24,8 @@ price. Every check result ends with **"Measured on-chain at block N. Not a tradi
 Node.js 20 or later.
 
 ```sh
-npx hyvo --help        # run without installing
-npm install -g hyvo    # or install the `hyvo` command
+npx @hyvo/cli --help        # run without installing
+npm install -g @hyvo/cli    # or install the `hyvo` command
 ```
 
 ## Commands
@@ -224,7 +224,7 @@ A [Model Context Protocol](https://modelcontextprotocol.io) server on stdio: new
 stdout, protocol versions 2025-11-25, 2025-06-18, 2025-03-26 and 2024-11-05. Add it to an MCP client's settings:
 
 ```json
-{ "mcpServers": { "hyvo": { "command": "npx", "args": ["-y", "hyvo", "mcp"] } } }
+{ "mcpServers": { "hyvo": { "command": "npx", "args": ["-y", "@hyvo/cli", "mcp"] } } }
 ```
 
 | Tool | Input | Returns |

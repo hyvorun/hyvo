@@ -61,8 +61,8 @@ describe("read-only", () => {
 describe("the npm package", () => {
   const pkg = JSON.parse(read("package.json")) as Record<string, any>;
 
-  it("is hyvo, AGPL-3.0-or-later, with one binary", () => {
-    expect(pkg.name).toBe("hyvo");
+  it("is @hyvo/cli, AGPL-3.0-or-later, with one binary named hyvo", () => {
+    expect(pkg.name).toBe("@hyvo/cli");
     expect(pkg.license).toBe("AGPL-3.0-or-later");
     expect(pkg.bin).toEqual({ hyvo: "dist/index.js" });
     expect(pkg.files).toEqual(["dist", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.md"]);
@@ -80,7 +80,7 @@ describe("the npm package", () => {
   it("documents every command", () => {
     const readme = read("README.md");
     for (const command of ["check", "watch", "watchlist", "runs", "verify", "mcp", "config"]) expect(readme, command).toContain(`hyvo ${command}`);
-    expect(readme).toContain("npx hyvo check 0x");
+    expect(readme).toContain("npx @hyvo/cli check 0x");
   });
 
   it("names Aleph's MIT notice and every bundled package in its third-party notices", () => {

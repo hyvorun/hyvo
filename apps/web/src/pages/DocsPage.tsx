@@ -273,12 +273,13 @@ for (const finding of report.findings) console.log(finding.severity, finding.tit
             <p>
               The <code className="mono">hyvo</code> command runs <Link to="/check">Hyvo Check</Link> on your own machine: the same reads and the same exit simulation,
               straight from a Robinhood Chain endpoint. It also lists and verifies published runs. It needs no account and no key, never signs or sends anything,
-              and sends no telemetry. It will be on npm soon; until then, this is how it will run.
+              and sends no telemetry. It is on npm as <code className="mono">@hyvo/cli</code>: run it with npx, or install the{" "}
+              <code className="mono">hyvo</code> command with <code className="mono">npm install -g @hyvo/cli</code>.
             </p>
-            <Code label="Check a token, then keep an eye on it">{`npx hyvo check 0x…                  # facts with their evidence, and the exit simulation
-npx hyvo check 0x… --json           # the report as JSON, amounts as decimal strings
-npx hyvo watch 0x… --interval 300   # check again every 5 minutes, print what changed
-npx hyvo verify <runId>             # a run's hash, recomputed, against its commit on-chain`}</Code>
+            <Code label="Check a token, then keep an eye on it">{`npx @hyvo/cli check 0x…                  # facts with their evidence, and the exit simulation
+npx @hyvo/cli check 0x… --json           # the report as JSON, amounts as decimal strings
+npx @hyvo/cli watch 0x… --interval 300   # check again every 5 minutes, print what changed
+npx @hyvo/cli verify <runId>             # a run's hash, recomputed, against its commit on-chain`}</Code>
             <dl className={styles.terms}>
               <div>
                 <dt className="mono">check &lt;token&gt;</dt>

@@ -21,7 +21,7 @@ TOOLS
   verify_run    Recompute a published Hyvo run's hash and compare it with its on-chain commit
 
 Register it with an MCP client as a stdio server, for example:
-  { "mcpServers": { "hyvo": { "command": "npx", "args": ["-y", "hyvo", "mcp"] } } }
+  { "mcpServers": { "hyvo": { "command": "npx", "args": ["-y", "@hyvo/cli", "mcp"] } } }
 
 Read-only: no tool signs or sends anything, and hyvo holds no key.
 `;
