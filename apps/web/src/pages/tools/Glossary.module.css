@@ -179,3 +179,17 @@
     opacity: 0.6;
   }
 }
+
+/* A term that the filter lets back in fades up into its place. */
+@media (prefers-reduced-motion: no-preference) {
+  .term {
+    animation: term-in 280ms var(--ease-out) both;
+  }
+}
+
+@keyframes term-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}

@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { Arrow } from "../../components/Icons";
+import { Reveal } from "../../components/Reveal";
 import { TOOLS, type ToolInfo } from "../../lib/tools";
 import { useDescription, useTitle } from "../../lib/use-title";
 import hub from "./ToolsPage.module.css";
@@ -26,17 +27,17 @@ export function ToolsPage() {
             <h2 id={`group-${group.title}`}>{group.title}</h2>
             {group.line && <p>{group.line}</p>}
           </div>
-          <ul className={hub.list}>
+          <Reveal as="ul" className={`${hub.list} stagger`}>
             {TOOLS.filter((tool) => tool.group === group.title).map((tool) => (
               <li key={tool.to}>
-                <Link to={tool.to} viewTransition>
+                <Link to={tool.to} className="press" viewTransition>
                   <span className={hub.name}>{tool.name}</span>
                   <span className={hub.line}>{tool.line}</span>
                   <Arrow />
                 </Link>
               </li>
             ))}
-          </ul>
+          </Reveal>
         </section>
       ))}
       <section className={hub.crowd} aria-labelledby="tools-crowd">

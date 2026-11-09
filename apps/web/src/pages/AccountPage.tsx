@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import type { Address, Hex } from "viem";
 import { useWalletSession, Web3 } from "../components/Web3";
 import { Disclaimer } from "../components/Disclaimer";
+import { Copied } from "../components/motion-data/Copied";
 import { ApiError, checkTopUp, createApiKey, fetchApiKeys, fetchBalance, fetchHealth, requestTopUp, revokeApiKey } from "../lib/api";
 import { formatUsd } from "../lib/draft";
 import { txUrl } from "../lib/explorer";
@@ -302,7 +303,7 @@ function Keys({ token }: { token: string }) {
           <p>This is the only time this key is shown. Copy it now.</p>
           <code className={`mono ${styles.key}`}>{fresh}</code>
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => void copy()}>
-            {copied ? "Copied" : "Copy the key"}
+            {copied ? <Copied>Copied</Copied> : "Copy the key"}
           </button>
         </div>
       )}

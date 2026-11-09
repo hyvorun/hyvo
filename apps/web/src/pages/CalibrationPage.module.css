@@ -208,3 +208,27 @@
 .no {
   background: var(--ink-3);
 }
+
+/*
+ * Bars grow from nothing when they come into view: hits and misses per firmness, one row after
+ * another, and each question's yes and no.
+ */
+@media screen and (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .hitFill,
+  .missFill,
+  .bar i {
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 800ms var(--ease-out) calc(var(--i, 0) * 60ms + 120ms);
+  }
+
+  .bar i + i {
+    transition-delay: 220ms;
+  }
+
+  :global(.reveal[data-in="true"]) .hitFill,
+  :global(.reveal[data-in="true"]) .missFill,
+  .bar[data-in="true"] i {
+    transform: none;
+  }
+}

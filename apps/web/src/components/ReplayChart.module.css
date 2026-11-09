@@ -117,3 +117,85 @@
   stroke: var(--accent);
   stroke-width: 1.5;
 }
+
+/*
+ * The first time the chart is drawn: the grid fades up, the price line draws itself from the left,
+ * the area under it fills after, and the price's dot pops into place at the end of the line. Each
+ * runs once, when the chart mounts; playback afterwards is exactly as before.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .round,
+  .tick,
+  .groups,
+  .turning,
+  .event {
+    animation: chart-fade 600ms var(--ease) both;
+  }
+
+  .ghost {
+    animation: chart-fade 700ms var(--ease) 200ms both;
+  }
+
+  .trace {
+    stroke-dasharray: 1;
+    animation: trace-draw 1100ms var(--ease-out) 120ms both;
+  }
+
+  .area {
+    animation: chart-fade 800ms var(--ease) 650ms both;
+  }
+
+  .marks {
+    animation: chart-fade 700ms var(--ease) 380ms both;
+  }
+
+  .playhead line {
+    animation: playhead-in 600ms var(--ease) 900ms both;
+  }
+
+  .head {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: head-pop 520ms cubic-bezier(0.34, 1.56, 0.64, 1) 1050ms both;
+  }
+}
+
+@keyframes chart-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes trace-draw {
+  from {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes playhead-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.55;
+  }
+}
+
+@keyframes head-pop {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

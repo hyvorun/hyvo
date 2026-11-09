@@ -1,0 +1,119 @@
+/*
+ * Numbers and hashes that move into place. The element (a <data>, which no page style aims at)
+ * always holds its final text, for screen readers, search, copying and tests; while it counts or
+ * decodes, that text's fill is transparent and what is on the way is drawn over it from a data
+ * attribute. The final text keeps its room, so nothing around it moves, and a pseudo-element's
+ * alternative text ("") keeps the passing values out of the accessibility tree.
+ */
+
+.overlay {
+  position: relative;
+  display: inline-grid;
+  text-decoration: inherit;
+}
+
+.overlay[data-shown] {
+  -webkit-text-fill-color: transparent;
+}
+
+.overlay[data-shown]::after {
+  content: attr(data-shown);
+  content: attr(data-shown) / "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: pre;
+  -webkit-text-fill-color: currentColor;
+  pointer-events: none;
+}
+
+.overlay[data-align="end"][data-shown]::after {
+  left: auto;
+  right: 0;
+}
+
+/* A long hash wraps where its final text wraps: same box, same monospaced characters. */
+.overlay[data-wrap][data-shown]::after {
+  right: 0;
+  bottom: 0;
+  white-space: inherit;
+  overflow-wrap: anywhere;
+}
+
+/* --- digits that roll when they change --------------------------------------------------------- */
+
+.roll {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.char {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .char[data-roll="up"] {
+    animation: roll-up 260ms var(--ease-out) both;
+  }
+
+  .char[data-roll="down"] {
+    animation: roll-down 260ms var(--ease-out) both;
+  }
+}
+
+@keyframes roll-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.42em);
+  }
+}
+
+@keyframes roll-down {
+  from {
+    opacity: 0;
+    transform: translateY(-0.42em);
+  }
+}
+
+/* --- a copy button's confirmation ---------------------------------------------------------------- */
+
+.copied {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.copied svg {
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .copied svg {
+    animation: copied-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .copied path {
+    stroke-dasharray: 1;
+    animation: copied-draw 360ms var(--ease-out) 80ms both;
+  }
+}
+
+@keyframes copied-pop {
+  from {
+    transform: scale(0.4);
+  }
+}
+
+@keyframes copied-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}

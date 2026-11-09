@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import { Link } from "react-router";
 import { Disclaimer } from "../components/Disclaimer";
 import { Arrow } from "../components/Icons";
+import { CountUp } from "../components/motion-data/CountUp";
+import { Reveal } from "../components/Reveal";
 import { Failure } from "../components/States";
 import { ADDRESSES } from "../lib/addresses";
 import { OFFICIAL } from "../lib/official";
@@ -90,7 +92,7 @@ export function TrustPage() {
 
       <section className={styles.section} aria-labelledby="never">
         <h2 id="never">Hyvo never…</h2>
-        <ul className={styles.never}>
+        <Reveal as="ul" className={`${styles.never} stagger`}>
           {NEVER.map((item) => (
             <li key={item.never}>
               <h3>{item.never}</h3>
@@ -102,7 +104,7 @@ export function TrustPage() {
               </div>
             </li>
           ))}
-        </ul>
+        </Reveal>
       </section>
 
       <ChainSection />
@@ -233,7 +235,7 @@ function ChainFacts() {
       <p className={styles.muted}>
         Read at block{" "}
         <a href={blockUrl(Number(facts.block))} target="_blank" rel="noreferrer" className="num">
-          {facts.block.toLocaleString("en-US")}
+          <CountUp value={Number(facts.block)} from={Math.max(0, Number(facts.block) - 1200)} format={(n) => n.toLocaleString("en-US")} />
         </a>
         , straight from the chain&apos;s public endpoints, without Hyvo&apos;s API in between.
       </p>

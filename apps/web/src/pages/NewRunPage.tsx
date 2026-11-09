@@ -227,7 +227,7 @@ function NewRun() {
                     type="button"
                     role="radio"
                     aria-checked={preset === size.id}
-                    className={styles.preset}
+                    className={`${styles.preset} lift`}
                     disabled={limits !== null && size.agents * size.rounds > limits.maxDecisions}
                     onClick={() => set({ agents: String(size.agents), rounds: String(size.rounds) })}
                   >
@@ -322,7 +322,7 @@ function Examples({ onPick, picked }: { onPick: (template: Template) => void; pi
           <button
             key={template.id}
             type="button"
-            className={styles.example}
+            className={`${styles.example} press`}
             aria-pressed={picked?.id === template.id}
             onClick={() => onPick(template)}
             title={template.tests}

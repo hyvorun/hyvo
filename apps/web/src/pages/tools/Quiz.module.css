@@ -80,7 +80,9 @@
   line-height: 1.4;
   text-align: left;
   cursor: pointer;
-  transition: background-color 160ms var(--ease);
+  transition:
+    background-color 160ms var(--ease),
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .options button:hover {
@@ -345,4 +347,28 @@
   content: " · you";
   color: var(--ink-3);
   font-weight: 400;
+}
+
+/* The archetype the quiz lands on arrives with a little give. */
+@media (prefers-reduced-motion: no-preference) {
+  .result .icon {
+    animation: icon-pop 620ms cubic-bezier(0.34, 1.56, 0.64, 1) 120ms both;
+  }
+
+  .result .icon svg {
+    animation: icon-turn 700ms var(--ease-out) 160ms both;
+  }
+}
+
+@keyframes icon-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes icon-turn {
+  from {
+    transform: rotate(-30deg);
+  }
 }

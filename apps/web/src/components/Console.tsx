@@ -6,6 +6,7 @@ import { formatDate, formatPct, formatScaled, formatTokens, personaLabel, priceU
 import { buildReplay, frameAt, isSwap, type Replay } from "../lib/replay";
 import styles from "./Console.module.css";
 import { Crowd } from "./Crowd";
+import { Roll } from "./motion-data/Roll";
 import { Arrow, PersonaIcon } from "./Icons";
 import { ReplayChart } from "./ReplayChart";
 import { RoundPanel } from "./RoundPanel";
@@ -37,6 +38,14 @@ function countsByStep(run: RunV1, replay: Replay) {
     posts[step.index] = said;
   }
   return { buys, sells, posts };
+}
+
+/** Who posts at the next step of the replay, so the feed can show them typing first. */
+function nextPoster(run: RunV1, replay: Replay, position: number, agents: Map<string, RunV1["crowd"]["agents"][number]>): string | null {
+  const next = replay.steps[position + 1];
+  if (!next || next.kind !== "post") return null;
+  const post = run.rounds[next.round - 1]?.posts[next.item];
+  return post ? (agents.get(post.agentId)?.handle ?? post.agentId) : null;
 }
 
 /**
@@ -96,16 +105,14 @@ export function Console({ run }: { run: RunV1 }) {
           onClick={playback.toggle}
           aria-label={playback.playing ? "Pause replay" : position >= last ? "Replay from the start" : "Play replay"}
         >
-          <span key={playback.playing ? "pause" : "play"} className={styles.icon}>
-            {playback.playing ? (
-              <svg viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M5.5 3.5v9M10.5 3.5v9" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M5 3.2v9.6l7.5-4.8Z" />
-              </svg>
-            )}
+          {/* Both marks are drawn; the one that applies turns and scales in over the other. */}
+          <span className={styles.icon} data-state={playback.playing ? "pause" : "play"}>
+            <svg className={styles.playMark} viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M5 3.2v9.6l7.5-4.8Z" />
+            </svg>
+            <svg className={styles.pauseMark} viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M5.5 3.5v9M10.5 3.5v9" />
+            </svg>
           </span>
         </button>
         <div className={styles.title}>
@@ -126,28 +133,38 @@ export function Console({ run }: { run: RunV1 }) {
         <div className={styles.stat}>
           <dt>Price, {unit.label}</dt>
           <dd className="num" title={`${spokenPrice(price)} ETH per token`}>
-            {formatScaled(price, unit)}
+            <Roll text={formatScaled(price, unit)} value={price} />
           </dd>
         </div>
         <div className={styles.stat}>
           <dt>Since start</dt>
-          <dd className={`num ${change > 0 ? styles.up : change < 0 ? styles.down : ""}`}>{formatPct(change)}</dd>
+          <dd className={`num ${change > 0 ? styles.up : change < 0 ? styles.down : ""}`}>
+            <Roll text={formatPct(change)} value={change} />
+          </dd>
         </div>
         <div className={styles.stat} title="Mean mood the agents reported this round, from −1 to 1">
           <dt>Mood, −1 to +1</dt>
-          <dd className="num">{Math.abs(mood) < 0.005 ? "0.00" : `${mood > 0 ? "+" : "−"}${Math.abs(mood).toFixed(2)}`}</dd>
+          <dd className="num">
+            <Roll text={Math.abs(mood) < 0.005 ? "0.00" : `${mood > 0 ? "+" : "−"}${Math.abs(mood).toFixed(2)}`} value={mood} />
+          </dd>
         </div>
         <div className={styles.stat}>
           <dt>Buys</dt>
-          <dd className="num">{whole(counts.buys[position]!)}</dd>
+          <dd className="num">
+            <Roll text={whole(counts.buys[position]!)} value={counts.buys[position]!} />
+          </dd>
         </div>
         <div className={styles.stat}>
           <dt>Sells</dt>
-          <dd className="num">{whole(counts.sells[position]!)}</dd>
+          <dd className="num">
+            <Roll text={whole(counts.sells[position]!)} value={counts.sells[position]!} />
+          </dd>
         </div>
         <div className={styles.stat}>
           <dt>Posts</dt>
-          <dd className="num">{whole(counts.posts[position]!)}</dd>
+          <dd className="num">
+            <Roll text={whole(counts.posts[position]!)} value={counts.posts[position]!} />
+          </dd>
         </div>
       </dl>
 
@@ -186,7 +203,7 @@ export function Console({ run }: { run: RunV1 }) {
           </div>
         </div>
         <div className={styles.side}>
-          <RoundPanel run={run} frame={frame} />
+          <RoundPanel run={run} frame={frame} typing={playback.playing ? nextPoster(run, replay, position, agents) : null} live={playback.playing} />
         </div>
       </div>
 

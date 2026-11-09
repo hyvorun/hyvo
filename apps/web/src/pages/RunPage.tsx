@@ -8,7 +8,7 @@ import { JobStatus } from "../components/JobStatus";
 import { OracleBadge } from "../components/OracleBadge";
 import { Replay } from "../components/Replay";
 import { ReportPanel } from "../components/ReportPanel";
-import { CountUp } from "../components/Reveal";
+import { CountUp } from "../components/motion-data/CountUp";
 import { ClonePanel } from "../components/ClonePanel";
 import { RewindPanel } from "../components/RewindPanel";
 import { RunProvenance } from "../components/RunProvenance";

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { Fragment, useMemo, type CSSProperties } from "react";
 import { Link } from "react-router";
 import { Console } from "../components/Console";
 import { Arrow } from "../components/Icons";
@@ -16,6 +16,8 @@ import { RunPath } from "./home/RunPath";
 import { TokenBrief } from "./home/TokenBrief";
 import { TrustBrief } from "./home/TrustBrief";
 
+const HEADLINE = "Launch it in a parallel world first.";
+
 export function HomePage() {
   const featured = useAsync(async () => {
     const summary = await fetchFeatured();
@@ -30,7 +32,18 @@ export function HomePage() {
   return (
     <>
       <section className={styles.hero}>
-        <h1 className={styles.display}>Launch it in a parallel world first.</h1>
+        <h1 className={styles.display}>
+          {HEADLINE.split(" ").map((word, index, words) => (
+            <Fragment key={index}>
+              <span className={styles.mask}>
+                <span className={styles.word} style={{ "--w": index } as CSSProperties}>
+                  {word}
+                </span>
+              </span>
+              {index < words.length - 1 && " "}
+            </Fragment>
+          ))}
+        </h1>
         <div className={styles.intro}>
           <p className={styles.lede}>
             Put a token launch, a rumor or a listing in front of a crowd of AI traders. They post, argue and swap against real
@@ -73,7 +86,7 @@ export function HomePage() {
 
       <FreeTools />
 
-      <Reveal as="section" className={styles.closing} aria-labelledby="closing-title">
+      <Reveal as="section" className={`${styles.closing} stagger`} aria-labelledby="closing-title">
         <h2 id="closing-title">Put your launch in front of the crowd first.</h2>
         <Link to="/new" className="btn btn-primary" viewTransition>
           Run a simulation
@@ -93,16 +106,18 @@ function FreeTools() {
           All tools <Arrow />
         </Link>
       </Reveal>
-      <ul className={styles.toolGrid}>
-        {HOME_TOOLS.map((tool, index) => (
-          <Reveal as="li" index={index} key={tool.to}>
-            <Link to={tool.to} viewTransition>
+      <Reveal as="ul" className={`${styles.toolGrid} stagger`}>
+        {HOME_TOOLS.map((tool) => (
+          <li key={tool.to}>
+            <Link to={tool.to} className="press" viewTransition>
               <b>{tool.name}</b>
-              <span>{tool.line}</span>
+              <span>
+                {tool.line} <Arrow />
+              </span>
             </Link>
-          </Reveal>
+          </li>
         ))}
-      </ul>
+      </Reveal>
     </section>
   );
 }
