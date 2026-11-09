@@ -162,8 +162,8 @@ function HolderRule() {
         {rule !== null && <span className="enter">{rule}</span>}
       </p>
       <p className={styles.muted}>
-        Sign in with that wallet when you start a run: the checkout offers its free runs and applies the discount. Hyvo only reads the
-        balance; nothing is locked or moved.
+        Sign in with the wallet that holds it when you start a run: the checkout offers its free runs and applies the discount. Hyvo
+        only reads the balance; nothing is locked or moved.
       </p>
     </div>
   );

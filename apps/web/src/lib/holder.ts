@@ -65,7 +65,7 @@ export function durationText(seconds: number): string {
 }
 
 /** The words for the holder rule when the API does not state it. */
-export const HOLDER_RULE_UNSET = "How much HYVO a wallet holds to count as a holder, and for how long, is set at the launch.";
+export const HOLDER_RULE_UNSET = "How much to hold, and for how long, is set at the launch.";
 
 /** Who counts as a holder, in one sentence. */
 export function holderRule(terms: HolderTerms | null): string {
