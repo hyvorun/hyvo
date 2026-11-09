@@ -96,8 +96,11 @@
 
 /* --- entrances -------------------------------------------------------------------------------- */
 
-/* Set by <Reveal> when a block scrolls into view. Without scripts everything simply shows. */
-@media (scripting: enabled) {
+/*
+ * Set by <Reveal> when a block scrolls into view. Without scripts, with reduced motion, and on paper,
+ * everything simply shows; a block that holds keyboard focus always shows.
+ */
+@media screen and (scripting: enabled) and (prefers-reduced-motion: no-preference) {
   .reveal {
     opacity: 0;
     transform: translateY(12px);
@@ -106,7 +109,8 @@
       transform 800ms var(--ease-out) calc(var(--i, 0) * 70ms);
   }
 
-  .reveal[data-in="true"] {
+  .reveal[data-in="true"],
+  .reveal:focus-within {
     opacity: 1;
     transform: none;
   }

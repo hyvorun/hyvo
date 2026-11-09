@@ -33,9 +33,25 @@ export function Layout() {
     }
   }, [theme]);
 
+  // A new page starts at the top, or at the section its #link names once that section has rendered
+  // (a lazy page needs a moment to load).
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, [location.pathname]);
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (!id) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+      return;
+    }
+    let frame = 0;
+    let tries = 0;
+    const seek = () => {
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ block: "start" });
+      else if (++tries < 180) frame = requestAnimationFrame(seek);
+      else window.scrollTo({ top: 0, behavior: "instant" });
+    };
+    seek();
+    return () => cancelAnimationFrame(frame);
+  }, [location.pathname, location.hash]);
 
   return (
     <div className={styles.shell}>

@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState, type CSSProperties, type ElementType, type ReactNode } from "react";
 import { prefersReducedMotion } from "./use-playback";
 
-/** True once the element has come into view. It stays true. */
+/**
+ * True once the element has come into view: `threshold` of it is on screen, or, for a block taller
+ * than the screen, enough of it to fill a quarter of the screen. Keyboard focus inside it counts too,
+ * so focus never lands on something still invisible. It stays true.
+ */
 export function useInView<T extends Element>(threshold = 0.16): [React.RefObject<T | null>, boolean] {
   const ref = useRef<T>(null);
   const [seen, setSeen] = useState(false);
@@ -13,15 +17,23 @@ export function useInView<T extends Element>(threshold = 0.16): [React.RefObject
     }
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry!.isIntersecting) {
-          setSeen(true);
-          observer.disconnect();
-        }
+        if (!entry!.isIntersecting) return;
+        const screen = entry!.rootBounds?.height ?? window.innerHeight;
+        if (entry!.intersectionRatio >= threshold || entry!.intersectionRect.height >= screen * 0.25) show();
       },
-      { threshold, rootMargin: "0px 0px -6% 0px" },
+      { threshold: [...new Set([0, 0.02, 0.05, 0.1, threshold])].sort((a, b) => a - b), rootMargin: "0px 0px -6% 0px" },
     );
+    function show() {
+      setSeen(true);
+      observer.disconnect();
+      element!.removeEventListener("focusin", show);
+    }
     observer.observe(element);
-    return () => observer.disconnect();
+    element.addEventListener("focusin", show);
+    return () => {
+      observer.disconnect();
+      element.removeEventListener("focusin", show);
+    };
   }, [threshold]);
   return [ref, seen];
 }

@@ -8,6 +8,8 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scrollbar-color: var(--rule-strong) transparent;
+  /* The sticky header is 61px tall: whatever focus or a #link scrolls to lands below it. */
+  scroll-padding-top: 76px;
 }
 
 body {
