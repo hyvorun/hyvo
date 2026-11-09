@@ -127,6 +127,21 @@ describe("hyvo stocks <ticker|address>", () => {
     }
   });
 
+  it("reports a chain that refuses the token's reads with exit 2, not as a contract that is no stock token", async () => {
+    const { route } = replay("rpc-nvda.json");
+    // Every eth_call is answered HTTP 429, as a busy public endpoint answers; everything else as recorded.
+    const busy: Route = (url, body) =>
+      url.origin === RPC && body && (JSON.parse(body) as { method: string }).method === "eth_call" ? { status: 429, body: { error: "too many requests" } } : undefined;
+    for (const argv of [["NVDA", "--rpc", RPC], ["NVDA", "--rpc", RPC, "--json"]]) {
+      const { code, out, err } = await stocks(argv, [busy, route, directory]);
+      expect(code, argv.join(" ")).toBe(2);
+      expect(out + err).not.toContain("not a stock token");
+      expect(out + err).not.toContain("not-a-stock-token");
+      if (argv.includes("--json")) expect(JSON.parse(out).error.code).toBe("chain_unavailable");
+      else expect(err).toMatch(/^hyvo: the token could not be read: /);
+    }
+  });
+
   it("reports a chain that does not answer with exit 2", async () => {
     const { code, err } = await stocks(["NVDA", "--rpc", RPC], [directory]);
     expect(code).toBe(2);

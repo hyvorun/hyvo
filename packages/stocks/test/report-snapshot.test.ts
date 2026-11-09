@@ -1,10 +1,10 @@
-import { getAddress } from "viem";
+import { createPublicClient, custom, getAddress, type PublicClient } from "viem";
 import { describe, expect, it } from "vitest";
 import { STOCK_FACTORY, STOCK_IMPLEMENTATION, STOCK_REGISTRY } from "../src/contracts";
 import { divideToDecimal } from "../src/decimal";
 import { stockReport } from "../src/report";
 import { SNAPSHOT, searchSnapshot, snapshotByAddress, snapshotByTicker } from "../src/snapshot";
-import { recordedAt, recordedDirectory, replayClient } from "./helpers";
+import { fixture, recordedAt, recordedDirectory, replayClient } from "./helpers";
 
 const NVDA = "0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC";
 
@@ -39,6 +39,25 @@ describe("a report from recorded chain answers", () => {
   it("finds no contract at an empty address", async () => {
     const report = await stockReport(replayClient("rpc-empty.json"), "0x000000000000000000000000000000000000dEaD", { directory: async () => recordedDirectory() });
     expect(report.verdict.kind).toBe("no-code");
+  });
+
+  it("fails when the chain answers none of the token's reads, instead of finding no stock token", async () => {
+    // The block and the code come back, but the one eth_call that holds every other read is refused, as a busy
+    // endpoint's HTTP 429 would refuse it: viem then hands back a failure for each of the batch's reads.
+    const recording = fixture<{ calls: { method: string; params: unknown; result: unknown }[] }>("rpc-nvda.json");
+    const answers = new Map(recording.calls.map((call) => [`${call.method} ${JSON.stringify(call.params)}`, call.result]));
+    const busy = createPublicClient({
+      transport: custom(
+        {
+          async request({ method, params }: { method: string; params?: unknown }) {
+            if (method === "eth_call") throw new Error("HTTP request failed. Status: 429");
+            return answers.get(`${method} ${JSON.stringify(params ?? [])}`);
+          },
+        },
+        { retryCount: 0 },
+      ),
+    }) as PublicClient;
+    await expect(stockReport(busy, NVDA, { directory: async () => recordedDirectory() })).rejects.toThrow("429");
   });
 
   it("says when Chainlink's directory could not be read, and keeps the rest", async () => {
