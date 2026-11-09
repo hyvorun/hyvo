@@ -339,9 +339,14 @@
     animation-delay: calc(var(--i, 0) * 70ms + var(--n, 0) * var(--stagger));
   }
 
+  /*
+   * Focus inside finishes the entrance at once. Not `animation: none`: that would take the finished
+   * entrance away, and focus leaving would add it again and play it once more.
+   */
   .reveal.stagger:focus-within > * {
     opacity: 1;
-    animation: none;
+    animation-duration: 0s;
+    animation-delay: 0s;
   }
 
   .stagger > :nth-child(2) {
