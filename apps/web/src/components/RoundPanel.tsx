@@ -8,6 +8,10 @@ import styles from "./RoundPanel.module.css";
 interface Props {
   run: RunV1;
   frame: Frame;
+  /** The handle about to post at the next step, while the replay plays (the home console). */
+  typing?: string | null;
+  /** True while the replay plays: the newest post is marked as it lands. */
+  live?: boolean;
 }
 
 type Tab = "feed" | "trades";
@@ -55,7 +59,7 @@ function history<T>(
 }
 
 /** The round as the crowd saw it, with its events, above everything said and traded so far. */
-export function RoundPanel({ run, frame }: Props) {
+export function RoundPanel({ run, frame, typing = null, live = false }: Props) {
   const [tab, setTab] = useState<Tab>("feed");
   const agents = useMemo(() => new Map(run.crowd.agents.map((a) => [a.agentId, a])), [run]);
   const posts = useMemo(() => new Map(run.rounds.flatMap((r) => r.posts.map((p) => [p.id, p] as const))), [run]);
@@ -78,6 +82,16 @@ export function RoundPanel({ run, frame }: Props) {
         <h3 key={frame.round} className={styles.roundTitle}>
           Round {frame.round}
         </h3>
+        {tab === "feed" && (
+          <span className={styles.typing} data-on={typing !== null} aria-hidden="true">
+            <span className={styles.dots}>
+              <i />
+              <i />
+              <i />
+            </span>
+            <span className={styles.typer}>{typing ?? ""}</span>
+          </span>
+        )}
         <div className={styles.tabs} role="tablist" aria-label="Round view">
           <button type="button" role="tab" aria-selected={tab === "feed"} onClick={() => setTab("feed")}>
             Feed <span className={`${styles.count} num`}>{postsSoFar}</span>
@@ -100,7 +114,12 @@ export function RoundPanel({ run, frame }: Props) {
           postsSoFar === 0 ? (
             <p className={styles.empty}>No posts yet.</p>
           ) : (
-            history(frame.posts, earlierPosts, (post) => <PostItem key={post.id} post={post} agents={agents} posts={posts} />, frame.round)
+            history(
+              frame.posts,
+              earlierPosts,
+              (post) => <PostItem key={post.id} post={post} agents={agents} posts={posts} fresh={live && post.id === frame.posts.at(-1)?.id} />,
+              frame.round,
+            )
           )
         ) : tradesSoFar === 0 ? (
           <p className={styles.empty}>No trades yet.</p>
@@ -123,16 +142,18 @@ function PostItem({
   post,
   agents,
   posts,
+  fresh = false,
 }: {
   post: Post;
   agents: Map<string, RunV1["crowd"]["agents"][number]>;
   posts: Map<string, Post>;
+  fresh?: boolean;
 }) {
   const author = agents.get(post.agentId);
   const parent = post.replyTo ? posts.get(post.replyTo) : undefined;
   const parentHandle = parent ? agents.get(parent.agentId)?.handle : undefined;
   return (
-    <article className={styles.post}>
+    <article className={styles.post} data-fresh={fresh}>
       <span className={styles.avatar} aria-hidden="true">
         {author && <PersonaIcon persona={author.persona} size={14} />}
       </span>
@@ -182,7 +203,7 @@ function TradeItem({ action, handle, symbol }: { action: Action; handle: string;
 
 function Direction({ buy }: { buy: boolean }) {
   return (
-    <span className={buy ? styles.buyMark : styles.sellMark} aria-hidden="true">
+    <span className={`${buy ? styles.buyMark : styles.sellMark} pop`} aria-hidden="true">
       <svg viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         {buy ? <path d="M6 10V2M2.500 5.500 6 2l3.500 3.500" /> : <path d="M6 2v8M2.500 6.500 6 10l3.500-3.500" />}
       </svg>

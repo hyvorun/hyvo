@@ -45,17 +45,15 @@ export function Transport({ replay, rounds, position, playing, speed, onToggle, 
         onClick={onToggle}
         aria-label={playing ? "Pause replay" : position >= last ? "Replay from the start" : "Play replay"}
       >
-        <span key={playing ? "pause" : "play"} className={styles.icon}>
-          {playing ? (
-            <svg viewBox="0 0 16 16" aria-hidden="true">
-              <rect x="3.5" y="2.8" width="3" height="10.4" rx="1" />
-              <rect x="9.5" y="2.8" width="3" height="10.4" rx="1" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M5 3.2v9.6a.6.6 0 0 0 .92.5l7.2-4.8a.6.6 0 0 0 0-1l-7.2-4.8A.6.6 0 0 0 5 3.2Z" />
-            </svg>
-          )}
+        {/* Both marks are drawn; the one that applies turns and scales in over the other. */}
+        <span className={styles.icon} data-state={playing ? "pause" : "play"}>
+          <svg className={styles.playMark} viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M5 3.2v9.6a.6.6 0 0 0 .92.5l7.2-4.8a.6.6 0 0 0 0-1l-7.2-4.8A.6.6 0 0 0 5 3.2Z" />
+          </svg>
+          <svg className={styles.pauseMark} viewBox="0 0 16 16" aria-hidden="true">
+            <rect x="3.5" y="2.8" width="3" height="10.4" rx="1" />
+            <rect x="9.5" y="2.8" width="3" height="10.4" rx="1" />
+          </svg>
         </span>
       </button>
 
@@ -77,7 +75,9 @@ export function Transport({ replay, rounds, position, playing, speed, onToggle, 
       </div>
 
       <span className={styles.round}>
-        R{step.round}/{rounds}
+        <span key={step.round} className={styles.roundNow}>
+          R{step.round}/{rounds}
+        </span>
       </span>
 
       <div className={styles.speeds} role="group" aria-label="Replay speed">
