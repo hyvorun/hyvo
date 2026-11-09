@@ -54,6 +54,15 @@ export const DEMO_LAUNCHES: FakeLaunch[] = [
 /** A curve launched a day ago, outside a 6-hour window, that still trades. */
 export const DEMO_OLDER = launch(11, { symbol: "EMBER", name: "Ember", ageMinutes: 26 * 60, liquidity: 1_900_000_000_000_000_000n, creatorTaxBps: 100 });
 
+/**
+ * Launches of the last 24 hours but not of the last 6, for Chain Pulse: each takes the symbol of a
+ * newer launch, and the second its name too.
+ */
+export const DEMO_EARLIER: FakeLaunch[] = [
+  launch(12, { symbol: "FIZZ", name: "Fizz Classic", ageMinutes: 8 * 60, liquidity: 210_000_000_000_000_000n, creatorTaxBps: 0 }),
+  launch(13, { symbol: "WREN", name: "Wren", ageMinutes: 14 * 60, liquidity: 96_000_000n, creatorTaxBps: 100, pairToken: DEMO_ASSETS.usdg.address, graduationThreshold: USDG_THRESHOLD }),
+];
+
 export const DEMO_IMPOSTOR = { curve: fakeAddress("impostor"), claimsToken: DEMO_LAUNCHES[0]!.token };
 
 export const DEMO_V1 = { token: fakeAddress("v1:token"), creator: fakeAddress("v1:creator"), pairedToken: fakeAddress("asset:WETH"), symbol: "OLDIE", name: "Oldie" };
@@ -88,7 +97,7 @@ export function demoChain(endpoints: Record<string, EndpointRules> = {}): FakeCh
     headTime: DEMO_TIME,
     blocksPerSecond: DEMO_PACE,
     assets: Object.values(DEMO_ASSETS),
-    launches: [...DEMO_LAUNCHES, DEMO_OLDER],
+    launches: [...DEMO_LAUNCHES, ...DEMO_EARLIER, DEMO_OLDER],
     trades: demoTrades(),
     graduations: [{ token: DEMO_LAUNCHES[5]!.token, block: DEMO_LAUNCHES[5]!.block + 20_000n, pairTokenAmount: ETH_THRESHOLD, tokenAmount: 285_714_285n * 10n ** 18n }],
     v1: [DEMO_V1],
