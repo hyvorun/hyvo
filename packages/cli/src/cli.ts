@@ -17,11 +17,15 @@ USAGE
 
 COMMANDS
   check <token>       Facts about a token, each with its evidence, and an exit simulation (also: scan)
+  launches [<token>]  The newest Pons launches, or one launch: pair asset, phase, creator tax, what its
+                      curve holds
+  stocks [<ticker>]   Robinhood stock tokens, or one: the factory's record, multiplier, Chainlink price
+                      and whether it can move right now
   watch [<token>...]  Re-check tokens on an interval and print what changed
   watchlist           The tokens watch follows, kept in a local file
   runs                Recent published runs of Hyvo's crowd simulation
   verify <runId>      Recompute a run's hash and compare it with its commit on Robinhood Chain
-  mcp                 A Model Context Protocol server on stdio: check_token and verify_run
+  mcp                 A Model Context Protocol server on stdio, with a tool for each of the above
   config              Where hyvo reads from: the RPC and the API
 
 OPTIONS
@@ -29,16 +33,18 @@ OPTIONS
   -v, --version       Show the version
 
 Read-only: hyvo never asks for a key, never signs and never sends a transaction, and sends no telemetry.
-Check results: measured on-chain at one block, not a trading signal. Runs: synthetic crowd reactions, not
-trading signals.
+Check, launches and stocks results: measured on-chain at one block, not a trading signal. Runs: synthetic
+crowd reactions, not trading signals.
 `;
 
 type Command = (argv: readonly string[], ctx: Context) => number | Promise<number>;
 
-// The API commands load the SDK and its schemas only when they run.
+// The API commands load the SDK and its schemas only when they run, and launches and stocks load viem only then.
 const COMMANDS: Record<string, Command> = {
   check: runCheck,
   scan: runCheck,
+  launches: async (argv, ctx) => (await import("./commands/launches.js")).runLaunches(argv, ctx),
+  stocks: async (argv, ctx) => (await import("./commands/stocks.js")).runStocks(argv, ctx),
   watch: runWatch,
   watchlist: runWatchlist,
   config: runConfig,
