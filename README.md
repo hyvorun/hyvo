@@ -71,6 +71,14 @@
   payment to the treasury in the same call and never holds funds. Paid runs are not open yet.
 - Both contracts have verified sources. The API answers at <https://api.hyvo.run/v1/health>.
 
+<!-- hyvo-token:start -->
+## The HYVO token
+
+Hyvo has not launched a token yet, so no token named HYVO is Hyvo's today. On the day it launches, its address
+appears here and on [hyvo.run/token](https://hyvo.run/token), and a token at any other address is not Hyvo's,
+whatever its name. Holding it will bring free runs, a discount and a place ahead in the queue.
+<!-- hyvo-token:end -->
+
 ## Check a run yourself
 
 You do not have to trust the site.

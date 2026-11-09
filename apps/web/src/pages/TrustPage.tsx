@@ -6,7 +6,7 @@ import { CountUp } from "../components/motion-data/CountUp";
 import { Reveal } from "../components/Reveal";
 import { Failure } from "../components/States";
 import { ADDRESSES } from "../lib/addresses";
-import { OFFICIAL } from "../lib/official";
+import { HYVO_TOKEN, OFFICIAL, ONLY_TOKEN } from "../lib/official";
 import { readChainFacts, type ChainFacts, type Ownership } from "../lib/contracts";
 import { addressUrl, blockUrl } from "../lib/explorer";
 import { shortHash } from "../lib/format";
@@ -87,7 +87,19 @@ export function TrustPage() {
             . A site or an account that uses the name anywhere else is not Hyvo&apos;s. Hyvo never sends the first direct message, and never asks for
             a seed phrase or a private key.
           </p>
-          {!ADDRESSES.hyvoToken && (
+          {HYVO_TOKEN ? (
+            <>
+              <p className={styles.tokenLine}>
+                <b>Token:</b>{" "}
+                <a className="mono u-link" href={HYVO_TOKEN.explorerUrl} target="_blank" rel="noreferrer">
+                  {HYVO_TOKEN.address}
+                </a>
+              </p>
+              <p>
+                {ONLY_TOKEN} The <Link to="/token">token page</Link> has it with a copy button.
+              </p>
+            </>
+          ) : (
             <p>
               Hyvo has not launched a token yet: until <Link to="/token">/token</Link> shows an address, no token is Hyvo&apos;s, whatever its name.
             </p>
