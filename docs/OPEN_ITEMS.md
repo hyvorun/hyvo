@@ -38,6 +38,7 @@ Status: **verified** (checked against an official source or on-chain) · **likel
 | 28 | Hyvo Stocks: where each fact comes from | verified / decision | on-chain StockFactory record + Chainlink feeds; Robinhood's API and docs not used |
 | 29 | Pons launches for Hyvo Launches: sources and limits | verified / decision | read in the visitor's browser; endpoints in `packages/launches/src/endpoints.ts` |
 | 30 | Hyvo Check: addresses and limits | verified | factories, hook and PoolManager read on-chain on every check; top holders from Blockscout through Hyvo's API (its own key); credit cost per request open |
+| 32 | Creator history and holder scan | likely / verified | a wallet's launches from Blockscout's `module=logs&action=getLogs` through Hyvo's API (its own key; the keyed answer not seen yet); every balance read on-chain |
 
 ---
 
@@ -644,3 +645,53 @@ sell reverted with `Error("TransferHelper: TRANSFER_FROM_FAILED")`.
   functions that live in a facet are not in its ABI.
 - Holders come from Blockscout's index (a key: item 24; through Hyvo's API, above), not from the block the rest is read at, and an index can
   trail the chain. Only Blockscout's first page (50 holders) is read, so the deployer outside it is named as not listed.
+
+## 32. Creator history and holder scan — likely / verified
+
+`GET /v1/launches/creator/:address` (docs/API.md, "Hyvo Launches"), `/launches/creator/:address`, and the holder scan on `/launches/:token`
+(`packages/launches/src/creator.ts` and `holder-scan.ts`). Read and called on 2026-11-10.
+
+**Why an index.** `TokenLaunched(address indexed token, address indexed curve, address indexed deployer, …)` puts the deployer in topic 3
+(`packages/launches/src/pons.ts`, from the verified source), so one log query by the factory, topic 0 and topic 3 finds a wallet's launches.
+The factory's history runs from block 26,841,846 to about 110.24M (head on 2026-11-10), over 83 million blocks; the public endpoints answer
+10,000 to 250,000 blocks a query (item 29), so the browser would need hundreds of queries. A recent `TokenLaunched` log (block 110,234,823,
+read from Pocket) gave a real deployer to try: `0xb02be0d44abb3991d5c00afbcb9c8154d3e8daa8`.
+
+**The endpoint, called without a key** (the key lives in `.env`, which this work did not read), each with that deployer as `topic3`:
+
+| Request | Answer |
+|---|---|
+| `robinhoodchain.blockscout.com/api?module=logs&action=getLogs&address=<factory>&fromBlock=26841846&toBlock=latest&topic0=<TokenLaunched>&topic3=<deployer>&topic0_3_opr=and` | `403`, Cloudflare's bot challenge ("Just a moment...", `cf-mitigated: challenge`), as in item 24. Not used, and not worked around |
+| the same query on `api.blockscout.com/4663/api` | `402 {"error":"Proceed with API key or make a X402 payment to continue"}`: the route answers, and asks for a key like the v2 routes (item 30) |
+| `robinhoodchain.blockscout.com/api/v2/addresses/<factory>/logs?topic=<TokenLaunched>` | `403`, the same challenge |
+
+- **Verified from Blockscout's docs.** "RPC API Endpoints: logs" (`docs.blockscout.com/devs/apis/rpc/logs`): `module=logs&action=getLogs` takes
+  `fromBlock`, `toBlock` (`latest` allowed), `address`, `topic0` to `topic3` and the `topicX_Y_opr` operators (`and` or `or`), and returns "up to
+  a maximum of 1,000 event logs", each with `address`, `topics`, `data`, `blockNumber`, `timeStamp`, `logIndex` and `transactionHash`; no paging
+  parameters are documented. Blockscout's Robinhood page (`docs.blockscout.com/robinhood-api`) lists the Etherscan-style routes on
+  `https://api.blockscout.com/4663/api?module=…&action=…` with `apikey=proapi_…` in the query, and says `eth_getLogs` is "Limited to 1,000
+  records on Robinhood Chain".
+- **Likely, not seen with a key:** the answer's shape on this chain (`status`, `message`, `result`), how it says "no logs" (handled: any
+  `result` list, empty or not, is read; anything else is "Blockscout's API gave no list of logs"), and its order. Pages assume the oldest logs
+  come first, as Etherscan's do: a full page of 1,000 is followed by one from its last block, both are merged without doubles, and after 3
+  requests the answer says `complete: false`. If the order turns out to be newest first, a wallet with over 1,000 launches would show its
+  newest 1,000 to 3,000 only; a wallet with fewer is unaffected. **Check with the first deploy:** call the route for the deployer above.
+- **Cost.** One lookup counts once against the holders route's Blockscout counters (60 a minute, 30,000 a day, item 30) though it can make up to
+  3 requests; a wallet with under 1,000 launches makes 1. Kept five minutes in the Cache API.
+
+**The chain has the last word.** The page reads each listed token's factory record (`getLaunchedToken`) and leaves out any whose record names
+another deployer; "graduated" counts records whose phase is `PoolCreated` (2). Each curve's state is read as on `/launches`, in one Multicall3
+batch per 300 reads; the page reads the newest 300 launches of a wallet at most.
+
+**The holder scan.** Blockscout's largest holders (through `GET /v1/check/:token/holders`, item 30) give only the addresses: every balance, the
+total supply and the factory's `poolManager()` are read on-chain in one Multicall3 batch, at one named block, and the list is ranked by those
+balances. From the verified sources: `PonsV2LauncherToken` is OpenZeppelin's `ERC20` with `ERC20Burnable`, so `totalSupply()` and
+`balanceOf(address)` are `ERC20.sol`'s; `PonsV2LaunchFactory` has `IPoolManager public immutable poolManager;`. The top-ten share leaves out
+the curve, the PoolManager (it holds every V4 pool's tokens) and two burn addresses by convention, the zero address and `0x…dEaD`; they show as
+labeled rows. The launch second is the curve's `launchedAt()`: the page finds the last block with that time from block headers (a binary search,
+at most 9 headers) and reads the curve's `CurveBuy` logs from the launch block to there; their recipients are the "first-second buyers", and the
+scan sums what they hold now.
+
+**Left open.** The holder count is Blockscout's, not the chain's; a holder outside Blockscout's first page (50) is not in the list, though the
+creator's and the first-second buyers' balances are always read. Snipe-tax exemptions are still not read (item 29).
+
