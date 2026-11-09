@@ -307,7 +307,8 @@
   line-height: calc(var(--node-y) * 2);
 }
 
-@media (max-width: 999px) {
+/* Not (max-width: 999px): a fractional width between 999 and 1000 px would match neither block. */
+@media not all and (min-width: 1000px) {
   .here {
     max-width: 38rem;
     padding: 12px 14px 14px;

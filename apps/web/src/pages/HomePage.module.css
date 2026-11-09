@@ -90,9 +90,11 @@
 }
 
 /* Keyboard focus that arrives early finds the opening already in place. */
+/* Focus inside finishes the entrance at once; not `animation: none`, which would replay it when focus leaves. */
 .intro:has(:focus-visible),
 .stage:has(:focus-visible) {
-  animation: none;
+  animation-duration: 0s;
+  animation-delay: 0s;
 }
 
 .placeholder.placeholder {

@@ -5,8 +5,8 @@
  *
  * Top holders, and the deployer when no launch record or Sourcify names one, come from Blockscout's
  * index, which answers only with a key: Hyvo's API reads it with its own (`GET /v1/check/:token/holders`)
- * while the browser reads the chain, and the check leaves out burn addresses and pools as it always
- * does. When the API does not answer, those two findings stay skipped and say why.
+ * while the browser reads the chain, and the check leaves out burn addresses, the V4 PoolManager, the
+ * Pons curve and the token's WETH pools as it always does. When the API does not answer, those two findings stay skipped and say why.
  */
 import { checkToken, type CheckReport, type HolderFacts } from "@hyvo/check";
 import { useCallback, useEffect, useState } from "react";

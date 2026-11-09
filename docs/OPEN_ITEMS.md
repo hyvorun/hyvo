@@ -604,9 +604,10 @@ Check does not use them.
   repo's `.env`) lets `GET /v1/check/:token`, `check_token` and `GET /v1/check/:token/holders` fill the top holders, and the deployer when
   neither a launch record nor Sourcify names one; the /check page asks the holders route while the browser reads the chain. The key goes to
   Blockscout only; a test with a fake key checks every answer, header and log for it (`apps/api/test/holders.test.ts`). Three requests per
-  token, each once (a `429` is reported, not retried), kept ten minutes in the Cache API; 10 reads a minute per IP on the holders route and 60
-  a minute for the Worker, under the free tier's 5 requests a second. Inside a check they bring the worst case to 49 of the 50 subrequests a
-  free-plan request may make. Without the key, or when Blockscout fails, the two findings say `skipped` and why. **Open:** what one request
+  token, each once (a `429` is reported, not retried, and the Worker then asks nothing for 30 s), kept ten minutes in the Cache API; 10 reads a
+  minute per IP on the holders route, and 60 a minute and 30,000 a day for the Worker (about 90,000 requests, under the free tier's 100,000
+  daily credits at one credit a request). Inside a check each RPC call is tried at most three times, so with the key and the Cache API's four
+  calls the worst case is 42 of the 50 subrequests a free-plan request may make. Without the key, or when Blockscout fails, the two findings say `skipped` and why. **Open:** what one request
   costs of the free tier's 100,000 daily credits, and the CPU of parsing a real holders page in the Worker; both to measure once deployed.
 - **dRPC** honors state overrides in `eth_call` (as does PublicNode), and answered the probe's 30M-gas call; its CORS preflight allows
   `https://hyvo.run`.

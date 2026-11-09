@@ -20,6 +20,7 @@ import { CountUp } from "../../components/motion-data/CountUp";
 import { Decode } from "../../components/motion-data/Decode";
 import { Reveal } from "../../components/Reveal";
 import { Failure } from "../../components/States";
+import { ADDRESSES } from "../../lib/addresses";
 import { addressUrl, tokenUrl, txUrl } from "../../lib/explorer";
 import { tokenFromPath } from "../../lib/launches";
 import { useDescription, useTitle } from "../../lib/use-title";
@@ -183,7 +184,17 @@ function Detail({ detail, state, onAgain }: { detail: LaunchDetail; state: Launc
         </a>
       </div>
       <p className={styles.fine}>
-        Hyvo Launches is not affiliated with this token, its creator or Pons. The facts above are what the chain&apos;s contracts hold; they say nothing about where its price goes.
+        {ADDRESSES.hyvoToken && detail.token.toLowerCase() === ADDRESSES.hyvoToken.toLowerCase() ? (
+          <>
+            This is HYVO, Hyvo&apos;s own token (<Link to="/token">hyvo.run/token</Link>). Hyvo Launches reads it like any other launch: the facts
+            above are what the chain&apos;s contracts hold; they say nothing about where its price goes.
+          </>
+        ) : (
+          <>
+            Hyvo Launches is not affiliated with this token, its creator or Pons. The facts above are what the chain&apos;s contracts hold; they say
+            nothing about where its price goes.
+          </>
+        )}
       </p>
     </>
   );
