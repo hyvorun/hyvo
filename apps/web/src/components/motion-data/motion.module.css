@@ -1,0 +1,67 @@
+/*
+ * Numbers and hashes that move into place. The element always holds its final text, for screen
+ * readers, search, copying and tests; while it counts or decodes, that text is hidden and what is on
+ * the way is drawn over it from a data attribute. The final text keeps its room, so nothing around
+ * it moves, and a pseudo-element's alternative text ("") keeps the passing values out of the
+ * accessibility tree.
+ */
+
+.overlay {
+  position: relative;
+  display: inline-grid;
+  text-decoration: inherit;
+}
+
+.overlay[data-shown] > .final {
+  opacity: 0;
+}
+
+.overlay[data-shown]::after {
+  content: attr(data-shown);
+  content: attr(data-shown) / "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: pre;
+  pointer-events: none;
+}
+
+.overlay[data-align="end"][data-shown]::after {
+  left: auto;
+  right: 0;
+}
+
+/* --- digits that roll when they change --------------------------------------------------------- */
+
+.roll {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.char {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .char[data-roll="up"] {
+    animation: roll-up 260ms var(--ease-out) both;
+  }
+
+  .char[data-roll="down"] {
+    animation: roll-down 260ms var(--ease-out) both;
+  }
+}
+
+@keyframes roll-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.42em);
+  }
+}
+
+@keyframes roll-down {
+  from {
+    opacity: 0;
+    transform: translateY(-0.42em);
+  }
+}
