@@ -18,7 +18,7 @@
 }
 
 /*
- * The headline rises word by word from under its own line, at once and in under 600 ms, so the
+ * The headline rises word by word from under its own line, at once and in about 640 ms, so the
  * largest paint on the page is never late. The mask is padded so no ascender or descender is cut.
  */
 .mask {
@@ -35,7 +35,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .word {
-    animation: word-rise 460ms var(--ease-out) calc(var(--w, 0) * 32ms) both;
+    animation: word-rise 400ms var(--ease-out) calc(var(--w, 0) * 40ms) both;
   }
 }
 
@@ -87,6 +87,12 @@
 .stage {
   display: grid;
   animation: rise 800ms var(--ease-out) 300ms both;
+}
+
+/* Keyboard focus that arrives early finds the opening already in place. */
+.intro:has(:focus-visible),
+.stage:has(:focus-visible) {
+  animation: none;
 }
 
 .placeholder.placeholder {
@@ -161,7 +167,7 @@
   /* With .press: the card sinks under a press and springs back. */
   transition:
     background-color 160ms var(--ease),
-    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform var(--dur-spring) var(--ease-spring);
 }
 
 .toolGrid a:hover {
@@ -216,4 +222,12 @@
   font-size: clamp(1.75rem, 3.4vw, 3rem);
   letter-spacing: -0.035em;
   line-height: 1.08;
+}
+
+/* CSS modules scope keyframe names, so this module keeps its own copy of the shared rise. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }

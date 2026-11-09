@@ -25,3 +25,10 @@
   pointer-events: none;
   animation: fade 120ms var(--ease) both;
 }
+
+/* CSS modules scope keyframe names, so this module keeps its own copy of the shared fade. */
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}

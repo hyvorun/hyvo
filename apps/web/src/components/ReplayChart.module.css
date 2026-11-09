@@ -156,7 +156,7 @@
   .head {
     transform-box: fill-box;
     transform-origin: center;
-    animation: head-pop 520ms cubic-bezier(0.34, 1.56, 0.64, 1) 1050ms both;
+    animation: head-pop 520ms var(--ease-spring-pop) 1050ms both;
   }
 }
 

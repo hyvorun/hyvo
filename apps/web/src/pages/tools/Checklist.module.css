@@ -147,7 +147,7 @@
   transition:
     background-color 160ms var(--ease),
     box-shadow 160ms var(--ease),
-    transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform var(--dur-spring) var(--ease-spring);
 }
 
 .group label:hover input:not(:checked) {
@@ -190,7 +190,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .group input:checked {
-    animation: box-pop 360ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: box-pop 360ms var(--ease-spring-pop);
   }
 }
 
@@ -241,4 +241,12 @@
 
 .link:hover {
   color: var(--ink);
+}
+
+/* CSS modules scope keyframe names, so this module keeps its own copy of the shared rise. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }

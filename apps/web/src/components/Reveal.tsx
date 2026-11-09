@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type CSSProperties, type ElementType, type ReactNode } from "react";
-import { prefersReducedMotion } from "./use-playback";
 
 /**
  * True once the element has come into view: `threshold` of it is on screen, or, for a block taller
@@ -58,26 +57,4 @@ export function Reveal({
       {children}
     </Tag>
   );
-}
-
-/** A number that counts up to its value the first time it is seen. */
-export function CountUp({ value, format }: { value: number; format: (value: number) => string }) {
-  const [ref, seen] = useInView<HTMLSpanElement>(0.2);
-  const [shown, setShown] = useState(value);
-  const started = useRef(false);
-  useEffect(() => {
-    if (!seen || started.current || prefersReducedMotion()) return;
-    started.current = true;
-    const begin = performance.now();
-    let raf = 0;
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - begin) / 1100);
-      const eased = 1 - (1 - t) ** 4;
-      setShown(t >= 1 ? value : value * eased);
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [seen, value]);
-  return <span ref={ref}>{format(shown)}</span>;
 }

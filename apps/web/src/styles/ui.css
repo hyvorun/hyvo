@@ -312,6 +312,15 @@
   }
 
   /*
+   * Keyboard focus never waits on an entrance: a block that takes it is there at once. Taking the
+   * transition away (not just its duration) also cancels one under way. Only for keyboard focus: a
+   * mouse press focuses a link too, and a block jumping under the pointer would lose the click.
+   */
+  .reveal:has(:focus-visible) {
+    transition: none;
+  }
+
+  /*
    * .stagger: the container stays put and its children come in one after another. An animation,
    * not a transition, so a child's own hover transitions are untouched once it has arrived.
    */
