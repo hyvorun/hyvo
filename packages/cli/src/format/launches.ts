@@ -49,9 +49,14 @@ function age(at: number | null, now: number): string {
   return at === null ? "unknown" : formatDuration(now - at);
 }
 
-/** What a listed curve holds, towards its threshold: "0.05994 of 4.2 ETH, 1.4%". */
-export function curveHolds(launch: Launch): string {
-  if (launch.graduated) return "moved to its pool";
+/**
+ * What a listed curve holds, towards its threshold: "0.05994 of 4.2 ETH, 1.4%". `pooled`: the factory's
+ * PoolGraduated for the token is among the window's events. graduated() turns true when the curve is swept, before
+ * the pool exists, so it alone does not say the launch trades in its pool.
+ */
+export function curveHolds(launch: Launch, pooled: boolean): string {
+  if (pooled) return "moved to its pool";
+  if (launch.graduated) return "off its curve, no pool yet";
   if (launch.liquidity === null) return "not read";
   const share = progress(launch.liquidity, launch.graduationThreshold);
   const unit = pairSymbol(launch.pair);
@@ -95,13 +100,14 @@ export function renderRecentLaunches(result: RecentLaunches, o: LaunchesRenderOp
     lines.push(...paragraph(result.total === 0 ? `No Pons launch in ${span(result.hours)}.` : "No launch could be listed: their pair assets' decimals could not be read.", o.width, c.gray));
   } else {
     const head = ["age", "token", "pair", "phase", "on its curve", "creator tax", "address"];
+    const pooled = new Set(result.graduations.map((event) => event.token.toLowerCase()));
     const rows = (short: boolean) =>
       result.launches.map((launch) => [
         age(launch.launchedAt, now),
         symbolOf(launch),
         pairSymbol(launch.pair),
         lowerFirst(listedPhase(launch)),
-        curveHolds(launch),
+        curveHolds(launch, pooled.has(launch.token.toLowerCase())),
         launch.creatorTaxBps === null ? "not read" : formatBps(launch.creatorTaxBps),
         short ? shortAddress(launch.token) : launch.token,
       ]);

@@ -63,6 +63,15 @@ describe("hyvo launches", () => {
     expect(json.graduations).toEqual([expect.objectContaining({ token: brisk.token, launchedInWindow: false })]);
   });
 
+  it("says a curve moved to its pool only when the factory's PoolGraduated is in the window", async () => {
+    // FIZZ's curve has been swept (graduated() is true), but the factory has not created its pool yet.
+    const chain = demoChain();
+    chain.launches[0] = { ...chain.launches[0]!, phase: 1 };
+    const { out } = await launches(["--rpc", RPC], [chainRoute([RPC], chain)]);
+    expect(out).toMatch(new RegExp(`^ {2}3 min +FIZZ +ETH +graduated +off its curve, no pool yet +0% +${fizz.token}$`, "m"));
+    expect(out).toMatch(new RegExp(`^ {2}1 h 10 min +BRISK +ETH +graduated +moved to its pool +10% +${brisk.token}$`, "m"));
+  });
+
   it("prints JSON with every amount and block as a decimal string", async () => {
     const { code, out } = await launches(["--rpc", RPC, "--json"]);
     expect(code).toBe(0);
