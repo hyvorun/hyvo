@@ -15,12 +15,12 @@ interface Props {
   title?: string;
 }
 
-/** The final text, with the passing values drawn over it (see motion.module.css). */
-function Overlay({ spanRef, text, className, align, title }: { spanRef: React.Ref<HTMLSpanElement>; text: ReactNode; className: string; align: Align; title?: string }) {
+/** The final value, with the passing values drawn over it (see motion.module.css). */
+function Overlay({ dataRef, value, text, className, align, title }: { dataRef: React.Ref<HTMLDataElement>; value: number; text: ReactNode; className: string; align: Align; title?: string }) {
   return (
-    <span ref={spanRef} className={`${styles.overlay} ${className}`} data-align={align} title={title}>
-      <span className={styles.final}>{text}</span>
-    </span>
+    <data ref={dataRef} value={String(value)} className={`${styles.overlay} ${className}`} data-align={align} title={title}>
+      {text}
+    </data>
   );
 }
 
@@ -30,7 +30,7 @@ function Overlay({ spanRef, text, className, align, title }: { spanRef: React.Re
  * simply the final value.
  */
 export function CountUp({ value, format, from = 0, duration, className = "", align = "start", title }: Props & { from?: number; duration?: number }) {
-  const [ref, seen] = useInView<HTMLSpanElement>(0.2);
+  const [ref, seen] = useInView<HTMLDataElement>(0.2);
   const phase = useRef<"idle" | "pending" | "running" | "done">("idle");
   const latest = useRef({ value, format });
   latest.current = { value, format };
@@ -75,7 +75,7 @@ export function CountUp({ value, format, from = 0, duration, className = "", ali
     // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once, when the number is first seen
   }, [seen]);
 
-  return <Overlay spanRef={ref} text={format(value)} className={className} align={align} title={title} />;
+  return <Overlay dataRef={ref} value={value} text={format(value)} className={className} align={align} title={title} />;
 }
 
 /**
@@ -83,7 +83,7 @@ export function CountUp({ value, format, from = 0, duration, className = "", ali
  * calculator's answer as the inputs change). The first value shows as it is.
  */
 export function Tween({ value, format, duration = 380, className = "", align = "start", title }: Props & { duration?: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
+  const ref = useRef<HTMLDataElement>(null);
   const shown = useRef(value);
   const latest = useRef(format);
   latest.current = format;
@@ -116,5 +116,5 @@ export function Tween({ value, format, duration = 380, className = "", align = "
     return () => cancelAnimationFrame(frame);
   }, [value, duration]);
 
-  return <Overlay spanRef={ref} text={format(value)} className={className} align={align} title={title} />;
+  return <Overlay dataRef={ref} value={value} text={format(value)} className={className} align={align} title={title} />;
 }

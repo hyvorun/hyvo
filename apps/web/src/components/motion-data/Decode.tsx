@@ -13,7 +13,7 @@ const SHUFFLE_MS = 45;
  * copying and tests only ever meet the real value.
  */
 export function Decode({ text, duration = 700, className = "", title }: { text: string; duration?: number; className?: string; title?: string }) {
-  const [ref, seen] = useInView<HTMLSpanElement>(0.2);
+  const [ref, seen] = useInView<HTMLDataElement>(0.2);
   const phase = useRef<"idle" | "pending" | "running" | "done">("idle");
 
   useLayoutEffect(() => {
@@ -63,8 +63,8 @@ export function Decode({ text, duration = 700, className = "", title }: { text: 
   }, [seen]);
 
   return (
-    <span ref={ref} className={`${styles.overlay} ${className}`} title={title}>
-      <span className={styles.final}>{text}</span>
-    </span>
+    <data ref={ref} value={text} className={`${styles.overlay} ${className}`} data-wrap="" title={title}>
+      {text}
+    </data>
   );
 }
