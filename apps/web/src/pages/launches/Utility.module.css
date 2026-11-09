@@ -94,6 +94,8 @@
   margin-left: -12px;
   border-radius: var(--radius-sm);
   color: inherit;
+  /* A followed wallet is shown whole: at 390 px its 42 characters wrap instead of running under the button beside it. */
+  overflow-wrap: anywhere;
   text-decoration: none;
   transition: background-color 160ms var(--ease);
 }
