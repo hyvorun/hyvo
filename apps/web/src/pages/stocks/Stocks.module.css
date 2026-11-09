@@ -448,6 +448,12 @@
   align-items: start;
 }
 
+/* A contract's name and ticker can be any length: they wrap rather than widen the page. */
+.answer > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .answer h3 {
   font-size: var(--t-xl);
   line-height: 1.25;

@@ -386,9 +386,14 @@ function VerdictPanel({ report, ticker }: { report: StockReport; ticker?: string
             <div>
               <dt>Terms it links</dt>
               <dd>
-                <a href={token.terms} target="_blank" rel="noreferrer">
-                  {token.terms}
-                </a>
+                {/* A link only when it is one: the text comes from the contract. */}
+                {/^https:\/\/[^\s"<>]+$/.test(token.terms) ? (
+                  <a href={token.terms} target="_blank" rel="noreferrer">
+                    {token.terms}
+                  </a>
+                ) : (
+                  <span>{token.terms}</span>
+                )}
                 <small>What the contract&apos;s terms() returns.</small>
               </dd>
             </div>
