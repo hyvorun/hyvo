@@ -2,7 +2,7 @@
 import { DEMO_HEAD, DEMO_LAUNCHES, DEMO_V1, demoChain, fakeAddress } from "@hyvo/launches/testing";
 import { describe, expect, it } from "vitest";
 import { hasBannedWords } from "../../check/src/output/copy";
-import { run, testContext, type Route } from "./helpers";
+import { mistype, run, testContext, type Route } from "./helpers";
 
 const RPC = "https://rpc.test";
 const PUBLIC = [...CALL_ENDPOINTS, ...LOG_ENDPOINTS.map((option) => (typeof option === "string" ? option : option.url))].map((url) => new URL(url).origin);
@@ -126,6 +126,24 @@ describe("hyvo launches", () => {
     const json = await launches(["--rpc", RPC, "--json"], []);
     expect(json.code).toBe(2);
     expect(JSON.parse(json.out).error.code).toBe("chain_unavailable");
+  });
+
+  it("reads an address typed in capitals or small letters, and refuses mixed case that fails its checksum", async () => {
+    for (const typed of [`0x${fizz.token.slice(2).toUpperCase()}`, fizz.token.toLowerCase()]) {
+      const { code, out, err } = await launches([typed, "--rpc", RPC]);
+      expect(err, typed).toBe("");
+      expect(code, typed).toBe(0);
+      expect(out).toContain(`Pons V2 launch · ${fizz.token} · block ${DEMO_HEAD}`);
+    }
+    const stranger = fakeAddress("not a launch");
+    const none = await launches([stranger.toLowerCase(), "--rpc", RPC]);
+    expect(none.out).toContain(`The Pons V2 launch factory has no record of ${stranger}`);
+
+    const mistyped = mistype(fizz.token);
+    const refused = await launches([mistyped, "--rpc", RPC]);
+    expect(refused.code).toBe(64);
+    expect(refused.err).toContain("capital letters do not match its checksum");
+    expect(refused.requests).toEqual([]);
   });
 
   it("refuses bad options before any request", async () => {

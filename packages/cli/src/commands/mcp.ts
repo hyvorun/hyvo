@@ -159,12 +159,14 @@ export function mcpHandlers(ctx: Context, options: Record<string, string | boole
       }
     },
     async launch_facts(args, signal) {
-      const token = typeof args.address === "string" ? args.address.trim() : "";
-      if (!isAddress(token) || /^0x0{40}$/i.test(token)) throw new ToolFailure("address must be a token address: 0x and 40 hex characters");
-      const { launchesReader, oneLaunch, oneLaunchJson, failureText } = await import("../launches.js");
+      const typed = typeof args.address === "string" ? args.address.trim() : "";
+      if (!isAddress(typed) || /^0x0{40}$/i.test(typed)) throw new ToolFailure("address must be a token address: 0x and 40 hex characters");
+      const { launchesReader, oneLaunch, oneLaunchJson, failureText, typedToken, MISTYPED_CHECKSUM } = await import("../launches.js");
+      const token = typedToken(typed);
+      if (token === null) throw new ToolFailure(`address: ${MISTYPED_CHECKSUM}`);
       const reader = launchesReader(rpc, cancellable(ctx.fetch, signal));
       try {
-        return oneLaunchJson(await oneLaunch(reader, token as `0x${string}`));
+        return oneLaunchJson(await oneLaunch(reader, token));
       } catch (error) {
         throw new ToolFailure(`chain_unavailable: Robinhood Chain could not be read: ${failureText(error)}`);
       }

@@ -5,7 +5,7 @@ import { FEED_DIRECTORY_URL } from "@hyvo/stocks";
 import { describe, expect, it } from "vitest";
 import { TOOLS } from "../src/commands/mcp";
 import { McpServer, SUPPORTED_VERSIONS, ToolFailure, type ToolHandler } from "../src/mcp";
-import { run, sampleReport, testContext, TOKEN } from "./helpers";
+import { mistype, run, sampleReport, testContext, TOKEN } from "./helpers";
 
 function server(handlers: Record<string, ToolHandler> = {}) {
   const written: unknown[] = [];
@@ -207,6 +207,22 @@ describe("hyvo mcp", () => {
     expect(byId.get(2)).toEqual({ content: [{ type: "text", text: "address must be a token address: 0x and 40 hex characters" }], isError: true });
     expect(byId.get(3)).toEqual({ content: [{ type: "text", text: "hours must be 1, 6 or 24, not 5" }], isError: true });
     expect(byId.get(4)).toEqual({ content: [{ type: "text", text: "limit must be a whole number from 1 to 100" }], isError: true });
+  });
+
+  it("launch_facts reads an address typed in capitals, and refuses mixed case that fails its checksum", async () => {
+    const chain = demoChain();
+    const fizz = DEMO_LAUNCHES[0]!;
+    const call = (id: number, address: string) => line({ jsonrpc: "2.0", id, method: "tools/call", params: { name: "launch_facts", arguments: { address } } });
+    const c = testContext({
+      stdin: [call(1, `0x${fizz.token.slice(2).toUpperCase()}`), call(2, mistype(fizz.token))],
+      routes: [(url, body) => (url.origin === "https://rpc.test" && body ? { body: JSON.parse(chain.answerText(url.href, body)) } : undefined)],
+    });
+    await run(["mcp", "--rpc", "https://rpc.test"], c);
+    const byId = new Map(c.stdout().trimEnd().split("\n").map((l) => JSON.parse(l)).map((m) => [m.id, m.result]));
+    expect(byId.get(1).isError).toBeUndefined();
+    expect(byId.get(1).structuredContent).toMatchObject({ kind: "v2", token: fizz.token, symbol: "FIZZ" });
+    expect(byId.get(2).isError).toBe(true);
+    expect(byId.get(2).content[0].text).toContain("capital letters do not match its checksum");
   });
 
   it("stock_token reads a token by ticker, and names what the list holds for an unknown one", async () => {

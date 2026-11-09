@@ -26,6 +26,7 @@ import {
   type Lookup,
   type Snapshot,
 } from "@hyvo/launches";
+import { toChecksumAddress } from "@hyvo/check";
 import type { Resolved } from "./config.js";
 import { checkDisclaimer } from "./format/check.js";
 import { toJson } from "./requests.js";
@@ -42,6 +43,19 @@ export const MAX_LIMIT = 100;
 const TRADE_HOURS = 1;
 
 const lower = (value: string) => value.toLowerCase();
+
+/** Why an address is refused when its letters' case fails its checksum. */
+export const MISTYPED_CHECKSUM = "its capital letters do not match its checksum: a character may be mistyped";
+
+/**
+ * A token address as typed (0x and 40 hex characters), checksummed for reading, or null when it is in mixed case
+ * that fails its EIP-55 checksum. All small or all capital letters carry no checksum and are read as they are.
+ */
+export function typedToken(address: string): `0x${string}` | null {
+  const hex = address.slice(2);
+  const checksummed = toChecksumAddress(address);
+  return hex !== hex.toLowerCase() && hex !== hex.toUpperCase() && checksummed !== address ? null : checksummed;
+}
 
 /** Every URL the default reader may ask, for the help text and the README. */
 export function publicEndpoints(): string[] {
