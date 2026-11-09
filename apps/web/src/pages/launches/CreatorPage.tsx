@@ -76,7 +76,14 @@ export function CreatorPage() {
           </ul>
           <p className={styles.fine}>
             The list: {state.answer.data.source}.{" "}
-            {state.chain === "ready" && state.reads.length > 0 ? null : state.chain === "error" ? state.chainError : "Reading each launch from the chain…"}
+            {state.chain === "error" ? state.chainError : state.chain === "loading" ? "Reading each launch from the chain…" : null}
+            {/* Without a chain read there is no block to name below, so the line says it here. */}
+            {state.reads.length === 0 && (
+              <>
+                {" "}
+                <strong>Not a trading signal.</strong>
+              </>
+            )}
           </p>
           {launches.length === 0 ? (
             <p className={styles.note}>This wallet has not launched a token through the Pons V2 factory.</p>

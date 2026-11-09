@@ -721,7 +721,8 @@ read from Pocket) gave a real deployer to try: `0xb02be0d44abb3991d5c00afbcb9c81
   `result` list, empty or not, is read; anything else is "Blockscout's API gave no list of logs"), and its order. Pages assume the oldest logs
   come first, as Etherscan's do: a full page of 1,000 is followed by one from its last block, both are merged without doubles, and after 3
   requests the answer says `complete: false`. If the order turns out to be newest first, a wallet with over 1,000 launches would show its
-  newest 1,000 to 3,000 only; a wallet with fewer is unaffected. **Check with the first deploy:** call the route for the deployer above.
+  newest 1,000 only, with `complete: false` (a full page out of block order is not followed); a wallet with fewer is unaffected. **Check
+  with the first deploy:** call the route for the deployer above.
 - **Cost.** One lookup counts once against the holders route's Blockscout counters (60 a minute, 30,000 a day, item 30) though it can make up to
   3 requests; a wallet with under 1,000 launches makes 1. Kept five minutes in the Cache API.
 

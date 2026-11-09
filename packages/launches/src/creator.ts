@@ -5,18 +5,21 @@
  * and the factory's history is over 83 million blocks, so Hyvo's API asks Blockscout's index instead
  * (item 32). Its Etherscan-style `module=logs&action=getLogs` answers "up to a maximum of 1,000 event logs"
  * and documents no paging, so the next page starts at the highest block seen: that takes the oldest logs to
- * come first, as Etherscan's do, which is not verified yet (item 32). This module builds the query and checks
- * every log it gets back; it makes no request itself.
+ * come first, as Etherscan's do, which is not verified yet (item 32); a full page in any other order ends the
+ * list as incomplete. This module builds the query and checks every log it gets back; it makes no request itself.
  */
-import { decodeEventLog, getAddress, isAddress, type Address, type Hex } from "viem";
-import { FACTORY_ABI, PONS_V2_FACTORY, PONS_V2_FACTORY_BLOCK, TOPICS } from "./pons";
+import { getAddress, isAddress, type Address, type Hex } from "viem";
+import { PONS_V2_FACTORY, PONS_V2_FACTORY_BLOCK, TOPICS } from "./pons";
 
 export { PONS_V2_FACTORY, PONS_V2_FACTORY_BLOCK };
 
 /** Blockscout answers at most this many logs to one getLogs query. */
 export const LOGS_PER_PAGE = 1000;
 
-/** One launch of the wallet, from its TokenLaunched log. */
+/**
+ * One launch of the wallet, from its TokenLaunched log. Addresses read from a log are lowercase (no checksum: it
+ * costs a hash each, too much CPU for a Worker over a page of 1,000); `creatorLaunchFromJson` checksums them.
+ */
 export interface CreatorLaunch {
   token: Address;
   curve: Address;
@@ -52,6 +55,15 @@ export function creatorLogsQuery(deployer: string, fromBlock: bigint = PONS_V2_F
 
 const HEX = /^0x[0-9a-fA-F]+$/;
 const TX = /^0x[0-9a-fA-F]{64}$/;
+const WORD = /^0x[0-9a-fA-F]{64}$/;
+/** TokenLaunched's data: three words (pairToken, launchConfigId, graduationThreshold). */
+const DATA = /^0x[0-9a-fA-F]{192}$/;
+const PADDING = /^0{24}/;
+
+/** The address in a 32-byte ABI word (64 hex digits, no 0x), lowercase; null when its first 12 bytes are not zero. */
+function wordAddress(word: string): Address | null {
+  return PADDING.test(word) ? (`0x${word.slice(24).toLowerCase()}` as Address) : null;
+}
 
 /** A quantity the index sent as hex ("0x1a") or as decimal digits; null when it is neither. */
 function quantity(value: unknown): bigint | null {
@@ -77,27 +89,28 @@ export function parseCreatorLogs(json: unknown, deployer: string): { launches: C
     if (!item || typeof item !== "object") continue;
     const log = item as Record<string, unknown>;
     if (typeof log.address !== "string" || log.address.toLowerCase() !== PONS_V2_FACTORY.toLowerCase()) continue;
-    const topics = Array.isArray(log.topics) ? log.topics.filter((topic): topic is string => typeof topic === "string" && /^0x[0-9a-fA-F]{64}$/.test(topic)) : [];
+    const topics = Array.isArray(log.topics) ? log.topics.filter((topic): topic is string => typeof topic === "string" && WORD.test(topic)) : [];
     if (topics.length !== 4 || topics[0]!.toLowerCase() !== TOPICS.tokenLaunched) continue;
-    if (typeof log.data !== "string" || !HEX.test(log.data)) continue;
+    if (typeof log.data !== "string" || !DATA.test(log.data)) continue;
     const block = quantity(log.blockNumber);
     const index = quantity(log.logIndex);
     if (block === null || block < PONS_V2_FACTORY_BLOCK || typeof log.transactionHash !== "string" || !TX.test(log.transactionHash)) continue;
-    let decoded;
-    try {
-      decoded = decodeEventLog({ abi: FACTORY_ABI, eventName: "TokenLaunched", data: log.data as Hex, topics: topics as [Hex, ...Hex[]], strict: true });
-    } catch {
-      continue;
-    }
-    const args = decoded.args;
-    if (args.deployer.toLowerCase() !== wanted) continue;
+    // TokenLaunched(address indexed token, address indexed curve, address indexed deployer, address pairToken,
+    // uint256 launchConfigId, uint256 graduationThreshold), decoded by hand: viem's decodeEventLog and checksums cost
+    // about 85 µs a log, so a page of 1,000 took some 85 ms of CPU, past the Worker free plan's 10 ms many times over.
+    const token = wordAddress(topics[1]!.slice(2));
+    const curve = wordAddress(topics[2]!.slice(2));
+    const from = wordAddress(topics[3]!.slice(2));
+    const data = log.data.slice(2);
+    const pairToken = wordAddress(data.slice(0, 64));
+    if (!token || !curve || !pairToken || from !== wanted) continue;
     const time = quantity(log.timeStamp);
     launches.push({
-      token: getAddress(args.token),
-      curve: getAddress(args.curve),
-      pairToken: getAddress(args.pairToken),
-      launchConfigId: args.launchConfigId,
-      graduationThreshold: args.graduationThreshold,
+      token,
+      curve,
+      pairToken,
+      launchConfigId: BigInt(`0x${data.slice(64, 128)}`),
+      graduationThreshold: BigInt(`0x${data.slice(128, 192)}`),
       block,
       timestamp: time !== null && time > 0n && time < 10_000_000_000n ? Number(time) : null,
       txHash: log.transactionHash.toLowerCase() as Hex,
@@ -120,10 +133,12 @@ export function mergeCreatorPages(pages: readonly (readonly CreatorLaunch[])[]):
 /**
  * Where the next page starts, or null when there is none: a page with fewer than LOGS_PER_PAGE logs is the
  * last. A full page whose logs all sit in the block it started at cannot move on, so that is null too, and the
- * caller says the list may be incomplete.
+ * caller says the list may be incomplete. So is a full page that does not come oldest first: if the index cut
+ * the newest 1,000, a page from their highest block would hold only that block's logs and look like the last.
  */
 export function nextPageFrom(page: { launches: readonly CreatorLaunch[]; rows: number }, from: bigint): bigint | null {
   if (page.rows < LOGS_PER_PAGE) return null;
+  for (let i = 1; i < page.launches.length; i++) if (page.launches[i]!.block < page.launches[i - 1]!.block) return null;
   const last = page.launches.reduce((max, launch) => (launch.block > max ? launch.block : max), 0n);
   return last > from ? last : null;
 }

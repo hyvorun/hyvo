@@ -69,14 +69,25 @@ describe("parseCreatorLogs", () => {
     };
     const page = parseCreatorLogs(answer, CREATOR.toLowerCase());
     expect(page?.rows).toBe(6);
-    expect(page?.launches.map((launch) => launch.token)).toEqual([fakeAddress("history:token:1"), fakeAddress("history:token:2")]);
+    expect(page?.launches.map((launch) => launch.token)).toEqual([fakeAddress("history:token:1").toLowerCase(), fakeAddress("history:token:2").toLowerCase()]);
     const first = page!.launches[0]!;
-    expect(first.curve).toBe(fakeAddress("history:curve:1"));
+    expect(first.curve).toBe(fakeAddress("history:curve:1").toLowerCase());
     expect(first.pairToken).toBe(getAddress(NATIVE));
+    expect(first.launchConfigId).toBe(1n);
     expect(first.graduationThreshold).toBe(4_200_000_000_000_000_000n);
     expect(first.block).toBe(110_000_001n);
     expect(first.timestamp).toBe(1_794_000_001);
     expect(first.logIndex).toBe(3);
+  });
+
+  it("drops a log whose words are not a TokenLaunched encoding", () => {
+    const dirty = blockscoutLog(1);
+    dirty.topics[1] = `0x${"f".repeat(24)}${dirty.topics[1]!.slice(26)}` as Hex;
+    const long = { ...blockscoutLog(2), data: `${blockscoutLog(2).data}${"0".repeat(64)}` };
+    const short = { ...blockscoutLog(3), data: blockscoutLog(3).data.slice(0, -64) };
+    const page = parseCreatorLogs({ result: [dirty, long, short, blockscoutLog(4)] }, CREATOR);
+    expect(page?.rows).toBe(4);
+    expect(page?.launches.map((launch) => launch.token)).toEqual([fakeAddress("history:token:4").toLowerCase()]);
   });
 
   it("takes Blockscout's empty answer as no launches, and anything without a list as no answer", () => {
@@ -106,6 +117,11 @@ describe("paging", () => {
     const stuck = Array.from({ length: LOGS_PER_PAGE }, (_, i) => blockscoutLog(i, { block: 100_000_000n }));
     expect(nextPageFrom(parseCreatorLogs({ result: stuck }, CREATOR)!, 100_000_000n)).toBeNull();
   });
+
+  it("stops when a full page comes newest first, rather than take a page of its newest block for the last", () => {
+    const newest = Array.from({ length: LOGS_PER_PAGE }, (_, i) => blockscoutLog(i, { block: 101_000_000n - BigInt(i) }));
+    expect(nextPageFrom(parseCreatorLogs({ result: newest }, CREATOR)!, PONS_V2_FACTORY_BLOCK)).toBeNull();
+  });
 });
 
 describe("JSON", () => {
@@ -114,7 +130,9 @@ describe("JSON", () => {
     const json = creatorLaunchToJson(launch);
     expect(json.graduationThreshold).toBe("4200000000000000000");
     expect(json.block).toBe(110_000_007);
-    expect(creatorLaunchFromJson(json)).toEqual(launch);
+    expect(json.token).toBe(fakeAddress("history:token:7").toLowerCase());
+    // The browser checksums what the API sends lowercase.
+    expect(creatorLaunchFromJson(json)).toEqual({ ...launch, token: fakeAddress("history:token:7"), curve: fakeAddress("history:curve:7"), pairToken: getAddress(NATIVE) });
     expect(creatorLaunchFromJson({ ...json, token: "<b>not an address</b>" })).toBeNull();
   });
 });
