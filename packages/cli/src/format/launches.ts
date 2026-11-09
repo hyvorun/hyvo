@@ -19,7 +19,7 @@ import {
   type LaunchDetail,
 } from "@hyvo/launches";
 import type { Palette } from "../color.js";
-import { listedPhase, type LastHour, type OneLaunch, type RecentLaunches } from "../launches.js";
+import { listedPhase, MAX_LIMIT, WINDOW_HOURS, type LastHour, type OneLaunch, type RecentLaunches } from "../launches.js";
 import { checkDisclaimer } from "./check.js";
 import { factLines, headingLine, paragraph, tableLines, tableWidth, titleLines, type Fact } from "./facts.js";
 import { oneLine, wrap } from "./text.js";
@@ -81,6 +81,27 @@ export function graduationsLine(graduations: RecentLaunches["graduations"]): str
   return `${graduations.length} curves graduated to their pools in these blocks (${here} of them launched in the window).`;
 }
 
+/**
+ * What the window holds beyond the rows shown, and how to see it: a larger --limit only while one would list more
+ * (up to MAX_LIMIT), else a shorter window; and the launches left out because their pair asset could not be read.
+ */
+function moreNotes(result: RecentLaunches): string[] {
+  const notes: string[] = [];
+  const asked = Math.min(result.total, result.limit);
+  const beyond = result.total - asked;
+  const unread = asked - result.launches.length;
+  const listable = Math.min(result.total, MAX_LIMIT);
+  if (beyond > 0 && result.limit < listable) {
+    notes.push(`${beyond} more in the window: hyvo launches --hours ${result.hours} --limit ${listable}`);
+  } else if (beyond > 0) {
+    const shorter = [...WINDOW_HOURS].reverse().find((hours) => hours < result.hours);
+    const tip = shorter === undefined ? "" : `; a shorter window has fewer: hyvo launches --hours ${shorter}`;
+    notes.push(`${beyond} more in the window: at most the newest ${MAX_LIMIT} are listed${tip}`);
+  }
+  if (unread > 0) notes.push(`${unread} more could not be listed: their pair assets' decimals could not be read.`);
+  return notes;
+}
+
 export function renderRecentLaunches(result: RecentLaunches, o: LaunchesRenderOptions): string {
   const c = o.palette;
   const now = result.read.timestamp || result.head.timestamp;
@@ -115,8 +136,7 @@ export function renderRecentLaunches(result: RecentLaunches, o: LaunchesRenderOp
     const shorten = o.width !== null && tableWidth(head, full) > o.width;
     lines.push(...tableLines(head, shorten ? rows(true) : full, c));
     const notes: string[] = [];
-    const rest = result.total - result.launches.length;
-    if (rest > 0) notes.push(`${rest} more in the window: hyvo launches --hours ${result.hours} --limit ${Math.min(100, result.total)}`);
+    notes.push(...moreNotes(result));
     notes.push("One launch's facts: hyvo launches <token>");
     if (shorten) notes.push("Addresses are shortened to fit this terminal; --json has them in full.");
     lines.push("", ...notes.flatMap((note) => paragraph(note, o.width, c.gray)));

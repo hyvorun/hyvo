@@ -90,6 +90,8 @@ export interface WindowGraduation extends GraduationEvent {
 
 export interface RecentLaunches {
   hours: number;
+  /** How many of the newest launches were asked for (`--limit`). */
+  limit: number;
   /** The block the window ends at. */
   head: Snapshot;
   fromBlock: bigint;
@@ -127,7 +129,7 @@ export async function recentLaunches(reader: ChainReader, hours: number, limit: 
     .sort((a, b) => b.launches - a.launches || (a.address < b.address ? -1 : 1));
   const launched = new Set(scan.launches.map((event) => lower(event.token)));
   const graduations = scan.graduations.map((event) => ({ ...event, launchedInWindow: launched.has(lower(event.token)) }));
-  return { hours, head, fromBlock: fromBlock < 0n ? 0n : fromBlock, total: scan.launches.length, graduations, launches, read, byPair };
+  return { hours, limit, head, fromBlock: fromBlock < 0n ? 0n : fromBlock, total: scan.launches.length, graduations, launches, read, byPair };
 }
 
 export type LastHour =

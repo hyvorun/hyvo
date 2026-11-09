@@ -1,5 +1,5 @@
-﻿import { CALL_ENDPOINTS, LOG_ENDPOINTS } from "@hyvo/launches";
-import { DEMO_HEAD, DEMO_LAUNCHES, DEMO_V1, demoChain, fakeAddress } from "@hyvo/launches/testing";
+﻿import { CALL_ENDPOINTS, LOG_ENDPOINTS, NATIVE } from "@hyvo/launches";
+import { DEMO_HEAD, DEMO_LAUNCHES, DEMO_PACE, DEMO_TIME, DEMO_V1, demoChain, FakeChain, fakeAddress } from "@hyvo/launches/testing";
 import { describe, expect, it } from "vitest";
 import { hasBannedWords } from "../../check/src/output/copy";
 import { mistype, run, testContext, type Route } from "./helpers";
@@ -70,6 +70,34 @@ describe("hyvo launches", () => {
     const { out } = await launches(["--rpc", RPC], [chainRoute([RPC], chain)]);
     expect(out).toMatch(new RegExp(`^ {2}3 min +FIZZ +ETH +graduated +off its curve, no pool yet +0% +${fizz.token}$`, "m"));
     expect(out).toMatch(new RegExp(`^ {2}1 h 10 min +BRISK +ETH +graduated +moved to its pool +10% +${brisk.token}$`, "m"));
+  });
+
+  it("suggests a larger --limit only while one would list more, and a shorter window past the newest 100", async () => {
+    // 105 launches in the last 6 hours, one a minute.
+    const crowded = new FakeChain({
+      head: DEMO_HEAD,
+      headTime: DEMO_TIME,
+      blocksPerSecond: DEMO_PACE,
+      launches: Array.from({ length: 105 }, (_, i) => ({
+        token: fakeAddress(`crowd:token:${i}`),
+        curve: fakeAddress(`crowd:curve:${i}`),
+        creator: fakeAddress(`crowd:creator:${i}`),
+        pairToken: NATIVE,
+        symbol: `C${i}`,
+        name: `Crowd ${i}`,
+        block: DEMO_HEAD - BigInt(Math.round((i + 1) * 60 * DEMO_PACE)),
+        launchedAt: DEMO_TIME - (i + 1) * 60,
+        graduationThreshold: 4_200_000_000_000_000_000n,
+        liquidity: 10n ** 16n,
+      })),
+    });
+    const route = [chainRoute([RPC], crowded)];
+    const most = await launches(["--rpc", RPC, "--limit", "100"], route);
+    expect(most.code).toBe(0);
+    expect(most.out).not.toContain("--limit 100");
+    expect(most.out).toContain("5 more in the window: at most the newest 100 are listed; a shorter window has fewer: hyvo launches --hours 1");
+    const few = await launches(["--rpc", RPC, "--limit", "20"], route);
+    expect(few.out).toContain("85 more in the window: hyvo launches --hours 6 --limit 100");
   });
 
   it("prints JSON with every amount and block as a decimal string", async () => {
