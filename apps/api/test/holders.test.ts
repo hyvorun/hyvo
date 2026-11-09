@@ -12,6 +12,7 @@ import type { Env } from "../src/env";
 import { setCheckRuntime } from "../src/lib/check";
 import { iso, setClock } from "../src/lib/clock";
 import { BLOCKSCOUT_READS_PER_MINUTE, HOLDER_READS_PER_MINUTE, holdersSource, redact, setHoldersFetch } from "../src/lib/holders";
+import { runScheduled } from "../src/scheduled";
 import { call, chainEnv, frozenClock, resetDb } from "./helpers";
 
 /** A fake key, made to stand out: it must never come back in an answer, a header or a log. */
@@ -273,8 +274,53 @@ describe("GET /v1/check/:token/holders", () => {
     expect(body.holdersMissing).toBe("Blockscout's API answered 429 for the token's holders: its free tier allows 5 requests a second");
     expect(body.creator).toBeNull();
     expect(body.creatorMissing).toBe("Blockscout's API answered 500 for the token's creator");
+    clock.advance(30); // past the pause a 429 starts, inside the same ten-minute window
     await get(`/v1/check/${TOKEN}/holders`);
     expect(asked).toHaveLength(6);
+  });
+
+  it("asks Blockscout nothing for 30 s after it answers 429, then asks again", async () => {
+    const { asked } = install({}, { holders: { status: 429, body: {} } });
+    await get(`/v1/check/${TOKEN}/holders`);
+    expect(asked).toHaveLength(3);
+    const paused = await get(`/v1/check/${other(1)}/holders`);
+    expect(paused.status).toBe(200);
+    expect(paused.headers.get("Cache-Control")).toBe("no-store");
+    const body = (await paused.json()) as Record<string, any>;
+    expect(body.holdersMissing).toBe("Blockscout's API answered 429 to Hyvo's API in the last 30 s; ask again in 30 s");
+    expect(body.creatorMissing).toBe(body.holdersMissing);
+    clock.advance(10);
+    expect(((await (await get(`/v1/check/${other(2)}/holders`)).json()) as Record<string, any>).holdersMissing).toMatch(/ask again in 20 s$/);
+    expect(asked).toHaveLength(3);
+    clock.advance(20);
+    await get(`/v1/check/${other(3)}/holders`);
+    expect(asked).toHaveLength(6);
+  });
+
+  it("stops reading Blockscout for the day after 30,000 reads, a count the cron keeps all day", async () => {
+    const { asked } = install();
+    const now = clock.now();
+    const day = now - (now % 86_400);
+    expect(now - day).toBeGreaterThan(3_600); // more than an hour into the UTC day
+    const seed = (key: string, start: number, count: number) =>
+      target.DB.prepare("INSERT INTO rate_limits (key, window_start, count) VALUES (?, ?, ?)").bind(key, start, count).run();
+    await seed(`blockscout-day:worker:${day}`, day, 30_000);
+    await seed(`blockscout:worker:${now - 7_200}`, now - 7_200, 5);
+    // The cron drops the counts of minutes past, not the day's.
+    await runScheduled(chainEnv({ BLOCKSCOUT_API_KEY: KEY, RPC_URLS: "" }), now);
+    const kept = await target.DB.prepare("SELECT key FROM rate_limits").all<{ key: string }>();
+    expect(kept.results.map((row) => row.key)).toEqual([`blockscout-day:worker:${day}`]);
+
+    const spent = await get(`/v1/check/${TOKEN}/holders`);
+    expect(spent.status).toBe(200);
+    const body = (await spent.json()) as Record<string, any>;
+    expect(body.holders).toBeNull();
+    expect(body.holdersMissing).toBe("Hyvo's API has read Blockscout's index as often as it may today; ask again after 00:00 UTC");
+    expect(asked).toHaveLength(0);
+    // A check still answers, with the holders skipped and why.
+    const check = (await (await get(`/v1/check/${TOKEN}`)).json()) as Record<string, any>;
+    expect(finding(check, "holders")).toMatchObject({ status: "skipped", evidence: body.holdersMissing });
+    expect(asked).toHaveLength(0);
   });
 
   it("refuses what is not an address, and is off without a key", async () => {

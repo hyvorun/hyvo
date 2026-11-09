@@ -183,16 +183,17 @@ function failure(what: string, outcome: { status: number } | HttpError): string 
  * could not be read is null, with the reason in `holdersMissing` or `creatorMissing`. A page that lists no holder
  * counts as holders not read yet, never as holders who hold nothing. `settled`: every request got an answer that
  * holds until the index changes (200 or 404), and the page listed holders, so the facts are worth keeping for a while.
+ * `limited`: Blockscout answered 429 to at least one of them, so a caller can wait before it asks again.
  */
 export async function readHolderFacts(
   token: string,
   options: HolderReadOptions,
-): Promise<HolderFacts & { requests: number; settled: boolean }> {
+): Promise<HolderFacts & { requests: number; settled: boolean; limited: boolean }> {
   const fetchFn = options.fetch ?? (globalThis.fetch?.bind(globalThis) as FetchLike | undefined);
   const base = { source: options.source, totalSupply: null, holderCount: null, holders: null, creator: null };
   if (!fetchFn || !isAddress(token)) {
     const why = !fetchFn ? "no fetch in this environment" : "not an address";
-    return { ...base, holdersMissing: why, creatorMissing: why, requests: 0, settled: false };
+    return { ...base, holdersMissing: why, creatorMissing: why, requests: 0, settled: false, limited: false };
   }
   const net = new Net({ fetch: fetchFn, signal: options.signal, timeoutMs: options.timeoutMs ?? DEFAULT_TIMEOUT_MS });
   const client = new BlockscoutClient(net, options.blockscoutUrl ?? ROBINHOOD_CHAIN.blockscoutApiUrl, options.blockscoutKey, options.retry429 ?? false);
@@ -238,5 +239,6 @@ export async function readHolderFacts(
     settled:
       !(listed !== null && listed.length === 0) &&
       [info, list, created].every((answer) => !(answer instanceof HttpError) && (answer.status === 200 || answer.status === 404)),
+    limited: [info, list, created].some((answer) => !(answer instanceof HttpError) && answer.status === 429),
   };
 }

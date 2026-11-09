@@ -510,9 +510,10 @@ chain, and the check in the browser leaves out burn addresses and pools as it do
   `Cache-Control: public, max-age=<seconds left in the window>`. Facts with a part Blockscout did not answer (a `429`, a timeout, a `5xx`), or
   with a page that lists no holder, are not kept and carry `Cache-Control: no-store`, so the next request asks again.
 - **Limits.** 10 reads a minute per IP on this route (an answer from the cache does not count), then `429 rate_limited` with `Retry-After`. The
-  Worker as a whole starts at most 60 reads a minute, 3 requests each, under Blockscout's free tier of 5 requests a second; past that the
-  facts say so (`holdersMissing`, `creatorMissing`) and Blockscout is not asked. Blockscout's free tier also allows 100,000 credits a day; what
-  one request costs in credits is not known yet (item 30).
+  Worker as a whole starts at most 60 reads a minute, 3 requests each, under Blockscout's free tier of 5 requests a second, and at most 30,000
+  reads a UTC day: 90,000 requests, under the free tier's 100,000 credits a day if a request costs one credit (what it costs is not known yet,
+  item 30), with the rest left to the engine's Wallet Clone, which uses the same key. After Blockscout answers `429`, the Worker's isolate that
+  saw it asks Blockscout nothing for 30 s. Past any of these, the facts say so (`holdersMissing`, `creatorMissing`) and Blockscout is not asked.
 - **Errors.** `400 bad_request` for anything that is not an address. `503 holders_disabled` when the Worker has no `BLOCKSCOUT_API_KEY`.
 
 ---

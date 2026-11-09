@@ -60,6 +60,7 @@ describe("readHolderFacts", () => {
       creatorMissing: null,
       requests: 3,
       settled: true,
+      limited: false,
     });
     expect(urls.map((u) => new URL(u).pathname).sort()).toEqual([
       `/4663/api/v2/addresses/${TOKEN}`,
@@ -78,6 +79,7 @@ describe("readHolderFacts", () => {
     expect(facts.creatorMissing).toBe("Blockscout's API could not be reached for the token's creator");
     expect(facts.totalSupply).toBe(1000n);
     expect(facts.settled).toBe(false);
+    expect(facts.limited).toBe(true);
     expect(limited.urls).toHaveLength(3);
     // The key, which a failing fetch can put in its message, reaches no reason.
     expect(JSON.stringify(serializeHolderFacts(facts))).not.toContain(KEY);
