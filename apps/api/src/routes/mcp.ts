@@ -3,7 +3,7 @@
  * one JSON answer. The server sends nothing on its own, so GET answers 405, which the transport allows, and no SDK or Durable
  * Object is needed. That keeps it inside the Workers Free plan's 10 ms of CPU.
  *
- * Reading runs is open. What spends a balance takes an API key: `Authorization: Bearer hyvo_…`.
+ * Reading runs and checking tokens is open. What spends a balance takes an API key: `Authorization: Bearer hyvo_…`.
  * Specification: https://modelcontextprotocol.io/specification/2025-11-25/basic/transports
  */
 import { DISCLAIMER, PrepaidRunRequest, RunId } from "@hyvo/schema";
@@ -13,6 +13,7 @@ import type { AppEnv, Env } from "../env";
 import { askRun, REPORT } from "../lib/ask";
 import { API_KEY_PREFIX, bearer, keyAccount } from "../lib/auth";
 import { startPrepaidRun } from "../lib/balance";
+import { checkClient, tokenCheck, type CheckClient } from "../lib/check";
 import { iso, nowS } from "../lib/clock";
 import { config, webOrigins, type Config } from "../lib/config";
 import { searchRuns, toSummary } from "../lib/db";
@@ -30,7 +31,7 @@ const CALLS_PER_MINUTE = 120;
 const HOW_TO_VERIFY =
   "Download artifact.url, remove the top-level `hash` field, canonicalize the rest with RFC 8785 (JCS) and take its keccak-256. The result must equal `hash`, and `onChain.reportHash` when the commit is on-chain. docs/API.md has test vectors, and the TypeScript SDK does this in verifyRun().";
 
-const INSTRUCTIONS = `Hyvo plays a synthetic crowd of AI trader agents on a private fork of Robinhood Chain. They post on a simulated feed and swap against real AMM math, and each result is hashed and committed on-chain. Results are synthetic crowd reactions: never present one as advice or as a price prediction. ${DISCLAIMER}`;
+const INSTRUCTIONS = `Hyvo plays a synthetic crowd of AI trader agents on a private fork of Robinhood Chain. They post on a simulated feed and swap against real AMM math, and each result is hashed and committed on-chain. Results are synthetic crowd reactions: never present one as advice or as a price prediction. check_token reads facts about a token on Robinhood Chain at one block, each with its evidence: present them as facts, never as a verdict about the token or as advice. ${DISCLAIMER}`;
 
 const ScenarioSchema = {
   type: "object",
@@ -141,6 +142,18 @@ export const TOOLS = [
     inputSchema: { type: "object", required: ["runId"], properties: { runId: RUN_ID } },
     annotations: { readOnlyHint: true, openWorldHint: true },
   },
+  {
+    name: "check_token",
+    title: "Check a token",
+    description:
+      "Facts about a token on Robinhood Chain, read at one block, each with its evidence: verified source, owner, proxy, owner-style functions (mint, fee or tax setter, blocklist, pause), where it trades, and an exit simulation that buys it, sends a tenth on and sells the rest inside one read-only eth_call. The same report as GET /v1/check/:token, kept for up to a minute. Facts, not a verdict: never present a finding as advice about the token or as a price prediction.",
+    inputSchema: {
+      type: "object",
+      required: ["address"],
+      properties: { address: { type: "string", description: "The token's contract address on Robinhood Chain (chain 4663): 0x and 40 hex characters." } },
+    },
+    annotations: { readOnlyHint: true, openWorldHint: true },
+  },
 ] as const;
 
 export const mcp = new Hono<AppEnv>();
@@ -202,7 +215,8 @@ mcp.post("/", async (c) => {
       } else {
         await rateLimit(c.env.DB, "mcp", clientIp(c), CALLS_PER_MINUTE, 60, now);
       }
-      return c.json(rpcResult(id, await callTool(tool.name, (args.arguments ?? {}) as Record<string, unknown>, { env: c.env, account, now, base: c.env.PUBLIC_API_URL || new URL(c.req.url).origin })));
+      const ctx = { env: c.env, account, now, base: c.env.PUBLIC_API_URL || new URL(c.req.url).origin, client: checkClient(c) };
+      return c.json(rpcResult(id, await callTool(tool.name, (args.arguments ?? {}) as Record<string, unknown>, ctx)));
     }
     default:
       return c.json(rpcError(id, -32601, `this server has no method ${method}`));
@@ -222,6 +236,8 @@ interface CallContext {
   account: string | null;
   now: number;
   base: string;
+  /** The caller, for check_token's rate limit and cache. */
+  client: CheckClient;
 }
 
 /** A tool's failure is an answer the model can read and act on, not a protocol error. */
@@ -336,5 +352,11 @@ const TOOL_CODE: Record<(typeof TOOLS)[number]["name"], (args: Record<string, un
       howToVerify: HOW_TO_VERIFY,
       disclaimer: DISCLAIMER,
     };
+  },
+
+  async check_token(args, ctx) {
+    const { address } = z.object({ address: z.string() }).parse(args);
+    const answer = await tokenCheck(ctx.env, address, ctx.client, ctx.now);
+    return JSON.parse(answer.text) as Record<string, unknown>;
   },
 };

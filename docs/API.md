@@ -15,7 +15,7 @@ Cloudflare Worker (`apps/api`, Hono, D1, KV, Workers AI). This document is the c
   `"disclaimer": "Synthetic crowd reaction. Not a trading signal."`.
 - Browser routes (`/v1/*`) answer CORS only for `WEB_ORIGIN`.
 
-Contents: [Authentication](#authentication) · [Runs](#runs) · [Quotes and payments](#quotes-and-payments) ·
+Contents: [Authentication](#authentication) · [Runs](#runs) · [Hyvo Check](#hyvo-check) · [Quotes and payments](#quotes-and-payments) ·
 [Oracle](#oracle) · [Admin](#admin) · [Runner jobs](#runner-jobs) · [LLM endpoint](#llm-endpoint) ·
 [Background work](#background-work) ·
 [Money rules in the API](#money-rules-in-the-api) · [Verifying a run](#verifying-a-run) · [`RunSummary`](#runsummary)
@@ -28,7 +28,7 @@ The kinds of caller:
 
 | Caller | How | Routes |
 |---|---|---|
-| Anyone | nothing | `GET /v1/health`, `/v1/runs*` reads, `/v1/artifacts/*`, `/v1/oracle*`, the reading tools of `/mcp` |
+| Anyone | nothing | `GET /v1/health`, `/v1/runs*` reads, `/v1/artifacts/*`, `/v1/oracle*`, `GET /v1/check/:token`, the reading tools of `/mcp` |
 | A wallet | `Authorization: Bearer <session token>` from Sign-In with Ethereum | `/v1/me`, `/v1/keys*`, `/v1/auth/logout`, and all of the next row; `/v1/admin/*` for founder wallets |
 | A bot | `Authorization: Bearer hyvo_…`, an API key of that wallet | `/v1/quotes`, `/v1/orders*`, `POST /v1/runs`, `POST /v1/runs/:id/ask`, `/v1/balance*`, `/v1/webhooks*`, all of `/mcp` |
 | The runner | `Authorization: Bearer <RUNNER_TOKEN>` | `/internal/*` except the LLM endpoint |
@@ -271,6 +271,7 @@ are limited to 120 a minute per IP.
 | `ask_agent(runId, agentId, question)` | yes | The same answer as `POST /v1/runs/:runId/ask`. |
 | `list_recent_runs(filter?, limit?)` | no | Listed runs, newest first. `filter`: `titleContains`, `status`. At most 20. |
 | `verify_run(runId)` | no | `hash`, `commit`, `onChain`, `matches`, `chainId`, `oracleAddress`, a signed `artifact` link and `howToVerify`. It reads the chain, but the proof is yours to recompute (below): `verifyRun` in `packages/sdk` does it. |
+| `check_token(address)` | no | The same answer as [`GET /v1/check/:token`](#get-v1checktoken), from the same cache and under the same limit of 10 checks a minute per IP: a token's facts at one block with their evidence, and `disclaimer`. Facts, not a verdict about the token. |
 
 A tool's failure is an answer with `isError: true` and a message a model can act on, not a protocol error. Every tool's answer is in `structuredContent`,
 and as JSON text in `content`.
@@ -398,6 +399,74 @@ The runner forks the chain at the block, seeds a test pair with the reserves the
 reserves and price at evenly spaced blocks. Anyone can read those from the chain with `getReserves()`. The run stays out of the gallery, because it names a real token (`docs/OPEN_ITEMS.md` item 23): `listed: true` answers `400`, as
 does a `market` with liquidity. A pool must have a contract address with `getReserves()`, and be priced in ETH. A block the node has no state for, or a window that reaches past the newest block, fails the job, and the price
 goes back to the balance.
+
+---
+
+## Hyvo Check
+
+Facts about a token on Robinhood Chain, read at one block, each with its evidence: verified source, owner, proxy, owner-style functions, where it
+trades, and an exit simulation that buys the token, sends a tenth of it to a fresh address and sells the rest, inside one read-only `eth_call`
+(`packages/check/README.md`). Nothing is signed, approved or sent. A report is not a verdict about the token, not an audit and not a trading signal.
+MCP's `check_token` gives the same answer.
+
+### `GET /v1/check/:token`
+
+No key and no session. `:token` is the token's address: `0x` and 40 hex characters, in any letter case.
+
+`200`: the report of `@hyvo/check` (`checkToken` with its defaults, written by `serializeReport`, so amounts and the block are decimal strings),
+then three fields of this API. The type is `CheckResponse` in `apps/api/src/lib/check.ts`.
+
+```jsonc
+{
+  "chainId": 4663,
+  "token": { "address": "0x…", "name": "…" | null, "symbol": "…" | null, "decimals": 18 | null, "totalSupply": "…" | null },
+  "block": "109871808",            // every read and the simulation ran here, two blocks below the head
+  "findings": [                    // always 11, in this order: source, owner, proxy, mint, fee-setter, blocklist, pause,
+                                   // venue, sell-simulation, holders, deployer
+    { "id": "venue", "title": "Trading venue", "status": "found", "evidence": "the Uniswap V2 pair 0x… with WETH, holding … WETH and … tokens" },
+    …
+  ],
+  "exit": {                        // null when there is no venue the simulation covers; the sell-simulation finding says why
+    "venue": { "kind": "v2", "router": "0x…", "pair": "0x…" },       // or pons-curve, pons-v4, v3
+    "ethIn": "1000000000000000",   // 0.001 ETH
+    "payout": "eth",               // or weth
+    "buy": { "ok": true, "promised": "…", "arrived": "…", "shortfallPct": 0, "gas": "133547", "reason": null },
+    "transfer": { … } | null,      // a tenth of what arrived, sent to a fresh address
+    "sell": { … } | null,
+    "roundTrip": { "spent": "…", "back": "…", "lossPct": 0.59 } | null
+  } | null,
+  "code": { "bytes": 2560, "proxyImplementation": "0x…" | null, "owner": "0x…" | null, "ownerRenounced": false, "sourcify": "none" },
+  "timings": { "totalMs": 1370, "chainMs": 900, "simulationMs": 350, "sourcesMs": 400, "requests": { "rpc": 8, "sourcify": 1, "blockscout": 0 } },
+  "notice": "Facts read from Robinhood Chain at one block, each with its evidence. Not a trading signal, and not an audit.",
+  "checkedAt": "2026-11-09T07:12:00Z",                               // when the check ran
+  "skippedByApi": [{ "id": "holders", "reason": "Top holders come from Blockscout, …" }],
+  "disclaimer": "Measured on-chain at block 109871808. Not a trading signal."
+}
+```
+
+A finding's `status` is `found` (the check found what it looks for), `not_found` (it looked, and the evidence says where) or `skipped` (it could
+not look, and the evidence says why). `CHECKS[id].looksFor` in `@hyvo/check`, and its README, say what each check looks for. A step's
+`shortfallPct` compares what arrived with what the venue's own math promised after its published fees and taxes.
+
+- **What this API leaves out.** It never asks Blockscout, which needs an API key and allows 5 requests a second on its free tier
+  (`docs/OPEN_ITEMS.md` item 24). So `holders` is always `skipped` and `skippedByApi` says why; verified source comes from Sourcify alone, and
+  the deployer from the Pons factories' records and Sourcify. `@hyvo/check` asks Blockscout too with a key of your own (`blockscoutKey`). The
+  simulation always buys with 0.001 ETH.
+- **Cache.** One check per token per UTC minute, about 600 blocks: every request in the minute gets the first one's answer, with
+  `X-Hyvo-Cache: hit` and `Cache-Control: public, max-age=<seconds left in the minute>`. `block` and `checkedAt` say when it was read. The Cache
+  API keeps an answer in the Cloudflare data center that made it, and Cloudflare documents it as working for Workers on custom domains such as
+  `api.hyvo.run` (read 2026-11-09); where it does not hold answers, every request is a new check. Errors are never cached, so an address
+  without a token is asked again next time.
+- **Errors.** `400 bad_request` for anything that is not an address. `404 not_a_contract` (no code at the block) and `404 not_a_token` (neither
+  `totalSupply()` nor `balanceOf(address)` answers). `503 chain_unavailable` with `Retry-After` when Robinhood Chain cannot be read. `504
+  check_timeout` after 25 s. `503 check_disabled` without `RPC_URLS`, or with a `CHAIN_ID` other than 4663.
+- **Rate limit:** 10 checks a minute per IP, shared with `check_token`. An answer from the cache does not count.
+- **Inside the Workers Free plan** (50 subrequests and 10 ms of CPU a request, item 21). A check makes at most 11 JSON-RPC calls, and the
+  client tries each one on every URL twice, so a check uses the first two URLs of `RPC_URLS`: at most 44 requests, plus 1 or 2 to Sourcify.
+  Measured on 2026-11-09 against dRPC, with the Worker's own bundle in local workerd, for tokens on a Uniswap V2 pair, a Pons curve and a Pons
+  V4 pool, USDG (a proxy) and a token on a V4 pool outside Pons: 7 to 10 JSON-RPC requests and 1 or 2 Sourcify requests, 1 to 3.2 s, and an
+  answer from the cache in 8 to 20 ms. CPU, measured in Node 24 on recorded answers: 2 to 4 ms a check once the code is warm, more for the
+  first check in a fresh isolate.
 
 ---
 
@@ -746,7 +815,8 @@ take the day past `DAILY_SPEND_CAP_USD`.
 
 Write endpoints are limited in D1 per IP or wallet (numbers above). Reads are cacheable; limiting them takes a
 Cloudflare zone rule, which needs a domain on Cloudflare. On `*.workers.dev` only the plan's daily request limit
-applies (`docs/RUNBOOK.md`).
+applies (`docs/RUNBOOK.md`). The reads that start work on the chain are limited in D1 as well: `GET /v1/oracle/:runId`,
+and every check that `GET /v1/check/:token` or `check_token` runs (an answer from the cache is not counted).
 
 ---
 

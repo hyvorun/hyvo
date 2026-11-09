@@ -480,7 +480,7 @@ async function main(): Promise<void> {
   const client = new Client({ name: "hyvo-e2e", version: "1.0.0" });
   await client.connect(transport);
   const tools = (await client.listTools()).tools.map((tool) => tool.name).sort();
-  check(tools.join() === "ask_agent,create_run,get_run,list_recent_runs,verify_run", `the MCP tools are listed (${tools.join()})`);
+  check(tools.join() === "ask_agent,check_token,create_run,get_run,list_recent_runs,verify_run", `the MCP tools are listed (${tools.join()})`);
   const toolCall = async (name: string, args: Record<string, unknown>) => {
     const result = await client.callTool({ name, arguments: args });
     check(!result.isError, `${name}: ${JSON.stringify(result.content)}`);

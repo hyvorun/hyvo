@@ -129,11 +129,11 @@ describe("the protocol", () => {
     expect((await post("x".repeat(100_001))).status).toBe(413);
   });
 
-  it("lists the five tools of SPEC 8.5, each with a schema", async () => {
+  it("lists the five tools of SPEC 8.5 and check_token, each with a schema", async () => {
     const { result } = await rpc("tools/list");
-    expect(result.tools.map((t: { name: string }) => t.name).sort()).toEqual(["ask_agent", "create_run", "get_run", "list_recent_runs", "verify_run"]);
+    expect(result.tools.map((t: { name: string }) => t.name).sort()).toEqual(["ask_agent", "check_token", "create_run", "get_run", "list_recent_runs", "verify_run"]);
     for (const listed of result.tools) expect(listed.inputSchema.type).toBe("object");
-    expect(TOOLS).toHaveLength(5);
+    expect(TOOLS).toHaveLength(6);
   });
 });
 
