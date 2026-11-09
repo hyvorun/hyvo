@@ -169,6 +169,50 @@ test("the long home page never scrolls sideways", async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
+test("the header keeps Check, Launches and Stocks at every width, and the bar always fits", async ({ page }, info) => {
+  test.skip(info.project.name === "phone", "desktop and tablet widths; the phone's sideways scroll is in motion-global.spec.ts");
+  await page.goto("/runs");
+  const nav = page.getByRole("navigation", { name: "Main" });
+  const sizes: [number, number, string[]][] = [
+    [1440, 900, ["Tools", "Oracle", "Docs"]],
+    [1280, 800, ["Tools", "Oracle", "Docs"]],
+    [1024, 768, ["Tools", "Oracle", "Docs"]],
+    [860, 800, ["Tools", "Docs"]],
+    [700, 800, []],
+  ];
+  for (const [width, height, more] of sizes) {
+    await page.setViewportSize({ width, height });
+    for (const name of ["Runs", "Check", "Launches", "Stocks", ...more]) {
+      await expect(nav.getByRole("link", { name, exact: true }), `${name} at ${width}px`).toBeVisible();
+    }
+    // Nothing in the bar is cut off or pushed past the page.
+    expect(await nav.evaluate((el) => el.scrollWidth - el.clientWidth), `the links at ${width}px`).toBeLessThanOrEqual(0);
+    const button = await page.getByRole("banner").getByRole("link", { name: /Run a simulation|New run/ }).boundingBox();
+    expect(button!.x + button!.width, `the bar's end at ${width}px`).toBeLessThanOrEqual(width);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+  }
+  await expect(page.getByRole("banner").getByRole("link", { name: "Launches", exact: true })).toHaveAttribute("href", "/launches");
+  await expect(page.getByRole("banner").getByRole("link", { name: "Stocks", exact: true })).toHaveAttribute("href", "/stocks");
+});
+
+test("the footer keeps its text at full width beside every link", async ({ page }, info) => {
+  test.skip(info.project.name === "phone", "the footer stacks on a phone");
+  await page.goto("/runs");
+  const footer = page.getByRole("contentinfo");
+  for (const [width, height] of [
+    [1440, 900],
+    [1280, 800],
+    [1024, 768],
+  ]) {
+    await page.setViewportSize({ width: width!, height: height! });
+    const text = await footer.locator("p").first().boundingBox();
+    // About 28rem: no narrower than the line the text is written for.
+    expect(text!.width, `the text at ${width}px`).toBeGreaterThanOrEqual(440);
+    const last = await footer.getByRole("link", { name: "X (@Hyvorun)" }).boundingBox();
+    expect(last!.x + last!.width, `the links at ${width}px`).toBeLessThanOrEqual(width!);
+  }
+});
+
 test("the header and the footer link Hyvo's official X account", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("banner").getByRole("link", { name: "Hyvo on X, @Hyvorun" })).toHaveAttribute("href", "https://x.com/Hyvorun");

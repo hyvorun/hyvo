@@ -37,6 +37,31 @@ test("the nav line slides to the link under the pointer and back to the page's l
   await expect.poll(() => under(page, "Tools")).toBe(true);
 });
 
+test("on a phone the links scroll sideways, the page's link is brought into view and the line is under it", async ({ page }, info) => {
+  test.skip(info.project.name !== "phone", "a phone's sideways scroll");
+  const nav = page.getByRole("navigation", { name: "Main" });
+  /** The link lies wholly inside the scrolling row. */
+  const inView = async (name: string) => {
+    const row = (await nav.boundingBox())!;
+    const link = (await nav.getByRole("link", { name, exact: true }).boundingBox())!;
+    return link.x >= row.x - 0.5 && link.x + link.width <= row.x + row.width + 0.5;
+  };
+  await page.goto("/docs");
+  await expect(nav).toHaveAttribute("data-ready", "true");
+  expect(await nav.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
+  for (const name of ["Runs", "Check", "Launches", "Stocks", "Tools", "Docs"]) await expect(nav.getByRole("link", { name, exact: true })).toBeAttached();
+  // Docs is the last link, out of the row at first: the row has scrolled to it, and the line followed.
+  await expect.poll(() => inView("Docs")).toBe(true);
+  await expect.poll(() => under(page, "Docs")).toBe(true);
+  // Scrolled to the far end, the row glides back to the next page's link.
+  await nav.evaluate((el) => el.scrollTo({ left: el.scrollWidth, behavior: "instant" }));
+  await page.getByRole("contentinfo").getByRole("link", { name: "Runs", exact: true }).click();
+  await expect(page).toHaveURL(/\/runs$/);
+  await expect.poll(() => inView("Runs")).toBe(true);
+  await expect.poll(() => under(page, "Runs")).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+});
+
 test("the header's hairline settles in once the page scrolls, without changing its height", async ({ page }) => {
   await page.goto("/");
   const header = page.getByRole("banner");
