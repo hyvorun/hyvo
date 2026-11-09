@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { CALL_ENDPOINTS } from "@hyvo/launches";
 import { FEED_DIRECTORY_URL, SNAPSHOT } from "@hyvo/stocks";
 import { describe, expect, it } from "vitest";
 import { hasBannedWords } from "../../check/src/output/copy";
@@ -141,6 +142,16 @@ describe("hyvo stocks <ticker|address>", () => {
       if (argv.includes("--json")) expect(JSON.parse(out).error.code).toBe("chain_unavailable");
       else expect(err).toMatch(/^hyvo: the token could not be read: /);
     }
+  });
+
+  it("asks each public endpoint twice at most for a read that fails, not eight times", async () => {
+    const origins = CALL_ENDPOINTS.map((endpoint) => new URL(endpoint).origin);
+    const busy: Route = (url) => (origins.includes(url.origin) ? { status: 503, body: { error: "busy" } } : undefined);
+    const { code, requests } = await stocks(["NVDA"], [busy, directory]);
+    expect(code).toBe(2);
+    const asked = requests.filter((request) => origins.includes(new URL(request.url).origin));
+    // The list once, then once more.
+    expect(asked.map((request) => new URL(request.url).origin)).toEqual([...origins, ...origins]);
   });
 
   it("reports a chain that does not answer with exit 2", async () => {
