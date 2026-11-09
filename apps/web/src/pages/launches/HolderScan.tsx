@@ -55,10 +55,7 @@ export function HolderScanSection({ detail, event, attempt }: { detail: LaunchDe
       {state.status === "ready" && scan && state.read && (
         <>
           <ul className={styles.stats} aria-label="Holder figures">
-            <li>
-              <b className="num">{scan.holderCount === null ? "Not read" : <CountUp value={scan.holderCount} format={(n) => Math.round(n).toLocaleString("en-US")} />}</b>
-              <span>Holders, in Blockscout&apos;s index</span>
-            </li>
+            <HolderCount counted={scan.holderCount} listed={scan.rows.filter((row) => row.balance > 0n).length} />
             <li>
               <b className="num">{scan.top10 ? percent(scan.top10.share) : "Not read"}</b>
               <span>Held by the ten largest holders, leaving out the curve, the pool and burn addresses</span>
@@ -120,6 +117,22 @@ function HolderItem({ row, rank }: { row: HolderRow; rank: number }) {
       <span className={`${own.share} num`} title={`${formatTokens(row.balance)} tokens`}>
         {percent(row.share)}
       </span>
+    </li>
+  );
+}
+
+/**
+ * Blockscout's holder count lags a new token: it can read 0 while the wallets listed below already hold it.
+ * Then the page says "at least" the listed wallets instead of a count that contradicts the list.
+ */
+function HolderCount({ counted, listed }: { counted: number | null; listed: number }) {
+  const behind = counted !== null && counted < listed;
+  return (
+    <li>
+      <b className="num">
+        {counted === null ? "Not read" : behind ? `${listed}+` : <CountUp value={counted} format={(n) => Math.round(n).toLocaleString("en-US")} />}
+      </b>
+      <span>{behind ? "Holders at least: Blockscout’s count has not caught up with this token yet" : "Holders, in Blockscout’s index"}</span>
     </li>
   );
 }
