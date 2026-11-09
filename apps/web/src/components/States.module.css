@@ -12,29 +12,41 @@
   gap: 4px;
 }
 
+/* The dots wave: each rises 3px and brightens in turn. A loading indicator, so it loops. */
 .dots i {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--ink-3);
+  opacity: 0.3;
   animation: dot 1.2s var(--ease) infinite;
 }
 
 .dots i:nth-child(2) {
-  animation-delay: 160ms;
+  animation-delay: 140ms;
 }
 
 .dots i:nth-child(3) {
-  animation-delay: 320ms;
+  animation-delay: 280ms;
 }
 
 @keyframes dot {
   0%,
+  60%,
   100% {
-    opacity: 0.25;
+    opacity: 0.3;
+    transform: none;
   }
-  40% {
+  25% {
     opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dots i {
+    animation: none;
+    opacity: 0.6;
   }
 }
 
@@ -47,7 +59,27 @@
   border-radius: var(--radius);
   box-shadow: inset 0 0 0 1px var(--rule-strong);
   font-size: var(--t-sm);
-  animation: fade 300ms var(--ease);
+  /* Fades in, then shakes once (two 3px cycles). */
+  animation:
+    failure-in 240ms var(--ease) backwards,
+    failure-shake 360ms var(--ease) 120ms;
+}
+
+@keyframes failure-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes failure-shake {
+  15%,
+  55% {
+    transform: translateX(-3px);
+  }
+  35%,
+  75% {
+    transform: translateX(3px);
+  }
 }
 
 .failure p {
