@@ -89,6 +89,12 @@
   animation: rise 800ms var(--ease-out) 300ms both;
 }
 
+/* Keyboard focus that arrives early finds the opening already in place. */
+.intro:has(:focus-visible),
+.stage:has(:focus-visible) {
+  animation: none;
+}
+
 .placeholder.placeholder {
   height: 640px;
   border-radius: var(--radius-lg);

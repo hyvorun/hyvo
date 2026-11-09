@@ -584,6 +584,12 @@
   .step:focus-within .node {
     transform: translate(-50%, -50%);
   }
+
+  /* No delay and no fade (one under way stops): keyboard focus never lands on a part on its way in. */
+  .step:has(:focus-visible) :is(.branch, .curve path, .curve, .node, .what, .here, .block) {
+    transition: none;
+    animation: none;
+  }
 }
 
 @keyframes node-pop {
