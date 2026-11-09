@@ -18,6 +18,8 @@ export interface HolderStatusValue {
   wallet: Address | null;
   /** The session token, for the account routes; null when signed out. */
   token: string | null;
+  /** True while GET /v1/me is being asked for this session, so a page can wait for the answer before reading the chain. */
+  checking: boolean;
   /** Read the session and ask the API again. */
   refresh: () => void;
 }
@@ -58,6 +60,8 @@ export function useHolderStatus(): HolderStatusValue {
   const [session, setSession] = useState<StoredSession | null>(() => readStoredSession());
   const [me, setMe] = useState<{ eligible: boolean } | "expired" | null>(null);
   const [attempt, setAttempt] = useState(0);
+  /** Which ask (token and attempt) has answered, so "checking" holds from the render the ask starts in. */
+  const [answered, setAnswered] = useState<string | null>(null);
 
   useEffect(() => {
     const look = () => setSession(readStoredSession());
@@ -77,7 +81,11 @@ export function useHolderStatus(): HolderStatusValue {
     setMe(null);
     if (!token) return;
     let live = true;
-    void askMe(token, attempt > 0).then((answer) => live && setMe(answer));
+    void askMe(token, attempt > 0).then((answer) => {
+      if (!live) return;
+      setMe(answer);
+      setAnswered(`${token}:${attempt}`);
+    });
     return () => {
       live = false;
     };
@@ -89,5 +97,6 @@ export function useHolderStatus(): HolderStatusValue {
   }, []);
 
   const status = holderStateFrom(session, me);
-  return { status, wallet: status === "signed-out" ? null : (session?.address ?? null), token: status === "signed-out" ? null : token, refresh };
+  const checking = token !== null && answered !== `${token}:${attempt}`;
+  return { status, wallet: status === "signed-out" ? null : (session?.address ?? null), token: status === "signed-out" ? null : token, checking, refresh };
 }

@@ -19,7 +19,8 @@ import { Age, BlockLink, pairLabel, Provenance } from "./parts";
 import launches from "./Launches.module.css";
 import styles from "./Utility.module.css";
 
-type Read = { status: "idle" | "loading" | "ready" | "error"; data: WalletTrades | null; head: Snapshot | null; served: string[]; error: string | null };
+/** `key`: the followed wallets `data` was read for, so trades read for another set of wallets are never shown as these. */
+type Read = { status: "idle" | "loading" | "ready" | "error"; data: WalletTrades | null; head: Snapshot | null; served: string[]; error: string | null; key: string };
 
 const MINUTES = Math.round(Number(TRACK_BLOCKS) / 9.6 / 60);
 
@@ -34,13 +35,20 @@ export function TrackPage() {
   const [input, setInput] = useState("");
   const [inputError, setInputError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
-  const [state, setState] = useState<Read>({ status: "idle", data: null, head: null, served: [], error: null });
+  const [state, setState] = useState<Read>({ status: "idle", data: null, head: null, served: [], error: null, key: "" });
   const key = followed.join(",");
+  // A signed-in visitor's limit and list are known once the API has said whether they hold HYVO and a holder's list has
+  // been merged with the account's: reading before that would read the chain again for each of those answers.
+  const ready = !holder.checking && saved.ready;
 
   useEffect(() => {
     const wallets = key ? (key.split(",") as `0x${string}`[]) : [];
     if (wallets.length === 0) {
-      setState({ status: "idle", data: null, head: null, served: [], error: null });
+      setState({ status: "idle", data: null, head: null, served: [], error: null, key: "" });
+      return;
+    }
+    if (!ready) {
+      setState((current) => ({ ...current, status: "loading", error: null }));
       return;
     }
     let live = true;
@@ -50,7 +58,7 @@ export function TrackPage() {
       const top = await reader.header("latest");
       const head = { block: top.number, timestamp: top.timestamp };
       const data = await readWalletTrades(reader, { wallets, fromBlock: head.block - TRACK_BLOCKS + 1n, toBlock: head.block, cache: assetCache });
-      if (live) setState({ status: "ready", data, head, served: [...reader.served], error: null });
+      if (live) setState({ status: "ready", data, head, served: [...reader.served], error: null, key });
     })().catch(() => {
       if (live)
         setState((current) => ({
@@ -62,7 +70,9 @@ export function TrackPage() {
     return () => {
       live = false;
     };
-  }, [key, attempt]);
+  }, [key, attempt, ready]);
+
+  const data = state.data && state.key === key ? state.data : null;
 
   const follow = (event: FormEvent) => {
     event.preventDefault();
@@ -166,39 +176,39 @@ export function TrackPage() {
           </p>
         </div>
         {followed.length === 0 && <p className={launches.note}>Follow a wallet above to see its trades here.</p>}
-        {followed.length > 0 && state.status === "loading" && !state.data && (
+        {followed.length > 0 && state.status === "loading" && !data && (
           <p className={launches.note} role="status">
             Reading Robinhood Chain…
           </p>
         )}
         {state.status === "error" && <Failure message={state.error ?? "The chain could not be read just now."} onRetry={() => setAttempt((n) => n + 1)} />}
-        {state.data && followed.length > 0 && (
+        {data && followed.length > 0 && (
           <>
-            {state.data.trades.length === 0 ? (
+            {data.trades.length === 0 ? (
               <p className={launches.note}>
-                No trade on a Pons curve by {followed.length === 1 ? "this wallet" : "these wallets"} in blocks {state.data.fromBlock.toLocaleString("en-US")} to{" "}
-                {state.data.toBlock.toLocaleString("en-US")}.
+                No trade on a Pons curve by {followed.length === 1 ? "this wallet" : "these wallets"} in blocks {data.fromBlock.toLocaleString("en-US")} to{" "}
+                {data.toBlock.toLocaleString("en-US")}.
               </p>
             ) : (
               <ol className={`${styles.trades} stagger`} aria-label="Trades">
-                {state.data.trades.map((trade) => (
+                {data.trades.map((trade) => (
                   <TradeRow key={`${trade.txHash}:${trade.logIndex}`} trade={trade} now={state.head?.timestamp ?? 0} />
                 ))}
               </ol>
             )}
-            {state.data.dropped > 0 && (
+            {data.dropped > 0 && (
               <p className={launches.fine}>
-                {state.data.dropped === 1 ? "One other contract" : `${state.data.dropped} other contracts`} sent the same events and{" "}
-                {state.data.dropped === 1 ? "is not a Pons curve, so it is" : "are not Pons curves, so they are"} left out.
+                {data.dropped === 1 ? "One other contract" : `${data.dropped} other contracts`} sent the same events and{" "}
+                {data.dropped === 1 ? "is not a Pons curve, so it is" : "are not Pons curves, so they are"} left out.
               </p>
             )}
             <p className={launches.fine}>
-              Blocks <BlockLink block={state.data.fromBlock} /> to <BlockLink block={state.data.toBlock} />.
+              Blocks <BlockLink block={data.fromBlock} /> to <BlockLink block={data.toBlock} />.
             </p>
           </>
         )}
-        {state.head && (
-          <Provenance reads={[state.data?.read ?? state.head]} served={state.served}>
+        {data && state.head && (
+          <Provenance reads={[data.read ?? state.head]} served={state.served}>
             {" "}
             <button type="button" className={launches.again} onClick={() => setAttempt((n) => n + 1)} disabled={state.status === "loading"}>
               Read again

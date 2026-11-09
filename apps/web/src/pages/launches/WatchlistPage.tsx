@@ -27,11 +27,17 @@ export function WatchlistPage() {
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<Read>({ status: "idle", items: [], read: null, served: [], error: null });
   const key = saved.list.join(",");
+  // A holder's list is read once it has been merged with the account's, not once before and once after.
+  const ready = !holder.checking && saved.ready;
 
   useEffect(() => {
     const tokens = key ? (key.split(",") as `0x${string}`[]) : [];
     if (tokens.length === 0) {
       setState({ status: "ready", items: [], read: null, served: [], error: null });
+      return;
+    }
+    if (!ready) {
+      setState((current) => ({ ...current, status: "loading", error: null }));
       return;
     }
     let live = true;
@@ -44,7 +50,7 @@ export function WatchlistPage() {
     return () => {
       live = false;
     };
-  }, [key, attempt]);
+  }, [key, attempt, ready]);
 
   const count = saved.list.length;
   return (
