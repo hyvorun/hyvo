@@ -93,6 +93,44 @@ export function mergeLists(account: readonly string[], local: readonly string[],
   return cleanList([...account, ...local], max);
 }
 
+/**
+ * A holder's list once this browser has read the account's: the account's list less what this browser took off since
+ * the two last agreed (`base`), then what this browser added since then, at most `max`. So a launch taken off in one
+ * browser stays off in the others. Without a `base` (this browser has not met the account yet) nothing counts as taken
+ * off here, and the two lists are joined, the account's first.
+ */
+export function mergeWithBase(account: readonly string[], local: readonly string[], base: readonly string[] | null, max: number): `0x${string}`[] {
+  const here = new Set(local.map((item) => item.toLowerCase()));
+  const agreed = new Set((base ?? []).map((item) => item.toLowerCase()));
+  const takenOffHere = (item: string) => agreed.has(item.toLowerCase()) && !here.has(item.toLowerCase());
+  const addedHere = local.filter((item) => !agreed.has(item.toLowerCase()));
+  return cleanList([...account.filter((item) => !takenOffHere(item)), ...addedHere], max);
+}
+
+const baseKey = (kind: ListKind) => `${LIST_KEYS[kind]}.synced`;
+
+/** The list this browser and `wallet`'s account last agreed on; null when they have not, for another wallet, or without storage. */
+export function loadBase(storage: StorageLike | null, kind: ListKind, wallet: string): `0x${string}`[] | null {
+  if (!storage) return null;
+  try {
+    const parsed = JSON.parse(storage.getItem(baseKey(kind)) ?? "null") as { wallet?: unknown; list?: unknown } | null;
+    if (!parsed || typeof parsed.wallet !== "string" || parsed.wallet !== wallet.toLowerCase() || !Array.isArray(parsed.list)) return null;
+    return cleanList(parsed.list, LIST_MAX[kind]);
+  } catch {
+    return null;
+  }
+}
+
+/** Remember the list this browser and `wallet`'s account now agree on. */
+export function saveBase(storage: StorageLike | null, kind: ListKind, wallet: string, list: readonly string[]): void {
+  if (!storage) return;
+  try {
+    storage.setItem(baseKey(kind), JSON.stringify({ wallet: wallet.toLowerCase(), list: cleanList(list, LIST_MAX[kind]) }));
+  } catch {
+    // Storage full or blocked: the next visit joins the lists instead.
+  }
+}
+
 export function sameList(a: readonly string[], b: readonly string[]): boolean {
   return a.length === b.length && a.every((item, i) => item.toLowerCase() === b[i]?.toLowerCase());
 }

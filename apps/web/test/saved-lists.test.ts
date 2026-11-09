@@ -4,11 +4,14 @@ import {
   cleanList,
   LIST_KEYS,
   LIST_MAX,
+  loadBase,
   loadList,
   mergeLists,
+  mergeWithBase,
   parseAddress,
   removeFrom,
   sameList,
+  saveBase,
   saveList,
   trackLimit,
   type StorageLike,
@@ -91,6 +94,40 @@ describe("changing a list", () => {
     expect(mergeLists([a(3), a(1)], [a(2)], 2)).toEqual([a(3), a(1)]);
     expect(sameList([a(1)], [a(1).toUpperCase().replace("0X", "0x")])).toBe(true);
     expect(sameList([a(1)], [a(1), a(2)])).toBe(false);
+  });
+});
+
+describe("a holder's list against the account's", () => {
+  it("joins the two, the account's first, when this browser has not met the account yet", () => {
+    expect(mergeWithBase([a(3), a(1)], [a(1), a(2)], null, 10)).toEqual([a(3), a(1), a(2)]);
+  });
+
+  it("keeps a launch taken off in another browser off, instead of bringing it back from this one", () => {
+    // Both browsers agreed on [1, 2]; the other one took 2 off, so the account holds [1]. This browser still has 2.
+    expect(mergeWithBase([a(1)], [a(1), a(2)], [a(1), a(2)], 10)).toEqual([a(1)]);
+  });
+
+  it("sends what this browser took off or added since the last agreement, and keeps what another browser added", () => {
+    // Agreed on [1, 2]. Here 1 was taken off and 4 added before the account heard of it; another browser added 3.
+    expect(mergeWithBase([a(1), a(2), a(3)], [a(2), a(4)], [a(1), a(2)], 10)).toEqual([a(2), a(3), a(4)]);
+    expect(mergeWithBase([a(1), a(2), a(3)], [a(2), a(4)], [a(1), a(2)], 2)).toEqual([a(2), a(3)]);
+  });
+
+  it("remembers the agreed list per wallet, and reads none for another wallet or without storage", () => {
+    const storage = memory();
+    const wallet = `0x${"AB".repeat(20)}`;
+    expect(loadBase(storage, "watchlist", wallet)).toBeNull();
+    saveBase(storage, "watchlist", wallet, [a(1), a(1), a(2)]);
+    expect(loadBase(storage, "watchlist", wallet.toLowerCase())).toEqual([a(1), a(2)]);
+    expect(loadBase(storage, "watchlist", a(9))).toBeNull();
+    expect(loadBase(storage, "tracked", wallet)).toBeNull();
+    // The list itself is not touched.
+    expect(loadList(storage, "watchlist")).toEqual([]);
+    storage.data.set(`${LIST_KEYS.watchlist}.synced`, "{oops");
+    expect(loadBase(storage, "watchlist", wallet)).toBeNull();
+    expect(loadBase(blocked, "watchlist", wallet)).toBeNull();
+    expect(() => saveBase(blocked, "watchlist", wallet, [a(1)])).not.toThrow();
+    expect(loadBase(null, "watchlist", wallet)).toBeNull();
   });
 });
 

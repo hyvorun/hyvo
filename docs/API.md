@@ -93,8 +93,10 @@ reads, holds or moves anyone's tokens.
 - A `PUT` replaces the whole list. Addresses (`0x` and 40 hex characters) are kept once each, in lowercase, in the order
   given; anything else in the body is `400 bad_request` (`zod`: `WatchlistRequest`, `TrackedRequest` in `@hyvo/schema`).
 - Rate limit: 30 requests a minute per wallet across the four routes (`LIST_REQUESTS_PER_MINUTE`).
-- The web app (`apps/web/src/lib/use-saved-list.ts`) joins the account's list with the browser's when a holder's page
-  opens, the account's first, and saves a change half a second after it.
+- The web app (`apps/web/src/lib/use-saved-list.ts`) merges the account's list with the browser's when a holder's page
+  opens, against the list the two last agreed on (kept in the browser per wallet): what another browser took off stays
+  off, and what this browser added or took off since then is sent. A change is saved half a second after it, and only
+  once the account's list has been read, so a `PUT` never replaces launches saved from another browser.
 
 ---
 
