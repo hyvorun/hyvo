@@ -249,7 +249,7 @@
 
   /* The open archetype's mark settles in with a little give. */
   .panelIcon svg {
-    animation: icon-in 520ms cubic-bezier(0.34, 1.56, 0.64, 1) 60ms both;
+    animation: icon-in 520ms var(--ease-spring-pop) 60ms both;
   }
 }
 

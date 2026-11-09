@@ -32,8 +32,20 @@
     "who who";
   gap: 6px var(--space-4);
   margin-inline: -12px;
-  padding: 18px 12px 20px;
-  border-bottom: 1px solid var(--rule);
+  padding: 18px 12px 21px;
+  /* The rule under each row is an inset line, so .lift can ease it into a hairline around the row. */
+  box-shadow: inset 0 -1px 0 var(--rule);
+}
+
+/* Under the pointer or keyboard focus the row becomes a rounded, raised card (.lift adds the rise). */
+.row:has(:focus-visible) {
+  border-radius: var(--radius-sm);
+}
+
+@media (hover: hover) {
+  .row:hover {
+    border-radius: var(--radius-sm);
+  }
 }
 
 .name {
@@ -100,8 +112,10 @@
   box-shadow: inset 0 0 0 1.5px var(--ink-3);
 }
 
+/* A live part's dot is ink, and so is the ring that .live-dot draws around it. */
 .status[data-tone="live"] .dot {
-  background: var(--ink);
+  color: var(--ink);
+  background: currentColor;
   box-shadow: none;
 }
 
@@ -131,7 +145,7 @@
     align-items: baseline;
     gap: var(--space-5);
     margin-inline: 0;
-    padding: 18px 12px;
+    padding: 18px 12px 19px;
   }
 
   .name {
@@ -154,9 +168,13 @@
     align-self: start;
     margin-top: 4px;
     color: var(--ink-3);
+  }
+
+  /* As specific as .lift .arrow, so the color eases too while the chevron springs right. */
+  .row .chevron {
     transition:
-      transform 220ms var(--ease-out),
-      color 160ms var(--ease);
+      transform var(--dur-spring) var(--ease-spring),
+      color var(--dur-hover) var(--ease);
   }
 
   .chevron svg {
@@ -170,14 +188,7 @@
 }
 
 @media (min-width: 1140px) and (hover: hover) {
-  /* The list item fades in; the row inside it lifts on hover (.lift), and its background follows. */
-  .row {
-    transition:
-      background-color 160ms var(--ease),
-      box-shadow 180ms var(--ease),
-      transform 200ms var(--ease-out);
-  }
-
+  /* The list item fades in; the row inside it lifts on hover (.lift eases it), its background follows. */
   .row:hover {
     background: var(--raised);
   }

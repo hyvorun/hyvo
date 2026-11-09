@@ -119,7 +119,7 @@
   }
 
   .pass .mark {
-    animation: mark-pop 520ms cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i, 0) * 140ms + 160ms) both;
+    animation: mark-pop 520ms var(--ease-spring-pop) calc(var(--i, 0) * 70ms + 160ms) both;
   }
 }
 
@@ -160,7 +160,7 @@
   padding-top: var(--space-2);
   border-top: 1px solid var(--rule);
   font-size: var(--t-sm);
-  animation: rise 520ms var(--ease-out) calc(var(--i, 0) * 140ms) both;
+  animation: rise 520ms var(--ease-out) calc(var(--i, 0) * 70ms) both;
 }
 
 .mark {
@@ -182,7 +182,7 @@
 
 .mark :global(.draw) {
   stroke-dasharray: 1;
-  animation: oracle-draw 500ms var(--ease-out) calc(var(--i, 0) * 140ms + 200ms) both;
+  animation: oracle-draw 500ms var(--ease-out) calc(var(--i, 0) * 70ms + 200ms) both;
 }
 
 @keyframes oracle-draw {
