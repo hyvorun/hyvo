@@ -43,6 +43,13 @@ const NAMESPACE = "hyvo-artifacts";
 const WORKER = "hyvo-api";
 const AGENTS_MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8-fast";
 const REPORT_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
+/**
+ * With an OpenRouter key in the repo's .env, the runner plays runs on DeepSeek V4 Flash there instead of Workers AI's free
+ * allowance (founder, 2026-11-09: about 1 run a day fits the free allowance). The engine caps each call's price at the one it
+ * budgets with (engine/hyvo/llm/pricing.py), so the founder's credit is never charged more than a run records.
+ */
+const OPENROUTER_URL = "https://openrouter.ai/api/v1";
+const OPENROUTER_MODEL = "deepseek/deepseek-v4-flash";
 
 const argv = process.argv.slice(2);
 const YES = argv.includes("--yes");
@@ -296,17 +303,17 @@ ${deployed.slice(-800)}`);
   if (blockscoutKey) wrangler(["secret", "put", "BLOCKSCOUT_API_KEY"], { input: blockscoutKey });
   say("secrets set");
 
+  const openRouterKey = env.get("OPENROUTER_API_KEY")?.trim();
   writeEnv({
     RUNNER_TOKEN: runnerToken,
     LLM_TOKEN: llmToken,
     ARTIFACT_SIGNING_KEY: signingKey,
     HYVO_API_URL: apiUrl,
-    LLM_API_KEY: llmToken,
-    LLM_BASE_URL: `${apiUrl}/internal/llm/v1`,
-    LLM_MODEL_NAME: AGENTS_MODEL,
-    REPORT_MODEL_NAME: REPORT_MODEL,
+    ...(openRouterKey
+      ? { LLM_API_KEY: openRouterKey, LLM_BASE_URL: OPENROUTER_URL, LLM_MODEL_NAME: OPENROUTER_MODEL, REPORT_MODEL_NAME: OPENROUTER_MODEL }
+      : { LLM_API_KEY: llmToken, LLM_BASE_URL: `${apiUrl}/internal/llm/v1`, LLM_MODEL_NAME: AGENTS_MODEL, REPORT_MODEL_NAME: REPORT_MODEL }),
   });
-  say("runner settings written", ".env");
+  say("runner settings written", openRouterKey ? `.env (runs on ${OPENROUTER_MODEL} through OpenRouter)` : ".env");
 
   // --- the web app ----------------------------------------------------------------------------------
   // The web app pins the oracle it checks against, so /oracle does not have to take the API's word for it,

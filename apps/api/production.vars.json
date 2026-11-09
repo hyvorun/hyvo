@@ -1,8 +1,8 @@
 {
-  "//": "Values that differ from wrangler.jsonc on the deployed Worker (Workers Free plan, Workers AI). scripts/deploy-cloudflare.ts passes them with --var. Cost numbers are measured: a 50 x 10 run on Llama 3.1 8B with a Llama 3.3 70B report used 2,800 neurons, $0.031 at list price. 10,000 free neurons a day are $0.11.",
-  "COST_PER_AGENT_ROUND_USD": "0.00005",
+  "//": "Values that differ from wrangler.jsonc on the deployed Worker (Workers Free plan). scripts/deploy-cloudflare.ts passes them with --var. Since 2026-11-09 runs play on DeepSeek V4 Flash through OpenRouter (the founder's key, in the repo's .env). Measured: a 10 x 8 run with its report used 64,612 input and 7,619 output tokens, $0.0120 at the price cap the engine sends ($0.15 / $0.30 per million) and $0.0047 actually charged. COST_PER_AGENT_ROUND_USD is that capped cost per agent-round with room to spare; DAILY_SPEND_CAP_USD is the founder's $3 a day.",
+  "COST_PER_AGENT_ROUND_USD": "0.00015",
   "REPORT_COST_USD": "0.008",
-  "DAILY_SPEND_CAP_USD": "0.10",
+  "DAILY_SPEND_CAP_USD": "3",
   "ORACLE_ADDRESS": "0x2FEDc123c38B069cf78e5915852A61022E347642",
   "PUBLIC_API_URL": "https://api.hyvo.run",
   "RPC_URLS": "https://robinhood.drpc.org,https://rpc.mainnet.chain.robinhood.com,https://robinhood.api.pocket.network"

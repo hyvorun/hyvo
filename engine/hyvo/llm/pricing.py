@@ -23,6 +23,11 @@ PRICES: dict[str, Prices] = {
     "deepseek/deepseek-flash": Prices(0.30, 1.20),
     "deepseek/deepseek-v4-flash": Prices(0.30, 1.20),
     "deepseek/deepseek-v4-pro": Prices(1.32, 3.96),
+    # OpenRouter, USD per 1M tokens: the price cap each call sends as provider.max_price (openai_compat.py),
+    # so OpenRouter only routes to providers at or under it. DeepSeek V4 Flash's providers listed
+    # $0.05-0.21 input and $0.165-0.56 output on https://openrouter.ai/api/v1/models/deepseek/deepseek-v4-flash/endpoints
+    # (read 2026-11-09); most sit under this cap.
+    "openrouter/deepseek/deepseek-v4-flash": Prices(0.15, 0.30),
     # Cloudflare Workers AI, USD per 1M tokens. The free allocation (10,000 neurons a day) is about
     # $0.11 at these prices. Source: https://developers.cloudflare.com/workers-ai/platform/pricing/
     # (checked 2026-11-04).

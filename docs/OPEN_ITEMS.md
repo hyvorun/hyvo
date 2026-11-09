@@ -176,6 +176,13 @@ A real 50 × 10 run cost 2,200 to 2,800 neurons ($0.024 to $0.031 at list price)
 few percent of its trades are invalid and become a hold, and it copies the posts it is shown, which the engine now
 drops. Bigger crowds or better prose take a paid key, set in `.env` the same way (`.env.example`).
 
+**Since 2026-11-09 runs play on DeepSeek V4 Flash through OpenRouter** (the founder's key, `OPENROUTER_API_KEY` in the repo's
+`.env`; the deploy then writes the runner's `LLM_*` for it). The free allowance fitted about one 50 x 10 run a day. Each call sends
+`reasoning.enabled=false` and `provider.max_price` equal to the price the engine budgets with ($0.15 input, $0.30 output per million),
+so OpenRouter only routes to providers at or under it (a cap below every provider answers 404). A 10 x 8 run with its report: 64,612
+input and 7,619 output tokens, $0.0120 budgeted, $0.0047 charged, 102 s; its posts are specific and its report coherent. The Worker's
+`COST_PER_AGENT_ROUND_USD` is 0.00015 and `DAILY_SPEND_CAP_USD` 3 (`apps/api/production.vars.json`). Ask an agent still uses Workers AI.
+
 ## 12. Mainnet deployment — decision
 
 `HyvoOracle` and `PaymentRouter` deploys need: the owner, the attester address (its key goes into a Wrangler secret

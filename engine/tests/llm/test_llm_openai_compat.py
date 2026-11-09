@@ -63,8 +63,28 @@ def test_deepseek_requests_disable_thinking_mode():
 
 def test_other_providers_get_no_extra_body():
     provider = FakeProvider(completion())
-    call(provider.client(base_url="https://openrouter.ai/api/v1"))
+    call(provider.client(base_url="https://api.groq.com/openai/v1"))
     assert "thinking" not in provider.requests[0]
+    assert "provider" not in provider.requests[0]
+
+
+def test_openrouter_caps_the_price_at_the_budgeted_one_and_turns_reasoning_off():
+    provider = FakeProvider(completion())
+    client = OpenAICompatClient(
+        API_KEY,
+        "https://openrouter.ai/api/v1",
+        "deepseek/deepseek-v4-flash",
+        0.15,
+        0.3,
+        max_retries=0,
+        http_client=httpx.Client(transport=httpx.MockTransport(provider)),
+    )
+    call(client)
+    body = provider.requests[0]
+    assert body["provider"] == {"max_price": {"prompt": 0.15, "completion": 0.3}}
+    assert body["reasoning"] == {"enabled": False}
+    assert "thinking" not in body
+    assert client.model_label == "openrouter/deepseek/deepseek-v4-flash"
 
 
 def test_explicit_extra_body_replaces_the_provider_default():

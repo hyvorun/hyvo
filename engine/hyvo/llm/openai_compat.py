@@ -103,6 +103,19 @@ PROVIDER_EXTRA_BODY: Mapping[str, Mapping[str, Any]] = {
     "deepseek": {"thinking": {"type": "disabled"}},
 }
 
+
+def openrouter_extra_body(prices: Prices) -> dict[str, Any]:
+    """What every OpenRouter call carries. OpenRouter routes a model to one of several providers, each at
+    its own price, so the call caps the price at the one this client budgets with (``provider.max_price``,
+    USD per million tokens): a run is never charged more than Hyvo records. Reasoning is off, as for
+    DeepSeek above, because models that think by default bill it as output. Units and routing checked
+    against the live API on 2026-11-09 (a cap below every provider answers 404 "No endpoints found").
+    """
+    return {
+        "reasoning": {"enabled": False},
+        "provider": {"max_price": {"prompt": prices.input_per_m, "completion": prices.output_per_m}},
+    }
+
 _RETRYABLE_NOT_SENT = (httpx.ConnectError, httpx.ConnectTimeout, httpx.PoolTimeout)
 _RETRYABLE_STATUSES = frozenset({408, 409, 429})
 _INITIAL_RETRY_DELAY_S = 0.5
@@ -291,7 +304,8 @@ class OpenAICompatClient:
         )
         self._send_response_format = True
         if extra_body is None:
-            extra_body = PROVIDER_EXTRA_BODY.get(provider_slug(self.base_url), {})
+            slug = provider_slug(self.base_url)
+            extra_body = openrouter_extra_body(prices) if slug == "openrouter" else PROVIDER_EXTRA_BODY.get(slug, {})
         self._extra_body = copy.deepcopy(dict(extra_body))
 
     def __repr__(self) -> str:
