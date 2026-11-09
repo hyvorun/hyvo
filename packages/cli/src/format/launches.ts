@@ -65,6 +65,17 @@ function span(hours: number): string {
   return hours === 1 ? "the last hour" : `the last ${hours} hours`;
 }
 
+/**
+ * The window's graduations, apart from its launches: a curve that launched before the window can graduate in it,
+ * so the count is not a share of the window's launches.
+ */
+export function graduationsLine(graduations: RecentLaunches["graduations"]): string {
+  const here = graduations.filter((event) => event.launchedInWindow).length;
+  if (graduations.length === 0) return "No curve graduated to its pool in these blocks.";
+  if (graduations.length === 1) return `1 curve graduated to its pool in these blocks (it launched ${here === 1 ? "in" : "before"} the window).`;
+  return `${graduations.length} curves graduated to their pools in these blocks (${here} of them launched in the window).`;
+}
+
 export function renderRecentLaunches(result: RecentLaunches, o: LaunchesRenderOptions): string {
   const c = o.palette;
   const now = result.read.timestamp || result.head.timestamp;
@@ -75,9 +86,10 @@ export function renderRecentLaunches(result: RecentLaunches, o: LaunchesRenderOp
     c,
     o.width,
   );
-  const count = `${result.total} ${result.total === 1 ? "launch" : "launches"} in ${span(result.hours)}, ${result.graduations.length} graduated.`;
+  const count = `${result.total} ${result.total === 1 ? "launch" : "launches"} in ${span(result.hours)}.`;
   const pairs = result.byPair.map((row) => `${row.pair ? pairSymbol(row.pair) : shortAddress(row.address)} ${row.launches}`);
-  lines.push("", ...paragraph(pairs.length > 0 ? `${count} Paired with: ${pairs.join(", ")}.` : count, o.width), "");
+  const summary = pairs.length > 0 ? `${count} Paired with: ${pairs.join(", ")}.` : count;
+  lines.push("", ...paragraph(`${summary} ${graduationsLine(result.graduations)}`, o.width), "");
 
   if (result.launches.length === 0) {
     lines.push(...paragraph(result.total === 0 ? `No Pons launch in ${span(result.hours)}.` : "No launch could be listed: their pair assets' decimals could not be read.", o.width, c.gray));

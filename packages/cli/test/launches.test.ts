@@ -29,7 +29,7 @@ describe("hyvo launches", () => {
     expect(err).toBe("");
     expect(out).toContain("HYVO LAUNCHES   Pons V2, the last 6 hours");
     expect(out).toContain(`curves read at block ${DEMO_HEAD}`);
-    expect(out).toContain("10 launches in the last 6 hours, 1 graduated. Paired with: ETH 6, USDG 2,");
+    expect(out).toContain("10 launches in the last 6 hours. Paired with: ETH 6, USDG 2,");
     expect(out).toMatch(/^ {2}age +token +pair +phase +on its curve +creator tax +address$/m);
     expect(out).toMatch(new RegExp(`^ {2}3 min +FIZZ +ETH +on its curve +0\\.05994 of 4\\.2 ETH, 1\\.4% +0% +${fizz.token}$`, "m"));
     expect(out).toMatch(new RegExp(`^ {2}1 h 10 min +BRISK +ETH +graduated +moved to its pool +10% +${brisk.token}$`, "m"));
@@ -43,12 +43,24 @@ describe("hyvo launches", () => {
 
   it("narrows the window with --hours and the rows with --limit", async () => {
     const hour = await launches(["--rpc", RPC, "--hours", "1"]);
-    expect(hour.out).toContain("5 launches in the last hour, 1 graduated. Paired with: ETH 2, USDG 2, NVDA 1.");
+    expect(hour.out).toContain("5 launches in the last hour. Paired with: ETH 2, USDG 2, NVDA 1.");
     expect(hour.out).not.toContain("BRISK");
     const three = await launches(["--rpc", RPC, "--limit", "3"]);
     expect(three.out).toContain("7 more in the window: hyvo launches --hours 6 --limit 10");
     expect(three.out).toContain("GLINT");
     expect(three.out).not.toContain("MOTE");
+  });
+
+  it("counts the curves that graduated in the window apart from the window's launches, and says when each launched", async () => {
+    // BRISK launched 70 minutes ago and graduated about 35 minutes ago: inside the 6-hour window both times, and
+    // inside the last hour only for its graduation, which is not one of that hour's five launches.
+    const six = await launches(["--rpc", RPC]);
+    expect(six.out).toContain("1 curve graduated to its pool in these blocks (it launched in the window).");
+    const hour = await launches(["--rpc", RPC, "--hours", "1"]);
+    expect(hour.out).not.toMatch(/5 launches in the last hour, 1 graduated/);
+    expect(hour.out).toContain("1 curve graduated to its pool in these blocks (it launched before the window).");
+    const json = JSON.parse((await launches(["--rpc", RPC, "--hours", "1", "--json"])).out);
+    expect(json.graduations).toEqual([expect.objectContaining({ token: brisk.token, launchedInWindow: false })]);
   });
 
   it("prints JSON with every amount and block as a decimal string", async () => {

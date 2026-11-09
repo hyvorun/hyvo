@@ -82,6 +82,12 @@ export interface PairCount {
   launches: number;
 }
 
+/** A curve whose pool the factory created in the window (`PoolGraduated`). */
+export interface WindowGraduation extends GraduationEvent {
+  /** Whether the token launched in the window too, or before it. */
+  launchedInWindow: boolean;
+}
+
 export interface RecentLaunches {
   hours: number;
   /** The block the window ends at. */
@@ -89,7 +95,8 @@ export interface RecentLaunches {
   fromBlock: bigint;
   /** Launches the factory announced in the window. */
   total: number;
-  graduations: GraduationEvent[];
+  /** Every graduation in the window's blocks, whenever its curve launched. */
+  graduations: WindowGraduation[];
   /** The newest of them, with their curves' state. */
   launches: Launch[];
   /** Where the curves' state was read. */
@@ -118,7 +125,9 @@ export async function recentLaunches(reader: ChainReader, hours: number, limit: 
   const byPair = [...counts]
     .map(([address, launches]): PairCount => ({ address, pair: address === lower(NATIVE) ? ETH : (cache.get(address) ?? null), launches }))
     .sort((a, b) => b.launches - a.launches || (a.address < b.address ? -1 : 1));
-  return { hours, head, fromBlock: fromBlock < 0n ? 0n : fromBlock, total: scan.launches.length, graduations: scan.graduations, launches, read, byPair };
+  const launched = new Set(scan.launches.map((event) => lower(event.token)));
+  const graduations = scan.graduations.map((event) => ({ ...event, launchedInWindow: launched.has(lower(event.token)) }));
+  return { hours, head, fromBlock: fromBlock < 0n ? 0n : fromBlock, total: scan.launches.length, graduations, launches, read, byPair };
 }
 
 export type LastHour =
