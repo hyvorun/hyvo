@@ -1,0 +1,36 @@
+/* What every home page section below the replay shares: the spacing above it, and a heading with its lead beside it, as in the hero. */
+
+.section {
+  display: grid;
+  gap: var(--space-6);
+  padding-top: clamp(72px, 8vw, 120px);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-4) 64px;
+}
+
+.head h2 {
+  flex: 999 1 520px;
+  min-width: 0;
+  max-width: 17em;
+  font-size: clamp(1.625rem, 2.8vw, 2.375rem);
+  letter-spacing: -0.03em;
+}
+
+.head p {
+  flex: 1 1 320px;
+  min-width: 0;
+  max-width: 34em;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+}

@@ -1,0 +1,243 @@
+/* The trust, token and questions sections of the home page. */
+
+/* --- trust: six promises, then the contracts behind them ------------------------------------------ */
+
+.promises {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: var(--space-6) 40px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.promises li {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule-strong);
+}
+
+.promises h3 {
+  font-size: 1.0625rem;
+  letter-spacing: -0.015em;
+}
+
+.never {
+  color: var(--ink-3);
+}
+
+.promises p {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.contracts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  border-radius: var(--radius-lg);
+  background: var(--rule);
+  box-shadow: 0 0 0 1px var(--rule);
+  overflow: hidden;
+}
+
+.contract {
+  display: grid;
+  flex: 1 1 260px;
+  gap: 2px;
+  padding: 16px 20px 18px;
+  background: var(--surface);
+  text-decoration: none;
+  transition: background-color 160ms var(--ease);
+}
+
+.contract:hover {
+  background: var(--raised);
+}
+
+.contract:focus-visible {
+  outline-offset: -3px;
+}
+
+.contractName {
+  font-weight: 500;
+}
+
+.contract :global(.mono) {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+}
+
+.contractWhat {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+/* --- token: what holding it is for -------------------------------------------------------------- */
+
+.benefits {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 720px) {
+  .benefits {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.benefits li {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--rule-strong);
+}
+
+.benefits b {
+  font-size: var(--t-lg);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.benefits span {
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  text-wrap: pretty;
+}
+
+.tokenFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+}
+
+.fine {
+  max-width: 52em;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: 1.6;
+}
+
+/* --- questions: the heading stays beside the answers on a wide screen ---------------------------- */
+
+.questions.questions {
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .questions.questions {
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    gap: 64px;
+  }
+
+  .questionsHead {
+    position: sticky;
+    top: 96px;
+  }
+}
+
+.questionsHead {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.questionsHead h2 {
+  font-size: clamp(1.625rem, 2.8vw, 2.375rem);
+  letter-spacing: -0.03em;
+}
+
+.questionsHead p {
+  color: var(--ink-2);
+}
+
+.questionsHead a,
+.answer a {
+  color: var(--accent-text);
+  text-decoration: underline;
+}
+
+.questionsHead a:hover,
+.answer a:hover {
+  color: var(--ink);
+}
+
+.answers {
+  display: grid;
+  border-top: 1px solid var(--rule-strong);
+}
+
+.question {
+  border-bottom: 1px solid var(--rule);
+}
+
+.question summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 56px;
+  padding: 14px 0;
+  font-size: var(--t-md);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  list-style: none;
+  cursor: pointer;
+}
+
+.question summary::-webkit-details-marker {
+  display: none;
+}
+
+.question summary svg {
+  flex: none;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transition:
+    transform 260ms var(--ease-out),
+    stroke 160ms var(--ease);
+}
+
+.question summary:hover svg {
+  stroke: var(--ink);
+}
+
+.question[open] summary svg {
+  transform: rotate(45deg);
+}
+
+.question summary:focus-visible {
+  outline-offset: 4px;
+}
+
+.answer {
+  max-width: 44em;
+  padding: 0 0 20px;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .question[open] .answer {
+    animation: open 280ms var(--ease-out) both;
+  }
+}
+
+@keyframes open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}

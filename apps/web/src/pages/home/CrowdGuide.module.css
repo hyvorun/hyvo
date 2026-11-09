@@ -1,0 +1,213 @@
+/* --- the list beside the one it opens ------------------------------------------------------------- */
+
+.guide {
+  display: grid;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  overflow: hidden;
+}
+
+@media (min-width: 860px) {
+  .guide {
+    grid-template-columns: minmax(250px, 300px) minmax(0, 1fr);
+  }
+}
+
+.side {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding: 10px;
+  border-bottom: 1px solid var(--rule);
+}
+
+@media (min-width: 860px) {
+  .side {
+    border-bottom: 0;
+    border-right: 1px solid var(--rule);
+  }
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+}
+
+@media (min-width: 860px) {
+  .list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--ease),
+    color 160ms var(--ease);
+}
+
+.tab:hover {
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+.tab[aria-selected="true"] {
+  background: var(--raised);
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.tab svg {
+  flex: none;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 0;
+  line-height: 1.3;
+}
+
+.count {
+  flex: none;
+  min-width: 22px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: var(--t-2xs);
+  text-align: center;
+}
+
+.legend {
+  padding: 0 12px 6px;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+/* --- the archetype that is open ----------------------------------------------------------------- */
+
+.panel {
+  min-width: 0;
+  padding: clamp(20px, 3vw, 36px) clamp(18px, 3.2vw, 40px);
+}
+
+.panel:focus-visible {
+  outline-offset: -4px;
+}
+
+.panelBody {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .panelBody {
+    animation: show 320ms var(--ease-out) both;
+  }
+}
+
+@keyframes show {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.panelHead {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.panelIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  background: var(--raised);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+.panelHead h3 {
+  font-size: var(--t-xl);
+  letter-spacing: -0.02em;
+}
+
+.panelHead p {
+  margin-top: 4px;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.traits {
+  display: grid;
+  margin: 0;
+}
+
+.traits div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  padding: 12px 0;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 560px) {
+  .traits div {
+    grid-template-columns: 7.5em minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+.traits dt {
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+}
+
+.traits dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.traits ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.traits li {
+  position: relative;
+  padding-left: 16px;
+}
+
+.traits li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.8em;
+  width: 7px;
+  height: 1px;
+  background: var(--ink-3);
+}

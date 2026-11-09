@@ -1,0 +1,568 @@
+/*
+ * The path of a run, drawn like a branch off the chain. The neutral line is Robinhood Chain and
+ * never stops; the silver one is the run's private chain. It leaves the chain at the fork block, and
+ * only hashes come back, dashed, at the commit block. As each step scrolls into view its part of
+ * the branch draws in.
+ */
+
+/* Doubled, so it outranks Section.module.css whatever order the two load in. */
+.section.section {
+  gap: var(--space-7);
+  --rail: 44px;
+  --main-x: 11px;
+  --branch-x: 33px;
+  --node-y: 12px;
+  --after: clamp(28px, 3.4vw, 44px);
+}
+
+/* --- the grid: [block on the chain] [rail] [what happens] [what happened in this run] ------------- */
+
+.path {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step,
+.origin {
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  grid-template-areas:
+    "rail what"
+    "rail here";
+  column-gap: var(--space-4);
+}
+
+.block {
+  display: none;
+  grid-area: block;
+}
+
+.rail {
+  position: relative;
+  grid-area: rail;
+  min-height: 100%;
+}
+
+.what {
+  grid-area: what;
+  min-width: 0;
+  padding-bottom: 14px;
+}
+
+.step[data-here="false"] .what {
+  padding-bottom: var(--after);
+}
+
+.here {
+  grid-area: here;
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  min-width: 0;
+  padding-bottom: var(--after);
+  color: var(--ink-2);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+}
+
+@media (min-width: 1000px) {
+  .step,
+  .origin {
+    grid-template-columns: 150px var(--rail) minmax(0, 1.12fr) minmax(0, 1fr);
+    grid-template-areas: "block rail what here";
+    column-gap: 20px;
+  }
+
+  .block {
+    display: block;
+    padding-right: 4px;
+    color: var(--ink-2);
+    font-family: var(--font-mono);
+    font-size: var(--t-xs);
+    line-height: calc(var(--node-y) * 2);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .blockInline {
+    display: none;
+  }
+
+  .what {
+    padding-bottom: var(--after);
+  }
+
+  .here {
+    padding-left: 28px;
+    border-left: 1px solid var(--rule);
+    margin-left: 20px;
+  }
+
+  /* Without a featured run there are no facts: the steps take the room. */
+  .path[data-run="false"] .step,
+  .path[data-run="false"] .origin {
+    grid-template-columns: 150px var(--rail) minmax(0, 1fr);
+    grid-template-areas: "block rail what";
+  }
+}
+
+.block a,
+.blockInline a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.block a:hover,
+.blockInline a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+/* --- the start of the chain, above the first step ---------------------------------------------- */
+
+.origin {
+  grid-template-areas: "rail what";
+  min-height: 44px;
+}
+
+.originLabel {
+  grid-area: what;
+  align-self: start;
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: 24px;
+}
+
+@media (min-width: 1000px) {
+  .origin {
+    grid-template-areas: "block rail what here";
+  }
+
+  .originLabel {
+    grid-area: block;
+    padding-right: 4px;
+    text-align: right;
+  }
+}
+
+.origin .main {
+  top: 12px;
+}
+
+/* On a wide screen the column says once what it holds; on a narrow one each step's box says it. */
+.hereHead {
+  display: none;
+}
+
+@media (min-width: 1000px) {
+  .hereHead {
+    display: block;
+    grid-area: here;
+    margin-left: 20px;
+    padding-left: 28px;
+    border-left: 1px solid var(--rule);
+    color: var(--ink-3);
+    font-size: var(--t-xs);
+    line-height: 24px;
+  }
+
+  .hereLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* --- the rail: the chain, the branch, the curves and the nodes ----------------------------------- */
+
+.main,
+.branch {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+}
+
+.main {
+  left: calc(var(--main-x) - 1px);
+  background: var(--rule-strong);
+}
+
+.branch {
+  display: none;
+  left: calc(var(--branch-x) - 1px);
+  background: var(--accent);
+  transform-origin: top;
+}
+
+.step[data-kind="world"] .branch {
+  display: block;
+}
+
+/* Leaves the chain below the fork node, along the curve. */
+.step[data-kind="fork"] .branch {
+  display: block;
+  top: calc(var(--node-y) + 30px);
+}
+
+/* Stops where the dashed way back begins. */
+.step[data-before-commit="true"] .branch {
+  bottom: 18px;
+}
+
+.curve {
+  position: absolute;
+  left: 0;
+  width: 44px;
+  height: 30px;
+  overflow: visible;
+  fill: none;
+  stroke-width: 2px;
+  stroke-linecap: round;
+}
+
+.curve[data-dir="out"] {
+  top: var(--node-y);
+  stroke: var(--accent);
+}
+
+.curve[data-dir="in"] {
+  top: calc(var(--node-y) - 30px);
+  stroke: var(--accent);
+  stroke-dasharray: 2 5;
+}
+
+.node {
+  position: absolute;
+  top: var(--node-y);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.step[data-kind="fork"] .node,
+.step[data-kind="commit"] .node {
+  left: var(--main-x);
+  background: var(--ink);
+  box-shadow: 0 0 0 4px var(--paper);
+}
+
+.step[data-kind="world"] .node {
+  left: var(--branch-x);
+  width: 11px;
+  height: 11px;
+  background: var(--paper);
+  box-shadow:
+    inset 0 0 0 2px var(--accent),
+    0 0 0 3px var(--paper);
+}
+
+/* The hash is what the branch ends in: a filled node. */
+.step[data-step="hash"] .node {
+  background: var(--accent);
+}
+
+/* --- the words ---------------------------------------------------------------------------------- */
+
+.what h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 1.1875rem;
+  letter-spacing: -0.018em;
+  line-height: calc(var(--node-y) * 2);
+}
+
+.number {
+  flex: none;
+  min-width: 1ch;
+  color: var(--ink-3);
+  font-size: var(--t-sm);
+  font-weight: 400;
+}
+
+.what p {
+  max-width: 36em;
+  margin-top: var(--space-2);
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.blockInline {
+  margin-top: 2px;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+}
+
+.hereLabel {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: calc(var(--node-y) * 2);
+}
+
+@media (max-width: 999px) {
+  .here {
+    max-width: 38rem;
+    padding: 12px 14px 14px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--rule);
+    margin-bottom: var(--after);
+  }
+
+  .hereLabel {
+    line-height: 1.4;
+  }
+}
+
+.here p {
+  text-wrap: pretty;
+}
+
+.here a:not(:global(.arrow-link)) {
+  color: var(--accent-text);
+  overflow-wrap: anywhere;
+}
+
+.here a:not(:global(.arrow-link)):hover {
+  color: var(--ink);
+}
+
+.here :global(.arrow-link) {
+  justify-self: start;
+}
+
+.quote {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.quote::before {
+  content: "\201C";
+}
+
+.quote::after {
+  content: "\201D";
+}
+
+.events {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.events li {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.round {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  line-height: 1.9;
+}
+
+.counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.counts b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.counts [data-tone="post"] b {
+  color: var(--post);
+}
+
+.counts [data-tone="buy"] b {
+  color: var(--buy-text);
+}
+
+.counts [data-tone="sell"] b {
+  color: var(--sell-text);
+}
+
+.price {
+  display: grid;
+  gap: 6px;
+  margin: 4px 0 0;
+}
+
+.price svg {
+  display: block;
+  width: 100%;
+  height: 64px;
+  overflow: visible;
+}
+
+.priceLine {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.band {
+  fill: var(--accent-soft);
+}
+
+.price figcaption,
+.small {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.facts {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.facts div {
+  display: grid;
+  gap: 2px;
+}
+
+@media (min-width: 1200px) {
+  .facts div {
+    grid-template-columns: 7.5em minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+
+.facts dt {
+  color: var(--ink-3);
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+.hash {
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* A model id moves to the next line whole where it fits, and breaks only where it cannot. */
+.model {
+  display: inline-block;
+  max-width: 100%;
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+.small:is(a) {
+  justify-self: start;
+  text-decoration: underline;
+}
+
+.small:is(a):hover {
+  color: var(--ink);
+}
+
+.wait {
+  height: 44px;
+}
+
+.after {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--rule);
+}
+
+/* --- drawing in, as each step scrolls into view --------------------------------------------------- */
+
+@media screen and (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .step .branch {
+    transition: transform 700ms var(--ease-out);
+  }
+
+  .step[data-in="false"] .branch {
+    transform: scaleY(0);
+  }
+
+  .curve[data-dir="out"] path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 600ms var(--ease-out);
+  }
+
+  .step[data-in="false"] .curve[data-dir="out"] path {
+    stroke-dashoffset: 1;
+  }
+
+  .curve[data-dir="in"],
+  .node,
+  .what,
+  .here,
+  .block {
+    transition:
+      opacity 600ms var(--ease-out) 120ms,
+      transform 700ms var(--ease-out) 120ms;
+  }
+
+  .step[data-in="false"] .curve[data-dir="in"],
+  .step[data-in="false"] .block {
+    opacity: 0;
+  }
+
+  .step[data-in="false"] .node {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+
+  .step[data-in="false"] .what,
+  .step[data-in="false"] .here {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .step .here {
+    transition-delay: 220ms;
+  }
+
+  /* Keyboard focus inside a step shows it at once. */
+  .step:focus-within .branch {
+    transform: none;
+  }
+
+  .step:focus-within .curve[data-dir="out"] path {
+    stroke-dashoffset: 0;
+  }
+
+  .step:focus-within .curve[data-dir="in"],
+  .step:focus-within .block,
+  .step:focus-within .node,
+  .step:focus-within .what,
+  .step:focus-within .here {
+    opacity: 1;
+  }
+
+  .step:focus-within .what,
+  .step:focus-within .here {
+    transform: none;
+  }
+
+  .step:focus-within .node {
+    transform: translate(-50%, -50%);
+  }
+}
