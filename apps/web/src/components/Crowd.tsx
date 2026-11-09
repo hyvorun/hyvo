@@ -437,12 +437,14 @@ export function Crowd({ layout, timeline, position = 0, fill = 0.5, ariaLabel, m
     });
     sized.observe(box);
     // Frames run only while the crowd is on screen. The first time enough of it is (a fifth, or a
-    // quarter of the screen for a tall one), its dots come in, row by row.
+    // quarter of the screen for a tall one), its dots come in, row by row. A late callback brings
+    // every entry since the last one, oldest first: the newest says where the crowd is now.
     const seen = new IntersectionObserver(
-      ([entry]) => {
-        state.visible = entry!.isIntersecting;
-        const screen = entry!.rootBounds?.height ?? window.innerHeight;
-        if (!state.seen && state.visible && (entry!.intersectionRatio >= 0.2 || entry!.intersectionRect.height >= screen * 0.25)) {
+      (entries) => {
+        const entry = entries[entries.length - 1]!;
+        state.visible = entry.isIntersecting;
+        const screen = entry.rootBounds?.height ?? window.innerHeight;
+        if (!state.seen && state.visible && (entry.intersectionRatio >= 0.2 || entry.intersectionRect.height >= screen * 0.25)) {
           state.seen = true;
           enter(state.anim, state.layout.cells, performance.now());
         }

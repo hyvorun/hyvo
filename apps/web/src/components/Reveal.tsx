@@ -15,10 +15,12 @@ export function useInView<T extends Element>(threshold = 0.16): [React.RefObject
       return;
     }
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry!.isIntersecting) return;
-        const screen = entry!.rootBounds?.height ?? window.innerHeight;
-        if (entry!.intersectionRatio >= threshold || entry!.intersectionRect.height >= screen * 0.25) show();
+      (entries) => {
+        // A late callback brings every entry since the last one, oldest first: the newest is now.
+        const entry = entries[entries.length - 1]!;
+        if (!entry.isIntersecting) return;
+        const screen = entry.rootBounds?.height ?? window.innerHeight;
+        if (entry.intersectionRatio >= threshold || entry.intersectionRect.height >= screen * 0.25) show();
       },
       { threshold: [...new Set([0, 0.02, 0.05, 0.1, threshold])].sort((a, b) => a - b), rootMargin: "0px 0px -6% 0px" },
     );
