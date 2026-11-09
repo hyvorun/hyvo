@@ -1,0 +1,24 @@
+{
+  "name": "@hyvo/check",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hyvo Check: read-only facts about a Robinhood Chain token with their evidence, and an exit simulation in one eth_call",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "probe:export": "node ../../chain/scripts/export-probe.mjs",
+    "check": "tsx scripts/check.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "viem": "2.57.5",
+    "vitest": "~5.0.5"
+  }
+}
