@@ -166,3 +166,9 @@ test("the long home page never scrolls sideways", async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test("the header and the footer link Hyvo's official X account", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("banner").getByRole("link", { name: "Hyvo on X, @Hyvorun" })).toHaveAttribute("href", "https://x.com/Hyvorun");
+  await expect(page.getByRole("contentinfo").getByRole("link", { name: "X (@Hyvorun)" })).toHaveAttribute("href", "https://x.com/Hyvorun");
+});

@@ -89,6 +89,34 @@
   transition: color 160ms var(--ease);
 }
 
+/* Hyvo's official X account, so a lookalike is easy to tell apart. The handle shows where there is room. */
+.social {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 9px;
+  border-radius: var(--radius-sm);
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  text-decoration: none;
+  transition: color 160ms var(--ease);
+}
+
+.social:hover {
+  color: var(--ink);
+}
+
+.handle {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .handle {
+    display: inline;
+  }
+}
+
 .theme:hover {
   color: var(--ink);
 }

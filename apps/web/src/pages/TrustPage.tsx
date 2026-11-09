@@ -4,6 +4,7 @@ import { Disclaimer } from "../components/Disclaimer";
 import { Arrow } from "../components/Icons";
 import { Failure } from "../components/States";
 import { ADDRESSES } from "../lib/addresses";
+import { OFFICIAL } from "../lib/official";
 import { readChainFacts, type ChainFacts, type Ownership } from "../lib/contracts";
 import { addressUrl, blockUrl } from "../lib/explorer";
 import { shortHash } from "../lib/format";
@@ -68,6 +69,24 @@ export function TrustPage() {
         <h1>Check it, rather than take our word</h1>
         <p>Each promise below comes with the place to verify it. Most of them are enforced by contracts on Robinhood Chain, which anyone can read.</p>
       </header>
+
+      <section className={styles.section} aria-labelledby="official">
+        <h2 id="official">Official accounts</h2>
+        <div className={styles.prose}>
+          <p>
+            Hyvo is at{" "}
+            <a href={OFFICIAL.site.url} rel="noreferrer">
+              {OFFICIAL.site.label}
+            </a>{" "}
+            and on X as{" "}
+            <a href={OFFICIAL.x.url} target="_blank" rel="noreferrer">
+              {OFFICIAL.x.handle}
+            </a>
+            . A site or an account that uses the name anywhere else is not Hyvo&apos;s. Hyvo never sends the first direct message, and never asks for
+            a seed phrase or a private key.
+          </p>
+        </div>
+      </section>
 
       <section className={styles.section} aria-labelledby="never">
         <h2 id="never">Hyvo never…</h2>

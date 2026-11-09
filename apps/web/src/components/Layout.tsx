@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router";
+import { OFFICIAL } from "../lib/official";
 import { Logomark } from "./Icons";
 import styles from "./Layout.module.css";
 
@@ -79,6 +80,10 @@ export function Layout() {
             </NavLink>
           </nav>
           <div className={styles.end}>
+            <a className={styles.social} href={OFFICIAL.x.url} target="_blank" rel="noreferrer" aria-label={`Hyvo on X, ${OFFICIAL.x.handle}`}>
+              <XMark />
+              <span className={styles.handle}>{OFFICIAL.x.handle}</span>
+            </a>
             <button
               type="button"
               className={styles.theme}
@@ -159,6 +164,9 @@ export function Layout() {
           <Link to="/account" viewTransition>
             API keys
           </Link>
+          <a href={OFFICIAL.x.url} target="_blank" rel="noreferrer">
+            X ({OFFICIAL.x.handle})
+          </a>
           {SOURCE_URL && (
             <a href={SOURCE_URL} target="_blank" rel="noreferrer">
               Source
@@ -167,5 +175,17 @@ export function Layout() {
         </nav>
       </footer>
     </div>
+  );
+}
+
+/** The X logo, for the link to Hyvo's official account. */
+function XMark() {
+  return (
+    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+      />
+    </svg>
   );
 }

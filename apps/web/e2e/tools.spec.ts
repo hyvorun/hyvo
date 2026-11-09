@@ -95,6 +95,8 @@ test("the glossary filters, and a link lands on its term", async ({ page }) => {
 
 test("the trust page says what Hyvo never does, and the token page what the token is for", async ({ page }) => {
   await page.goto("/trust");
+  await expect(page.getByRole("heading", { name: "Official accounts" })).toBeVisible();
+  await expect(page.getByRole("main").getByRole("link", { name: "@Hyvorun" })).toHaveAttribute("href", "https://x.com/Hyvorun");
   await expect(page.getByRole("heading", { name: "Hyvo never…" })).toBeVisible();
   for (const never of ["Keeps your money in a contract", "Moves or approves your tokens", "Changes a published run", "Gives trading advice"]) {
     await expect(page.getByRole("heading", { name: never, level: 3 })).toBeVisible();

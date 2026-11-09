@@ -16,7 +16,7 @@ Status: **verified** (checked against an official source or on-chain) · **likel
 | 6 | Zep Cloud free tier | verified | `ZEP_API_KEY=` (not needed in Stage 1) |
 | 7 | LLM free tiers and prices | verified / likely | `LLM_*=` empty → offline model |
 | 8 | Farcaster data API | verified | Stage 3 only |
-| 9 | `hyvo.run`, X handle | attached / unknown | site at `hyvo.run`, API at `api.hyvo.run` (`apps/api/domains.json`) |
+| 9 | `hyvo.run`, X handle | attached / decided | site at `hyvo.run`, API at `api.hyvo.run` (`apps/api/domains.json`); X `@Hyvorun` |
 | 10 | Report agent vs spec §6.7 | decision | Hyvo report agent modeled on ReportAgent |
 | 11 | LLM for real-model runs | resolved | Workers AI through the Worker; no key |
 | 12 | Mainnet deploy: owner, attester, treasury | deployed | `chain/deployments/4663.json`; owner and treasury still to move to the founder's wallet |
@@ -139,7 +139,8 @@ laptop job). Source: <https://docs.neynar.com/reference/what-are-the-rate-limits
   domain to a Pages project, hence the Worker. The Pages project `hyvo` still serves `hyvo.pages.dev`, whose page sends
   visitors to `hyvo.run` with the path kept, and the API's `*.workers.dev` address keeps answering. `WEB_ORIGIN` and
   `SIWE_DOMAIN` list both addresses of the site, the domain first.
-- The X handle is not settled yet.
+- The X account is `@Hyvorun` (<https://x.com/Hyvorun>), made on 2026-11-09. The header, the footer and `/trust` link it
+  (`apps/web/src/lib/official.ts`), so a lookalike site or account is easier to tell apart.
 
 ## 10. Report agent vs spec §6.7 — decision
 
