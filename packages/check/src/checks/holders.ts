@@ -15,6 +15,16 @@ export type HoldersInput = {
   deployer: Address | null;
   /** Addresses that hold tokens for others or for nobody: burn addresses, the PoolManager, the venue's pool. */
   excluded: { address: Address; label: string }[];
+  /**
+   * Where the holders were read when they did not come from Blockscout with the caller's own key, such as
+   * "Blockscout's index, read through Hyvo's API at 07:12 UTC on 2026-11-09". The evidence names it, and says
+   * the balances were not read at `block`.
+   */
+  source?: string;
+  /** Why `holders` is null, in plain words, when the source said. */
+  missing?: string | null;
+  /** The block the check read at. */
+  block?: bigint;
 };
 
 // Percentage with two decimals, computed in bigint.
@@ -40,7 +50,10 @@ export function holdersCheck(input: HoldersInput): Finding {
   }
   const { totalSupply, holders } = input;
   if (!holders || totalSupply === null || totalSupply === 0n) {
-    return makeFinding({ id: "holders", title, status: "skipped", evidence: "Blockscout did not return the token's holders" });
+    const why = !holders
+      ? (input.missing ?? "Blockscout did not return the token's holders")
+      : "the token's total supply is unknown or zero, so no share of it can be given";
+    return makeFinding({ id: "holders", title, status: "skipped", evidence: input.source && holders ? `${why} (${input.source})` : why });
   }
 
   const ranked = holders
@@ -63,6 +76,10 @@ export function holdersCheck(input: HoldersInput): Finding {
         ? `the deployer ${shortenAddress(input.deployer)} holds ${formatPct(pct(listed.value, totalSupply))}`
         : `the deployer ${shortenAddress(input.deployer)} is not among the ${holders.length} largest holders Blockscout listed`,
     );
+  }
+  if (input.source) {
+    const block = input.block !== undefined ? `, not read at block ${input.block.toLocaleString("en-US")}` : "";
+    parts.push(`balances from ${input.source}${block}`);
   }
   return makeFinding({ id: "holders", title, status: "found", evidence: parts.join("; ") });
 }

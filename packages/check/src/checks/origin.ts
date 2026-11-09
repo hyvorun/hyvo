@@ -12,6 +12,13 @@ export type OriginInput = {
   sourcify: SourcifyContract["deployment"] | undefined;
   /** Blockscout's creator; undefined when Blockscout was not asked (no key), null when it did not answer. */
   blockscout: { deployer: Address; creationTxHash: string | null } | null | undefined;
+  /**
+   * Where Blockscout's creator was read when not with the caller's own key, such as "Blockscout's index, read
+   * through Hyvo's API at 07:12 UTC on 2026-11-09"; the evidence names it.
+   */
+  blockscoutSource?: string;
+  /** Why Blockscout's creator is null, in plain words, when the source said. */
+  blockscoutMissing?: string | null;
 };
 
 function shortHash(hash: string): string {
@@ -45,12 +52,14 @@ export function originCheck(input: OriginInput): Finding {
       id: "deployer",
       title,
       status: "found",
-      evidence: `created by ${shortenAddress(input.blockscout.deployer)}${tx} (Blockscout); no Pons launch record`,
+      evidence: `created by ${shortenAddress(input.blockscout.deployer)}${tx} (${input.blockscoutSource ?? "Blockscout"}); no Pons launch record`,
     });
   }
   const sourcify = input.sourcify === undefined ? "Sourcify could not be reached" : "Sourcify has no deployment record";
   const blockscout =
-    input.blockscout === undefined ? "no Blockscout key was given" : "Blockscout did not name a creator";
+    input.blockscout === undefined
+      ? "no Blockscout key was given"
+      : (input.blockscoutMissing ?? "Blockscout did not name a creator");
   return makeFinding({
     id: "deployer",
     title,

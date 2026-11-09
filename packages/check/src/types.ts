@@ -176,6 +176,32 @@ export interface CheckReport {
   notice: string;
 }
 
+/**
+ * What an index of the chain says about a token's holders and creator, read apart from the check: Hyvo's API
+ * reads Blockscout's index with its own key and hands these out, and `checkToken` takes them through
+ * `options.holders`. They are the index's, not read at the check's block, and the evidence says where they
+ * came from (`source`).
+ */
+export interface HolderFacts {
+  /**
+   * Where and when the facts were read, as the evidence names it, such as "Blockscout's index, read through
+   * Hyvo's API at 07:12 UTC on 2026-11-09".
+   */
+  source: string;
+  /** The index's total supply; the check's own read at its block comes first. */
+  totalSupply: bigint | null;
+  /** How many addresses hold the token, by the index's count. */
+  holderCount: number | null;
+  /** The largest holders, largest first (the index's first page); null when they could not be read. */
+  holders: { address: Address; value: bigint }[] | null;
+  /** Why `holders` is null, in plain words; null when they were read. */
+  holdersMissing: string | null;
+  /** Who created the token, by the index; null when it does not say or could not be read. */
+  creator: { address: Address; creationTxHash: Hex | null } | null;
+  /** Why `creator` is null, in plain words; null when it was read. */
+  creatorMissing: string | null;
+}
+
 /** The structural minimum of `fetch` that Hyvo Check uses, so browser, Node and Worker fetch all fit. */
 export type FetchLike = (
   url: string,
@@ -198,6 +224,12 @@ export interface CheckOptions {
   blockscoutKey?: string;
   /** Blockscout's keyed API for chain 4663. Default `https://api.blockscout.com/4663/api`. */
   blockscoutUrl?: string;
+  /**
+   * Holders and the creator read elsewhere, such as through Hyvo's API (`GET /v1/check/:token/holders`). Called
+   * once, as the check starts, and awaited with the other sources; it takes the place of Blockscout's holder and
+   * creator reads. Null, or a rejection, leaves the holder check skipped.
+   */
+  holders?: (token: Address, signal?: AbortSignal) => Promise<HolderFacts | null>;
   /** ETH the exit simulation spends on the buy, in wei. Default 0.001 ETH (10^15 wei). */
   ethIn?: bigint;
   /** The block to read at. Default: two blocks below the head, so every RPC node has it. */
