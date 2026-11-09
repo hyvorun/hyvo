@@ -267,9 +267,10 @@ export function chooseVenue(token: Address, decimals: number | null, a: Discover
     finding: makeFinding({ id: "venue", title, status: "found", evidence }),
   });
 
+  // Only the pools this check discovers: with WETH. A pair or pool with another asset, such as USDG, stays in.
   if (a.ponsV2) excluded.push({ address: a.ponsV2.curve, label: "the Pons curve" });
-  if (b.v2Pair) excluded.push({ address: b.v2Pair, label: "the Uniswap V2 pair" });
-  for (const p of b.v3Pools) excluded.push({ address: p.pool, label: "the Uniswap V3 pools" });
+  if (b.v2Pair) excluded.push({ address: b.v2Pair, label: "the Uniswap V2 pair with WETH" });
+  for (const p of b.v3Pools) excluded.push({ address: p.pool, label: "the Uniswap V3 pools with WETH" });
 
   // 1. Pons v2
   const pons = a.ponsV2;

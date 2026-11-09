@@ -77,7 +77,7 @@ or `skipped` (it could not look, and the evidence says why). `CHECKS[id].looksFo
 | `pause` | Pause or trading switch | `pause`, `setTradingEnabled`, `enableTrading` and similar | same |
 | `venue` | Trading venue | Where the token trades against ETH | Pons factories, Uniswap factories, the V4 PoolManager |
 | `sell-simulation` | Sell or transfer shortfall | After the buy: a transfer or sell that reverts, or any step short of the venue's own math (a buy that reverts is `skipped`) | the probe, in one `eth_call` |
-| `holders` | Top holders | The share of the 10 largest holders, burn addresses and pools left out | Blockscout (needs a key) |
+| `holders` | Top holders | The share of the 10 largest holders, leaving out burn addresses, the V4 PoolManager, the token's Pons curve and its Uniswap V2 pair and V3 pools with WETH (a pool with another asset stays in) | Blockscout (needs a key) |
 | `deployer` | Deployer | Who created or launched the token | the Pons factories' records, Sourcify, Blockscout |
 
 For the function checks, a verified ABI is authoritative. Without one, the selectors of a fixed list of

@@ -447,8 +447,9 @@ then three fields of this API. The type is `CheckResponse` in `apps/api/src/lib/
 ```
 
 With the key, the `holders` finding reads, for example: "the 2 largest holders hold 30% of the supply, leaving out burn addresses, the Uniswap V4
-PoolManager, the Uniswap V2 pair; 3 holders in all (Blockscout); the deployer 0xAbc9…0f21 holds 10%; balances from Blockscout's index, read through
-Hyvo's API at 07:12 UTC on 2026-11-09, not read at block 109,871,808". The share is of the supply read at the block, of the balances in the index.
+PoolManager, the Uniswap V2 pair with WETH; 3 holders in all (Blockscout); the deployer 0xAbc9…0f21 holds 10%; balances from Blockscout's index, read
+through Hyvo's API at 07:12 UTC on 2026-11-09, not read at block 109,871,808". The share is of the supply read at the block, of the balances in the
+index.
 
 A finding's `status` is `found` (the check found what it looks for), `not_found` (it looked, and the evidence says where) or `skipped` (it could
 not look, and the evidence says why). `CHECKS[id].looksFor` in `@hyvo/check`, and its README, say what each check looks for. A step's
@@ -456,7 +457,8 @@ not look, and the evidence says why). `CHECKS[id].looksFor` in `@hyvo/check`, an
 
 - **Top holders and Blockscout.** With the Worker secret `BLOCKSCOUT_API_KEY` set, a check reads the token's holders and creator from
   Blockscout's index beside the chain reads, through the same cache as the holders route below: the `holders` finding gives the ten largest
-  holders' share of the supply with burn addresses, the Uniswap V4 PoolManager and the token's pools left out, and the `deployer` finding falls
+  holders' share of the supply, leaving out burn addresses, the Uniswap V4 PoolManager, the token's Pons curve and its Uniswap V2 pair and V3
+  pools with WETH (the only pools the check looks for, so a pool with another asset, such as USDG, stays in), and the `deployer` finding falls
   back to Blockscout's creator after the Pons factories' records and Sourcify. Both name Blockscout's index as their source, with the time it
   was read; it is not read at `block`. When Blockscout answers `429`, fails, takes more than 5 s or lists no holder, the finding is `skipped`
   and its evidence says why. Without the key, `holders` is `skipped`, `skippedByApi` says why, and Blockscout is never asked. Verified source comes from
@@ -485,7 +487,8 @@ not look, and the evidence says why). `CHECKS[id].looksFor` in `@hyvo/check`, an
 
 No key and no session; CORS as every `/v1/*` route. A token's top holders and creator from Blockscout's index, read by this API with its own
 key, which never leaves the Worker: no answer, header, error or log carries it. The /check page asks this route while the browser reads the
-chain, and the check in the browser leaves out burn addresses and pools as it does everywhere. The type is `HoldersResponse` in
+chain, and the check in the browser leaves out burn addresses, the V4 PoolManager, the Pons curve and the token's pools with WETH as it does
+everywhere. The type is `HoldersResponse` in
 `apps/api/src/lib/holders.ts`; `parseHolderFacts` in `@hyvo/check` reads it back.
 
 ```jsonc

@@ -41,7 +41,8 @@ export const CHECKS: Record<CheckId, { title: string; looksFor: string }> = {
   },
   holders: {
     title: "Top holders",
-    looksFor: "How much of the supply the ten largest holders hold, burn addresses and pools left out.",
+    looksFor:
+      "How much of the supply the ten largest holders hold, leaving out burn addresses, the Uniswap V4 PoolManager, the token's Pons curve and its Uniswap V2 pair and V3 pools with WETH.",
   },
   deployer: {
     title: "Deployer",

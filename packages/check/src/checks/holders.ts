@@ -14,7 +14,10 @@ export type HoldersInput = {
   holders: { address: Address; value: bigint }[] | null;
   /** Who created or launched the token, when known; its share is read from the same holder list. */
   deployer: Address | null;
-  /** Addresses that hold tokens for others or for nobody: burn addresses, the PoolManager, the venue's pool. */
+  /**
+   * Addresses that hold tokens for others or for nobody: burn addresses, the V4 PoolManager, the Pons curve and the
+   * token's pools with WETH (chooseVenue).
+   */
   excluded: { address: Address; label: string }[];
   /**
    * Where the holders were read when they did not come from Blockscout with the caller's own key, such as
@@ -36,7 +39,8 @@ function pct(part: bigint, whole: bigint): number {
 
 /**
  * How much of the supply the ten largest holders hold. Burn addresses, the Uniswap V4 PoolManager (which holds
- * pool liquidity, not a holder's tokens) and the venue's own pool are left out, and the evidence says so.
+ * pool liquidity, not a holder's tokens), the token's Pons curve and its Uniswap V2 pair and V3 pools with WETH are
+ * left out, and the evidence names them. A pool with another asset, which this check does not look for, stays in.
  */
 export function holdersCheck(input: HoldersInput): Finding {
   const title = CHECKS.holders.title;

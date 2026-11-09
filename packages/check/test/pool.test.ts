@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { CHECKS } from "../src/checks/catalog";
 import { type DiscoveryA, type DiscoveryB, type DiscoveryC, chooseVenue, parseDiscoveryA } from "../src/checks/pool";
 import { ADDRESSES } from "../src/registry/addresses";
 import type { Address } from "../src/types";
@@ -49,6 +50,29 @@ describe("venue discovery", () => {
     expect(choice.finding.status).toBe("found");
     expect(choice.finding.evidence).toContain("curve fee 1%, creator tax 1%, snipe tax at this block 0%");
     expect(choice.excluded.map((e) => e.label)).toContain("the Pons curve");
+  });
+
+  it("leaves out of the top holders exactly the addresses it found, and says what each is, as the check's description does", () => {
+    const choice = chooseVenue(
+      TOKEN,
+      18,
+      discA({ ponsV2: pons(0) }),
+      discB({ v2Pair: PAIR, v3Pools: [{ fee: 3000, pool: POOL_A }] }),
+      discC({ v2Reserves: { weth: 10n ** 18n, token: 10n ** 24n } }),
+    );
+    const labels = [...new Set(choice.excluded.map((e) => e.label))];
+    expect(labels).toEqual([
+      "burn addresses",
+      "the Uniswap V4 PoolManager",
+      "the Pons curve",
+      "the Uniswap V2 pair with WETH",
+      "the Uniswap V3 pools with WETH",
+    ]);
+    // Only pools with WETH are discovered, so what the check looks for says so rather than "pools".
+    const looksFor = CHECKS.holders.looksFor;
+    for (const words of ["burn addresses", "the Uniswap V4 PoolManager", "Pons curve", "Uniswap V2 pair", "V3 pools with WETH"]) {
+      expect(looksFor).toContain(words);
+    }
   });
 
   it("takes a graduated Pons launch's V4 pool with the hook from the factory", () => {
