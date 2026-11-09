@@ -164,13 +164,10 @@ function Stats({ state, hours }: { state: WindowState; hours: number }) {
     <ul className={styles.stats} aria-label={`The ${span} on Pons`}>
       {items.map((item) => (
         <li key={item.label}>
-          {item.value === null ? (
-            <span className={`${styles.statWait} skeleton`} aria-hidden="true" />
-          ) : (
-            <b className="num">
-              <CountUp value={item.value} format={item.format} />
-            </b>
-          )}
+          {/* The placeholder sits in the <b> its number will take, so it is one line of that number tall. */}
+          <b className="num">
+            {item.value === null ? <span className={`${styles.statWait} skeleton`} aria-hidden="true" /> : <CountUp value={item.value} format={item.format} />}
+          </b>
           <span>{item.label}</span>
         </li>
       ))}

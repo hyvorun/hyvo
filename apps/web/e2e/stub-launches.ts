@@ -8,7 +8,17 @@ import type { Page } from "@playwright/test";
 
 const RPC = "http://rpc.test";
 
-export async function stubLaunchChain(page: Page, rules: EndpointRules = {}): Promise<FakeChain> {
+/** One JSON-RPC call of a request (a request may batch several). */
+export interface RpcCall {
+  method: string;
+  params?: unknown[];
+}
+
+/**
+ * `hold` can keep a request waiting: given its calls, it returns a promise to answer only once that
+ * settles, or nothing to answer at once.
+ */
+export async function stubLaunchChain(page: Page, rules: EndpointRules = {}, hold?: (calls: RpcCall[]) => Promise<void> | undefined): Promise<FakeChain> {
   const chain = demoChain({ [RPC]: rules });
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -20,7 +30,12 @@ export async function stubLaunchChain(page: Page, rules: EndpointRules = {}): Pr
     if (request.method() === "OPTIONS") return route.fulfill({ status: 204, headers });
     if (rules.down) return route.abort("connectionrefused");
     if (rules.rateLimited) return route.fulfill({ status: 429, headers, body: "Too Many Requests" });
-    return route.fulfill({ status: 200, contentType: "application/json", headers, body: chain.answerText(request.url(), request.postData() ?? "{}") });
+    const text = request.postData() ?? "{}";
+    if (hold) {
+      const body = JSON.parse(text) as RpcCall | RpcCall[];
+      await hold(Array.isArray(body) ? body : [body]);
+    }
+    return route.fulfill({ status: 200, contentType: "application/json", headers, body: chain.answerText(request.url(), text) });
   });
   return chain;
 }

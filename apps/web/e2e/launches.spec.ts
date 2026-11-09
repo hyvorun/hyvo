@@ -94,6 +94,49 @@ test("Chain Pulse counts the last 24 hours from the reads above and the hours be
   await noHorizontalScroll(page);
 });
 
+test("Chain Pulse keeps its height while it reads, so nothing below it moves", async ({ page }) => {
+  // Held twice: the factory's events of the hours before the window (the pulse waits), then the
+  // curves' reads that follow them (the pulse has its counts and waits for each curve's facts).
+  const head = 109_867_700n;
+  const windowFrom = head - BigInt(Math.round(6 * 3600 * 9.6)) + 1n;
+  const gate = () => {
+    let open!: () => void;
+    const shut = new Promise<void>((resolve) => (open = resolve));
+    return { shut, open };
+  };
+  const scan = gate();
+  const curves = gate();
+  let scanned = false;
+  await stubLaunchChain(page, {}, (calls) => {
+    const earlier = calls.some((call) => {
+      const filter = call.params?.[0] as { address?: string; toBlock?: string } | undefined;
+      return call.method === "eth_getLogs" && filter?.address?.toLowerCase() === PONS_V2_FACTORY.toLowerCase() && BigInt(filter.toBlock!) < windowFrom;
+    });
+    if (earlier) return scan.shut;
+    if (scanned && calls.some((call) => call.method === "eth_call")) return curves.shut;
+    return undefined;
+  });
+  await page.goto("/launches");
+  const pulse = page.getByRole("region", { name: "Chain Pulse: the last 24 hours" });
+  await expect(pulse.getByText("Reading the hours before the window…")).toBeVisible();
+  await pulse.scrollIntoViewIfNeeded();
+  await page.evaluate(() => document.fonts.ready);
+  const height = () => pulse.evaluate((section) => Math.round(section.getBoundingClientRect().height * 10) / 10);
+  const waiting = await height();
+
+  scanned = true;
+  scan.open();
+  await expect(pulse.getByText("Counted from the launch events; reading each curve…")).toBeVisible();
+  await expect(pulse.getByRole("list", { name: "The last 24 hours, counted" }).getByRole("listitem").filter({ hasText: "Launches" })).toContainText("12");
+  const counted = await height();
+
+  curves.open();
+  await expect(pulse.getByText(/^Measured on-chain at block/)).toBeVisible();
+  await expect(pulse).toContainText("4 of 12 launches share a symbol or a name");
+  const ready = await height();
+  expect({ counted, ready }).toEqual({ counted: waiting, ready: waiting });
+});
+
 test("the map draws one system per pair asset, and a keyboard opens one", async ({ page }) => {
   await stubLaunchChain(page);
   await page.goto("/launches");

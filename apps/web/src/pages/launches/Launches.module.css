@@ -231,9 +231,12 @@
   line-height: 1.45;
 }
 
-.statWait {
+/* Inside the <b> its number will take, so the line keeps that number's height. */
+.stats .statWait {
+  display: inline-block;
   width: 56%;
-  height: 26px;
+  height: 1em;
+  vertical-align: middle;
 }
 
 /* --- sections ---------------------------------------------------------------------------------- */
@@ -904,7 +907,8 @@
     grid-column: 1 / -1;
   }
 
-  .twins {
+  .twins,
+  .twinPanel .pulseWait {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--space-7);
   }
@@ -919,7 +923,8 @@
     grid-column: auto;
   }
 
-  .twins {
+  .twins,
+  .twinPanel .pulseWait {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -937,11 +942,40 @@
   font-weight: 500;
 }
 
-/* Room for the most rows a panel shows, so nothing below moves when the counts arrive. */
+/*
+ * Room for the most rows each panel shows, waiting or not, so nothing below moves when the counts
+ * arrive: six pair assets; seven creator taxes and the rest, in 32px rows; six shared symbols or
+ * names, in 64.4px rows (a 16px name line, a 12px address line, 4px between, 8px above and below
+ * and a 1px rule), one column of six or, between 720px and 1100px, three rows of two.
+ */
+.pulsePanel {
+  --rows: 228px;
+}
+
+.taxPanel {
+  --rows: calc(8 * 32px + 1px);
+}
+
+.twinPanel {
+  --rows: calc(6 * 64.4px + 1px);
+}
+
+@media (min-width: 720px) {
+  .twinPanel {
+    --rows: 228px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .twinPanel {
+    --rows: calc(6 * 64.4px + 1px);
+  }
+}
+
 .pulseWait,
 .pulseRows,
 .twins {
-  min-height: 228px;
+  min-height: var(--rows);
 }
 
 .pulseWait {
@@ -1056,6 +1090,42 @@
   height: 8px;
   border-radius: 2px;
   background: var(--ink-3);
+}
+
+/* Until each curve is read, one line of the legend: a placeholder in a line box of its text. */
+.pulseLegend .legendWait {
+  display: block;
+  flex: 1;
+}
+
+.legendWait span {
+  display: inline-block;
+  width: min(100%, 22em);
+  height: 8px;
+  vertical-align: middle;
+}
+
+/* A number still being read, in a sentence that is already there. */
+.fine .numberWait {
+  display: inline-block;
+  width: 2ch;
+  height: 0.75em;
+  vertical-align: middle;
+}
+
+/*
+ * The line under the pulse ends up naming the blocks it was read at and the endpoints that served
+ * them, whose names are long: two lines on a wide screen, up to four on a phone. Room for them from
+ * the start.
+ */
+.pulseStatus {
+  min-height: calc(4 * 1.6 * var(--t-xs));
+}
+
+@media (min-width: 720px) {
+  .pulseStatus {
+    min-height: calc(2 * 1.6 * var(--t-xs));
+  }
 }
 
 .twins li {
