@@ -9,9 +9,12 @@ import { useWalletSession, Web3 } from "../components/Web3";
 import { ApiError, buildClone, deleteClone, fetchClone, startRunFromBalance } from "../lib/api";
 import { shortHash } from "../lib/format";
 import { useTitle } from "../lib/use-title";
+import { BalancePrice, useHealth } from "./DryRunPage";
 import styles from "./DryRunPage.module.css";
 
 const POLL_MS = 4000;
+/** A clone's run: fifty agents, one of them the clone, for ten rounds. */
+const RUN_SIZE = { agents: 50, rounds: 10 };
 
 export function ClonePage() {
   useTitle("Wallet Clone");
@@ -205,6 +208,7 @@ function RunIt({ token }: { token: string }) {
   const [errors, setErrors] = useState<{ title?: string }>({});
   const [failure, setFailure] = useState<{ message: string; short: boolean } | null>(null);
   const [busy, setBusy] = useState(false);
+  const health = useHealth();
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -220,8 +224,7 @@ function RunIt({ token }: { token: string }) {
         balance: true,
         clone: true,
         scenario: { title: title.trim(), seedText: seedText.trim(), events: [] },
-        agents: 50,
-        rounds: 10,
+        ...RUN_SIZE,
       });
       navigate(`/run/${runId}`);
     } catch (caught) {
@@ -246,6 +249,7 @@ function RunIt({ token }: { token: string }) {
           <label htmlFor="clone-seed">What the crowd reads before round 1</label>
           <textarea id="clone-seed" rows={4} value={seedText} onChange={(event) => setSeedText(event.target.value)} />
         </div>
+        <BalancePrice health={health} size={RUN_SIZE} token={token} />
         <PaymentsNote className={styles.small} />
         <div className={styles.actions}>
           <button type="submit" className="btn btn-primary btn-sm" disabled={busy}>

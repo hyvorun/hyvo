@@ -252,6 +252,85 @@ test("the form sends a submission and opens its page", async ({ page }) => {
   await noHorizontalScroll(page);
 });
 
+/** The API's price terms, as production.vars.json sets them. */
+const PRODUCTION_TERMS = { multiplier: 2.5, floorUsd: 1, stepUsd: 1, costPerAgentRoundUsd: 0.00005, reportCostUsd: 0.008 };
+
+/** /v1/health with the price terms and the daily limit of a test's choosing. */
+async function healthWith(page: Page, pricing: typeof PRODUCTION_TERMS | null, maxDecisions = 840) {
+  await page.route("http://api.test/v1/health", (route) =>
+    route.fulfill({
+      status: 200,
+      headers: { "Access-Control-Allow-Origin": "*" },
+      json: {
+        ok: true,
+        version: "test",
+        features: { payments: true, oracle: true, holder: false, clone: true },
+        limits: { minAgents: 10, maxAgents: 2000, minRounds: 3, maxRounds: 30, maxDecisions },
+        holder: null,
+        ...(pricing ? { pricing } : {}),
+      },
+    }),
+  );
+}
+
+test("the form says the price before the button that spends it, as the API works it out", async ({ page }) => {
+  await stubApi(page);
+  await withWallet(page);
+  await stubDryRuns(page, () => dryView("queued"));
+  // Costs high enough that the size moves the price off the $1 floor.
+  await healthWith(page, { ...PRODUCTION_TERMS, costPerAgentRoundUsd: 0.003 });
+  await page.goto("/dryrun");
+  const price = page.getByRole("status").filter({ hasText: "Price" });
+  // 12 x 8 x 0.003 + 0.008 = 0.296; x 2.5 = 0.74: the floor.
+  await expect(price).toContainText("$1.00");
+  await expect(price).toContainText("from your prepaid balance");
+  // 40 x 20 x 0.003 + 0.008 = 2.408; x 2.5 = 6.02, up to the next dollar.
+  await page.getByLabel("Users").fill("40");
+  await page.getByLabel("Rounds").fill("20");
+  await expect(price).toContainText("$7.00");
+  const button = page.getByRole("button", { name: "Start the Dry Run" });
+  expect((await price.boundingBox())!.y).toBeLessThan((await button.boundingBox())!.y);
+  // A size the form would refuse has no price.
+  await page.getByLabel("Users").fill("400");
+  await expect(price).toContainText("–");
+  await noHorizontalScroll(page);
+});
+
+test("the form keeps to the API's daily limit, as /new does, before anything is charged", async ({ page }) => {
+  await stubApi(page);
+  await withWallet(page);
+  let posts = 0;
+  await stubDryRuns(page, () => dryView("queued"), () => {
+    posts++;
+    return { status: 201, json: { dryRun: dryView("queued"), disclaimer: DISCLAIMER } };
+  });
+  await healthWith(page, PRODUCTION_TERMS, 840);
+  await page.goto("/dryrun");
+  await page.getByLabel("Contract address").fill(`0x${"1".repeat(40)}`);
+  await page.getByLabel("What it does, in plain language").fill("A savings vault.");
+  await page.getByLabel("Users").fill("40");
+  await page.getByLabel("Rounds").fill("30");
+  const price = page.getByRole("status").filter({ hasText: "Price" });
+  await expect(price).toContainText("–");
+  await page.getByRole("button", { name: "Start the Dry Run" }).click();
+  await expect(page.getByText("For now, users × rounds can be at most 840.")).toBeVisible();
+  expect(posts).toBe(0);
+  await page.getByLabel("Rounds").fill("21");
+  await expect(price).toContainText("$1.00");
+  await page.getByRole("button", { name: "Start the Dry Run" }).click();
+  await expect(page).toHaveURL(new RegExp(`/dryrun/${DRY_ID}$`));
+  expect(posts).toBe(1);
+});
+
+test("an API that does not say its price terms leaves the price open rather than guessing", async ({ page }) => {
+  await stubApi(page);
+  await healthWith(page, null);
+  await page.goto("/dryrun");
+  await expect(page.getByRole("heading", { name: "Dry Run", level: 1 })).toBeVisible();
+  await page.waitForLoadState("networkidle");
+  await expect(page.getByRole("status").filter({ hasText: "Price" })).toContainText("–");
+});
+
 test("a short balance is explained, with where to top up", async ({ page }) => {
   await stubApi(page);
   await withWallet(page);

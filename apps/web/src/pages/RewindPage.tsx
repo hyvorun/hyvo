@@ -6,10 +6,12 @@ import { Reveal } from "../components/Reveal";
 import { useWalletSession, Web3 } from "../components/Web3";
 import { ApiError, startRunFromBalance } from "../lib/api";
 import { useTitle } from "../lib/use-title";
+import { BalancePrice, useHealth } from "./DryRunPage";
 import styles from "./DryRunPage.module.css";
 
 const ROUNDS = 10;
 const AGENTS = 50;
+const SIZE = { agents: AGENTS, rounds: ROUNDS };
 
 export function RewindPage() {
   useTitle("Rewind");
@@ -52,6 +54,7 @@ function Rewind() {
   const [errors, setErrors] = useState<Errors>({});
   const [failure, setFailure] = useState<{ message: string; short: boolean } | null>(null);
   const [busy, setBusy] = useState(false);
+  const health = useHealth();
   const set = (patch: Partial<Fields>) => setFields((current) => ({ ...current, ...patch }));
 
   const submit = async (event: FormEvent) => {
@@ -118,6 +121,7 @@ function Rewind() {
         <p className={styles.small}>
           Fifty agents and ten rounds, paid from your <Link to="/account">balance</Link>. Old blocks depend on what the public node still serves: if it cannot read yours, the run fails and the price goes back.
         </p>
+        <BalancePrice health={health} size={SIZE} token={wallet.session?.token ?? null} />
         <PaymentsNote className={styles.small} />
         <div className={styles.actions}>
           <button type="submit" className="btn btn-primary btn-sm" disabled={busy || wallet.busy !== null}>

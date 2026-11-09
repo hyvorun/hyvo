@@ -336,6 +336,123 @@ test("the rewind form holds one change, and sends it", async ({ page }) => {
   await noHorizontalScroll(page);
 });
 
+// --- the price, before the button that spends it -----------------------------------------------------
+
+/** The API's price terms, as production.vars.json sets them. */
+const PRODUCTION_TERMS = { multiplier: 2.5, floorUsd: 1, stepUsd: 1, costPerAgentRoundUsd: 0.00005, reportCostUsd: 0.008 };
+
+async function healthWith(page: Page, pricing: typeof PRODUCTION_TERMS) {
+  await page.route("http://api.test/v1/health", (route) =>
+    route.fulfill({
+      status: 200,
+      headers: CORS,
+      json: {
+        ok: true,
+        version: "test",
+        features: { payments: true, oracle: true, holder: true, clone: true },
+        limits: { minAgents: 10, maxAgents: 2000, minRounds: 3, maxRounds: 30, maxDecisions: 840 },
+        holder: { min: "1000", decimals: 18, heldForSeconds: 86_400 },
+        pricing,
+      },
+    }),
+  );
+}
+
+/** `/v1/me` for a wallet that holds enough, for long enough: its discount applies to what it starts. */
+async function eligibleHolder(page: Page, discountBps: number) {
+  await page.route("http://api.test/v1/me", (route) =>
+    route.fulfill({
+      status: 200,
+      headers: CORS,
+      json: {
+        address: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        admin: false,
+        holder: {
+          enabled: true,
+          eligible: true,
+          minBalance: "1000",
+          balance: "5000",
+          balance24hAgo: "5000",
+          freeRunsPerMonth: 2,
+          freeRunsLeft: 2,
+          discountBps,
+          freeRunMax: { agents: 50, rounds: 10 },
+        },
+      },
+    }),
+  );
+}
+
+test("the rewind form says its price before the button that spends it", async ({ page }) => {
+  await stubApi(page);
+  await healthWith(page, PRODUCTION_TERMS);
+  await page.goto("/rewind");
+  const price = page.getByRole("status").filter({ hasText: "Price" });
+  // 50 x 10 x 0.00005 + 0.008 = 0.033; x 2.5 is under the $1 floor.
+  await expect(price).toContainText("$1.00");
+  await expect(price).toContainText("from your prepaid balance");
+  const button = page.getByRole("button", { name: "Start the rewind" });
+  expect((await price.boundingBox())!.y).toBeLessThan((await button.boundingBox())!.y);
+  await noHorizontalScroll(page);
+});
+
+test("a clone's run says its price, with a holder's discount once the wallet is signed in", async ({ page }) => {
+  await stubApi(page);
+  await withWallet(page);
+  await stubClone(page, { clone: view("ready") });
+  // 50 x 10 x 0.004 + 0.008 = 2.008; x 2.5 = 5.02, up to $6, and $5 with 20% off (4.016).
+  await healthWith(page, { ...PRODUCTION_TERMS, costPerAgentRoundUsd: 0.004 });
+  await eligibleHolder(page, 2000);
+  await signedIn(page, "/clone");
+  const price = page.getByRole("status").filter({ hasText: "Price" });
+  await expect(price).toContainText("$5.00");
+  await expect(price).toContainText("with your 20% holder discount");
+  const button = page.getByRole("button", { name: "Start the run" });
+  expect((await price.boundingBox())!.y).toBeLessThan((await button.boundingBox())!.y);
+});
+
+test("a clone's run without a holder discount says the full price", async ({ page }) => {
+  await stubApi(page);
+  await withWallet(page);
+  await stubClone(page, { clone: view("ready") });
+  await healthWith(page, { ...PRODUCTION_TERMS, costPerAgentRoundUsd: 0.004 });
+  await signedIn(page, "/clone");
+  const price = page.getByRole("status").filter({ hasText: "Price" });
+  await expect(price).toContainText("$6.00");
+  await expect(price).not.toContainText("discount");
+});
+
+// --- a run that failed --------------------------------------------------------------------------------
+
+const FAILED_ID = "run_01M6MEGJ413H22963NTZAH32A9";
+
+for (const { refund, attempt, says } of [
+  { refund: "credited", attempt: 1, says: "It failed in a way another attempt would not fix, so it will not start again. Its price went straight back to the prepaid balance it was paid from." },
+  { refund: "due", attempt: 2, says: "It failed twice, so it will not start again. The payment will be refunded to the wallet that paid it." },
+  { refund: "sent", attempt: 2, says: "It failed twice, so it will not start again. The payment was refunded to the wallet that paid." },
+  { refund: null, attempt: 2, says: "It failed twice, so it will not start again. It was a free run, and it went back to the wallet's free runs for this month." },
+] as const) {
+  test(`a failed run says where what it cost went (${refund ?? "a free run"})`, async ({ page }) => {
+    await stubApi(page);
+    await page.route(`http://api.test/v1/runs/${FAILED_ID}`, (route) =>
+      route.fulfill({
+        status: 200,
+        headers: CORS,
+        json: {
+          run: null,
+          job: { status: "failed", attempt, progress: null, queuedAt: "2026-11-06T00:00:00Z", startedAt: "2026-11-06T00:00:05Z", finishedAt: "2026-11-06T00:09:00Z", refund },
+          oracle: null,
+          disclaimer: DISCLAIMER,
+        },
+      }),
+    );
+    await page.goto(`/run/${FAILED_ID}`);
+    await expect(page.getByRole("heading", { name: "This run could not be completed" })).toBeVisible();
+    await expect(page.getByText(says)).toBeVisible();
+    if (refund !== null) await expect(page.getByText("free runs")).toHaveCount(0);
+  });
+}
+
 // --- before payments open -----------------------------------------------------------------------------
 
 test.describe("before payments open", () => {
