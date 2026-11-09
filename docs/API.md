@@ -73,6 +73,29 @@ Ends the session. `200 { "ok": true }`.
 
 A balance that cannot be read (RPC down, state older than the node keeps) makes the wallet not eligible.
 
+### HYVO holder utilities: lists kept with the account (session, holders)
+
+A holder's watchlist of Pons launches (`/watchlist`, the watch button on `/launches/:token`) and the wallets they follow
+on `/track`, kept with their account so the lists reach their other browsers (docs/OPEN_ITEMS.md item 33). Everyone else
+keeps them in their own browser only, which needs nothing from the API. The lists are addresses only: nothing here
+reads, holds or moves anyone's tokens.
+
+| Route | Body | Answer |
+|---|---|---|
+| `GET /v1/account/watchlist` | | `200 { "tokens": ["0x…"], "updatedAt": "…" \| null }` |
+| `PUT /v1/account/watchlist` | `{ "tokens": ["0x…"] }`, at most 200 | `200`, the list as kept |
+| `GET /v1/account/tracked` | | `200 { "wallets": ["0x…"], "updatedAt": "…" \| null }` |
+| `PUT /v1/account/tracked` | `{ "wallets": ["0x…"] }`, at most 25 | `200`, the list as kept |
+
+- **Holders only**, by the rule of every holder benefit (`GET /v1/me`'s `eligible`: `HOLDER_MIN` HYVO in the signed-in
+  wallet now and at the block of 24 h ago). Anyone else gets `403 holder_only`, with the rule in words; a balance that
+  cannot be read refuses too. Each request reads the chain.
+- A `PUT` replaces the whole list. Addresses (`0x` and 40 hex characters) are kept once each, in lowercase, in the order
+  given; anything else in the body is `400 bad_request` (`zod`: `WatchlistRequest`, `TrackedRequest` in `@hyvo/schema`).
+- Rate limit: 30 requests a minute per wallet across the four routes (`LIST_REQUESTS_PER_MINUTE`).
+- The web app (`apps/web/src/lib/use-saved-list.ts`) joins the account's list with the browser's when a holder's page
+  opens, the account's first, and saves a change half a second after it.
+
 ---
 
 ## Runs

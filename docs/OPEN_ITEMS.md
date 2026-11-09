@@ -38,6 +38,7 @@ Status: **verified** (checked against an official source or on-chain) · **likel
 | 28 | Hyvo Stocks: where each fact comes from | verified / decision | on-chain StockFactory record + Chainlink feeds; Robinhood's API and docs not used |
 | 29 | Pons launches for Hyvo Launches: sources and limits | verified / decision | read in the visitor's browser; endpoints in `packages/launches/src/endpoints.ts` |
 | 30 | Hyvo Check: addresses and limits | verified | factories, hook and PoolManager read on-chain on every check; top holders from Blockscout through Hyvo's API (its own key); credit cost per request open |
+| 33 | HYVO utilities: Board live, watchlist, Track | verified / decision | read in the browser; Track over the last 30,000 blocks; lists kept with a holder's account in D1 |
 
 ---
 
@@ -644,3 +645,44 @@ sell reverted with `Error("TransferHelper: TRANSFER_FROM_FAILED")`.
   functions that live in a facet are not in its ABI.
 - Holders come from Blockscout's index (a key: item 24; through Hyvo's API, above), not from the block the rest is read at, and an index can
   trail the chain. Only Blockscout's first page (50 holders) is read, so the deployer outside it is named as not listed.
+
+## 33. HYVO utilities: Board live, watchlist, Track — verified / decision
+
+What holding HYVO unlocks beyond runs, under the rule every holder benefit uses (decided 2026-11-09, unchanged): at least
+1,000,000 HYVO in one wallet, now and 24 hours earlier, read by the API (`GET /v1/me`'s `eligible`). Utilities only: the
+pages say what holding does, never anything about HYVO's price, value, fees, tax, payouts or returns.
+
+- **Board live.** `apps/web/src/lib/holder-status.ts`: `useHolderStatus()` reads the signed-in session from storage (no
+  wallet libraries) and asks `GET /v1/me`; `boardRefreshMs()` gives holders 10 s and everyone else 60 s. The `/board`
+  page uses it (built separately).
+- **Watchlist.** A watch button on each `/launches/<token>` page and a `/watchlist` page that reads every saved launch at
+  one block in the visitor's browser (`packages/launches/src/track.ts`, `readWatchlist`: two Multicall3 batches and the
+  pair assets). Saved in the browser for everyone; for holders also with the account, `GET`/`PUT /v1/account/watchlist`
+  (at most 200, D1 `account_lists`, docs/API.md).
+- **Track.** `/track` follows wallets: everyone 1, holders 25 (`GET`/`PUT /v1/account/tracked`). It lists their trades on
+  Pons V2 curves, each counted only when the factory's record names its emitter as the token's curve (as in item 29).
+
+**Measured on 2026-11-10** (head about block 110,241,500; each endpoint called from this machine with `Origin: https://hyvo.run`):
+
+| Endpoint | `CurveBuy`/`CurveSell` without an address | With a wallet as topic 1, without an address |
+|---|---|---|
+| `rpc.degenprotocol.io/robinhood` | 10,000 blocks answered (2,837 trades, `blockTimestamp` on each); 30,000 refused ("missing required field 'address'") | 10,000 and 30,000 answered; 50,000 refused: "query spans 49985 blocks … but only 30000 are allowed for this request; narrow the block range, or add an address filter" |
+| `robinhood.api.pocket.network` | 10,000 answered (same 2,837 trades); 30,000 refused ("missing required field 'address'") | 10,000 and 30,000 refused ("missing required field 'address'"); 50,000 refused ("max 10001 blocks") |
+| `robinhood.drpc.org` | refused: "ranges over 10000 blocks are not supported on free plan" | same |
+| `rpc.mainnet.chain.robinhood.com` | no connection from this machine (item 14) | no connection |
+
+So Track reads the last **30,000 blocks** (about 52 minutes at 9.6 blocks a second), the widest span a query without an
+address was answered over; the reader splits it where an endpoint asks for less. **Topic 2 too:** in those 2,837 trades,
+807 had a different first indexed address (the buyer or seller, `msg.sender`: a router for most of them, `0xd6d35b…c4e6`
+in 475) from the second (the recipient). So Track asks twice, once with the followed wallets as topic 1 and once as topic
+2, and names a trade's `msg.sender` ("through 0x…") when it is not the wallet.
+
+**Open:**
+
+1. Whether `rpc.mainnet.chain.robinhood.com` adds `blockTimestamp` to logs was not seen from here (blocked). A trade
+   without one shows its block, not its time.
+2. Pocket answered address-less queries on some tries and refused them on others (as in item 29). When neither degenprotocol
+   nor Robinhood's endpoint answers, Track says the chain could not be read and offers to try again. A keyed endpoint
+   (item 29, founder point 1) would make it dependable and could widen the window.
+3. Each account-list request reads the holder's balance from the chain (two balances and up to four block headers, under
+   the free plan's 50 subrequests); measure the CPU once deployed, and cache the holder decision if it is high.
