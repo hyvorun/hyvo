@@ -128,6 +128,16 @@ describe("GET /v1/launches/creator/:address", () => {
     expect(body.launches!.length).toBeGreaterThan(2 * LOGS_PER_PAGE);
   });
 
+  it("does not follow a full page that comes newest first, and says the list may be incomplete", async () => {
+    const newest = Array.from({ length: LOGS_PER_PAGE }, (_, i) => log(i, 101_000_000n - BigInt(i)));
+    // Were it followed from its highest block, this page would look like the last one.
+    const asked = install([{ status: 200, body: { status: "1", result: newest } }, { status: 200, body: { status: "1", result: [newest[0]] } }]);
+    const body = CreatorLaunchesResponse.parse(await (await get(`/v1/launches/creator/${CREATOR}`)).json());
+    expect(asked).toHaveLength(1);
+    expect(body.launches).toHaveLength(LOGS_PER_PAGE);
+    expect(body.complete).toBe(false);
+  });
+
   it("answers a wallet with no launches with an empty list", async () => {
     install([{ status: 200, body: { status: "0", message: "No logs found", result: [] } }]);
     const body = CreatorLaunchesResponse.parse(await (await get(`/v1/launches/creator/${CREATOR}`)).json());

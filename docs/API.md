@@ -547,8 +547,8 @@ the deployer as topic 3. The type is `CreatorLaunchesResponse` in `@hyvo/schema`
   "factory": "0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e",
   "launches": [                                     // newest first; null when Blockscout's index could not be read
     {
-      "token": "0x…", "curve": "0x…",
-      "pairToken": "0x0000000000000000000000000000000000000000",   // ETH; else the pair asset
+      "token": "0x…", "curve": "0x…",                 // lowercase, as in the log (no checksum: CPU)
+      "pairToken": "0x0000000000000000000000000000000000000000",   // ETH; else the pair asset, lowercase
       "launchConfigId": "1",
       "graduationThreshold": "4200000000000000000", // in the pair asset's smallest unit
       "block": 110239544, "timestamp": 1794207706 | null,
@@ -566,7 +566,9 @@ the deployer as topic 3. The type is `CreatorLaunchesResponse` in `@hyvo/schema`
 - **Where it comes from.** `https://api.blockscout.com/4663/api?module=logs&action=getLogs&address=<factory>&fromBlock=26841846&toBlock=latest&topic0=<TokenLaunched>&topic3=<the wallet as a topic>&topic0_3_opr=and`,
   with the key in the query. Each log must come from the factory, decode as `TokenLaunched` (the event in `packages/launches/src/pons.ts`)
   and name the wallet as its deployer; anything else is dropped. Blockscout answers at most 1,000 logs a query, so a full page is followed by
-  one from its last block, at most 3 requests (3,000 launches); past that `complete` is `false`.
+  one from its last block, at most 3 requests (3,000 launches); past that `complete` is `false`. A full page that does not come oldest first
+  is not followed (`complete: false`). Each log is decoded by hand, not with viem's `decodeEventLog` (about 85 µs a log, a full page some
+  85 ms of CPU against the free plan's 10 ms).
 - **Cache.** Per wallet for the rest of a five-minute UTC window, in the Cache API: `X-Hyvo-Cache: hit` and `Cache-Control: public,
   max-age=<seconds left>`. An answer without the list (`launches: null`) is not kept and carries `Cache-Control: no-store`.
 - **Limits.** 10 lookups a minute per IP (an answer from the cache does not count), then `429 rate_limited`. Each lookup counts once against
