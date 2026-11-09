@@ -10,6 +10,18 @@ import { API_URL } from "./api";
 export const HOLDER_BENEFITS = { freeRuns: 2, freeAgents: 50, freeRounds: 10, discountPct: 20 } as const;
 
 /**
+ * What holding HYVO unlocks beyond runs, under the same rule: the board refreshing every 10 seconds (lib/holder-status.ts),
+ * the watchlist kept with the account and up to 25 followed wallets on /track (packages/schema TRACKED_MAX_HOLDER).
+ * Utilities only: nothing about the token's price, value or returns.
+ */
+export const HOLDER_UTILITIES = [
+  { name: "Board live", line: "The board of new launches refreshes every 10 seconds, instead of every minute.", to: "/board" },
+  { name: "Watchlist sync", line: "Your watchlist of launches is kept with your account and reaches every browser you sign in on.", to: "/watchlist" },
+  // No "Pons", "buy", "sell", "fee" or "tax" here: the token page names none of them (e2e/token-live.spec.ts).
+  { name: "25 tracked wallets", line: "Follow up to 25 wallets on Track and see their trades on new launches, instead of 1.", to: "/track" },
+] as const;
+
+/**
  * Who will count as a holder, the founder's decision of 2026-11-09: at least 1,000,000 HYVO in one wallet,
  * now and 24 hours earlier. `token:go-live` sets HOLDER_MIN to it at the launch; from then on the pages read
  * the rule from GET /v1/health instead.

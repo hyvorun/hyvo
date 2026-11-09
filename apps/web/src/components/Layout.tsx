@@ -211,6 +211,12 @@ export function Layout() {
           <Link to="/board" viewTransition>
             Board
           </Link>
+          <Link to="/watchlist" viewTransition>
+            Watchlist
+          </Link>
+          <Link to="/track" viewTransition>
+            Track
+          </Link>
           <Link to="/stocks" viewTransition>
             Stocks
           </Link>

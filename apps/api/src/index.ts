@@ -17,6 +17,7 @@ import { auth, me } from "./routes/account";
 import { admin } from "./routes/admin";
 import { balance, keys } from "./routes/balance";
 import { check } from "./routes/check";
+import { accountLists } from "./routes/lists";
 import { dryruns } from "./routes/dryruns";
 import { clones } from "./routes/clones";
 import { internal, uploads } from "./routes/internal";
@@ -36,7 +37,7 @@ app.use(
   "/v1/*",
   cors({
     origin: (origin, c) => (webOrigins(c.env).includes(origin) ? origin : null),
-    allowMethods: ["GET", "POST", "DELETE"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE"],
     allowHeaders: ["Content-Type", "Authorization"],
     maxAge: 600,
   }),
@@ -57,6 +58,7 @@ app.get("/v1/health", (c) => {
 });
 app.route("/v1/auth", auth);
 app.route("/v1/me", me);
+app.route("/v1/account", accountLists);
 app.route("/v1/keys", keys);
 app.route("/v1/balance", balance);
 app.route("/v1/webhooks", webhooks);

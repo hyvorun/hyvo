@@ -17,7 +17,7 @@ export function TokenBrief() {
         <h2 id="token-title">The HYVO token</h2>
         <p>
           {token
-            ? "HYVO is live. Holding it brings free runs, a discount and a place ahead in the queue."
+            ? "HYVO is live. Holding it brings free runs, a discount, a place ahead in the queue, the board live every 10 seconds, a watchlist kept with your account and 25 tracked wallets."
             : "A HYVO token is coming. Holding it will bring free runs, a discount and a place ahead in the queue."}
         </p>
       </Reveal>

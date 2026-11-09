@@ -26,6 +26,8 @@ import {
   SessionResponse,
   TopUpCheckResponse,
   TopUpResponse,
+  TrackedResponse,
+  WatchlistResponse,
   PrepaidRunRequest,
   type DryRunRequest,
   type QuestionOutcome,
@@ -149,6 +151,24 @@ export function verifySignIn(message: string, signature: string) {
 
 export function fetchMe(token: string) {
   return send(`${API_URL}/v1/me`, MeResponse, { token });
+}
+
+// --- HYVO holder utilities: lists kept with a holder's account --------------------------------
+
+export function fetchWatchlist(token: string) {
+  return send(`${API_URL}/v1/account/watchlist`, WatchlistResponse, { token });
+}
+
+export function saveWatchlist(token: string, tokens: readonly string[]) {
+  return send(`${API_URL}/v1/account/watchlist`, WatchlistResponse, { token, method: "PUT", body: { tokens } });
+}
+
+export function fetchTracked(token: string) {
+  return send(`${API_URL}/v1/account/tracked`, TrackedResponse, { token });
+}
+
+export function saveTracked(token: string, wallets: readonly string[]) {
+  return send(`${API_URL}/v1/account/tracked`, TrackedResponse, { token, method: "PUT", body: { wallets } });
 }
 
 export function requestQuote(token: string, request: QuoteRequest) {

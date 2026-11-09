@@ -223,6 +223,7 @@ export async function resetDb(): Promise<void> {
     "webhooks",
     "webhook_deliveries",
     "questions",
+    "account_lists",
   ];
   await env.DB.batch(tables.map((table) => env.DB.prepare(`DELETE FROM ${table}`)));
 }
